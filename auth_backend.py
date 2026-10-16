@@ -1,0 +1,249 @@
+"""Phone/password authentication and user-scoped demo activity."""
+
+from __future__ import annotations
+
+import hashlib
+import hmac
+import os
+import re
+import secrets
+import threading
+import time
+from datetime import datetime, timezone
+
+import psycopg
+from psycopg.errors import UniqueViolation
+from psycopg.rows import dict_row
+
+PASSWORD_ITERATIONS = 310_000
+SESSION_DAYS = 7
+DEFAULT_SESSION_DAYS = 1
+PHONE_LENGTHS = {"+225": 10, "+228": 8}
+ACTIVITY_KINDS = {"recharge", "withdrawal", "purchase"}
+MIN_ACTIVITY_AMOUNTS = {"recharge": 4_000, "withdrawal": 2_200, "purchase": 4_000}
+MAX_ACTIVITY_AMOUNT = 500_000_000
+_DUMMY_SALT = b"\x00" * 16
+_DUMMY_HASH = hashlib.pbkdf2_hmac("sha256", b"not-a-real-password", _DUMMY_SALT, PASSWORD_ITERATIONS)
+_login_failures: dict[str, list[float]] = {}
+_login_lock = threading.Lock()
+
+
+class AuthError(Exception):
+    def __init__(self, status: int, message: str):
+        super().__init__(message)
+        self.status = status
+        self.message = message
+
+
+class PhoneAlreadyRegistered(Exception):
+    pass
+
+
+def connect():
+    database_url = os.environ.get("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("Database is not configured")
+    return psycopg.connect(database_url, connect_timeout=5, row_factory=dict_row)
+
+
+def normalize_phone(country_code: str, phone: str) -> str:
+    country_code = str(country_code or "").strip()
+    if country_code not in PHONE_LENGTHS:
+        raise ValueError("Choisissez le Togo ou la Côte d’Ivoire.")
+    digits = re.sub(r"\D", "", str(phone or ""))
+    country_digits = country_code[1:]
+    expected_length = PHONE_LENGTHS[country_code]
+    if len(digits) == expected_length + len(country_digits) and digits.startswith(country_digits):
+        digits = digits[len(country_digits):]
+    if len(digits) != expected_length:
+        raise ValueError("Vérifiez le numéro de téléphone saisi.")
+    return f"{country_code}{digits}"
+
+
+def _password_bytes(password: str) -> bytes:
+    if not isinstance(password, str) or len(password) < 8 or len(password) > 256:
+        raise ValueError("Le mot de passe doit contenir entre 8 et 256 caractères.")
+    encoded = password.encode("utf-8")
+    if len(encoded) > 1024:
+        raise ValueError("Le mot de passe est trop long.")
+    return encoded
+
+
+def _hash_password(password: str, salt: bytes) -> bytes:
+    return hashlib.pbkdf2_hmac("sha256", _password_bytes(password), salt, PASSWORD_ITERATIONS)
+
+
+def _token_hash(token: str) -> str:
+    return hashlib.sha256(token.encode("ascii")).hexdigest()
+
+
+def _create_session(cursor, user_id: int, remember: bool = False) -> tuple[str, int]:
+    cursor.execute("DELETE FROM shineray_sessions WHERE expires_at <= CURRENT_TIMESTAMP")
+    token = secrets.token_urlsafe(32)
+    session_days = SESSION_DAYS if remember else DEFAULT_SESSION_DAYS
+    cursor.execute(
+        """
+        INSERT INTO shineray_sessions (token_hash, user_id, expires_at)
+        VALUES (%s, %s, CURRENT_TIMESTAMP + (%s * INTERVAL '1 day'))
+        """,
+        (_token_hash(token), user_id, session_days),
+    )
+    return token, session_days
+
+
+def register(country_code: str, phone: str, password: str) -> tuple[str, dict, int]:
+    normalized = normalize_phone(country_code, phone)
+    salt = secrets.token_bytes(16)
+    password_hash = _hash_password(password, salt)
+    try:
+        with connect() as connection, connection.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO shineray_users (phone, password_salt, password_hash)
+                VALUES (%s, %s, %s)
+                RETURNING id, phone
+                """,
+                (normalized, salt, password_hash),
+            )
+            user = cursor.fetchone()
+            token, session_days = _create_session(cursor, user["id"])
+    except UniqueViolation as exc:
+        raise PhoneAlreadyRegistered from exc
+    return token, {"id": user["id"], "phone": user["phone"]}, session_days
+
+
+def _rate_limit_key(phone: str) -> str:
+    return hashlib.sha256(phone.encode("utf-8")).hexdigest()
+
+
+def _record_login_failure(phone: str) -> bool:
+    now = time.monotonic()
+    key = _rate_limit_key(phone)
+    with _login_lock:
+        if len(_login_failures) > 5_000:
+            for old_key, values in list(_login_failures.items()):
+                recent = [instant for instant in values if now - instant < 900]
+                if recent:
+                    _login_failures[old_key] = recent
+                else:
+                    _login_failures.pop(old_key, None)
+        attempts = [instant for instant in _login_failures.get(key, []) if now - instant < 900]
+        attempts.append(now)
+        _login_failures[key] = attempts
+        return len(attempts) >= 8
+
+
+def _clear_login_failures(phone: str) -> None:
+    with _login_lock:
+        _login_failures.pop(_rate_limit_key(phone), None)
+
+
+def login(country_code: str, phone: str, password: str, remember: bool = False) -> tuple[str, dict, int]:
+    normalized = normalize_phone(country_code, phone)
+    password_input = _password_bytes(password)
+    with connect() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT id, phone, password_salt, password_hash FROM shineray_users WHERE phone = %s",
+            (normalized,),
+        )
+        user = cursor.fetchone()
+        salt = bytes(user["password_salt"]) if user else _DUMMY_SALT
+        expected = bytes(user["password_hash"]) if user else _DUMMY_HASH
+        actual = hashlib.pbkdf2_hmac("sha256", password_input, salt, PASSWORD_ITERATIONS)
+        if not user or not hmac.compare_digest(actual, expected):
+            limited = _record_login_failure(normalized)
+            if limited:
+                raise AuthError(429, "Trop de tentatives. Réessayez dans quelques minutes.")
+            raise AuthError(401, "Numéro ou mot de passe incorrect.")
+        _clear_login_failures(normalized)
+        token, session_days = _create_session(cursor, user["id"], remember)
+    return token, {"id": user["id"], "phone": user["phone"]}, session_days
+
+
+def get_user_for_session(token: str | None) -> dict | None:
+    if not token or len(token) > 128:
+        return None
+    with connect() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT u.id, u.phone
+            FROM shineray_sessions s
+            JOIN shineray_users u ON u.id = s.user_id
+            WHERE s.token_hash = %s AND s.expires_at > CURRENT_TIMESTAMP
+            """,
+            (_token_hash(token),),
+        )
+        return cursor.fetchone()
+
+
+def revoke_session(token: str | None) -> None:
+    if not token or len(token) > 128:
+        return
+    with connect() as connection, connection.cursor() as cursor:
+        cursor.execute("DELETE FROM shineray_sessions WHERE token_hash = %s", (_token_hash(token),))
+
+
+def record_demo_activity(user_id: int, kind: str, amount_fcfa: int, label: str) -> dict:
+    if kind not in ACTIVITY_KINDS:
+        raise ValueError("Type d’opération invalide.")
+    if (
+        not isinstance(amount_fcfa, int)
+        or isinstance(amount_fcfa, bool)
+        or not MIN_ACTIVITY_AMOUNTS[kind] <= amount_fcfa <= MAX_ACTIVITY_AMOUNT
+    ):
+        raise ValueError("Montant invalide.")
+    safe_label = re.sub(r"[\x00-\x1f\x7f]", "", str(label or "")).strip()[:80]
+    if not safe_label:
+        safe_label = {"recharge": "Recharge simulée", "withdrawal": "Retrait simulé", "purchase": "Achat simulé"}[kind]
+    with connect() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
+            INSERT INTO shineray_demo_activity (user_id, kind, label, amount_fcfa)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id, kind, label, amount_fcfa, created_at
+            """,
+            (user_id, kind, safe_label, amount_fcfa),
+        )
+        activity = cursor.fetchone()
+    return _serialize_activity(activity)
+
+
+def get_demo_activity(user_id: int, kind: str | None = None) -> list[dict]:
+    if kind is not None and kind not in ACTIVITY_KINDS:
+        raise ValueError("Filtre d’historique invalide.")
+    with connect() as connection, connection.cursor() as cursor:
+        if kind:
+            cursor.execute(
+                """
+                SELECT id, kind, label, amount_fcfa, created_at
+                FROM shineray_demo_activity
+                WHERE user_id = %s AND kind = %s
+                ORDER BY created_at DESC LIMIT 100
+                """,
+                (user_id, kind),
+            )
+        else:
+            cursor.execute(
+                """
+                SELECT id, kind, label, amount_fcfa, created_at
+                FROM shineray_demo_activity
+                WHERE user_id = %s
+                ORDER BY created_at DESC LIMIT 100
+                """,
+                (user_id,),
+            )
+        return [_serialize_activity(row) for row in cursor.fetchall()]
+
+
+def _serialize_activity(activity: dict) -> dict:
+    created_at = activity["created_at"]
+    if isinstance(created_at, datetime):
+        created_at = created_at.astimezone(timezone.utc).isoformat()
+    return {
+        "id": activity["id"],
+        "kind": activity["kind"],
+        "label": activity["label"],
+        "amount_fcfa": activity["amount_fcfa"],
+        "created_at": created_at,
+        "simulated": True,
+    }

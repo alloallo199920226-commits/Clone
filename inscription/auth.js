@@ -47,15 +47,40 @@
     if (confirmation.value) confirmation.dispatchEvent(new Event("input"));
   });
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    const notice = document.querySelector(".demo-notice");
     if (!countryInput.value) {
-      document.querySelector(".demo-notice").textContent = "Sélectionnez votre pays pour continuer.";
+      notice.textContent = "Sélectionnez votre pays pour continuer.";
       trigger.focus();
       return;
     }
     if (!form.reportValidity()) return;
-    document.querySelector(".demo-notice").textContent =
-      "Formulaire validé pour la démonstration. La création de compte et l’envoi de SMS ne sont pas activés.";
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    notice.textContent = "Création du compte…";
+    const digits = form.elements.phone.value.replace(/\D/g, "");
+    const countryDigits = countryInput.value.slice(1);
+    const expectedLength = countryInput.value === "+225" ? 10 : 8;
+    const phone = digits.length === expectedLength + countryDigits.length && digits.startsWith(countryDigits)
+      ? digits.slice(countryDigits.length)
+      : digits;
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          country_code: countryInput.value,
+          phone,
+          password: password.value,
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Création du compte impossible.");
+      window.location.replace("/accueil");
+    } catch (error) {
+      notice.textContent = error.message || "Le service est indisponible. Réessayez.";
+      button.disabled = false;
+    }
   });
 })();

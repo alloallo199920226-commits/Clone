@@ -4,6 +4,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <title>Projet - Shineray</title>
+<link rel="stylesheet" href="/pages/pages.css"/>
+<script src="/pages/pages.js" defer></script>
 <!-- Tailwind CSS CDN -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <!-- BEGIN: CustomStyles -->
@@ -42,24 +44,25 @@
 <div class="grid grid-cols-2 gap-3">
 <!-- Carte Quantité achetée -->
 <div class="stat-card-gradient rounded-md p-3.5 text-white shadow-sm flex flex-col justify-between min-h-[82px]" data-purpose="stat-quantity">
-<span class="text-xs sm:text-sm font-medium tracking-wide">Quantité achetée</span>
-<span class="text-base sm:text-lg font-bold mt-2">0</span>
+<span class="text-xs sm:text-sm font-medium tracking-wide">Achats simulés</span>
+<span class="text-base sm:text-lg font-bold mt-2" data-purchase-count>0</span>
 </div>
 <!-- Carte Mes revenus -->
 <div class="stat-card-gradient rounded-md p-3.5 text-white shadow-sm flex flex-col justify-between min-h-[82px]" data-purpose="stat-revenue">
-<span class="text-xs sm:text-sm font-medium tracking-wide">Mes revenus</span>
-<span class="text-base sm:text-lg font-bold mt-2">FCFA 0</span>
+<span class="text-xs sm:text-sm font-medium tracking-wide">Montant simulé</span>
+<span class="text-base sm:text-lg font-bold mt-2" data-purchase-total>FCFA 0</span>
 </div>
 </div>
 </section>
 <!-- END: StatsCardsSection -->
 <!-- BEGIN: EmptyStateSection -->
 <!-- Message centré en cas d'absence de produits achetés -->
-<section class="py-24 px-6 text-center flex items-center justify-center" data-purpose="empty-state">
+<section class="py-24 px-6 text-center flex items-center justify-center" data-purpose="empty-state" data-activity-empty>
 <p class="text-gray-900 text-sm sm:text-base font-normal tracking-wide">
-        Vous n'avez pas acheté de produit
+        Vous n’avez enregistré aucun achat de démonstration.
       </p>
 </section>
+<section class="px-4 pb-6" data-activity-list data-activity-kind="purchase" aria-live="polite"></section>
 <!-- END: EmptyStateSection -->
 </main>
 <!-- END: MainContent -->

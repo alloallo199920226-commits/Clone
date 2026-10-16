@@ -1,0 +1,1 @@
+- [Phone-only account flow](phone-only-auth.md) — Users requested phone + password, no email/SMS; ownership verification and password recovery are absent.

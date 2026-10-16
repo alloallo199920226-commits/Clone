@@ -284,14 +284,35 @@
       document.querySelectorAll('[data-route]').forEach((button) => {
         button.addEventListener('click', () => { window.location.href = button.dataset.route; });
       });
-      // Provide visual feedback for action and buy buttons
+      // Purchases are recorded only as per-user demo activity; they never change a balance.
       const buyButtons = document.querySelectorAll('[data-purpose="buy-btn"]');
       buyButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
           e.preventDefault();
           const card = e.target.closest('article');
           const title = card ? card.querySelector('h2').textContent : 'Produit';
-          alert(`Maquette de démonstration : aucun achat réel n’a été effectué pour ${title}.`);
+          const price = card && [...card.querySelectorAll('span')]
+            .find((item) => /^\s*FCFA\b/.test(item.textContent));
+          const amount = price ? Number(price.textContent.replace(/\D/g, '')) : 0;
+          if (!amount) {
+            alert('Montant du produit indisponible.');
+            return;
+          }
+          btn.disabled = true;
+          try {
+            const response = await fetch('/api/demo-activity', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ kind: 'purchase', amount_fcfa: amount, label: `Achat simulé ${title}` }),
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'Enregistrement impossible.');
+            alert(`Demande ${title} enregistrée en démonstration. Aucun achat ni paiement réel n’a été effectué.`);
+          } catch (error) {
+            alert(error.message || 'Le service est indisponible. Réessayez.');
+          } finally {
+            btn.disabled = false;
+          }
         });
       });
     });
