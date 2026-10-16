@@ -15,6 +15,22 @@ PAGES = {
     "/connexion": "connexion",
     "/inscription": "inscription",
 }
+MORE_PAGES = {
+    "/financement": "financement.html",
+    "/recharger": "recharger.html",
+    "/retrait": "retrait.html",
+    "/historique-recharges": "historique-recharges.html",
+    "/historique-retraits": "historique-retraits.html",
+    "/gestion-compte-bancaire": "gestion-compte-bancaire.html",
+    "/ajouter-compte-retrait": "ajouter-compte-retrait.html",
+    "/a-propos": "a-propos.html",
+    "/regles": "regles.html",
+    "/service-client": "service-client.html",
+}
+STATIC_FILES = {
+    "/pages/pages.css": ("pages/pages.css", "text/css; charset=utf-8"),
+    "/pages/pages.js": ("pages/pages.js", "text/javascript; charset=utf-8"),
+}
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -29,6 +45,11 @@ class Handler(BaseHTTPRequestHandler):
         directory = PAGES.get(route)
         file_path = ROOT / directory / "code.html" if directory else None
         content_type = "text/html; charset=utf-8"
+        if route in MORE_PAGES:
+            file_path = ROOT / "pages" / MORE_PAGES[route]
+        elif route in STATIC_FILES:
+            relative_path, content_type = STATIC_FILES[route]
+            file_path = ROOT / relative_path
         if file_path is None:
             for folder in PAGES.values():
                 allowed_files = {"code.html": "text/html; charset=utf-8", "screen.png": "image/png"}

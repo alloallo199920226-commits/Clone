@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ajouter un compte de retrait — SHINERAY</title><link rel="stylesheet" href="/pages/pages.css"><script src="/pages/pages.js" defer></script></head>
+<body><main class="page"><header class="page-header"><a class="back" href="/gestion-compte-bancaire" aria-label="Retour à la gestion des comptes">‹</a><h1>Ajouter un compte de retrait</h1><span class="header-spacer"></span></header>
+<div class="page-content"><p class="demo-note"><strong>Mode démonstration</strong>Ne saisissez pas de vrai numéro de portefeuille : ces informations ne sont ni enregistrées ni protégées par un service de compte.</p>
+<form data-demo-form><label class="field-label" for="wallet-type">Type de portefeuille</label><select class="select" id="wallet-type" required><option value="">Veuillez sélectionner</option><option value="togocel">TOGOCEL</option></select>
+<label class="field-label" for="wallet-number">Compte portefeuille</label><input class="input" id="wallet-number" type="tel" inputmode="tel" placeholder="Saisissez un numéro de démonstration" required>
+<button class="button-red button-wide" type="submit" style="margin-top:48px">Ajouter</button><p class="status" data-status role="status" aria-live="polite"></p></form></div>
+<script>document.querySelector("[data-demo-form]").addEventListener("submit",e=>{e.preventDefault();if(e.currentTarget.reportValidity())document.querySelector("[data-status]").textContent="Aucun compte n’a été enregistré : cette page est une démonstration."});</script></main></body></html>

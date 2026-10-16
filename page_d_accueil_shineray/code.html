@@ -78,7 +78,7 @@
 <section class="px-3.5 py-4" data-purpose="quick-actions-bar">
 <div class="grid grid-cols-3 gap-2.5">
 <!-- Recharger Button -->
-<button class="quick-action-card rounded-xl py-3 px-2 flex flex-col items-center justify-center text-center transition-transform active:scale-95" data-purpose="recharger-btn" type="button">
+<button class="quick-action-card rounded-xl py-3 px-2 flex flex-col items-center justify-center text-center transition-transform active:scale-95" data-purpose="recharger-btn" data-route="/recharger" type="button">
 <div class="text-amber-300 mb-1.5">
 <!-- Credit Card Icon -->
 <svg class="w-7 h-7 fill-current drop-shadow" viewbox="0 0 24 24">
@@ -88,7 +88,7 @@
 <span class="text-white text-xs font-medium tracking-tight">Recharger</span>
 </button>
 <!-- Retirer Button -->
-<button class="quick-action-card rounded-xl py-3 px-2 flex flex-col items-center justify-center text-center transition-transform active:scale-95" data-purpose="retirer-btn" type="button">
+<button class="quick-action-card rounded-xl py-3 px-2 flex flex-col items-center justify-center text-center transition-transform active:scale-95" data-purpose="retirer-btn" data-route="/retrait" type="button">
 <div class="text-amber-300 mb-1.5">
 <!-- Wallet Icon -->
 <svg class="w-7 h-7 fill-current drop-shadow" viewbox="0 0 24 24">
@@ -98,7 +98,7 @@
 <span class="text-white text-xs font-medium tracking-tight">Retirer</span>
 </button>
 <!-- Service Client Button -->
-<button class="quick-action-card rounded-xl py-3 px-2 flex flex-col items-center justify-center text-center transition-transform active:scale-95" data-purpose="support-btn" type="button">
+<button class="quick-action-card rounded-xl py-3 px-2 flex flex-col items-center justify-center text-center transition-transform active:scale-95" data-purpose="support-btn" data-route="/service-client" type="button">
 <div class="text-amber-300 mb-1.5">
 <!-- Customer Support Users Icon -->
 <svg class="w-7 h-7 fill-current drop-shadow" viewbox="0 0 24 24">
@@ -281,6 +281,9 @@
 <!-- BEGIN: Interactive Feedback Script -->
 <script data-purpose="event-handlers">
     document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('[data-route]').forEach((button) => {
+        button.addEventListener('click', () => { window.location.href = button.dataset.route; });
+      });
       // Provide visual feedback for action and buy buttons
       const buyButtons = document.querySelectorAll('[data-purpose="buy-btn"]');
       buyButtons.forEach(btn => {
@@ -288,7 +291,7 @@
           e.preventDefault();
           const card = e.target.closest('article');
           const title = card ? card.querySelector('h2').textContent : 'Produit';
-          alert(`Souscription initiée pour ${title}`);
+          alert(`Maquette de démonstration : aucun achat réel n’a été effectué pour ${title}.`);
         });
       });
     });

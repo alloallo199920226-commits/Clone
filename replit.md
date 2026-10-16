@@ -17,6 +17,11 @@
 - `/notifications` : notifications
 - `/connexion` : écran de connexion (formulaire de démonstration)
 - `/inscription` : écran d’inscription (formulaire de démonstration)
+- `/financement` : détails du financement (données illustratives)
+- `/recharger` et `/retrait` : formulaires de démonstration sans transactions
+- `/historique-recharges` et `/historique-retraits` : historiques vides
+- `/gestion-compte-bancaire` et `/ajouter-compte-retrait` : gestion fictive des comptes de retrait
+- `/a-propos`, `/regles` et `/service-client` : pages d’information et d’assistance
 
 Les dossiers HTML et les captures importés sont conservés. Le serveur ne rend
 accessibles que les pages et ressources explicitement listées, pas les autres

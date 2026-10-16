@@ -85,11 +85,11 @@
 <!-- Recharge and Withdrawal Buttons -->
 <section class="grid grid-cols-2 gap-3" data-purpose="wallet-actions">
 <!-- Recharge Button -->
-<button aria-label="Recharger le compte" class="btn-action-gradient text-white py-3.5 px-4 rounded-md font-medium text-sm flex items-center justify-center transition duration-150 active:scale-95" type="button">
+<button aria-label="Recharger le compte" class="btn-action-gradient text-white py-3.5 px-4 rounded-md font-medium text-sm flex items-center justify-center transition duration-150 active:scale-95" data-route="/recharger" type="button">
           Recharger
         </button>
 <!-- Retrait Button -->
-<button aria-label="Faire un retrait" class="btn-action-gradient text-white py-3.5 px-4 rounded-md font-medium text-sm flex items-center justify-center transition duration-150 active:scale-95" type="button">
+<button aria-label="Faire un retrait" class="btn-action-gradient text-white py-3.5 px-4 rounded-md font-medium text-sm flex items-center justify-center transition duration-150 active:scale-95" data-route="/retrait" type="button">
           Retrait
         </button>
 </section>
@@ -100,7 +100,7 @@
 <ul class="divide-y divide-gray-100/80">
 <!-- Item: Détails du financement -->
 <li>
-<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="#">
+<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="/financement">
 <div class="flex items-center space-x-3.5">
 <!-- Icon: Stats & Coins -->
 <div class="w-6 h-6 flex items-center justify-center text-gray-700">
@@ -120,7 +120,7 @@
 </li>
 <!-- Item: Historique des recharges -->
 <li>
-<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="#">
+<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="/historique-recharges">
 <div class="flex items-center space-x-3.5">
 <!-- Icon: Notebook / Pen Edit -->
 <div class="w-6 h-6 flex items-center justify-center text-gray-700">
@@ -138,7 +138,7 @@
 </li>
 <!-- Item: Registres de retrait -->
 <li>
-<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="#">
+<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="/historique-retraits">
 <div class="flex items-center space-x-3.5">
 <!-- Icon: Notebook / Pen Edit -->
 <div class="w-6 h-6 flex items-center justify-center text-gray-700">
@@ -156,7 +156,7 @@
 </li>
 <!-- Item: Gestion de compte bancaire -->
 <li>
-<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="#">
+<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="/gestion-compte-bancaire">
 <div class="flex items-center space-x-3.5">
 <!-- Icon: Bank Card -->
 <div class="w-6 h-6 flex items-center justify-center text-gray-700">
@@ -179,9 +179,15 @@
 <!-- Section with Platform Information and Support -->
 <section class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden" data-purpose="support-menu-group">
 <ul class="divide-y divide-gray-100/80">
+<li>
+<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="/notifications">
+<div class="flex items-center space-x-3.5"><span class="w-6 h-6 flex items-center justify-center text-gray-700" aria-hidden="true">●</span><span class="text-sm font-normal text-gray-800">Notifications</span></div>
+<svg class="w-4 h-4 text-gray-500 stroke-[2]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</a>
+</li>
 <!-- Item: À propos de nous -->
 <li>
-<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="#">
+<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="/a-propos">
 <div class="flex items-center space-x-3.5">
 <!-- Icon: Circle Information -->
 <div class="w-6 h-6 flex items-center justify-center text-gray-700">
@@ -198,7 +204,7 @@
 </li>
 <!-- Item: Règles de la plateforme -->
 <li>
-<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="#">
+<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="/regles">
 <div class="flex items-center space-x-3.5">
 <!-- Icon: Circle Play / Rules -->
 <div class="w-6 h-6 flex items-center justify-center text-gray-700">
@@ -215,7 +221,7 @@
 </li>
 <!-- Item: Service client -->
 <li>
-<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="#">
+<a class="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition duration-150" href="/service-client">
 <div class="flex items-center space-x-3.5">
 <!-- Icon: Customer Support Headset -->
 <div class="w-6 h-6 flex items-center justify-center text-gray-700">
@@ -274,5 +280,10 @@
 </div>
 </nav>
 <!-- END: BottomNavigation -->
+<script>
+  document.querySelectorAll('[data-route]').forEach((button) => {
+    button.addEventListener('click', () => { window.location.href = button.dataset.route; });
+  });
+</script>
 </div>
 </body></html>
