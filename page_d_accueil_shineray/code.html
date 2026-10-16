@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Page d'accueil - SHINERAY</title>
+<!-- Tailwind CSS CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#DC1E28',
+              darkRed: '#7A0A10',
+              gold: '#F4CA38'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="base-layout">
+    body {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .safe-bottom {
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+  </style>
+<style data-purpose="card-gradients">
+    /* Subtle metallic/gradient dark-to-red button styling for quick action cards */
+    .quick-action-card {
+      background: linear-gradient(135deg, #1b0709 0%, #3a0d11 35%, #8f121b 75%, #ba1c27 100%);
+      box-shadow: 0 4px 10px rgba(186, 28, 39, 0.2);
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="bg-gray-100 text-gray-800 antialiased min-h-screen flex flex-col font-sans pb-24">
+<!-- BEGIN: MainHeader -->
+<header class="bg-white px-4 py-3.5 flex items-center justify-between sticky top-0 z-30 shadow-sm" data-purpose="header">
+<h1 class="text-xl font-bold tracking-tight text-gray-900">Page d'accueil</h1>
+<!-- Shineray Brand Logo Badge -->
+<div class="flex items-center space-x-1.5" data-purpose="logo-container">
+<div class="flex items-center bg-[#D81E27] px-3 py-1 rounded-sm shadow-sm">
+<svg class="w-4 h-4 text-white mr-1.5 fill-current" viewbox="0 0 24 24">
+<path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z"></path>
+</svg>
+<span class="text-white font-extrabold text-sm tracking-wider uppercase font-mono">SHINERAY</span>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: HeroBanner -->
+<section class="relative w-full bg-slate-900 overflow-hidden shadow-md" data-purpose="hero-banner">
+<!-- Hero Background Image provided in snapshot -->
+<div class="relative w-full aspect-[16/9] sm:aspect-[21/9] bg-gradient-to-t from-gray-950 via-gray-900 to-sky-950 overflow-hidden">
+<img alt="SHINERAY Fleet - Powering Every Hustle" class="w-full h-full object-cover object-top filter brightness-95 contrast-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXYIOgOPJkp7noI1KsbHsCJoiRRSQMkOoyViaFAJKHtvHVOuFpLcZfsaAFySmy2D163KNantDmDHPy4TACTzleHhmU04-a2dLCTSnCXYlUt7uRNwhrFASeTb4PMeqaTMyDY1Dqk8tdxEi7aH9xg4NTrgbjTW_Fk88aSZsF7lCRqkClN9z6ku2QFKjmusi5a5q6DXErRyQNB5yHoboC8npzzH1Rlxku3XFhkuksfk2iNfapfGSkZ46SN6ryGAVJZQ25ePo"/>
+<!-- Dramatic overlay gradient simulating the sleek showcase reflection -->
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none"></div>
+<!-- Headline overlay on banner -->
+<div class="absolute top-4 left-4 text-white max-w-[60%] pointer-events-none">
+<p class="font-black text-xs sm:text-base tracking-widest uppercase text-white/95 leading-tight drop-shadow-md">
+          POWERING<br/>EVERY HUSTLE
+        </p>
+</div>
+</div>
+</section>
+<!-- END: HeroBanner -->
+<!-- BEGIN: QuickActions -->
+<section class="px-3.5 py-4" data-purpose="quick-actions-bar">
+<div class="grid grid-cols-3 gap-2.5">
+<!-- Recharger Button -->
+<button class="quick-action-card rounded-xl py-3 px-2 flex flex-col items-center justify-center text-center transition-transform active:scale-95" data-purpose="recharger-btn" type="button">
+<div class="text-amber-300 mb-1.5">
+<!-- Credit Card Icon -->
+<svg class="w-7 h-7 fill-current drop-shadow" viewbox="0 0 24 24">
+<path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2zM7 15h3v2H7v-2z"></path>
+</svg>
+</div>
+<span class="text-white text-xs font-medium tracking-tight">Recharger</span>
+</button>
+<!-- Retirer Button -->
+<button class="quick-action-card rounded-xl py-3 px-2 flex flex-col items-center justify-center text-center transition-transform active:scale-95" data-purpose="retirer-btn" type="button">
+<div class="text-amber-300 mb-1.5">
+<!-- Wallet Icon -->
+<svg class="w-7 h-7 fill-current drop-shadow" viewbox="0 0 24 24">
+<path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path>
+</svg>
+</div>
+<span class="text-white text-xs font-medium tracking-tight">Retirer</span>
+</button>
+<!-- Service Client Button -->
+<button class="quick-action-card rounded-xl py-3 px-2 flex flex-col items-center justify-center text-center transition-transform active:scale-95" data-purpose="support-btn" type="button">
+<div class="text-amber-300 mb-1.5">
+<!-- Customer Support Users Icon -->
+<svg class="w-7 h-7 fill-current drop-shadow" viewbox="0 0 24 24">
+<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path>
+</svg>
+</div>
+<span class="text-white text-xs font-medium tracking-tight">Service client</span>
+</button>
+</div>
+</section>
+<!-- END: QuickActions -->
+<!-- BEGIN: ProductGrid -->
+<main class="px-3.5 flex-1" data-purpose="vip-investments-grid">
+<div class="grid grid-cols-2 gap-3">
+<!-- Product Card VIP 1 -->
+<article class="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex flex-col justify-between" data-purpose="vip-card-1">
+<div>
+<h2 class="text-center font-bold text-gray-900 text-sm tracking-wide mb-2">VIP1</h2>
+<!-- Product Vehicle Thumbnail -->
+<div class="h-24 w-full flex items-center justify-center my-1">
+<img alt="Camionnette VIP1" class="max-h-full max-w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXsSYkAAwTYlzRat4-dC17IB-cfZhv-DS2WWoQ2RBJRDtalLCDCGil2sQG_kemO4hZorJEY1lxYZ2oZRsVRgPxFAAuHie86bvCfsYE6wUEAREu40lTDLHuPfwipB7cOMop_oUU2JGg9Z6Fyzc3rSPR9OI6bYAAv80OIhy_3WIMRZZQk633oUHGrIwyzH3k7SZC-Wos4AzT9lyoYN9KfFDC2BN1HDo4SB1ZVgYfUxR6yVCSLdsbQUQ62Q"/>
+</div>
+<!-- Financial metrics -->
+<div class="mt-2 space-y-0.5">
+<p class="text-xs font-bold text-[#D81E27] tracking-tight">FCFA 1,000</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu quotidien</p>
+<p class="text-xs font-bold text-[#D81E27] tracking-tight pt-1">FCFA 180,000</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu total</p>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between pt-1">
+<span class="text-xs font-extrabold text-gray-900">FCFA 4,000</span>
+<button class="bg-[#D81E27] hover:bg-red-700 active:scale-95 text-white text-[10px] font-bold py-1.5 px-3 rounded tracking-wider uppercase transition-colors" data-purpose="buy-btn" type="button">
+            ACHETER
+          </button>
+</div>
+</article>
+<!-- Product Card VIP 2 -->
+<article class="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex flex-col justify-between" data-purpose="vip-card-2">
+<div>
+<h2 class="text-center font-bold text-gray-900 text-sm tracking-wide mb-2">VIP2</h2>
+<div class="h-24 w-full flex items-center justify-center my-1">
+<img alt="Camionnette VIP2" class="max-h-full max-w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZbZdSvkNAOaooMTeT_PL6HJPKuVXvRG2o4ldrdUmJIoUnLt224W_MdzjdpfD3uI-iseGo8j0V6vDCrGD4Ytk1XQBn23n-H6foPL1duv656hmByJHI7rEeGkh7MhjsRd37zLWlln3ZBPb9fhJRIhpGkIgavPiDNfQkl6-g3ew019bwHn8i-3Rc_LXn2rAf93nY-CYJC2hXi8f91TR6O7ddROee4iGEETaamgPijeoFNu7bKXhQFRjaeg"/>
+</div>
+<div class="mt-2 space-y-0.5">
+<p class="text-xs font-bold text-[#D81E27] tracking-tight">FCFA 2,000</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu quotidien</p>
+<p class="text-xs font-bold text-[#D81E27] tracking-tight pt-1">FCFA 360,000</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu total</p>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between pt-1">
+<span class="text-xs font-extrabold text-gray-900">FCFA 8,000</span>
+<button class="bg-[#D81E27] hover:bg-red-700 active:scale-95 text-white text-[10px] font-bold py-1.5 px-3 rounded tracking-wider uppercase transition-colors" data-purpose="buy-btn" type="button">
+            ACHETER
+          </button>
+</div>
+</article>
+<!-- Product Card VIP 3 -->
+<article class="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex flex-col justify-between" data-purpose="vip-card-3">
+<div>
+<h2 class="text-center font-bold text-gray-900 text-sm tracking-wide mb-2">VIP3</h2>
+<div class="h-24 w-full flex items-center justify-center my-1">
+<img alt="Camionnette VIP3" class="max-h-full max-w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd1r2WnGcUCdjSLjQh-uDBNlVWuk5IUjfHaPM0oCVz69H-ePDi3Hlm_LOWrKp9Eux8lEqEPHrW_vXQPDwjKsoGMCCw9Ev_qpcc1fx7n89FbyBW00lOZbHwjaOFdcgjy9UoaLAS4h_dHz6OglkY3FPV_o3_b2wSoPKm0HrtIVZrCsPH--X8oYS5nNIECeyuPCjgXYX77Gs_nFGVJv6T9j8Y4gUFjQBf64_IeOIKcuHA3o3l7PihrHOpPA"/>
+</div>
+<div class="mt-2 space-y-0.5">
+<p class="text-xs font-bold text-[#D81E27] tracking-tight">FCFA 3,150</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu quotidien</p>
+<p class="text-xs font-bold text-[#D81E27] tracking-tight pt-1">FCFA 567,000</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu total</p>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between pt-1">
+<span class="text-xs font-extrabold text-gray-900">FCFA 15,000</span>
+<button class="bg-[#D81E27] hover:bg-red-700 active:scale-95 text-white text-[10px] font-bold py-1.5 px-3 rounded tracking-wider uppercase transition-colors" data-purpose="buy-btn" type="button">
+            ACHETER
+          </button>
+</div>
+</article>
+<!-- Product Card VIP 4 -->
+<article class="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex flex-col justify-between" data-purpose="vip-card-4">
+<div>
+<h2 class="text-center font-bold text-gray-900 text-sm tracking-wide mb-2">VIP4</h2>
+<div class="h-24 w-full flex items-center justify-center my-1">
+<img alt="Camionnette VIP4" class="max-h-full max-w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAINTILhKAXVXyjUgFwQ9pRkzTrgI_sdZ0ps4sHysttYCO2Q60WSzfp-12xdEPYocmAynRpXu0hOFIJ30PET8qhMY1MJ3NbDrTMijPqJ7OU2joGYpJ0iw0Su5KSc_PDm6LIPY9pVTgV3HVOCJGQwlSPzd9CufzjngQPoATjPftoet6W5CAJ_QhEj3za-m8LCClQtbMi93S_ISvlaZnJHymKLJ8rAGru-ceg58vQzJLPUpUiK1hX5SOV_A"/>
+</div>
+<div class="mt-2 space-y-0.5">
+<p class="text-xs font-bold text-[#D81E27] tracking-tight">FCFA 8,800</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu quotidien</p>
+<p class="text-xs font-bold text-[#D81E27] tracking-tight pt-1">FCFA 1,584,000</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu total</p>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between pt-1">
+<span class="text-xs font-extrabold text-gray-900">FCFA 40,000</span>
+<button class="bg-[#D81E27] hover:bg-red-700 active:scale-95 text-white text-[10px] font-bold py-1.5 px-3 rounded tracking-wider uppercase transition-colors" data-purpose="buy-btn" type="button">
+            ACHETER
+          </button>
+</div>
+</article>
+<!-- Product Card VIP 5 -->
+<article class="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex flex-col justify-between" data-purpose="vip-card-5">
+<div>
+<h2 class="text-center font-bold text-gray-900 text-sm tracking-wide mb-2">VIP5</h2>
+<div class="h-24 w-full flex items-center justify-center my-1">
+<img alt="Minibus VIP5" class="max-h-full max-w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJCZKCyKQ_FWGijpxu6L_qKhv1LOerP_-JDmHbywrmV9oPvJZp5Fq7EKJovPPGtrhD0iBNej18LnVZI9I49zqJCy-aIZYQ4_sZaq-fni2NNlrmCmiQABCcemtAcxav6-BxdRO-GvW8aGF20WRYZSokUdpJmw3H0NzhUMHckq45FzjPjuNKx8xoohE87ps4Ju0V471enFZJCSRAYn6EMcwD-CVoDJn87QPrHkSv4IfqDxF7o3iGSZWWYQ"/>
+</div>
+<div class="mt-2 space-y-0.5">
+<p class="text-xs font-bold text-[#D81E27] tracking-tight">FCFA 18,400</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu quotidien</p>
+<p class="text-xs font-bold text-[#D81E27] tracking-tight pt-1">FCFA 3,312,000</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu total</p>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between pt-1">
+<span class="text-xs font-extrabold text-gray-900">FCFA 80,000</span>
+<button class="bg-[#D81E27] hover:bg-red-700 active:scale-95 text-white text-[10px] font-bold py-1.5 px-3 rounded tracking-wider uppercase transition-colors" data-purpose="buy-btn" type="button">
+            ACHETER
+          </button>
+</div>
+</article>
+<!-- Product Card VIP 6 -->
+<article class="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex flex-col justify-between" data-purpose="vip-card-6">
+<div>
+<h2 class="text-center font-bold text-gray-900 text-sm tracking-wide mb-2">VIP6</h2>
+<div class="h-24 w-full flex items-center justify-center my-1">
+<img alt="Minivan VIP6" class="max-h-full max-w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWISs47sHErAk-OIwBMhnUzsUKNNcGrZty6UdheN83UF9Q0GqBBOzoIi15Paw-g0X6-132na0D_unkSVfaWzmBKhNOxeXjAfkNQc3Vtz8yA44fvU4Stc7kW_U7QLt13cnAuGP-e96sg_NzylFedIDTtmMhs_FWOrVm4Ebw9arBthzaTf6Zh23UnShL1aLiCDsymcnnKY7Jdrx2uZyfakALJfXK16_P2YUVgBjxVv8QbWr-BddLTTOOLA"/>
+</div>
+<div class="mt-2 space-y-0.5">
+<p class="text-xs font-bold text-[#D81E27] tracking-tight">FCFA 28,800</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu quotidien</p>
+<p class="text-xs font-bold text-[#D81E27] tracking-tight pt-1">FCFA 5,184,000</p>
+<p class="text-[10px] text-gray-500 font-normal leading-tight">Revenu total</p>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between pt-1">
+<span class="text-xs font-extrabold text-gray-900">FCFA 120,000</span>
+<button class="bg-[#D81E27] hover:bg-red-700 active:scale-95 text-white text-[10px] font-bold py-1.5 px-3 rounded tracking-wider uppercase transition-colors" data-purpose="buy-btn" type="button">
+            ACHETER
+          </button>
+</div>
+</article>
+</div>
+</main>
+<!-- END: ProductGrid -->
+<!-- BEGIN: BottomNavigation -->
+<nav class="fixed bottom-0 inset-x-0 bg-[#161616] text-gray-400 z-50 safe-bottom border-t border-neutral-800" data-purpose="bottom-navigation">
+<div class="grid grid-cols-4 h-14 max-w-lg mx-auto items-center">
+<!-- Tab 1: Maison (Active in gold) -->
+<a aria-current="page" class="flex flex-col items-center justify-center text-[#F5C538]" data-purpose="nav-tab-maison" href="#">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24">
+<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+</svg>
+<span class="text-[11px] font-semibold mt-1">Maison</span>
+</a>
+<!-- Tab 2: Projet -->
+<a class="flex flex-col items-center justify-center text-gray-400 hover:text-gray-200 transition-colors" data-purpose="nav-tab-projet" href="#">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24">
+<path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"></path>
+</svg>
+<span class="text-[11px] mt-1">Projet</span>
+</a>
+<!-- Tab 3: Équipe -->
+<a class="flex flex-col items-center justify-center text-gray-400 hover:text-gray-200 transition-colors" data-purpose="nav-tab-equipe" href="#">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24">
+<path d="M12 2l2.4 4.86 5.36.78-3.88 3.78.92 5.34L12 14.24l-4.8 2.52.92-5.34-3.88-3.78 5.36-.78L12 2zm-6 16l1.2 2.43 2.68.39-1.94 1.89.46 2.67L6 24.12l-2.4 1.26.46-2.67-1.94-1.89 2.68-.39L6 18zm12 0l1.2 2.43 2.68.39-1.94 1.89.46 2.67L18 24.12l-2.4 1.26.46-2.67-1.94-1.89 2.68-.39L18 18z"></path>
+</svg>
+<span class="text-[11px] mt-1">Équipe</span>
+</a>
+<!-- Tab 4: Le mien -->
+<a class="flex flex-col items-center justify-center text-gray-400 hover:text-gray-200 transition-colors" data-purpose="nav-tab-profil" href="#">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24">
+<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+</svg>
+<span class="text-[11px] mt-1">Le mien</span>
+</a>
+</div>
+</nav>
+<!-- END: BottomNavigation -->
+<!-- BEGIN: Interactive Feedback Script -->
+<script data-purpose="event-handlers">
+    document.addEventListener('DOMContentLoaded', () => {
+      // Provide visual feedback for action and buy buttons
+      const buyButtons = document.querySelectorAll('[data-purpose="buy-btn"]');
+      buyButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const card = e.target.closest('article');
+          const title = card ? card.querySelector('h2').textContent : 'Produit';
+          alert(`Souscription initiée pour ${title}`);
+        });
+      });
+    });
+  </script>
+<!-- END: Interactive Feedback Script -->
+</body></html>
