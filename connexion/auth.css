@@ -41,13 +41,30 @@ button, input { font: inherit; }
 .switch-copy a:hover { text-decoration: underline; }
 .demo-notice { margin: 36px 0 0; color: #666; font-size: 12px; line-height: 1.5; text-align: center; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-.country-overlay { position: fixed; inset: 0; z-index: 10; display: flex; align-items: flex-end; background: #0008; }
-.country-overlay[hidden] { display: none; }
-.country-sheet { width: min(100%, 520px); min-height: min(440px, 58vh); margin: 0 auto; padding-bottom: max(24px, env(safe-area-inset-bottom)); background: linear-gradient(#f7f7f7, #e5e5e5); box-shadow: 0 -8px 32px #0002; }
-.sheet-header { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; min-height: 56px; padding: 0 8px; background: #fff; }
+.country-overlay { position: fixed; inset: 0; z-index: 10; display: flex; align-items: flex-end; background: rgba(43, 52, 63, .58); }
+.country-overlay[hidden], .country-sheet [hidden] { display: none !important; }
+.country-sheet { display: flex; flex-direction: column; width: min(100%, 520px); height: 50vh; height: 50dvh; min-height: min(360px, 85dvh); max-height: 540px; margin: 0 auto; overflow: auto; padding-bottom: max(24px, env(safe-area-inset-bottom)); border-radius: 3px 3px 0 0; background: linear-gradient(#f7f7f7, #d7d7d7); box-shadow: 0 -8px 32px #16202d26; }
+.sheet-header { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; min-height: 58px; padding: 0 8px; background: rgba(255, 255, 255, .88); }
 .sheet-header h2 { margin: 0; font-size: 16px; font-weight: 700; text-align: center; }
 .sheet-back { border: 0; padding: 4px 8px; background: transparent; color: #222; font-size: 30px; cursor: pointer; }
-.country-options { display: grid; gap: 10px; padding: 28px 12px; }
-.country-option { display: flex; min-height: 52px; justify-content: space-between; align-items: center; border: 0; border-radius: 7px; padding: 0 16px; background: #fff; color: #282828; font-size: 15px; cursor: pointer; }
+.country-loading { display: flex; flex: 1; min-height: 138px; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+.country-spinner { width: 34px; height: 34px; border: 3px solid #bac5d2; border-top-color: #183c63; border-right-color: #183c63; border-radius: 50%; animation: country-spin .8s linear infinite; }
+.country-dots { display: flex; align-items: center; justify-content: center; gap: 7px; }
+.country-dots span { width: 13px; height: 13px; border-radius: 50%; background: #ff9d00; animation: country-dot 1s ease-in-out infinite alternate; }
+.country-dots span:nth-child(2) { width: 19px; height: 19px; background: #ff4e00; animation-delay: .16s; }
+.country-dots span:nth-child(3) { background: #ff7916; animation-delay: .32s; }
+.country-overlay:not([data-stage="spinner"]) .country-spinner,
+.country-overlay:not([data-stage="dots"]) .country-dots { display: none; }
+.country-overlay[data-stage="spinner"] .sheet-header,
+.country-overlay[data-stage="spinner"] .country-options { display: none; }
+.country-overlay:not([data-stage="ready"]) .country-options { display: none; }
+.country-overlay[data-stage="ready"] .country-loading { display: none; }
+.country-options { display: grid; gap: 12px; padding: 26px 16px; }
+.country-option { display: flex; min-height: 50px; justify-content: space-between; align-items: center; border: 0; border-radius: 5px; padding: 0 18px; background: #fff; color: #282828; font-size: 15px; cursor: pointer; }
 .country-option:hover, .country-option:focus-visible { outline: 2px solid #df0d2540; }
+@keyframes country-spin { to { transform: rotate(360deg); } }
+@keyframes country-dot { from { transform: translateY(0); opacity: .55; } to { transform: translateY(-5px); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .country-spinner, .country-dots span { animation: none; }
+}
 @media (max-width: 380px) { .auth-page { padding-right: 17px; padding-left: 17px; } .auth-card form { gap: 16px; } .brand { margin-top: 32px; margin-bottom: 40px; } }

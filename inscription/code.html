@@ -21,7 +21,7 @@
       <h1 id="page-title" class="sr-only">Créer votre compte</h1>
       <form data-auth-form="signup">
         <label class="sr-only" for="signup-country">Pays</label>
-        <button class="field country-trigger" id="signup-country" type="button" aria-haspopup="dialog" aria-expanded="false">
+        <button class="field country-trigger" id="signup-country" type="button" aria-haspopup="dialog" aria-controls="country-dialog" aria-expanded="false">
           <span data-country-label>Sélectionnez votre pays &gt;&gt;</span><span class="chevron" aria-hidden="true">⌄</span>
         </button>
         <input type="hidden" name="country" required>
@@ -50,18 +50,24 @@
   </main>
 
   <div class="country-overlay" data-country-overlay hidden>
-    <section class="country-sheet" role="dialog" aria-modal="true" aria-labelledby="country-title">
+    <section class="country-sheet" id="country-dialog" role="dialog" aria-modal="true" aria-labelledby="country-title" tabindex="-1">
       <header class="sheet-header">
         <button type="button" class="sheet-back" data-country-close aria-label="Fermer">‹</button>
         <h2 id="country-title">Sélectionnez votre pays</h2>
         <span class="sheet-spacer"></span>
       </header>
+      <div class="country-loading" data-country-loading role="status" aria-live="polite">
+        <span class="country-spinner" aria-hidden="true"></span>
+        <span class="country-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="sr-only">Ouverture de la liste des pays…</span>
+      </div>
       <div class="country-options">
         <button type="button" class="country-option" data-country-code="+228" data-country-name="Togo"><span>+228</span><span>Togo</span></button>
         <button type="button" class="country-option" data-country-code="+225" data-country-name="Côte d’Ivoire"><span>+225</span><span>Côte d’Ivoire</span></button>
       </div>
     </section>
   </div>
+  <script src="/pages/country-picker.js" defer></script>
   <script src="/inscription/auth.js" defer></script>
 </body>
 </html>

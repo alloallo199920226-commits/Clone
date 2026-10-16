@@ -33,6 +33,7 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/pages/country-picker.js": ("pages/country-picker.js", "text/javascript; charset=utf-8"),
     "/pages/pages.css": ("pages/pages.css", "text/css; charset=utf-8"),
     "/pages/pages.js": ("pages/pages.js", "text/javascript; charset=utf-8"),
     "/pages/notification.js": ("pages/notification.js", "text/javascript; charset=utf-8"),
