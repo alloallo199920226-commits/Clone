@@ -28,10 +28,16 @@ class Handler(BaseHTTPRequestHandler):
         content_type = "text/html; charset=utf-8"
         if file_path is None:
             for folder in PAGES.values():
-                if route in (f"/{folder}/code.html", f"/{folder}/screen.png"):
+                allowed_files = {"code.html": "text/html; charset=utf-8", "screen.png": "image/png"}
+                if folder == "page_d_accueil_shineray":
+                    allowed_files["modern-suv-hero.jpg"] = "image/jpeg"
+                for filename, media_type in allowed_files.items():
+                    if route != f"/{folder}/{filename}":
+                        continue
                     file_path = ROOT / route.lstrip("/")
-                    if route.endswith(".png"):
-                        content_type = "image/png"
+                    content_type = media_type
+                    break
+                if file_path is not None:
                     break
         if file_path is None or not file_path.is_file():
             self.send_error(404)
