@@ -15,7 +15,7 @@ Use real photos of attractive modern vehicles, not screenshots as image backgrou
 
 **How to apply:** inspect the rendered asset itself before accepting it as a vehicle photograph. Match layout without presenting reference financial figures as real funds or activated returns.
 
-The country selector must show its states one after another and follow the real Internet connection, not just run a fast fixed animation.
+The country selector must show its states one after another and follow the real Internet connection, not just run a fast fixed animation. The user describes the first indicator as resembling a pulley, not a circle.
 
 **Why:** the user repeated that the first loader’s geometry was wrong and that the stages advanced too quickly without following their connection.
 
