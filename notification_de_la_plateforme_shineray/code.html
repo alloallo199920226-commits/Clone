@@ -1,13 +1,27 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Notification de la plateforme — SHINERAY</title><link rel="stylesheet" href="/pages/pages.css"></head>
-<body><main class="page"><header class="page-header"><a class="back" href="/accueil" aria-label="Retour à l’accueil">‹</a><h1>Notifications</h1><span class="header-spacer"></span></header>
-<section data-notification-card style="background:#fff;border-radius:16px;padding:24px;max-width:340px;margin:24px auto;font-size:14px;line-height:1.7">
-<h2 id="notification-title" style="color:#d80b21;text-align:center;font-size:21px;margin:0 0 18px">Notification de la plateforme</h2>
-<p>Bienvenue sur votre espace SHINERAY.</p>
-<p>Retrouvez votre code d’invitation et votre lien de parrainage dans la rubrique Équipe.</p>
-<p>Les recharges, les achats et les retraits ne sont pas encore disponibles. Vous serez informé ici de leur ouverture.</p>
-<p>Aucun rendement ni bonus financier n’est actuellement activé.</p>
-<a href="/regles" style="color:#c90920">Règles de la plateforme</a>
-<div style="display:flex;gap:8px;margin:18px 0"><a class="button-outline" href="/service-client">Chaîne Telegram</a><a class="button-outline" href="/service-client">Groupe Telegram</a></div>
-<button class="button-red button-wide" type="button" data-notification-close>J’ai compris</button>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Notification de la plateforme — SHINERAY</title><link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/notification.css"></head>
+<body class="notification-page"><main class="page"><header class="page-header"><a class="back" href="/accueil" aria-label="Retour à l’accueil">‹</a><h1>Notifications</h1><span class="header-spacer"></span></header>
+<section class="notification-card" data-notification-card>
+<h2 id="notification-title">Notification de la plateforme</h2>
+<div class="notification-copy">
+<p class="notification-disclaimer">Présentation fournie — conditions non activées, aucun rendement garanti.</p>
+<p>📣SHINERAY est officiellement lancé au Togo et en Côte d'Ivoire !</p>
+<ol>
+  <li>Investissez 4 000 FCFA et retirez immédiatement 2 200 FCFA.</li>
+  <li>Bonus d'inscription : 2 200 FCFA.</li>
+  <li>🚀 Gains quotidiens : 25 % à 50 %.</li>
+  <li>Parrainez vos amis et recevez immédiatement 41 % de leur investissement.</li>
+  <li>Tous les produits sont rechargeables pour accumuler des gains.</li>
+  <li>Les gains générés par les produits sont automatiquement crédités sur votre compte 24 h/24 et 7 j/7 et peuvent être retirés à tout moment.</li>
+  <li>Rejoignez notre groupe Telegram pour en savoir plus sur les offres de la plateforme.</li>
+</ol>
+<p class="notification-caveat">Ces éléments sont une présentation de référence, pas des offres disponibles.</p>
+</div>
+<footer class="notification-actions">
+  <div class="notification-telegram">
+    <a href="/service-client">Chaîne Telegram</a>
+    <a href="/service-client">Groupe Telegram</a>
+  </div>
+  <button type="button" data-notification-close>Désactiver les rappels</button>
+</footer>
 </section></main><script>document.querySelector("[data-notification-close]").addEventListener("click",()=>location.assign("/accueil"));</script></body></html>

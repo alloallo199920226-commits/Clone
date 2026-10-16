@@ -11,6 +11,7 @@ test("home notification reopens after dismissal on every pageshow, including his
   let dialog;
   const closeButton = {
     style: {},
+    setAttribute() {},
     focus() {},
     addEventListener(_, fn) { closeClick = fn; },
   };

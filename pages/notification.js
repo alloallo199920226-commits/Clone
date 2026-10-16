@@ -15,20 +15,13 @@
       const card = documentCopy.querySelector("[data-notification-card]");
       if (!card) throw new Error();
       dialog = document.createElement("dialog");
+      dialog.className = "platform-notification-dialog";
       dialog.setAttribute("aria-labelledby", "notification-title");
-      dialog.style.cssText = "border:0;padding:0;border-radius:16px;width:calc(100% - 40px);max-width:360px;max-height:85dvh;background:white;color:#222;box-shadow:0 12px 50px #0005";
-      card.style.margin = "0 auto";
-      card.querySelectorAll("a").forEach((link) => {
-        link.style.cssText += ";display:inline-block;padding:8px;color:#b90016";
-      });
       const close = card.querySelector("[data-notification-close]");
-      close.style.cssText = "border:0;border-radius:8px;background:#111;color:#fff;padding:14px;width:100%;cursor:pointer";
+      close.setAttribute("aria-label", "Fermer la notification pour cette visite");
       close.addEventListener("click", () => dialog.close());
       dialog.append(card);
       document.body.append(dialog);
-      const style = document.createElement("style");
-      style.textContent = "dialog::backdrop{background:rgba(0,0,0,.65)}";
-      document.head.append(style);
       dialog.showModal();
       close.focus();
     } catch {

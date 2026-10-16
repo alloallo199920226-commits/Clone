@@ -1,1 +1,2 @@
 - [Phone-only account flow](phone-only-auth.md) — Users requested phone + password, no email/SMS; ownership verification and password recovery are absent.
+- [Reference fidelity](reference-fidelity.md) — Match supplied screens closely; verify opened, signed-in states and use real vehicle photos, not screenshot backgrounds.

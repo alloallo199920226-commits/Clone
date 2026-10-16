@@ -1,0 +1,188 @@
+/* SHINERAY platform notice — shared by the standalone route and its modal. */
+:root {
+  color-scheme: light;
+}
+
+body.notification-page {
+  margin: 0;
+  min-height: 100dvh;
+  background: #181818;
+  color: #171717;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.notification-card,
+dialog:has([data-notification-card]) [data-notification-card],
+.platform-notification-dialog [data-notification-card] {
+  box-sizing: border-box;
+  width: calc(100% - 38px);
+  max-width: 440px;
+  height: min(60dvh, 520px);
+  max-height: calc(100dvh - 40px);
+  margin: 0 auto;
+  padding: 20px 11px 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #f2f2f2;
+  color: #101010;
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+body.notification-page main.page {
+  box-sizing: border-box;
+  min-height: 100dvh;
+  padding: 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.notification-page .page-header {
+  display: none;
+}
+
+#notification-title {
+  flex: none;
+  margin: 13px 4px 14px;
+  color: #d20b18;
+  text-align: center;
+  font-size: 23px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.notification-copy {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 10px 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #b8b8b8 transparent;
+}
+
+.notification-copy p {
+  margin: 7px 0;
+}
+
+.notification-copy ol {
+  list-style: decimal;
+  margin: 19px 0 0;
+  padding-left: 16px;
+}
+
+.notification-copy li {
+  padding-left: 0;
+  margin: 0 0 1px;
+}
+
+.notification-disclaimer {
+  color: #4e4e4e;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.notification-caveat {
+  color: #505050;
+  font-size: 11px;
+}
+
+.notification-actions {
+  flex: none;
+  padding-top: 5px;
+}
+
+.notification-telegram {
+  display: flex;
+  gap: 14px;
+  margin: 0 0 15px;
+}
+
+.notification-telegram a {
+  box-sizing: border-box;
+  flex: 1 1 50%;
+  min-height: 40px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 8px !important;
+  border: 0;
+  border-radius: 7px;
+  background: linear-gradient(110deg, #c9c9c9, #555);
+  color: #fff !important;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.notification-actions [data-notification-close] {
+  box-sizing: border-box;
+  width: 100% !important;
+  min-height: 39px;
+  padding: 9px 12px !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background: linear-gradient(105deg, #080808, #353535) !important;
+  color: #fff !important;
+  font: inherit;
+  cursor: pointer;
+}
+
+.notification-actions a:active,
+.notification-actions button:active {
+  opacity: .84;
+}
+
+dialog:has([data-notification-card]),
+dialog.platform-notification-dialog {
+  box-sizing: border-box;
+  width: calc(100% - 38px) !important;
+  max-width: 462px !important;
+  max-height: calc(100dvh - 40px) !important;
+  padding: 0 !important;
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  color: #101010;
+  box-shadow: 0 18px 64px rgb(0 0 0 / 35%) !important;
+}
+
+dialog:has([data-notification-card]) [data-notification-card],
+dialog.platform-notification-dialog [data-notification-card] {
+  width: 100%;
+  height: min(60dvh, 520px);
+  max-height: calc(100dvh - 40px);
+  margin: 0 !important;
+}
+
+dialog:has([data-notification-card])::backdrop,
+dialog.platform-notification-dialog::backdrop {
+  background: rgb(0 0 0 / 92%);
+}
+
+@media (max-height: 600px) {
+  .notification-card,
+  dialog:has([data-notification-card]) [data-notification-card],
+  .platform-notification-dialog [data-notification-card] {
+    height: calc(100dvh - 32px);
+    max-height: calc(100dvh - 32px);
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  #notification-title {
+    margin-top: 4px;
+    margin-bottom: 7px;
+    font-size: 21px;
+  }
+
+  .notification-telegram {
+    margin-bottom: 9px;
+  }
+}
