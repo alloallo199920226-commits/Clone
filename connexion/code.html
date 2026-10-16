@@ -20,7 +20,7 @@
       <h1 id="page-title" class="sr-only">Connectez-vous à votre compte</h1>
       <form data-auth-form="login">
         <label class="sr-only" for="login-country">Pays</label>
-        <button class="field country-trigger" id="login-country" type="button" aria-haspopup="dialog" aria-controls="country-dialog" aria-expanded="false">
+        <button class="field country-trigger" id="login-country" type="button" aria-haspopup="dialog" aria-controls="country-dialog" aria-describedby="country-loading" aria-expanded="false">
           <span data-country-label>Sélectionnez votre pays &gt;&gt;</span><span class="chevron" aria-hidden="true">⌄</span>
         </button>
         <input type="hidden" name="country" required>
@@ -51,13 +51,17 @@
         <span class="sheet-spacer"></span>
       </header>
       <div class="country-loading" data-country-loading role="status" aria-live="polite">
-        <span class="country-spinner" aria-hidden="true"></span>
+        <span class="country-spinner" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
         <span class="country-dots" aria-hidden="true"><span></span><span></span><span></span></span>
         <span class="sr-only">Ouverture de la liste des pays…</span>
       </div>
-      <div class="country-options">
+      <div class="country-options" hidden>
         <button type="button" class="country-option" data-country-code="+228" data-country-name="Togo"><span>+228</span><span>Togo</span></button>
         <button type="button" class="country-option" data-country-code="+225" data-country-name="Côte d’Ivoire"><span>+225</span><span>Côte d’Ivoire</span></button>
+      </div>
+      <div class="country-error" data-country-error hidden role="alert">
+        <p data-country-message></p>
+        <button type="button" data-country-retry>Réessayer</button>
       </div>
     </section>
   </div>

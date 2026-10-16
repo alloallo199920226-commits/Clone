@@ -14,3 +14,9 @@ Use real photos of attractive modern vehicles, not screenshots as image backgrou
 **Why:** the user explicitly requested vehicle photos rather than screenshots and real platform data. Some imported remote images that appeared vehicle-related actually contained entire UI captures.
 
 **How to apply:** inspect the rendered asset itself before accepting it as a vehicle photograph. Match layout without presenting reference financial figures as real funds or activated returns.
+
+The country selector must show its states one after another and follow the real Internet connection, not just run a fast fixed animation.
+
+**Why:** the user repeated that the first loader’s geometry was wrong and that the stages advanced too quickly without following their connection.
+
+**How to apply:** preserve the reference panel and loader geometry, wait for actual server responses before advancing, and provide an explicit retry state on connection failure. Short minimum display times may make each stage visible on fast networks, but must never advance a pending request.

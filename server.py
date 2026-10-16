@@ -135,6 +135,19 @@ class Handler(BaseHTTPRequestHandler):
             self._json(404, {"error": "Page introuvable."})
             return
 
+        if route in {"/api/country-picker/config", "/api/countries"}:
+            if self.command != "GET":
+                self._json(405, {"error": "Méthode non autorisée."})
+            elif route.endswith("/config"):
+                self._json(200, {"countries_url": "/api/countries"})
+            else:
+                names = {"+228": "Togo", "+225": "Côte d’Ivoire"}
+                self._json(200, {"countries": [
+                    {"code": code, "name": names[code], "phone_length": auth_backend.PHONE_LENGTHS[code]}
+                    for code in ("+228", "+225")
+                ]})
+            return
+
         if self.command not in {"GET", "HEAD"}:
             if not self._is_same_origin():
                 self._json(403, {"error": "Requête refusée."})

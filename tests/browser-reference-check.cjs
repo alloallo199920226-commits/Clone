@@ -33,10 +33,14 @@ async function main() {
       socket.addEventListener("error", reject, { once: true });
     });
     const pending = new Map();
+    const paused = new Map();
     let sequence = 0;
     const errors = [];
     socket.addEventListener("message", event => {
       const message = JSON.parse(event.data);
+      if (message.method === "Fetch.requestPaused") {
+        paused.set(new URL(message.params.request.url).pathname, message.params.requestId);
+      }
       if (message.method === "Runtime.exceptionThrown") {
         errors.push(message.params.exceptionDetails.text);
       }
@@ -86,6 +90,85 @@ async function main() {
       width: 472, height: 864, deviceScaleFactor: 1, mobile: true,
     });
     await navigate("/connexion");
+    if (process.argv.includes("--countries")) {
+      const pauseConfig = "/api/country-picker/config";
+      const pauseCountries = "/api/countries";
+      const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+      async function awaitPaused(path) {
+        for (let attempt = 0; attempt < 100; attempt++) {
+          if (paused.has(path)) return;
+          await sleep(50);
+        }
+        throw new Error(`Country request did not start: ${path}`);
+      }
+      async function resume(path) {
+        const requestId = paused.get(path);
+        paused.delete(path);
+        await call("Fetch.continueRequest", { requestId });
+      }
+      await call("Fetch.enable", { patterns: [
+        { urlPattern: "*api/country-picker/config*", requestStage: "Request" },
+        { urlPattern: "*api/countries*", requestStage: "Request" },
+      ] });
+      await navigate("/inscription");
+      await evaluate("document.querySelector('.country-trigger').click()");
+      await awaitPaused(pauseConfig);
+      await sleep(900);
+      assert.equal(await evaluate("document.querySelector('[data-country-overlay]').dataset.stage"), "spinner");
+      const geometry = await evaluate(`(() => {
+        const sheet=document.querySelector('.country-sheet').getBoundingClientRect();
+        const spinner=document.querySelector('.country-spinner').getBoundingClientRect();
+        return {top:sheet.top,height:sheet.height,viewport:innerHeight,
+          centerX:spinner.x+spinner.width/2,centerY:spinner.y+spinner.height/2,
+          rays:document.querySelectorAll('.country-spinner span').length,
+          header:getComputedStyle(document.querySelector('.sheet-header')).display};
+      })()`);
+      assert.equal(geometry.rays, 8);
+      assert.equal(geometry.header, "none");
+      assert(Math.abs(geometry.top - geometry.viewport / 2) <= 1, JSON.stringify(geometry));
+      assert(Math.abs(geometry.height - geometry.viewport / 2) <= 1, JSON.stringify(geometry));
+      assert(Math.abs(geometry.centerY - (geometry.top + geometry.height / 2)) <= 1, JSON.stringify(geometry));
+      assert(Math.abs(geometry.centerX - 236) <= 1, JSON.stringify(geometry));
+      await screenshot("shineray-country-spinner");
+      await resume(pauseConfig);
+      await waitFor("document.querySelector('[data-country-overlay]').dataset.stage === 'dots'");
+      await awaitPaused(pauseCountries);
+      await sleep(1100);
+      assert.equal(await evaluate("document.querySelector('[data-country-overlay]').dataset.stage"), "dots");
+      assert.equal(await evaluate("document.querySelector('.country-options').hidden"), true);
+      const dotsY = await evaluate("(()=>{const r=document.querySelector('.country-dots').getBoundingClientRect();return r.y+r.height/2})()");
+      assert(Math.abs(dotsY - geometry.centerY) <= 1);
+      await screenshot("shineray-country-dots");
+      await resume(pauseCountries);
+      await waitFor("document.querySelector('[data-country-overlay]').dataset.stage === 'ready'");
+      assert.equal(await evaluate("document.querySelectorAll('.country-option').length"), 2);
+      await screenshot("shineray-country-ready");
+      await evaluate("document.querySelector('[data-country-code=\"+225\"]').click()");
+      assert.equal(await evaluate("document.querySelector('[name=country]').value"), "+225");
+      assert.equal(await evaluate("document.querySelector('[data-country-overlay]').hidden"), true);
+      await call("Fetch.disable");
+      await navigate("/connexion");
+      await call("Network.enable");
+      await call("Network.emulateNetworkConditions", {
+        offline: true, latency: 0, downloadThroughput: 0, uploadThroughput: 0,
+      });
+      await evaluate("document.querySelector('.country-trigger').click()");
+      await waitFor("document.querySelector('[data-country-overlay]').dataset.stage === 'error'");
+      assert.equal(await evaluate("document.querySelector('.country-options').hidden"), true);
+      assert(await evaluate("document.querySelector('[data-country-message]').textContent.includes('Internet')"));
+      await call("Network.emulateNetworkConditions", {
+        offline: false, latency: 120, downloadThroughput: 50000, uploadThroughput: 50000,
+      });
+      await evaluate("document.querySelector('[data-country-retry]').click()");
+      await waitFor("document.querySelector('[data-country-overlay]').dataset.stage === 'ready'");
+      await evaluate("document.querySelector('[data-country-code=\"+228\"]').click()");
+      assert.equal(await evaluate("document.querySelector('[name=country]').value"), "+228");
+      assert.equal(await evaluate("document.querySelector('[data-country-overlay]').hidden"), true);
+      assert.deepEqual(errors, []);
+      console.log("PASS: country picker geometry, eight-ray spinner, sequential real requests held under slow network, both pages, offline error and retry.");
+      console.log("Screenshots: /tmp/shineray-country-spinner.png /tmp/shineray-country-dots.png /tmp/shineray-country-ready.png");
+      return;
+    }
     const phone = "9" + String(randomInt(1000000, 9999999));
     const payload = { country_code: "+228", phone, password: "reference-browser-test-password" };
     const registration = await evaluate(`(async () => {
