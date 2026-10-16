@@ -9,7 +9,8 @@
 
 ## Pages
 
-- `/` : accueil
+- `/` : connexion (page d’entrée)
+- `/accueil` : accueil du site
 - `/projet` : produits
 - `/equipe` : parrainage
 - `/compte` : compte

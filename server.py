@@ -6,7 +6,8 @@ from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent
 PAGES = {
-    "/": "page_d_accueil_shineray",
+    "/": "connexion",
+    "/accueil": "page_d_accueil_shineray",
     "/projet": "projet_mes_produits_shineray",
     "/equipe": "quipe_parrainage_shineray",
     "/compte": "mon_compte_le_mien_shineray",
