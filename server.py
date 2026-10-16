@@ -11,6 +11,8 @@ PAGES = {
     "/equipe": "quipe_parrainage_shineray",
     "/compte": "mon_compte_le_mien_shineray",
     "/notifications": "notification_de_la_plateforme_shineray",
+    "/connexion": "connexion",
+    "/inscription": "inscription",
 }
 
 
@@ -31,6 +33,8 @@ class Handler(BaseHTTPRequestHandler):
                 allowed_files = {"code.html": "text/html; charset=utf-8", "screen.png": "image/png"}
                 if folder == "page_d_accueil_shineray":
                     allowed_files["modern-suv-hero.jpg"] = "image/jpeg"
+                if folder in {"connexion", "inscription"}:
+                    allowed_files.update({"auth.css": "text/css; charset=utf-8", "auth.js": "text/javascript; charset=utf-8"})
                 for filename, media_type in allowed_files.items():
                     if route != f"/{folder}/{filename}":
                         continue
