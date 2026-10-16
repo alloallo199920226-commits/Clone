@@ -39,6 +39,9 @@
         <label class="sr-only" for="signup-confirm">Répéter le mot de passe</label>
         <input class="field" id="signup-confirm" name="password-confirm" type="password" autocomplete="new-password" placeholder="Répéter le mot de passe" minlength="8" required>
 
+        <label class="sr-only" for="signup-referral">Code de parrainage (facultatif)</label>
+        <input class="field" id="signup-referral" name="referral_code" type="text" autocomplete="off" placeholder="Code de parrainage (facultatif)" minlength="6" maxlength="10" pattern="[A-Za-z0-9]{6,10}">
+
         <button class="primary-button" type="submit">Inscrivez-vous maintenant</button>
         <p class="switch-copy">Déjà inscrit ? <a href="/connexion">Connectez-vous</a></p>
       </form>

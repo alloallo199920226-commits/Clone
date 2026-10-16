@@ -35,6 +35,8 @@ MORE_PAGES = {
 STATIC_FILES = {
     "/pages/pages.css": ("pages/pages.css", "text/css; charset=utf-8"),
     "/pages/pages.js": ("pages/pages.js", "text/javascript; charset=utf-8"),
+    "/pages/notification.js": ("pages/notification.js", "text/javascript; charset=utf-8"),
+    "/pages/team.js": ("pages/team.js", "text/javascript; charset=utf-8"),
 }
 PUBLIC_AUTH_PAGES = {"/", "/connexion", "/inscription"}
 
@@ -50,6 +52,9 @@ class Handler(BaseHTTPRequestHandler):
             self.respond()
 
     def do_POST(self):
+        self.handle_api()
+
+    def do_DELETE(self):
         self.handle_api()
 
     def respond(self, send_body=True):
@@ -99,9 +104,14 @@ class Handler(BaseHTTPRequestHandler):
         if route in STATIC_FILES:
             relative_path, content_type = STATIC_FILES[route]
             return ROOT / relative_path, content_type
+        if route.startswith("/pages/assets/"):
+            candidate = (ROOT / route.lstrip("/")).resolve()
+            if candidate.is_relative_to(ROOT / "pages" / "assets") and candidate.suffix in {".jpg", ".jpeg", ".png"}:
+                return candidate, "image/png" if candidate.suffix == ".png" else "image/jpeg"
+        if route == "/pages/reference.css":
+            return ROOT / "pages/reference.css", "text/css; charset=utf-8"
         for folder in set(PAGES.values()):
             allowed_files = {
-                "code.html": "text/html; charset=utf-8",
                 "screen.png": "image/png",
             }
             if folder == "page_d_accueil_shineray":
@@ -122,12 +132,15 @@ class Handler(BaseHTTPRequestHandler):
             self._json(404, {"error": "Page introuvable."})
             return
 
-        if route in {"/api/auth/register", "/api/auth/login", "/api/auth/logout", "/api/demo-activity"}:
+        if self.command not in {"GET", "HEAD"}:
             if not self._is_same_origin():
                 self._json(403, {"error": "Requête refusée."})
                 return
 
         if route in {"/api/auth/register", "/api/auth/login"}:
+            if self.command != "POST":
+                self._json(405, {"error": "Méthode non autorisée."})
+                return
             payload = self._read_json()
             if payload is None:
                 return
@@ -137,6 +150,7 @@ class Handler(BaseHTTPRequestHandler):
                         payload.get("country_code"),
                         payload.get("phone"),
                         payload.get("password"),
+                        payload.get("referral_code", ""),
                     )
                     status = 201
                 else:
@@ -163,6 +177,9 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/auth/logout":
+            if self.command != "POST":
+                self._json(405, {"error": "Méthode non autorisée."})
+                return
             try:
                 auth_backend.revoke_session(self._session_token())
                 self._json(
@@ -184,13 +201,49 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/me" and self.command == "GET":
-            self._json(200, {"id": user["id"], "phone": user["phone"], "demo_balance_fcfa": 0})
+            try:
+                self._json(200, auth_backend.account_summary(user["id"]))
+            except Exception:
+                self._json(503, {"error": "Impossible de charger le compte."})
+            return
+
+        if route == "/api/team" and self.command == "GET":
+            try:
+                self._json(200, auth_backend.get_team(user["id"]))
+            except Exception:
+                self._json(503, {"error": "Impossible de charger l’équipe."})
+            return
+
+        if route == "/api/wallets":
+            try:
+                if self.command == "GET":
+                    self._json(200, {"wallets": auth_backend.get_wallets(user["id"])})
+                elif self.command == "POST":
+                    payload = self._read_json()
+                    if payload is not None:
+                        self._json(201, {"wallet": auth_backend.add_wallet(user["id"], payload.get("provider"), payload.get("phone"))})
+                else:
+                    self._json(405, {"error": "Méthode non autorisée."})
+            except ValueError as exc:
+                self._json(400, {"error": str(exc)})
+            except Exception:
+                self._json(503, {"error": "Impossible de charger ou enregistrer le compte de retrait."})
+            return
+
+        if route.startswith("/api/wallets/") and self.command == "DELETE":
+            try:
+                deleted = auth_backend.delete_wallet(user["id"], int(route.rsplit("/", 1)[1]))
+                self._json(200 if deleted else 404, {"ok": deleted})
+            except ValueError:
+                self._json(400, {"error": "Compte invalide."})
+            except Exception:
+                self._json(503, {"error": "Suppression impossible."})
             return
 
         if route == "/api/activity" and self.command == "GET":
             kind = parse_qs(urlsplit(self.path).query).get("kind", [None])[0]
             try:
-                activities = auth_backend.get_demo_activity(user["id"], kind)
+                activities = auth_backend.get_activity(user["id"], kind)
                 self._json(200, {"activities": activities})
             except ValueError as exc:
                 self._json(400, {"error": str(exc)})
@@ -198,22 +251,8 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(503, {"error": "Impossible de charger l’historique pour le moment."})
             return
 
-        if route == "/api/demo-activity" and self.command == "POST":
-            payload = self._read_json()
-            if payload is None:
-                return
-            try:
-                activity = auth_backend.record_demo_activity(
-                    user["id"],
-                    payload.get("kind"),
-                    payload.get("amount_fcfa"),
-                    payload.get("label"),
-                )
-                self._json(201, {"activity": activity, "simulated": True})
-            except ValueError as exc:
-                self._json(400, {"error": str(exc)})
-            except Exception:
-                self._json(503, {"error": "Impossible d’enregistrer la simulation pour le moment."})
+        if route in {"/api/demo-activity", "/api/payments"} and self.command == "POST":
+            self._json(503, {"error": "Paiements indisponibles : aucun prestataire de paiement n’est connecté. Aucun montant n’a été débité ou crédité."})
             return
 
         self._json(404, {"error": "Page introuvable."})

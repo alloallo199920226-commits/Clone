@@ -7,6 +7,8 @@
   const form = document.querySelector("[data-auth-form]");
   const password = document.querySelector("#signup-password");
   const confirmation = document.querySelector("#signup-confirm");
+  const referral = document.querySelector("#signup-referral");
+  referral.value = new URLSearchParams(location.search).get("c") || "";
 
   function closeCountryPicker() {
     overlay.hidden = true;
@@ -73,6 +75,7 @@
           country_code: countryInput.value,
           phone,
           password: password.value,
+          referral_code: referral.value.trim(),
         }),
       });
       const result = await response.json();

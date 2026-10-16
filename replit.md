@@ -7,7 +7,7 @@
 - Le serveur écoute sur `0.0.0.0:5000`.
 - La dépendance PostgreSQL du serveur est déclarée dans `pyproject.toml`.
 - Le serveur utilise la base PostgreSQL Replit configurée dans l'environnement ; il ne journalise pas sa chaîne de connexion.
-- `schema.sql` est la source du schéma. Il contient les tables des comptes, sessions et activités de démonstration.
+- `schema.sql` est la source du schéma des comptes, sessions, parrainages, portefeuilles et transactions. Les anciennes simulations restent conservées séparément et ne sont jamais utilisées dans les soldes ou historiques.
 
 ## Pages
 
@@ -20,7 +20,7 @@
 - `/connexion` : connexion par numéro de téléphone et mot de passe
 - `/inscription` : création d’un compte avec numéro de téléphone et mot de passe
 - `/financement` : détails du financement (données illustratives)
-- `/recharger` et `/retrait` : formulaires de démonstration sans transactions
+- `/recharger` et `/retrait` : paiements indisponibles tant qu’aucun prestataire n’est connecté
 - `/historique-recharges` et `/historique-retraits` : historiques vides
 - `/gestion-compte-bancaire` et `/ajouter-compte-retrait` : gestion fictive des comptes de retrait
 - `/a-propos`, `/regles` et `/service-client` : pages d’information et d’assistance
@@ -32,13 +32,17 @@ données d’activité sont isolées par compte.
 
 ## Limites
 
-Il s'agit de maquettes HTML, pas d'un service financier opérationnel.
+Les comptes, parrainages et portefeuilles sont persistants. Le service de paiement
+n’est pas encore opérationnel.
 L’authentification fonctionne sans e-mail ni SMS, conformément au parcours demandé.
 Les numéros ne sont donc pas vérifiés ; aucun mécanisme de récupération du mot de
 passe oublié n’est disponible. Les pages préviennent l’utilisateur de cette limite.
-Les activités d’achat, de recharge et de retrait enregistrées dans le backend sont
-explicitement des simulations : elles ne modifient aucun solde et ne transfèrent
-pas d’argent. Aucun prestataire de paiement n’est configuré.
+Les soldes et historiques utilisent uniquement le registre des transactions réelles.
+Les anciennes simulations sont conservées dans leur table séparée, sans être affichées.
+Aucun prestataire de paiement n’est configuré : aucun achat, recharge ou retrait
+ne peut être exécuté. Les tarifs des captures sont des références non activées.
+La notification s’affiche à chaque navigation vers l’accueil, y compris un retour
+par l’historique du navigateur ; sa fermeture n’est pas mémorisée entre les visites.
 Tailwind, Google Fonts et les images distantes nécessitent une connexion Internet.
 
 Après une modification de `schema.sql`, le schéma de développement doit être

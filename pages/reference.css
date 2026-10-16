@@ -1,0 +1,229 @@
+/* Page-specific refinements for the supplied SHINERAY mobile references. */
+.reference-page {
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  background: #fff;
+  color: #181818;
+  font-family: Arial, Helvetica, sans-serif;
+  box-shadow: none;
+}
+
+.reference-page .page-header {
+  min-height: 48px;
+  grid-template-columns: 42px 1fr 42px;
+  padding: 0 6px;
+  background: #f1f1f1;
+}
+
+.reference-page .page-header h1 {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.reference-page .back {
+  padding-left: 3px;
+  font-size: 29px;
+}
+
+.reference-crop {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  margin: 0;
+  background: #edf1f4;
+}
+
+.reference-crop img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.about-page .page-header {
+  min-height: 60px;
+}
+
+.about-page .page-header h1 {
+  text-transform: lowercase;
+}
+
+.about-content {
+  padding: 21px 6px 28px;
+}
+
+.about-fleet {
+  width: calc(100% - 17px);
+  aspect-ratio: 1.79;
+}
+
+.about-page .reference-copy {
+  margin: 3px 0 2px;
+  color: #1b1b1b;
+  font-size: 13px;
+  line-height: 1.52;
+}
+
+.about-showroom {
+  width: calc(100% - 17px);
+  margin-top: 1px;
+  aspect-ratio: 1.7731;
+}
+
+.about-page .about-caption {
+  margin-top: 1px;
+}
+
+.rules-content {
+  padding: 20px 12px 28px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.rules-banner {
+  width: calc(100% - 7px);
+  aspect-ratio: 1;
+  margin-bottom: 2px;
+}
+
+.rules-intro {
+  margin: 0 0 17px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.rules-arrival {
+  margin: 18px 0 12px;
+}
+
+.reference-terms {
+  margin: 0;
+  padding-left: 19px;
+}
+
+.reference-terms li {
+  padding: 0 0 12px 1px;
+  line-height: 1.6;
+}
+
+.reference-subtitle {
+  margin: 7px 0 16px;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.rules-content .reference-copy {
+  margin: 0;
+}
+
+.reference-disclaimer {
+  margin: 22px 0 0;
+  color: #777;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.service-page .page-header h1 {
+  font-weight: 700;
+}
+
+.service-banner {
+  width: calc(100% - 4px);
+  margin-left: 2px;
+  aspect-ratio: 1.76;
+}
+
+.reference-hours {
+  display: flex;
+  min-height: 69px;
+  margin: 0 2px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(105deg, #e50920 0%, #a50013 50%, #170204 100%);
+  color: #fff;
+  text-align: center;
+}
+
+.reference-hours strong {
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.reference-hours span {
+  margin-top: 2px;
+  color: #f3d9dc;
+  font-size: 14px;
+}
+
+.reference-contact-list {
+  display: grid;
+  gap: 10px;
+  margin: 14px 2px 0;
+  padding: 42px 22px 32px;
+  background: linear-gradient(105deg, #e50920 0%, #a50013 49%, #170204 100%);
+}
+
+.reference-contact {
+  display: flex;
+  min-width: 0;
+  min-height: 55px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 5px;
+  padding: 0 12px 0 32px;
+  background: #fff;
+  color: #222;
+  font-size: 14px;
+}
+
+.contact-main {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 32px;
+}
+
+.reference-telegram {
+  display: grid;
+  width: 35px;
+  height: 35px;
+  flex: 0 0 35px;
+  place-items: center;
+  border-radius: 50%;
+  background: #269ed8;
+}
+
+.reference-telegram svg {
+  width: 21px;
+  height: 21px;
+  fill: #fff;
+}
+
+.contact-unavailable {
+  flex: 0 0 auto;
+  color: #777;
+  font-size: 10px;
+}
+
+@media (min-width: 700px) {
+  .reference-page {
+    margin: 18px auto;
+    min-height: calc(100vh - 36px);
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .reference-contact-list {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+  .contact-main {
+    gap: 14px;
+  }
+  .reference-contact {
+    padding-left: 12px;
+  }
+}

@@ -1,33 +1,28 @@
 (() => {
   const status = document.querySelector("[data-status]");
 
-  document.querySelectorAll("[data-demo-action]").forEach((button) => {
+  document.querySelectorAll("[data-payment-action]").forEach((button) => {
     button.addEventListener("click", async () => {
-      const kind = button.dataset.demoKind;
-      if (!kind) {
-        if (status) status.textContent = "Cette action n’est pas reliée à un service externe.";
-        return;
-      }
+      const kind = button.dataset.paymentKind;
       const amount = Number(document.querySelector("#amount")?.value);
       if (!Number.isSafeInteger(amount) || amount <= 0) {
-        if (status) status.textContent = "Saisissez un montant valide pour enregistrer la simulation.";
+        if (status) status.textContent = "Saisissez un montant valide.";
         return;
       }
       button.disabled = true;
-      if (status) status.textContent = "Enregistrement de la simulation…";
+      if (status) status.textContent = "Vérification de la disponibilité…";
       try {
-        const response = await fetch("/api/demo-activity", {
+        const response = await fetch("/api/payments", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             kind,
             amount_fcfa: amount,
-            label: kind === "recharge" ? "Recharge simulée" : "Retrait simulé",
           }),
         });
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || "Enregistrement impossible.");
-        if (status) status.textContent = "Demande enregistrée en mode démonstration. Aucun argent n’a été envoyé ni crédité.";
+        if (status) status.textContent = "Demande enregistrée.";
       } catch (error) {
         if (status) status.textContent = error.message || "Le service est indisponible. Réessayez.";
       } finally {
@@ -51,14 +46,72 @@
     });
   });
 
-  const amount = document.querySelector("#amount");
-  if (amount && document.querySelector("[data-net-amount]")) {
-    amount.addEventListener("input", () => {
-      const value = Number(amount.value);
-      const net = Number.isFinite(value) && value >= 0 ? (value * 0.78).toFixed(0) : "0";
-      document.querySelector("[data-net-amount]").textContent = `FCFA ${net}`;
-    });
+  async function api(url, options) {
+    const response = await fetch(url, options);
+    if (response.status === 401) location.replace("/connexion");
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Service indisponible.");
+    return data;
   }
+
+  const walletForm = document.querySelector("[data-wallet-form]");
+  walletForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!walletForm.reportValidity()) return;
+    const button = walletForm.querySelector('button[type="submit"]');
+    button.disabled = true;
+    try {
+      await api("/api/wallets", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          provider: walletForm.elements.provider.value,
+          phone: walletForm.elements.phone.value,
+        }),
+      });
+      location.assign("/gestion-compte-bancaire");
+    } catch (error) {
+      status.textContent = error.message;
+      button.disabled = false;
+    }
+  });
+
+  const walletList = document.querySelector("[data-wallet-list]");
+  if (walletList) {
+    api("/api/wallets").then(({ wallets }) => {
+      const empty = document.querySelector("[data-wallet-empty]");
+      if (empty) empty.hidden = wallets.length > 0;
+      wallets.forEach((wallet) => {
+        const row = document.createElement("article");
+        row.className = "finance-row";
+        const text = document.createElement("span");
+        text.textContent = `${wallet.provider} · ${wallet.phone}`;
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "button-outline";
+        remove.textContent = "Supprimer";
+        remove.addEventListener("click", async () => {
+          if (!confirm("Supprimer ce compte de retrait ?")) return;
+          remove.disabled = true;
+          try {
+            await api(`/api/wallets/${wallet.id}`, { method: "DELETE" });
+            row.remove();
+            if (empty) empty.hidden = walletList.children.length > 0;
+          } catch (error) {
+            status.textContent = error.message;
+            remove.disabled = false;
+          }
+        });
+        row.append(text, remove);
+        walletList.append(row);
+      });
+    }).catch((error) => { status.textContent = error.message; });
+  }
+
+  document.querySelectorAll("[data-account-balance]").forEach((element) => {
+    api("/api/me").then((user) => {
+      element.textContent = `FCFA ${new Intl.NumberFormat("fr-FR").format(user.balance_fcfa)}`;
+    }).catch(() => { element.textContent = "Solde indisponible"; });
+  });
 
   const activityList = document.querySelector("[data-activity-list]");
   if (activityList) {
@@ -80,7 +133,7 @@
           const amountText = document.createElement("span");
           title.className = "finance-kind";
           title.textContent = activity.label;
-          meta.textContent = `Simulation · ${new Date(activity.created_at).toLocaleString("fr-FR")}`;
+          meta.textContent = new Date(activity.created_at).toLocaleString("fr-FR");
           amountText.textContent = `FCFA ${formatter.format(activity.amount_fcfa)}`;
           details.append(title, document.createElement("br"), meta);
           row.append(details, amountText);

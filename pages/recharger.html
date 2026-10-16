@@ -1,15 +1,10 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recharger — SHINERAY</title><link rel="stylesheet" href="/pages/pages.css"><script src="/pages/pages.js" defer></script></head>
-<body><main class="page">
-  <header class="page-header"><a class="back" href="/accueil" aria-label="Retour à l’accueil">‹</a><h1>Recharger</h1><span class="header-spacer">ⓘ</span></header>
-  <div class="page-content">
-    <p class="demo-note"><strong>Aucune transaction réelle</strong>Cette page est une maquette. N’envoyez pas d’argent à partir de ces informations.</p>
-    <label class="field-label" for="amount">Montant de la recharge <span class="muted">(minimum indicatif : 4 000 FCFA)</span></label>
-    <div class="amount-options"><button class="amount-choice" type="button" data-amount-choice="4000">4 000</button><button class="amount-choice" type="button" data-amount-choice="8000">8 000</button><button class="amount-choice" type="button" data-amount-choice="15000">15 000</button><button class="amount-choice" type="button" data-amount-choice="40000">40 000</button><button class="amount-choice" type="button" data-amount-choice="80000">80 000</button><button class="amount-choice" type="button" data-amount-choice="120000">120 000</button></div>
-    <div class="field-inline"><span>FCFA</span><input class="input" id="amount" type="number" min="4000" step="1" placeholder="Saisissez un montant" inputmode="numeric"></div>
-    <label class="field-label">Méthode de recharge</label>
-    <div class="channels"><button class="channel-choice" type="button" data-channel-choice aria-pressed="true">Recharger le canal 2</button><button class="channel-choice" type="button" data-channel-choice aria-pressed="false">Recharger le canal 1</button></div>
-    <button class="button-red button-wide" type="button" data-demo-action data-demo-kind="recharge">Enregistrer une simulation</button><p class="status" data-status role="status" aria-live="polite"></p>
-    <h2 class="section-title">Instructions de recharge</h2><ol class="info-list"><li>Choisissez un montant pour la démonstration.</li><li>Les canaux de paiement ne sont pas configurés.</li><li>Aucun dépôt ne sera envoyé ni crédité.</li><li>Ne transmettez pas d’informations bancaires sur cette maquette.</li></ol>
-  </div>
-</main></body></html>
+<body><main class="page"><header class="page-header"><a class="back" href="/accueil" aria-label="Retour à l’accueil">‹</a><h1>Recharger</h1><span class="header-spacer"></span></header>
+<div class="page-content"><p class="hint" role="status">Les recharges sont indisponibles pour le moment. Aucun prestataire de paiement n’est connecté.</p>
+<label class="field-label" for="amount">Montant de la recharge</label>
+<div class="amount-options"><button class="amount-choice" type="button" data-amount-choice="4000">4 000</button><button class="amount-choice" type="button" data-amount-choice="8000">8 000</button><button class="amount-choice" type="button" data-amount-choice="15000">15 000</button></div>
+<div class="field-inline"><span>FCFA</span><input class="input" id="amount" type="number" min="1" step="1" placeholder="Saisissez un montant" inputmode="numeric"></div>
+<label class="field-label">Méthode de recharge</label><p class="hint">Aucune méthode disponible.</p>
+<button class="button-red button-wide" type="button" disabled>Recharge indisponible</button>
+<p class="status" data-status role="status" aria-live="polite"></p><a href="/historique-recharges">Historique des recharges</a></div></main></body></html>

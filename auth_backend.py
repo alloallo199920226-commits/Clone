@@ -1,4 +1,4 @@
-"""Phone/password authentication and user-scoped demo activity."""
+"""Phone/password authentication and persistent account data."""
 
 from __future__ import annotations
 
@@ -91,19 +91,28 @@ def _create_session(cursor, user_id: int, remember: bool = False) -> tuple[str, 
     return token, session_days
 
 
-def register(country_code: str, phone: str, password: str) -> tuple[str, dict, int]:
+def register(country_code: str, phone: str, password: str, referral_code: str = "") -> tuple[str, dict, int]:
     normalized = normalize_phone(country_code, phone)
+    referral_code = str(referral_code or "").strip().upper()
+    if referral_code and not re.fullmatch(r"[A-Z0-9]{6,10}", referral_code):
+        raise ValueError("Code de parrainage invalide.")
     salt = secrets.token_bytes(16)
     password_hash = _hash_password(password, salt)
     try:
         with connect() as connection, connection.cursor() as cursor:
+            referrer = None
+            if referral_code:
+                cursor.execute("SELECT id FROM shineray_users WHERE referral_code = %s", (referral_code,))
+                referrer = cursor.fetchone()
+                if not referrer:
+                    raise ValueError("Ce code de parrainage n’existe pas.")
             cursor.execute(
                 """
-                INSERT INTO shineray_users (phone, password_salt, password_hash)
-                VALUES (%s, %s, %s)
+                INSERT INTO shineray_users (phone, password_salt, password_hash, referred_by)
+                VALUES (%s, %s, %s, %s)
                 RETURNING id, phone
                 """,
-                (normalized, salt, password_hash),
+                (normalized, salt, password_hash, referrer["id"] if referrer else None),
             )
             user = cursor.fetchone()
             token, session_days = _create_session(cursor, user["id"])
@@ -181,6 +190,86 @@ def revoke_session(token: str | None) -> None:
         return
     with connect() as connection, connection.cursor() as cursor:
         cursor.execute("DELETE FROM shineray_sessions WHERE token_hash = %s", (_token_hash(token),))
+
+
+def account_summary(user_id: int) -> dict:
+    with connect() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """SELECT u.id, u.phone, u.referral_code,
+                      COALESCE((SELECT SUM(t.amount_fcfa) FROM shineray_transactions t
+                                WHERE t.user_id = u.id), 0)::bigint AS balance_fcfa
+               FROM shineray_users u WHERE u.id = %s""",
+            (user_id,),
+        )
+        return cursor.fetchone()
+
+
+def get_activity(user_id: int, kind: str | None = None) -> list[dict]:
+    if kind is not None and kind not in ACTIVITY_KINDS:
+        raise ValueError("Filtre d’historique invalide.")
+    with connect() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """SELECT id, kind, label, abs(amount_fcfa) AS amount_fcfa, created_at
+               FROM shineray_transactions
+               WHERE user_id = %s AND (%s::text IS NULL OR kind = %s)
+               ORDER BY created_at DESC LIMIT 100""",
+            (user_id, kind, kind),
+        )
+        rows = cursor.fetchall()
+    return [{**row, "created_at": row["created_at"].isoformat()} for row in rows]
+
+
+def get_team(user_id: int) -> dict:
+    with connect() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """WITH RECURSIVE team AS (
+                 SELECT id, 1 AS level FROM shineray_users WHERE referred_by = %s
+                 UNION ALL
+                 SELECT u.id, t.level + 1 FROM shineray_users u
+                 JOIN team t ON u.referred_by = t.id WHERE t.level < 3
+               ) SELECT level, count(*) AS count FROM team GROUP BY level""",
+            (user_id,),
+        )
+        counts = {row["level"]: row["count"] for row in cursor.fetchall()}
+        cursor.execute(
+            """SELECT COALESCE(SUM(amount_fcfa), 0)::bigint AS revenue
+               FROM shineray_transactions WHERE user_id = %s AND kind = 'commission'""",
+            (user_id,),
+        )
+        revenue = cursor.fetchone()["revenue"]
+    return {"levels": [counts.get(level, 0) for level in (1, 2, 3)],
+            "total": sum(counts.values()), "revenue_fcfa": revenue}
+
+
+def get_wallets(user_id: int) -> list[dict]:
+    with connect() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT id, provider, phone FROM shineray_wallets WHERE user_id = %s ORDER BY id",
+            (user_id,),
+        )
+        return cursor.fetchall()
+
+
+def add_wallet(user_id: int, provider: str, phone: str) -> dict:
+    if provider != "TOGOCEL":
+        raise ValueError("Sélectionnez TOGOCEL.")
+    normalized = normalize_phone("+228", phone)
+    try:
+        with connect() as connection, connection.cursor() as cursor:
+            cursor.execute(
+                """INSERT INTO shineray_wallets (user_id, provider, phone)
+                   VALUES (%s, %s, %s) RETURNING id, provider, phone""",
+                (user_id, provider, normalized),
+            )
+            return cursor.fetchone()
+    except UniqueViolation as exc:
+        raise ValueError("Ce compte de retrait est déjà enregistré.") from exc
+
+
+def delete_wallet(user_id: int, wallet_id: int) -> bool:
+    with connect() as connection, connection.cursor() as cursor:
+        cursor.execute("DELETE FROM shineray_wallets WHERE id = %s AND user_id = %s", (wallet_id, user_id))
+        return cursor.rowcount == 1
 
 
 def record_demo_activity(user_id: int, kind: str, amount_fcfa: int, label: str) -> dict:

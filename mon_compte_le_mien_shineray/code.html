@@ -298,7 +298,7 @@
       if (!user) return;
       document.querySelector('[data-user-phone]').textContent = user.phone;
       document.querySelector('[data-demo-balance]').textContent =
-        new Intl.NumberFormat('fr-FR').format(user.demo_balance_fcfa);
+        new Intl.NumberFormat('fr-FR').format(user.balance_fcfa);
     })
     .catch(() => {
       document.querySelector('[data-user-phone]').textContent = 'Compte temporairement indisponible';
