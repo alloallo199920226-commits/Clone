@@ -20,3 +20,9 @@ Deposit recipient details will come from the administrator. Screenshot recipient
 **Why:** the user clarified: “les information viendras de ladmin toi tu doit juste reproduire la maquette”.
 
 **How to apply:** reproduce the deposit screens and their navigation without requesting or inventing merchant details for the maquette. Keep recipient information explicitly unconfigured until supplied through administration.
+
+The deposit countdown represents the validity of the current entry session, not a bank or operator payment deadline.
+
+**Why:** the user requested a working timer while payment-provider and recipient configuration remain separate work.
+
+**How to apply:** elapsed time may expire the entry flow, but must never approve, reject, debit or credit a financial transaction. If a provider is integrated later, its verified transaction status remains authoritative.

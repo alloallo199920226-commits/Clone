@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#f0bd22">
   <title>Choisir un opérateur — Valhalla Pay</title>
   <link rel="stylesheet" href="/pages/deposit-flow.css">
+  <script src="/pages/deposit-i18n.js" defer></script>
   <script src="/pages/deposit-flow.js" defer></script>
 </head>
 <body class="deposit-page deposit-page--operator">
@@ -24,8 +25,8 @@
         <header class="deposit-card-header">
           <h1 class="deposit-brand" id="deposit-title">Valhalla Pay</h1>
           <div class="deposit-heading-tools" aria-label="Outils de paiement">
-            <span class="deposit-timer" aria-label="Temps restant non configuré">—:—</span>
-            <button class="deposit-language" type="button" data-deposit-language title="Version anglaise à configurer" aria-label="Version anglaise à configurer" disabled>English</button>
+            <span class="deposit-timer" aria-label="Temps restant pour terminer ce parcours">20:00</span>
+            <button class="deposit-language" type="button" data-deposit-language aria-label="Passer en anglais">English</button>
           </div>
         </header>
 
@@ -58,11 +59,11 @@
               <input class="deposit-phone-input" id="deposit-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Votre numéro de téléphone" aria-describedby="deposit-phone-warning deposit-phone-status" required>
             </div>
             <p class="deposit-form-warning" id="deposit-phone-warning">Veuillez vérifier le numéro de téléphone avant de soumettre.</p>
-            <button class="deposit-submit" type="submit">Soumettre <span aria-hidden="true">→</span></button>
+            <button class="deposit-submit" type="submit"><span data-submit-label>Soumettre</span> <span aria-hidden="true">→</span></button>
             <p class="deposit-form-status" id="deposit-phone-status" data-deposit-status role="alert" aria-live="polite"></p>
           </form>
 
-          <p class="deposit-notice"><strong>Configuration en attente.</strong> Aucun paiement n’a été initié. Les informations de paiement seront fournies par l’administrateur.</p>
+          <p class="deposit-notice"><strong>Configuration en attente.</strong> <span data-notice-body>Aucun paiement n’a été initié. Les informations de paiement seront fournies par l’administrateur.</span></p>
         </div>
       </div>
     </section>

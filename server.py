@@ -38,6 +38,7 @@ MORE_PAGES = {
 STATIC_FILES = {
     "/pages/deposit-flow.css": ("pages/deposit-flow.css", "text/css; charset=utf-8"),
     "/pages/deposit-flow.js": ("pages/deposit-flow.js", "text/javascript; charset=utf-8"),
+    "/pages/deposit-i18n.js": ("pages/deposit-i18n.js", "text/javascript; charset=utf-8"),
     "/pages/navigation-loading.css": ("pages/navigation-loading.css", "text/css; charset=utf-8"),
     "/pages/navigation-loading.js": ("pages/navigation-loading.js", "text/javascript; charset=utf-8"),
     "/pages/records-reference.css": ("pages/records-reference.css", "text/css; charset=utf-8"),

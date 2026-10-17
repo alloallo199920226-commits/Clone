@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#f0bd22">
   <title>Confirmation du dépôt — Valhalla Pay</title>
   <link rel="stylesheet" href="/pages/deposit-flow.css">
+  <script src="/pages/deposit-i18n.js" defer></script>
   <script src="/pages/deposit-flow.js" defer></script>
 </head>
 <body class="deposit-page deposit-page--confirmation">
@@ -19,8 +20,8 @@
       <div class="deposit-content" data-deposit-content>
         <header class="deposit-confirmation-header" id="deposit-title">
           <strong class="deposit-selected-operator" data-selected-operator>—</strong>
-          <span class="deposit-timer" aria-label="Temps restant non configuré">—:—</span>
-          <button class="deposit-language" type="button" data-deposit-language title="Version anglaise à configurer" aria-label="Version anglaise à configurer" disabled>English</button>
+          <span class="deposit-timer" aria-label="Temps restant pour terminer ce parcours">20:00</span>
+          <button class="deposit-language" type="button" data-deposit-language aria-label="Passer en anglais">English</button>
           <a class="deposit-close" href="/recharger" aria-label="Fermer et revenir à Recharger">×</a>
         </header>
 
@@ -70,7 +71,7 @@
             <a class="deposit-modify" data-deposit-modify href="/choisir-operateur">Modifier</a>
           </div>
 
-          <p class="deposit-notice"><strong>Configuration en attente.</strong> Aucun paiement n’a été initié. Les coordonnées et instructions seront fournies par l’administrateur.</p>
+          <p class="deposit-notice"><strong>Configuration en attente.</strong> <span data-notice-body>Aucun paiement n’a été initié. Les coordonnées et instructions seront fournies par l’administrateur.</span></p>
         </div>
       </div>
     </section>

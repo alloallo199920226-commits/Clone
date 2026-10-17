@@ -222,6 +222,11 @@ async function main() {
     assert.equal(modal.overflow, false);
     await evaluate("document.querySelector('[data-notification-close]').click()");
     assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
+    if (process.argv.includes("--deposit-i18n")) {
+      await require("./deposit-i18n-browser.cjs")({ call, evaluate, waitFor, navigate, screenshot });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--deposit-flow")) {
       await navigate("/recharger");
       await evaluate("document.querySelector('[data-payment-action]').click()");
