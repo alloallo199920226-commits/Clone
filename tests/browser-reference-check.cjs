@@ -222,6 +222,15 @@ async function main() {
     assert.equal(modal.overflow, false);
     await evaluate("document.querySelector('[data-notification-close]').click()");
     assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
+    if (process.argv.includes("--filled-records")) {
+      await require("./filled-records-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, paused, base,
+        owner: registration.body.user, loginPayload: payload,
+        trackChild: id => childUserIds.push(id),
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--member-pages")) {
       async function noOverflow() {
         assert.equal(await evaluate("document.documentElement.scrollWidth > innerWidth"), false);
@@ -302,7 +311,7 @@ async function main() {
       await waitFor("document.querySelector('[data-team-members]').children.length===1");
       assert.equal(await evaluate("document.querySelector('[data-team-level-count=\"1\"]').textContent"), "1");
       assert.equal(await evaluate("document.querySelector('[data-team-detail-empty]').hidden"), true);
-      assert(await evaluate("document.querySelector('[data-team-members]').innerText.includes('•••')"));
+      assert(await evaluate("document.querySelector('[data-team-members]').innerText.includes('****')"));
       assert.equal(await evaluate(`document.querySelector('[data-team-members]').innerText.includes(${JSON.stringify(childPhone)})`), false);
       await evaluate("document.querySelector('[data-team-level-tab=\"2\"]').click()");
       assert.equal(await evaluate("document.querySelector('[data-team-members]').children.length"), 0);
@@ -463,6 +472,7 @@ async function main() {
         "import sys, json, auth_backend",
         "with auth_backend.connect() as conn, conn.cursor() as cur:",
         " for user_id in json.loads(sys.argv[1]):",
+        "  cur.execute('DELETE FROM shineray_transactions WHERE user_id = %s', (user_id,))",
         "  cur.execute('DELETE FROM shineray_users WHERE id = %s', (user_id,))",
       ].join("\n"), JSON.stringify([...childUserIds.reverse(), userId])], { stdio: "inherit" });
     }

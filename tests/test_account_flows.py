@@ -76,7 +76,7 @@ class AccountFlowTests(unittest.TestCase):
         self.assertEqual(json.loads(body)["revenue_fcfa"], 0)
         member = json.loads(body)["members"][0]
         self.assertEqual(member["level"], 1)
-        self.assertIn("•••", member["phone_masked"])
+        self.assertIn("****", member["phone_masked"])
         self.assertNotIn(second["phone"], member["phone_masked"])
         status, _, _ = self.request("POST", "/api/wallets", {
             "provider": "TOGOCEL", "phone": "90123456",
@@ -164,3 +164,82 @@ class AccountFlowTests(unittest.TestCase):
         self.assertEqual(json.loads(body)["activities"], [])
         _, _, body = self.request("GET", "/api/activity", cookie=other_cookie)
         self.assertEqual(json.loads(body)["activities"], [])
+
+    def test_receipts_owned_vips_and_team_use_only_account_facts(self):
+        owner, cookie = self.create_user()
+        _, _, body = self.request("GET", "/api/me", cookie=cookie)
+        owner = json.loads(body)
+        child, child_cookie = self.create_user(owner["referral_code"])
+        _, _, body = self.request("GET", "/api/me", cookie=child_cookie)
+        child = json.loads(body)
+        grandchild, _ = self.create_user(child["referral_code"])
+        entries = [
+            (owner["id"], "recharge", "Dépôt vérifié", 8000, {"channel": "Recharger le canal 1"}),
+            (owner["id"], "withdrawal", "Retrait vérifié", -2200, {"net_amount_fcfa": 1715}),
+            (owner["id"], "purchase", "VIP2", -8000, {
+                "vip": 2, "daily_income_fcfa": 2000, "total_income_fcfa": 360000,
+                "validity_days": 180, "quantity": 1, "income_fcfa": 6000,
+            }),
+            (child["id"], "purchase", "VIP1", -4000, {"vip": 1}),
+            (grandchild["id"], "purchase", "VIP2", -8000, {"vip": 2}),
+            (owner["id"], "commission", "Commission niveau 1", 1480, {"source_user_id": child["id"]}),
+            (owner["id"], "commission", "Commission niveau 2", 240, {"source_user_id": grandchild["id"]}),
+        ]
+        with auth_backend.connect() as connection, connection.cursor() as cursor:
+            for user_id, kind, label, amount, details in entries:
+                cursor.execute(
+                    """INSERT INTO shineray_transactions
+                       (user_id,kind,label,amount_fcfa,provider_reference,details)
+                       VALUES (%s,%s,%s,%s,%s,%s::jsonb)""",
+                    (user_id, kind, label, amount, "receipt-test-" + secrets.token_hex(12), json.dumps(details)),
+                )
+        status, _, body = self.request("GET", "/api/activity?kind=withdrawal", cookie=cookie)
+        self.assertEqual(status, 200)
+        receipt = json.loads(body)["activities"][0]
+        self.assertEqual(receipt["amount_fcfa"], 2200)
+        self.assertEqual(receipt["net_amount_fcfa"], 1715)
+        self.assertEqual(receipt["status"], "succeeded")
+        self.assertTrue(receipt["reference"].startswith("receipt-test-"))
+        status, _, body = self.request("GET", "/api/products", cookie=cookie)
+        self.assertEqual(status, 200)
+        products = json.loads(body)
+        self.assertEqual(products["quantity"], 1)
+        self.assertEqual(products["income_fcfa"], 6000)
+        self.assertEqual(products["products"][0]["vip"], 2)
+        self.assertEqual(products["products"][0]["validity_days"], 180)
+        _, _, body = self.request("GET", "/api/products", cookie=child_cookie)
+        self.assertIsNone(json.loads(body)["income_fcfa"])
+        self.assertIsNone(json.loads(body)["products"][0]["daily_income_fcfa"])
+        _, _, body = self.request("GET", "/api/team", cookie=cookie)
+        team = json.loads(body)
+        self.assertEqual(team["levels"], [1, 1, 0])
+        self.assertEqual(team["level_revenue_fcfa"], [1480, 240, 0])
+        self.assertEqual(team["revenue_fcfa"], 1720)
+        self.assertEqual([member["investment_fcfa"] for member in team["members"]], [4000, 8000])
+        with auth_backend.connect() as connection, connection.cursor() as cursor:
+            cursor.execute(
+                """INSERT INTO shineray_transactions
+                   (user_id,kind,label,amount_fcfa,provider_reference)
+                   VALUES (%s,'commission','Commission sans répartition',100,%s)""",
+                (owner["id"], "unallocated-test-" + secrets.token_hex(12)),
+            )
+        _, _, body = self.request("GET", "/api/team", cookie=cookie)
+        self.assertEqual(json.loads(body)["level_revenue_fcfa"], [None, None, None])
+        self.assertEqual(json.loads(body)["revenue_fcfa"], 1820)
+        self.assertEqual(self.request("GET", "/api/products")[0], 401)
+
+    def test_history_limit_does_not_claim_the_list_is_finished(self):
+        owner, cookie = self.create_user()
+        with auth_backend.connect() as connection, connection.cursor() as cursor:
+            cursor.executemany(
+                """INSERT INTO shineray_transactions
+                   (user_id,kind,label,amount_fcfa,provider_reference)
+                   VALUES (%s,'recharge','Reçu de test isolé',%s,%s)""",
+                [(owner["id"], 4000 + index, "limit-test-" + secrets.token_hex(12))
+                 for index in range(105)],
+            )
+        status, _, body = self.request("GET", "/api/activity?kind=recharge", cookie=cookie)
+        self.assertEqual(status, 200)
+        self.assertTrue(json.loads(body)["has_more"])
+        self.assertEqual(len(json.loads(body)["activities"]), 100)
+        self.assertEqual(json.loads(body)["activities"][0]["amount_fcfa"], 4104)

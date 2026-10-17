@@ -12,12 +12,13 @@
   <main class="page team-detail-page" data-team-page>
     <header class="page-header"><a class="back" href="/equipe" aria-label="Retour à l’équipe">‹</a><h1>Mon équipe</h1><span class="header-spacer"></span></header>
     <nav class="team-level-tabs" aria-label="Filtrer les membres par niveau">
-      <button class="team-level-tab" type="button" data-team-level-tab="1" aria-selected="true"><span class="team-level-revenue" data-team-level-revenue>0.00</span><span>Niveau 1 (<span data-team-level-count="1">0</span>)</span></button>
-      <button class="team-level-tab" type="button" data-team-level-tab="2" aria-selected="false"><span class="team-level-revenue" data-team-level-revenue>0.00</span><span>Niveau 2 (<span data-team-level-count="2">0</span>)</span></button>
-      <button class="team-level-tab" type="button" data-team-level-tab="3" aria-selected="false"><span class="team-level-revenue" data-team-level-revenue>0.00</span><span>Niveau 3 (<span data-team-level-count="3">0</span>)</span></button>
+      <button class="team-level-tab" type="button" data-team-level-tab="1" aria-selected="true"><span class="team-level-revenue" data-team-level-revenue>—</span><span>Niveau 1 (<span data-team-level-count="1">—</span>)</span></button>
+      <button class="team-level-tab" type="button" data-team-level-tab="2" aria-selected="false"><span class="team-level-revenue" data-team-level-revenue>—</span><span>Niveau 2 (<span data-team-level-count="2">—</span>)</span></button>
+      <button class="team-level-tab" type="button" data-team-level-tab="3" aria-selected="false"><span class="team-level-revenue" data-team-level-revenue>—</span><span>Niveau 3 (<span data-team-level-count="3">—</span>)</span></button>
     </nav>
     <section class="team-member-list" data-team-members aria-live="polite"></section>
-    <div class="team-detail-empty" data-team-detail-empty><img src="/pages/assets/empty-records.svg" alt="" aria-hidden="true"><span>Plus aucune donnée</span></div>
+    <p class="team-detail-more" data-team-detail-more hidden>Les 100 membres les plus récents de chaque niveau sont affichés.</p>
+    <div class="team-detail-empty" data-team-detail-empty hidden><img src="/pages/assets/empty-records.svg" alt="" aria-hidden="true"><span>Plus aucune donnée</span></div>
     <p class="team-detail-status" data-team-detail-error hidden role="status"></p>
   </main>
 </body>

@@ -209,14 +209,68 @@ def get_activity(user_id: int, kind: str | None = None) -> list[dict]:
         raise ValueError("Filtre d’historique invalide.")
     with connect() as connection, connection.cursor() as cursor:
         cursor.execute(
-            """SELECT id, kind, label, abs(amount_fcfa) AS amount_fcfa, created_at
+            """SELECT id, kind, label, abs(amount_fcfa) AS amount_fcfa,
+                      created_at, provider_reference, details
                FROM shineray_transactions
                WHERE user_id = %s AND (%s::text IS NULL OR kind = %s)
-               ORDER BY created_at DESC LIMIT 100""",
+               ORDER BY created_at DESC, id DESC LIMIT 101""",
             (user_id, kind, kind),
         )
         rows = cursor.fetchall()
-    return [{**row, "created_at": row["created_at"].isoformat()} for row in rows]
+    return [
+        {"id": row["id"], "kind": row["kind"], "label": row["label"],
+         "amount_fcfa": row["amount_fcfa"], "created_at": row["created_at"].isoformat(),
+         "reference": row["provider_reference"], "status": "succeeded",
+         "channel": row["details"].get("channel") if isinstance(row["details"].get("channel"), str) else None,
+         "net_amount_fcfa": _receipt_number(row["details"], "net_amount_fcfa")}
+        for row in rows
+    ]
+
+
+def _receipt_number(details: dict, key: str, minimum: int = 0, maximum: int = 999_999_999_999_999) -> int | None:
+    value = details.get(key)
+    return value if type(value) is int and minimum <= value <= maximum else None
+
+
+def get_products(user_id: int) -> dict:
+    with connect() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """SELECT id, label, abs(amount_fcfa) AS amount_fcfa, created_at, details
+               FROM shineray_transactions WHERE user_id = %s AND kind = 'purchase'
+               ORDER BY created_at DESC, id DESC LIMIT 100""", (user_id,),
+        )
+        rows = cursor.fetchall()
+        cursor.execute(
+            """SELECT COALESCE(SUM(quantity), 0)::bigint AS quantity,
+                      CASE WHEN COUNT(*) = COUNT(income)
+                           THEN COALESCE(SUM(income), 0)::bigint END AS income_fcfa,
+                      COUNT(*) > 100 AS has_more
+               FROM (
+                 SELECT CASE WHEN jsonb_typeof(details->'quantity') = 'number'
+                                  AND details->>'quantity' ~ '^[1-9][0-9]{0,5}$'
+                             THEN (details->>'quantity')::bigint ELSE 1 END AS quantity,
+                        CASE WHEN jsonb_typeof(details->'income_fcfa') = 'number'
+                                  AND details->>'income_fcfa' ~ '^[0-9]{1,15}$'
+                             THEN (details->>'income_fcfa')::bigint END AS income
+                 FROM shineray_transactions WHERE user_id = %s AND kind = 'purchase'
+               ) AS owned""", (user_id,),
+        )
+        summary = cursor.fetchone()
+    products = []
+    for row in rows:
+        details = row["details"]
+        vip = _receipt_number(details, "vip", 1, 12)
+        products.append({
+            "id": row["id"], "name": f"VIP{vip}" if vip is not None else row["label"],
+            "vip": vip, "amount_fcfa": row["amount_fcfa"],
+            "quantity": _receipt_number(details, "quantity", 1, 999_999) or 1,
+            "created_at": row["created_at"].isoformat(),
+            "daily_income_fcfa": _receipt_number(details, "daily_income_fcfa"),
+            "total_income_fcfa": _receipt_number(details, "total_income_fcfa"),
+            "validity_days": _receipt_number(details, "validity_days", 1, 365_000),
+            "income_fcfa": _receipt_number(details, "income_fcfa"),
+        })
+    return {**summary, "products": products}
 
 
 def get_team(user_id: int) -> dict:
@@ -239,24 +293,46 @@ def get_team(user_id: int) -> dict:
                  SELECT u.id, u.phone, u.created_at, t.level + 1
                  FROM shineray_users u JOIN team t ON u.referred_by = t.id
                  WHERE t.level < 3
-               ) SELECT phone, created_at, level FROM team
-               ORDER BY created_at DESC, id DESC LIMIT 100""",
+               ), ranked AS (
+                 SELECT *, row_number() OVER (
+                   PARTITION BY level ORDER BY created_at DESC, id DESC
+                 ) AS rank FROM team
+               ) SELECT r.phone, r.created_at, r.level,
+                        COALESCE((SELECT SUM(abs(t.amount_fcfa))
+                                  FROM shineray_transactions t
+                                  WHERE t.user_id = r.id AND t.kind = 'purchase'), 0)::bigint
+                        AS investment_fcfa
+                 FROM ranked r WHERE rank <= 100
+                 ORDER BY r.level, r.created_at DESC, r.id DESC""",
             (user_id,),
         )
         members = [
             {"level": row["level"],
-             "phone_masked": row["phone"][:4] + " ••• " + row["phone"][-3:],
-             "created_at": row["created_at"].isoformat()}
+             "phone_masked": row["phone"][4:6] + "****" + row["phone"][-3:],
+             "created_at": row["created_at"].isoformat(),
+             "investment_fcfa": row["investment_fcfa"]}
             for row in cursor.fetchall()
         ]
         cursor.execute(
-            """SELECT COALESCE(SUM(amount_fcfa), 0)::bigint AS revenue
-               FROM shineray_transactions WHERE user_id = %s AND kind = 'commission'""",
-            (user_id,),
+            """WITH RECURSIVE team AS (
+                 SELECT id, 1 AS level FROM shineray_users WHERE referred_by = %s
+                 UNION ALL
+                 SELECT u.id, t.level + 1 FROM shineray_users u
+                 JOIN team t ON u.referred_by = t.id WHERE t.level < 3
+               ) SELECT team.level, SUM(c.amount_fcfa)::bigint AS revenue
+                 FROM shineray_transactions c
+                 LEFT JOIN team ON c.details->>'source_user_id' = team.id::text
+                 WHERE c.user_id = %s AND c.kind = 'commission'
+                 GROUP BY team.level""",
+            (user_id, user_id),
         )
-        revenue = cursor.fetchone()["revenue"]
+        by_level = {row["level"]: row["revenue"] for row in cursor.fetchall()}
+        revenue = sum(by_level.values())
     return {"levels": [counts.get(level, 0) for level in (1, 2, 3)],
             "total": sum(counts.values()), "revenue_fcfa": revenue,
+            "level_revenue_fcfa": [None if by_level.get(None, 0) else by_level.get(level, 0)
+                                   for level in (1, 2, 3)],
+            "members_has_more": any(count > 100 for count in counts.values()),
             "members": members}
 
 

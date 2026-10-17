@@ -61,3 +61,8 @@ CREATE TABLE IF NOT EXISTS shineray_transactions (
 );
 CREATE INDEX IF NOT EXISTS shineray_transactions_user_idx
     ON shineray_transactions(user_id, created_at DESC);
+
+-- Optional receipt/product facts supplied only by a verified server-side writer.
+-- Missing facts remain unknown; they are not inferred from advertised returns.
+ALTER TABLE shineray_transactions ADD COLUMN IF NOT EXISTS details JSONB
+    NOT NULL DEFAULT '{}'::jsonb CHECK (jsonb_typeof(details) = 'object');

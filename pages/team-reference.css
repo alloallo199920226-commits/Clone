@@ -159,9 +159,15 @@ html, body { margin: 0; min-width: 320px; }
 }
 .team-detail-empty img { width: 248px; height: 204px; object-fit: contain; }
 .team-member-list { padding: 0 14px; }
-.team-member-row { display: flex; min-height: 66px; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; font-size: 14px; }
-.team-member-phone { color: #222; }
+.team-member-row { display: grid; min-height: 64px; grid-template-columns: 54px minmax(0,1fr) auto; align-items: center; gap: 10px; border-bottom: 1px solid #eee; font-size: 14px; }
+.team-member-avatar { width: 36px; height: 36px; justify-self: center; object-fit: contain; }
+.team-member-details { display: grid; min-width: 0; gap: 4px; }
+.team-member-phone { overflow: hidden; color: #222; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
 .team-member-date { color: #888; font-size: 12px; }
+.team-member-investment { padding-right: 2px; color: #161616; font-size: 15px; font-weight: 700; white-space: nowrap; }
+.team-detail-more { padding: 12px 14px; color: #888; font-size: 13px; text-align: center; }
+.team-loading-row { height: 64px; border-bottom: 1px solid #eee; background: linear-gradient(#f3f3f3,#f3f3f3) 10px 16px / 36px 36px no-repeat, linear-gradient(#eee,#eee) 65px 19px / 42% 10px no-repeat, linear-gradient(#eee,#eee) 65px 38px / 58% 8px no-repeat, linear-gradient(#eee,#eee) calc(100% - 4px) 20px / 44px 11px no-repeat; animation: team-placeholder 1.2s ease-in-out infinite alternate; }
+@keyframes team-placeholder { to { opacity: .55; } }
 .team-detail-status { padding: 18px; color: #8b222b; font-size: 13px; }
 [hidden] { display: none !important; }
 @media (max-width: 360px) {

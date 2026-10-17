@@ -34,6 +34,8 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/pages/records-reference.css": ("pages/records-reference.css", "text/css; charset=utf-8"),
+    "/pages/records-reference.js": ("pages/records-reference.js", "text/javascript; charset=utf-8"),
     "/pages/auth-progress.js": ("pages/auth-progress.js", "text/javascript; charset=utf-8"),
     "/pages/member-reference.css": ("pages/member-reference.css", "text/css; charset=utf-8"),
     "/pages/team-reference.css": ("pages/team-reference.css", "text/css; charset=utf-8"),
@@ -117,7 +119,7 @@ class Handler(BaseHTTPRequestHandler):
             return ROOT / relative_path, content_type
         if route.startswith("/pages/assets/"):
             candidate = (ROOT / route.lstrip("/")).resolve()
-            if candidate.is_relative_to(ROOT / "pages" / "assets") and candidate.name == "empty-records.svg":
+            if candidate.is_relative_to(ROOT / "pages" / "assets") and candidate.name in {"empty-records.svg", "team-avatar.svg"}:
                 return candidate, "image/svg+xml"
             if candidate.is_relative_to(ROOT / "pages" / "assets") and candidate.suffix in {".jpg", ".jpeg", ".png"}:
                 return candidate, "image/png" if candidate.suffix == ".png" else "image/jpeg"
@@ -271,11 +273,18 @@ class Handler(BaseHTTPRequestHandler):
             kind = parse_qs(urlsplit(self.path).query).get("kind", [None])[0]
             try:
                 activities = auth_backend.get_activity(user["id"], kind)
-                self._json(200, {"activities": activities})
+                self._json(200, {"activities": activities[:100], "has_more": len(activities) > 100})
             except ValueError as exc:
                 self._json(400, {"error": str(exc)})
             except Exception:
                 self._json(503, {"error": "Impossible de charger l’historique pour le moment."})
+            return
+
+        if route == "/api/products" and self.command == "GET":
+            try:
+                self._json(200, auth_backend.get_products(user["id"]))
+            except Exception:
+                self._json(503, {"error": "Impossible de charger vos produits pour le moment."})
             return
 
         if route in {"/api/demo-activity", "/api/payments"} and self.command == "POST":
