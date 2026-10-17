@@ -1,0 +1,175 @@
+:root { --team-red: #e50920; }
+* { box-sizing: border-box; }
+html, body { margin: 0; min-width: 320px; }
+.team-nav-symbol { width: 28px; height: 28px; fill: currentColor; }
+.team-portal {
+  width: min(100%, 480px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 0 5px 76px;
+  background: #fff;
+  color: #181818;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.team-brandbar {
+  display: flex;
+  height: 95px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 11px;
+}
+.team-wordmark {
+  position: relative;
+  display: flex;
+  height: 37px;
+  align-items: center;
+  background: #e50920;
+  padding: 0 10px 0 43px;
+  color: #fff;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+}
+.team-wordmark::before {
+  position: absolute;
+  left: 4px;
+  width: 34px;
+  height: 29px;
+  background: linear-gradient(135deg, transparent 0 30%, white 31% 48%, transparent 49%), linear-gradient(45deg, transparent 0 36%, white 37% 52%, transparent 53%);
+  content: "";
+}
+.team-view-link,
+.team-copy {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 18px;
+  padding: 0 20px;
+  background: var(--team-red);
+  color: #fff;
+  font: 14px Arial, Helvetica, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+.team-view-link { border-radius: 3px; min-width: 132px; }
+.team-invite {
+  min-height: 155px;
+  margin: 0 0 21px;
+  border-radius: 6px;
+  padding: 19px 11px 14px 21px;
+  background: #f1f1f1;
+}
+.team-invite-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 132px;
+  align-items: center;
+  gap: 8px;
+  min-height: 60px;
+}
+.team-invite-value { overflow: hidden; color: #222; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; }
+.team-invite-label { display: block; margin-top: 3px; color: #b81b29; font-size: 13px; }
+.team-table-wrap { overflow-x: auto; background: linear-gradient(100deg, #050505, #333); color: #fff; }
+.team-commission-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
+.team-commission-table th,
+.team-commission-table td { height: 38px; border-bottom: 1px solid #ffffff26; padding: 5px 4px; text-align: center; font-weight: 400; }
+.team-commission-table th:first-child,
+.team-commission-table td:first-child { width: 51%; }
+.team-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin: 15px 0; }
+.team-metric {
+  display: grid;
+  min-height: 66px;
+  align-content: center;
+  gap: 5px;
+  border-radius: 5px;
+  background: linear-gradient(100deg, #050505, #333);
+  color: #fff;
+  text-align: center;
+  font-size: 15px;
+}
+.team-terms {
+  margin: 0;
+  border-radius: 5px;
+  padding: 16px 14px 17px;
+  background: linear-gradient(100deg, #050505, #333);
+  color: #eee;
+  font-size: 13px;
+  line-height: 1.43;
+}
+.team-terms h2 { margin: 0 0 10px; border-left: 3px solid #8b8b8b; padding-left: 9px; font-size: 15px; font-weight: 400; }
+.team-terms p { margin: 0 0 14px; }
+.team-terms p:last-of-type { margin-bottom: 10px; }
+.team-disclosure { color: #bbb; font-size: 11px; line-height: 1.4; }
+.team-bottom-nav {
+  position: fixed;
+  z-index: 5;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  width: min(100%, 480px);
+  height: 63px;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 0 auto;
+  background: linear-gradient(100deg, #050505, #252525);
+}
+.team-bottom-nav a {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 2px;
+  color: #c9c9c9;
+  font: 12px Georgia, serif;
+  text-decoration: none;
+}
+.team-bottom-nav a[aria-current="page"] { color: #ffd84d; }
+.team-nav-symbol { font: 21px Arial, sans-serif; line-height: 1; }
+.team-status { min-height: 17px; margin: 8px 3px; color: #8b222b; font-size: 12px; }
+.team-detail-page { padding: 0; }
+.team-detail-page .page-header { height: 55px; background: #f1f1f1; }
+.team-detail-page .page-header h1 { font-size: 15px; }
+.team-level-tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #222; }
+.team-level-tab {
+  display: grid;
+  min-height: 77px;
+  align-content: center;
+  justify-items: center;
+  gap: 11px;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  padding: 0 2px;
+  background: #fff;
+  color: #121212;
+  font: 14px Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+.team-level-tab[aria-selected="true"] { border-bottom-color: #111; }
+.team-level-revenue { font-size: 15px; }
+.team-detail-empty {
+  display: flex;
+  min-height: 385px;
+  margin: 0;
+  padding: 106px 0 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  color: #999;
+  font-size: 15px;
+}
+.team-detail-empty img { width: 248px; height: 204px; object-fit: contain; }
+.team-member-list { padding: 0 14px; }
+.team-member-row { display: flex; min-height: 66px; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; font-size: 14px; }
+.team-member-phone { color: #222; }
+.team-member-date { color: #888; font-size: 12px; }
+.team-detail-status { padding: 18px; color: #8b222b; font-size: 13px; }
+[hidden] { display: none !important; }
+@media (max-width: 360px) {
+  .team-invite { padding-left: 13px; }
+  .team-invite-row { grid-template-columns: minmax(0, 1fr) 118px; }
+  .team-copy { padding: 0 12px; font-size: 12px; }
+  .team-wordmark { font-size: 23px; }
+}
+
+.team-commission-table th, .team-commission-table td { height: 40px; padding: 8px; font-size: 12px; line-height: 16px; }
+.team-commission-table th { font-weight: 400; }

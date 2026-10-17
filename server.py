@@ -21,6 +21,7 @@ PAGES = {
     "/inscription": "inscription",
 }
 MORE_PAGES = {
+    "/mon-equipe": "mon-equipe.html",
     "/financement": "financement.html",
     "/recharger": "recharger.html",
     "/retrait": "retrait.html",
@@ -33,6 +34,12 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/pages/member-reference.css": ("pages/member-reference.css", "text/css; charset=utf-8"),
+    "/pages/team-reference.css": ("pages/team-reference.css", "text/css; charset=utf-8"),
+    "/pages/home-reference.css": ("pages/home-reference.css", "text/css; charset=utf-8"),
+    "/pages/home-reference.js": ("pages/home-reference.js", "text/javascript; charset=utf-8"),
+    "/pages/payment-reference.css": ("pages/payment-reference.css", "text/css; charset=utf-8"),
+    "/pages/payment-reference.js": ("pages/payment-reference.js", "text/javascript; charset=utf-8"),
     "/pages/account.css": ("pages/account.css", "text/css; charset=utf-8"),
     "/pages/notification.css": ("pages/notification.css", "text/css; charset=utf-8"),
     "/pages/country-picker.js": ("pages/country-picker.js", "text/javascript; charset=utf-8"),
@@ -109,6 +116,8 @@ class Handler(BaseHTTPRequestHandler):
             return ROOT / relative_path, content_type
         if route.startswith("/pages/assets/"):
             candidate = (ROOT / route.lstrip("/")).resolve()
+            if candidate.is_relative_to(ROOT / "pages" / "assets") and candidate.name == "empty-records.svg":
+                return candidate, "image/svg+xml"
             if candidate.is_relative_to(ROOT / "pages" / "assets") and candidate.suffix in {".jpg", ".jpeg", ".png"}:
                 return candidate, "image/png" if candidate.suffix == ".png" else "image/jpeg"
         if route == "/pages/reference.css":
@@ -237,7 +246,8 @@ class Handler(BaseHTTPRequestHandler):
                 elif self.command == "POST":
                     payload = self._read_json()
                     if payload is not None:
-                        self._json(201, {"wallet": auth_backend.add_wallet(user["id"], payload.get("provider"), payload.get("phone"))})
+                        self._json(201, {"wallet": auth_backend.add_wallet(
+                            user["id"], payload.get("provider"), payload.get("phone"), payload.get("holder_name"))})
                 else:
                     self._json(405, {"error": "Méthode non autorisée."})
             except ValueError as exc:

@@ -232,34 +232,58 @@ def get_team(user_id: int) -> dict:
         )
         counts = {row["level"]: row["count"] for row in cursor.fetchall()}
         cursor.execute(
+            """WITH RECURSIVE team AS (
+                 SELECT id, phone, created_at, 1 AS level
+                 FROM shineray_users WHERE referred_by = %s
+                 UNION ALL
+                 SELECT u.id, u.phone, u.created_at, t.level + 1
+                 FROM shineray_users u JOIN team t ON u.referred_by = t.id
+                 WHERE t.level < 3
+               ) SELECT phone, created_at, level FROM team
+               ORDER BY created_at DESC, id DESC LIMIT 100""",
+            (user_id,),
+        )
+        members = [
+            {"level": row["level"],
+             "phone_masked": row["phone"][:4] + " ••• " + row["phone"][-3:],
+             "created_at": row["created_at"].isoformat()}
+            for row in cursor.fetchall()
+        ]
+        cursor.execute(
             """SELECT COALESCE(SUM(amount_fcfa), 0)::bigint AS revenue
                FROM shineray_transactions WHERE user_id = %s AND kind = 'commission'""",
             (user_id,),
         )
         revenue = cursor.fetchone()["revenue"]
     return {"levels": [counts.get(level, 0) for level in (1, 2, 3)],
-            "total": sum(counts.values()), "revenue_fcfa": revenue}
+            "total": sum(counts.values()), "revenue_fcfa": revenue,
+            "members": members}
 
 
 def get_wallets(user_id: int) -> list[dict]:
     with connect() as connection, connection.cursor() as cursor:
         cursor.execute(
-            "SELECT id, provider, phone FROM shineray_wallets WHERE user_id = %s ORDER BY id",
+            "SELECT id, provider, phone, holder_name FROM shineray_wallets WHERE user_id = %s ORDER BY id",
             (user_id,),
         )
         return cursor.fetchall()
 
 
-def add_wallet(user_id: int, provider: str, phone: str) -> dict:
+def add_wallet(user_id: int, provider: str, phone: str, holder_name: str | None = None) -> dict:
     if provider != "TOGOCEL":
         raise ValueError("Sélectionnez TOGOCEL.")
+    if not isinstance(holder_name, str) or any(ord(char) < 32 for char in holder_name):
+        raise ValueError("Saisissez le nom du titulaire du compte.")
+    holder_name = " ".join(holder_name.split())
+    if not holder_name or len(holder_name) > 120:
+        raise ValueError("Le nom du titulaire doit contenir entre 1 et 120 caractères.")
     normalized = normalize_phone("+228", phone)
     try:
         with connect() as connection, connection.cursor() as cursor:
             cursor.execute(
-                """INSERT INTO shineray_wallets (user_id, provider, phone)
-                   VALUES (%s, %s, %s) RETURNING id, provider, phone""",
-                (user_id, provider, normalized),
+                """INSERT INTO shineray_wallets (user_id, provider, phone, holder_name)
+                   VALUES (%s, %s, %s, %s) RETURNING id, provider, phone, holder_name""",
+                (user_id, provider, normalized, holder_name),
             )
             return cursor.fetchone()
     except UniqueViolation as exc:

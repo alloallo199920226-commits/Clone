@@ -19,10 +19,11 @@
 - `/notifications` : notifications
 - `/connexion` : connexion par numéro de téléphone et mot de passe
 - `/inscription` : création d’un compte avec numéro de téléphone et mot de passe
-- `/financement` : détails du financement (données illustratives)
+- `/financement` : registre des opérations réelles du compte
 - `/recharger` et `/retrait` : paiements indisponibles tant qu’aucun prestataire n’est connecté
-- `/historique-recharges` et `/historique-retraits` : historiques vides
-- `/gestion-compte-bancaire` et `/ajouter-compte-retrait` : gestion fictive des comptes de retrait
+- `/historique-recharges` et `/historique-retraits` : historiques réels, avec état vide lorsqu’il n’y a aucune opération
+- `/gestion-compte-bancaire` et `/ajouter-compte-retrait` : portefeuilles persistants avec nom du titulaire
+- `/mon-equipe` : membres invités par niveau, avec numéros masqués
 - `/a-propos`, `/regles` et `/service-client` : pages d’information et d’assistance
 
 Les pages du site et les API privées exigent une session. Les mots de passe sont

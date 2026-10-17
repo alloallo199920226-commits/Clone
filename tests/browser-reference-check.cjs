@@ -17,6 +17,7 @@ async function main() {
   ], { stdio: "ignore" });
   let socket;
   let userId;
+  const childUserIds = [];
   try {
     let tabs;
     for (let attempt = 0; attempt < 60; attempt++) {
@@ -36,13 +37,28 @@ async function main() {
     const paused = new Map();
     let sequence = 0;
     const errors = [];
+    const paymentResponses = [];
+    const paymentRequests = [];
     socket.addEventListener("message", event => {
       const message = JSON.parse(event.data);
+      if (message.method === "Page.javascriptDialogOpening" &&
+          process.argv.includes("--member-pages")) {
+        call("Page.handleJavaScriptDialog", { accept: true }).catch(error => errors.push(error.message));
+      }
       if (message.method === "Fetch.requestPaused") {
         paused.set(new URL(message.params.request.url).pathname, message.params.requestId);
       }
       if (message.method === "Runtime.exceptionThrown") {
         errors.push(message.params.exceptionDetails.text);
+      }
+      if (message.method === "Network.responseReceived" &&
+          new URL(message.params.response.url).pathname === "/api/payments") {
+        paymentResponses.push(message.params.response.status);
+      }
+      if (message.method === "Network.requestWillBeSent" &&
+          new URL(message.params.request.url).pathname === "/api/payments" &&
+          message.params.request.postData) {
+        paymentRequests.push(JSON.parse(message.params.request.postData));
       }
       const request = pending.get(message.id);
       if (!request) return;
@@ -86,6 +102,7 @@ async function main() {
     }
     await call("Runtime.enable");
     await call("Page.enable");
+    await call("Network.enable");
     await call("Emulation.setDeviceMetricsOverride", {
       width: 472, height: 864, deviceScaleFactor: 1, mobile: true,
     });
@@ -197,6 +214,197 @@ async function main() {
     assert.equal(modal.overflow, false);
     await evaluate("document.querySelector('[data-notification-close]').click()");
     assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
+    if (process.argv.includes("--member-pages")) {
+      async function noOverflow() {
+        assert.equal(await evaluate("document.documentElement.scrollWidth > innerWidth"), false);
+      }
+      for (const [route, name] of [
+        ["/financement", "finance"], ["/historique-recharges", "recharge-history"],
+        ["/historique-retraits", "withdraw-history"], ["/gestion-compte-bancaire", "wallet-empty"],
+      ]) {
+        await navigate(route);
+        await waitFor("!document.querySelector('[aria-busy=\"true\"]')");
+        await waitFor("[...document.images].every(i=>i.complete&&i.naturalWidth>0)");
+        await noOverflow();
+        const text = await evaluate("document.body.innerText");
+        assert(!text.includes("2,200") && !text.includes("2 200") && !text.includes("Bonus d'inscription"));
+        await screenshot(`shineray-${name}-reference`);
+      }
+      await navigate("/ajouter-compte-retrait");
+      assert.equal(await evaluate("document.querySelector('[name=holder_name]').required"), true);
+      assert.equal(await evaluate("document.querySelector('[data-wallet-form]').checkValidity()"), false);
+      await noOverflow();
+      await screenshot("shineray-wallet-form-reference");
+      await evaluate(`(() => {
+        const form=document.querySelector('[data-wallet-form]');
+        form.elements.provider.value='TOGOCEL';
+        form.elements.holder_name.value='Titulaire de test';
+        form.elements.phone.value=${JSON.stringify(phone)};
+        form.requestSubmit();
+      })()`);
+      await waitFor("location.pathname==='/gestion-compte-bancaire'");
+      await waitFor("Boolean(document.querySelector('.wallet-list-row'))");
+      assert(await evaluate("document.querySelector('[data-wallet-list]').innerText.includes('Titulaire de test')"));
+      assert.equal(await evaluate("document.querySelector('[data-wallet-empty]').hidden"), true);
+      await screenshot("shineray-wallet-populated-reference");
+      const storedWallet = await evaluate("fetch('/api/wallets').then(r=>r.json())");
+      assert.equal(storedWallet.wallets[0].holder_name, "Titulaire de test");
+      await evaluate("document.querySelector('[data-wallet-list] button').click()");
+      await waitFor("document.querySelector('[data-wallet-list]').children.length===0");
+      assert.equal(await evaluate("document.querySelector('[data-wallet-empty]').hidden"), false);
+      assert.equal(await evaluate("getComputedStyle(document.querySelector('[data-wallet-empty]')).display"), "flex");
+      await navigate("/a-propos");
+      await waitFor("[...document.images].every(i=>i.complete&&i.naturalWidth>0)");
+      await noOverflow();
+      assert(await evaluate("document.body.innerText.includes('600615.SH')"));
+      await screenshot("shineray-about-reference");
+      await evaluate("scrollTo(0,document.body.scrollHeight)");
+      await screenshot("shineray-about-scrolled-reference");
+      await navigate("/equipe");
+      await waitFor("/^[A-Z0-9]{8,10}$/.test(document.querySelector('[data-referral-code]').textContent.trim())");
+      const ownCode = await evaluate("document.querySelector('[data-referral-code]').textContent.trim()");
+      const inviteLink = await evaluate("document.querySelector('[data-referral-link]').textContent.trim()");
+      assert(inviteLink.includes(`/inscription?c=${ownCode}`));
+      await noOverflow();
+      await screenshot("shineray-team-reference");
+      await evaluate("document.querySelector('[data-copy-value=\"code\"]').click()");
+      await waitFor("document.querySelector('[data-team-status]').textContent.trim().length>0");
+      assert(await evaluate("document.querySelector('[data-team-status]').textContent.includes('Copi')"));
+      await navigate("/mon-equipe");
+      await waitFor("!document.querySelector('[data-team-detail-empty]').hidden");
+      await screenshot("shineray-team-detail-reference");
+      for (const level of ["2", "3", "1"]) {
+        await evaluate(`document.querySelector('[data-team-level-tab="${level}"]').click()`);
+        assert.equal(await evaluate(`document.querySelector('[data-team-level-tab="${level}"]').getAttribute('aria-selected')`), "true");
+        assert.equal(await evaluate("document.querySelector('[data-team-members]').children.length"), 0);
+      }
+      const childPhone = "9" + String(randomInt(1000000, 9999999));
+      const child = await evaluate(`fetch('/api/auth/register',{
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+          country_code:'+228',phone:${JSON.stringify(childPhone)},password:'reference-browser-test-password',
+          referral_code:${JSON.stringify(ownCode)}
+        })}).then(async r=>({status:r.status,body:await r.json()}))`);
+      assert.equal(child.status, 201, JSON.stringify(child));
+      childUserIds.push(child.body.user.id);
+      const login = await evaluate(`fetch('/api/auth/login',{
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(${JSON.stringify(payload)})
+      }).then(r=>r.status)`);
+      assert.equal(login, 200);
+      await navigate("/mon-equipe");
+      await waitFor("document.querySelector('[data-team-members]').children.length===1");
+      assert.equal(await evaluate("document.querySelector('[data-team-level-count=\"1\"]').textContent"), "1");
+      assert.equal(await evaluate("document.querySelector('[data-team-detail-empty]').hidden"), true);
+      assert(await evaluate("document.querySelector('[data-team-members]').innerText.includes('•••')"));
+      assert.equal(await evaluate(`document.querySelector('[data-team-members]').innerText.includes(${JSON.stringify(childPhone)})`), false);
+      await evaluate("document.querySelector('[data-team-level-tab=\"2\"]').click()");
+      assert.equal(await evaluate("document.querySelector('[data-team-members]').children.length"), 0);
+      assert.equal(await evaluate("document.querySelector('[data-team-detail-empty]').hidden"), false);
+      await call("Emulation.setDeviceMetricsOverride", { width:390,height:744,deviceScaleFactor:1,mobile:true });
+      for (const route of ["/financement","/historique-recharges","/historique-retraits",
+        "/gestion-compte-bancaire","/ajouter-compte-retrait","/a-propos","/equipe","/mon-equipe"]) {
+        await navigate(route);
+        await noOverflow();
+      }
+      assert.deepEqual(errors, []);
+      console.log("PASS: reference member pages, real empty histories, required wallet name persisted and deleted through UI, full About, personal invitation/copy, real referral member masked and filtered, two mobile widths.");
+      return;
+    }
+    if (process.argv.includes("--reference-pages")) {
+      const clickText = text => evaluate(`(() => {
+        const button=[...document.querySelectorAll('button')].find(b=>b.textContent.trim()===${JSON.stringify(text)});
+        if(!button) throw new Error('Missing button: '+${JSON.stringify(text)});
+        button.click();
+      })()`);
+      const noOverflow = async () => assert.equal(
+        await evaluate("document.documentElement.scrollWidth > innerWidth"), false);
+      const imagesLoaded = async () => {
+        await waitFor("[...document.images].every(image=>image.complete)");
+        assert(await evaluate("[...document.images].every(image=>image.naturalWidth>0)"), "Broken vehicle photo");
+      };
+      await imagesLoaded();
+      await noOverflow();
+      assert.equal(await evaluate("document.querySelectorAll('[data-purpose=\"buy-btn\"]').length"), 6);
+      assert.equal(await evaluate("Boolean([...document.scripts].find(s=>s.src.includes('tailwind')))"), false);
+      await screenshot("shineray-home-reference");
+      await evaluate("document.querySelector('[data-purpose=\"buy-btn\"]').click()");
+      await waitFor("Boolean(document.querySelector('dialog[open]'))");
+      await screenshot("shineray-purchase-reference");
+      await clickText("Annuler");
+      assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
+      await evaluate("document.querySelector('[data-purpose=\"buy-btn\"]').click()");
+      await clickText("Confirmer");
+      await waitFor("document.body.innerText.includes('Aucun montant n’a été débité ou crédité.')");
+      assert.deepEqual(paymentResponses, [503]);
+      await navigate("/recharger");
+      assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice]').length"), 6);
+      await noOverflow();
+      await screenshot("shineray-recharge-reference");
+      await evaluate("document.querySelector('[data-info-open]').click()");
+      assert(await evaluate("Boolean(document.querySelector('#reference-info[open]'))"));
+      await evaluate("document.querySelector('[data-info-close]').click()");
+      await evaluate("document.querySelector('[data-amount-choice=\"8000\"]').click()");
+      assert.equal(await evaluate("document.querySelector('#amount').value"), "8000");
+      await evaluate("document.querySelector('[data-channel-choice=\"1\"]').click()");
+      assert.equal(await evaluate("document.querySelector('[data-channel-choice=\"1\"]').getAttribute('aria-pressed')"), "true");
+      await clickText("Rechargez maintenant");
+      await waitFor("document.body.innerText.includes('Aucun montant n’a été débité ou crédité.')");
+      assert.deepEqual(paymentResponses, [503, 503]);
+      assert.equal(String(paymentRequests[1].channel), "1");
+      await evaluate("window.scrollTo(0,document.body.scrollHeight)");
+      await screenshot("shineray-recharge-instructions-reference");
+      await navigate("/retrait");
+      await imagesLoaded();
+      await waitFor("document.querySelector('[data-account-balance]')?.textContent.includes('0')");
+      await noOverflow();
+      await screenshot("shineray-withdraw-reference");
+      await evaluate("document.querySelector('#amount').value='10000';document.querySelector('#amount').dispatchEvent(new Event('input',{bubbles:true}))");
+      assert(await evaluate("/7[\\s,.]?800/.test(document.body.innerText)"), "22% reference fee preview should update");
+      await evaluate("window.scrollTo(0,document.body.scrollHeight)");
+      await screenshot("shineray-withdraw-instructions-reference");
+      await evaluate("document.querySelector('[data-wallet-select]').click()");
+      await waitFor("document.querySelector('[data-wallet-options]').innerText.includes('Aucun compte')");
+      assert.equal(await evaluate("document.querySelector('[data-wallet-options] a').getAttribute('href')"), "/ajouter-compte-retrait");
+      const walletResponse = await evaluate(`fetch('/api/wallets', {
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({provider:'TOGOCEL',phone:${JSON.stringify(phone)},holder_name:'Titulaire de test'})
+      }).then(async r=>({status:r.status,body:await r.json()}))`);
+      assert.equal(walletResponse.status, 201, JSON.stringify(walletResponse));
+      await navigate("/retrait");
+      await waitFor("document.querySelectorAll('[data-wallet-options] button').length===1");
+      await evaluate("document.querySelector('[data-wallet-select]').click();document.querySelector('[data-wallet-options] button').click()");
+      assert.equal(await evaluate("Number(document.querySelector('[data-payment-action]').dataset.walletId)"), walletResponse.body.wallet.id);
+      await evaluate("document.querySelector('#amount').value='2200';document.querySelector('#amount').dispatchEvent(new Event('input',{bubbles:true}))");
+      await clickText("Retirer de l'argent maintenant");
+      await waitFor("document.body.innerText.includes('Aucun montant n’a été débité ou crédité.')");
+      assert.deepEqual(paymentResponses, [503, 503, 503]);
+      assert.equal(paymentRequests[2].wallet_id, walletResponse.body.wallet.id);
+      await navigate("/service-client");
+      await imagesLoaded();
+      await noOverflow();
+      await screenshot("shineray-support-reference");
+      await evaluate("document.querySelector('[data-contact]').click()");
+      assert(await evaluate("Boolean(document.querySelector('dialog[open]'))"));
+      assert(await evaluate("document.querySelector('dialog[open]').innerText.includes('configur')"));
+      await call("Emulation.setDeviceMetricsOverride", {
+        width: 390, height: 744, deviceScaleFactor: 1, mobile: true,
+      });
+      for (const route of ["/accueil", "/recharger", "/retrait", "/service-client"]) {
+        await navigate(route);
+        if (route === "/accueil") {
+          await waitFor("Boolean(document.querySelector('dialog[open]'))");
+          await evaluate("document.querySelector('[data-notification-close]').click()");
+          await evaluate("document.querySelector('[data-purpose=\"buy-btn\"]').click()");
+          assert(await evaluate("(()=>{const r=document.querySelector('dialog[open]').getBoundingClientRect();return r.x>=0&&r.right<=innerWidth&&r.y>=0&&r.bottom<=innerHeight})()"));
+        }
+        await noOverflow();
+      }
+      assert.deepEqual(errors, []);
+      const currentUser = await evaluate("fetch('/api/me').then(r=>r.json())");
+      assert.equal(currentUser.balance_fcfa, 0, "Reference actions must not change real funds");
+      console.log("PASS: reference home, purchase dialog cancel/real provider failure, recharge presets/failure, withdrawal real balance/fee preview, support photos, no overflow at472/390, no fake funds.");
+      console.log("Screenshots: /tmp/shineray-{home,purchase,recharge,withdraw,support}-reference.png");
+      return;
+    }
     await navigate("/compte");
     await waitFor("document.querySelector('[data-user-phone]')?.textContent.includes('228')");
     await waitFor("document.querySelector('[data-demo-balance]')?.textContent.trim() === '0'");
@@ -244,10 +452,11 @@ async function main() {
     browser.kill("SIGTERM");
     if (Number.isSafeInteger(userId)) {
       execFileSync("python3", ["-c", [
-        "import sys, auth_backend",
+        "import sys, json, auth_backend",
         "with auth_backend.connect() as conn, conn.cursor() as cur:",
-        " cur.execute('DELETE FROM shineray_users WHERE id = %s', (int(sys.argv[1]),))",
-      ].join("\n"), String(userId)], { stdio: "inherit" });
+        " for user_id in json.loads(sys.argv[1]):",
+        "  cur.execute('DELETE FROM shineray_users WHERE id = %s', (user_id,))",
+      ].join("\n"), JSON.stringify([...childUserIds.reverse(), userId])], { stdio: "inherit" });
     }
     await new Promise(resolve => setTimeout(resolve, 200));
     fs.rmSync(profile, { recursive: true, force: true });

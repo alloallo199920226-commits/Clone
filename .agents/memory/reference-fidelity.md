@@ -9,11 +9,17 @@ Reproduce the user’s supplied screen composition and text closely rather than 
 
 **How to apply:** compare the actual opened notification and signed-in account view to the supplied images. A screenshot of the closed selector or sign-in page does not verify an interactive or authenticated screen. Describe exactly which states were checked; do not imply iPhone Safari or published-site verification from a development Chromium check.
 
+Ground delegated edits in the existing route map, and verify them through the actual signed-in URL, not merely by checking that new files exist.
+
+**Why:** similarly spelled imported directories and output-directory prefixes caused reference markup to be written somewhere other than the page served to users.
+
+**How to apply:** resolve the live route to its current source before delegating, preserve that path, and confirm the rendered route after integration.
+
 Use real photos of attractive modern vehicles, not screenshots as image backgrounds. Keep phone numbers and balances account-specific, never copied from a reference image.
 
-**Why:** the user explicitly requested vehicle photos rather than screenshots and real platform data. Some imported remote images that appeared vehicle-related actually contained entire UI captures.
+**Why:** the user explicitly requested vehicle photos rather than screenshots and real platform data. Some imported remote images that appeared vehicle-related actually contained entire UI captures or unrelated vehicle models.
 
-**How to apply:** inspect the rendered asset itself before accepting it as a vehicle photograph. Match layout without presenting reference financial figures as real funds or activated returns.
+**How to apply:** inspect the rendered asset itself and compare the vehicle to the reference, rather than trusting a filename or VIP label. Match layout without presenting reference financial figures as real funds or activated returns.
 
 The country selector must show its states one after another and follow the real Internet connection, not just run a fast fixed animation. The user describes the first indicator as resembling a pulley, not a circle.
 

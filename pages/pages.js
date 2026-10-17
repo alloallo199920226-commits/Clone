@@ -66,6 +66,7 @@
         body: JSON.stringify({
           provider: walletForm.elements.provider.value,
           phone: walletForm.elements.phone.value,
+            holder_name: walletForm.elements.holder_name.value,
         }),
       });
       location.assign("/gestion-compte-bancaire");
@@ -77,14 +78,23 @@
 
   const walletList = document.querySelector("[data-wallet-list]");
   if (walletList) {
+    walletList.setAttribute("aria-busy", "true");
+    const empty = document.querySelector("[data-wallet-empty]");
+    if (empty) empty.hidden = true;
     api("/api/wallets").then(({ wallets }) => {
-      const empty = document.querySelector("[data-wallet-empty]");
       if (empty) empty.hidden = wallets.length > 0;
       wallets.forEach((wallet) => {
         const row = document.createElement("article");
-        row.className = "finance-row";
-        const text = document.createElement("span");
-        text.textContent = `${wallet.provider} · ${wallet.phone}`;
+        row.className = "finance-row wallet-list-row";
+        const text = document.createElement("div");
+        text.className = "wallet-details";
+        const holder = document.createElement("span");
+        holder.className = "wallet-name";
+        holder.textContent = `${wallet.provider}${wallet.holder_name ? ` · ${wallet.holder_name}` : ""}`;
+        const phone = document.createElement("span");
+        phone.className = "wallet-phone";
+        phone.textContent = wallet.phone;
+        text.append(holder, phone);
         const remove = document.createElement("button");
         remove.type = "button";
         remove.className = "button-outline";
@@ -95,7 +105,7 @@
           try {
             await api(`/api/wallets/${wallet.id}`, { method: "DELETE" });
             row.remove();
-            if (empty) empty.hidden = walletList.children.length > 0;
+          if (empty) empty.hidden = walletList.children.length > 0;
           } catch (error) {
             status.textContent = error.message;
             remove.disabled = false;
@@ -104,7 +114,8 @@
         row.append(text, remove);
         walletList.append(row);
       });
-    }).catch((error) => { status.textContent = error.message; });
+    }).catch((error) => { status.textContent = error.message; })
+      .finally(() => walletList.setAttribute("aria-busy", "false"));
   }
 
   document.querySelectorAll("[data-account-balance]").forEach((element) => {
@@ -115,6 +126,9 @@
 
   const activityList = document.querySelector("[data-activity-list]");
   if (activityList) {
+    activityList.setAttribute("aria-busy", "true");
+    const emptyState = document.querySelector("[data-activity-empty]");
+    if (emptyState) emptyState.hidden = true;
     const kind = activityList.dataset.activityKind;
     const query = kind && kind !== "all" ? `?kind=${encodeURIComponent(kind)}` : "";
     fetch(`/api/activity${query}`)
@@ -132,6 +146,9 @@
           const meta = document.createElement("small");
           const amountText = document.createElement("span");
           title.className = "finance-kind";
+          if (["recharge", "bonus", "commission"].includes(activity.kind)) title.classList.add("finance-incoming");
+          meta.className = "finance-meta";
+          amountText.className = "finance-amount";
           title.textContent = activity.label;
           meta.textContent = new Date(activity.created_at).toLocaleString("fr-FR");
           amountText.textContent = `FCFA ${formatter.format(activity.amount_fcfa)}`;
@@ -139,7 +156,6 @@
           row.append(details, amountText);
           activityList.append(row);
         });
-        const emptyState = document.querySelector("[data-activity-empty]");
         if (emptyState) emptyState.hidden = activities.length > 0;
         if (kind === "purchase") {
           const count = document.querySelector("[data-purchase-count]");
@@ -151,8 +167,11 @@
         }
       })
       .catch(() => {
-        const emptyState = document.querySelector("[data-activity-empty]");
-        if (emptyState) emptyState.textContent = "Historique temporairement indisponible.";
-      });
+        if (emptyState) {
+          emptyState.hidden = false;
+          emptyState.textContent = "Historique temporairement indisponible.";
+        }
+      })
+      .finally(() => activityList.setAttribute("aria-busy", "false"));
   }
 })();

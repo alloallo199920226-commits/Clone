@@ -1,8 +1,29 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retrait — SHINERAY</title><link rel="stylesheet" href="/pages/pages.css"><script src="/pages/pages.js" defer></script></head>
-<body><main class="page"><header class="page-header"><a class="back" href="/compte" aria-label="Retour au compte">‹</a><h1>Retrait</h1><span class="header-spacer"></span></header>
-<div class="page-content"><div class="vehicle-banner"><img src="/page_d_accueil_shineray/modern-suv-hero.jpg" alt="SUV moderne"><div class="vehicle-overlay"><small>Solde disponible</small><strong data-account-balance>Chargement…</strong></div></div>
-<p class="hint" role="status">Les retraits sont indisponibles : aucun prestataire de paiement n’est connecté.</p>
-<label class="field-label">Compte de retrait</label><a class="button-outline button-wide" href="/gestion-compte-bancaire">Gérer mes comptes portefeuille　›</a>
-<label class="field-label" for="amount">Montant du retrait</label><div class="field-inline"><span>FCFA</span><input class="input" id="amount" type="number" min="1" step="1" placeholder="Saisissez un montant" inputmode="numeric"></div>
-<p class="hint">Les frais seront affichés avant confirmation lorsque les retraits seront disponibles.</p><button class="button-red button-wide" type="button" disabled>Retrait indisponible</button><p class="status" data-status role="status"></p><a href="/historique-retraits">Historique des retraits</a></div></main></body></html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retrait — SHINERAY</title><link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/payment-reference.css"><script src="/pages/payment-reference.js" defer></script></head>
+<body><main class="finance-page">
+  <header class="finance-header"><a class="finance-back" href="/compte" aria-label="Retour au compte">‹</a><h1>Retrait</h1><button class="info-button" type="button" aria-label="Informations sur le retrait" data-info-open>i</button></header>
+  <div class="finance-content withdraw-content">
+    <figure class="vehicle-balance"><img src="/pages/assets/withdraw-suv.jpg" alt="SUV SWM sur une piste désertique"><figcaption>Solde du compte<strong data-account-balance>Chargement…</strong></figcaption></figure>
+    <div class="finance-section-label"><span>Compte de retrait</span></div>
+    <button type="button" class="wallet-select" data-wallet-select><span data-wallet-label>Sélectionnez le compte portefeuille de retrait</span><span class="chevron" aria-hidden="true">›</span></button>
+    <div class="wallet-options" data-wallet-options hidden></div><p class="payment-status" data-wallet-status role="status" aria-live="polite"></p>
+    <div class="finance-section-label amount-title"><span>Montant du retrait</span><small>Impôt: 22%</small></div>
+    <label class="input-wrap"><span>FCFA</span><input id="amount" type="number" min="2200" step="1" inputmode="numeric" placeholder="Veuillez choisir le montant du retrait" aria-label="Montant du retrait"></label>
+    <p class="received-amount" data-amount-received>Montant reçu: FCFA 0.00</p>
+    <p class="minimum-note">( Minimum FCFA 2,200 )</p>
+    <button class="payment-submit withdraw-submit" type="button" data-payment-action data-payment-kind="withdrawal">Retirer de l'argent maintenant</button>
+    <p class="payment-status" data-payment-status role="status" aria-live="polite"></p>
+    <section class="instructions"><h2>Instructions de retrait</h2><ol>
+      <li>1. Le montant minimum de retrait est de 2200 FCFA.</li>
+      <li>2. Il n'y a pas de limite de temps pour les retraits ; vous pouvez effectuer plusieurs retraits.</li>
+      <li>3. 22 % des frais de retrait serviront à couvrir les pertes liées à ce produit.</li>
+      <li>4. Les retraits sont généralement traités sous 2 heures, mais ce délai peut être exceptionnellement prolongé à 24 heures.</li>
+      <li>5. Veuillez saisir correctement les informations de votre compte de retrait ; toute information incorrecte entraînera l'échec du retrait.</li>
+      <li>6. Afin de protéger les droits et intérêts de la plateforme et de ses membres, vous devez investir avant de pouvoir effectuer un retrait.</li>
+    </ol></section>
+    <p class="payment-disclosure">Conditions de référence non activées : le seuil de 2 200 FCFA et le calcul indicatif de 22 % ne constituent pas une politique appliquée. Retraits et frais ne sont pas disponibles. Aucun revenu n'est garanti.</p>
+    <p class="payment-disclosure"><a href="/historique-retraits">Historique des retraits</a></p>
+  </div>
+</main>
+<dialog class="finance-dialog" id="reference-info"><h2>Conditions de référence</h2><p>Le montant minimum et les frais de 22 % reproduisent les conditions figurant sur le document de référence. Elles ne sont pas activées ni garanties et ne sont pas appliquées par le serveur. Le retrait est actuellement indisponible faute de prestataire ; aucun mouvement ne sera effectué.</p><button type="button" data-info-close>Compris</button></dialog>
+</body></html>

@@ -1,10 +1,28 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recharger — SHINERAY</title><link rel="stylesheet" href="/pages/pages.css"><script src="/pages/pages.js" defer></script></head>
-<body><main class="page"><header class="page-header"><a class="back" href="/accueil" aria-label="Retour à l’accueil">‹</a><h1>Recharger</h1><span class="header-spacer"></span></header>
-<div class="page-content"><p class="hint" role="status">Les recharges sont indisponibles pour le moment. Aucun prestataire de paiement n’est connecté.</p>
-<label class="field-label" for="amount">Montant de la recharge</label>
-<div class="amount-options"><button class="amount-choice" type="button" data-amount-choice="4000">4 000</button><button class="amount-choice" type="button" data-amount-choice="8000">8 000</button><button class="amount-choice" type="button" data-amount-choice="15000">15 000</button></div>
-<div class="field-inline"><span>FCFA</span><input class="input" id="amount" type="number" min="1" step="1" placeholder="Saisissez un montant" inputmode="numeric"></div>
-<label class="field-label">Méthode de recharge</label><p class="hint">Aucune méthode disponible.</p>
-<button class="button-red button-wide" type="button" disabled>Recharge indisponible</button>
-<p class="status" data-status role="status" aria-live="polite"></p><a href="/historique-recharges">Historique des recharges</a></div></main></body></html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recharger — SHINERAY</title><link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/payment-reference.css"><script src="/pages/payment-reference.js" defer></script></head>
+<body><main class="finance-page">
+  <header class="finance-header"><a class="finance-back" href="/accueil" aria-label="Retour à l’accueil">‹</a><h1>Recharger</h1><button class="info-button" type="button" aria-label="Informations sur la recharge" data-info-open>i</button></header>
+  <div class="finance-content">
+    <div class="finance-section-label"><span>Montant de la recharge</span><small>(Minimum 4 000 FCFA)</small></div>
+    <div class="amount-options" aria-label="Montants proposés">
+      <button type="button" class="amount-choice" data-amount-choice="4000" aria-pressed="false">4000</button><button type="button" class="amount-choice" data-amount-choice="8000" aria-pressed="false">8000</button><button type="button" class="amount-choice" data-amount-choice="15000" aria-pressed="false">15000</button><button type="button" class="amount-choice" data-amount-choice="40000" aria-pressed="false">40000</button><button type="button" class="amount-choice" data-amount-choice="80000" aria-pressed="false">80000</button><button type="button" class="amount-choice" data-amount-choice="120000" aria-pressed="false">120000</button>
+    </div>
+    <label class="input-wrap"><span>FCFA</span><input id="amount" type="number" min="4000" step="1" inputmode="numeric" placeholder="Veuillez saisir le montant de la recharge" aria-label="Montant de la recharge"></label>
+    <h2 class="channel-heading">Méthode de recharge</h2>
+    <button class="channel-choice" type="button" data-channel-choice="2" aria-pressed="true">Recharger le canal 2</button>
+    <button class="channel-choice" type="button" data-channel-choice="1" aria-pressed="false">Recharger le canal 1</button>
+    <button class="payment-submit" type="button" data-payment-action data-payment-kind="recharge">Rechargez maintenant</button>
+    <p class="payment-status" data-payment-status role="status" aria-live="polite"></p>
+    <section class="instructions"><h2>Instructions de recharge</h2><ol>
+      <li>1. Le dépôt minimum est de 4 000 FCFA. Les dépôts inférieurs à ce montant ne seront pas crédités sur votre compte.</li>
+      <li>2. Veuillez utiliser votre compte le plus récent pour chaque dépôt.</li>
+      <li>3. Le montant de la marge doit correspondre au montant du paiement.</li>
+      <li>4. Si votre dépôt n'est pas crédité immédiatement après le transfert, veuillez contacter le service client.</li>
+      <li>5. Cher membre, si vous recevez le message « Portefeuille indisponible » lors d'un rechargement via Moov, vous pouvez utiliser Togocel pour recharger votre compte ; le rechargement se déroulera normalement.</li>
+    </ol></section>
+    <p class="payment-disclosure">Information importante : aucun prestataire de paiement n'est actuellement connecté. Les instructions ci-dessus sont des références non activées ; ne transférez pas de fonds. Aucune recharge ne peut être confirmée.</p>
+    <p class="payment-disclosure"><a href="/historique-recharges">Historique des recharges</a></p>
+  </div>
+</main>
+<dialog class="finance-dialog" id="reference-info"><h2>Disponibilité des recharges</h2><p>Aucun prestataire de paiement n'est connecté. Le canal choisi et les montants affichés sont des références uniquement. N'effectuez aucun transfert ; aucune recharge ne peut actuellement être créditée.</p><button type="button" data-info-close>Compris</button></dialog>
+</body></html>

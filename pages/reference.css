@@ -127,6 +127,15 @@
   font-weight: 700;
 }
 
+.service-page .page-header { min-height: 54px; }
+.service-page .service-banner { width: 100%; margin: 6px 0 0; aspect-ratio: 472 / 266; }
+.service-page .reference-hours { min-height: 82px; margin: 0; background: linear-gradient(90deg, #e50920, #000); }
+.service-page .reference-hours strong { font-size: 22px; }
+.service-page .reference-contact-list { gap: 11px; margin: 16px 0 0; padding: 50px 24px 39px; background: linear-gradient(90deg, #e50920, #000); }
+.service-page .reference-contact { min-height: 61px; padding: 0 24px 0 33px; }
+.service-page .contact-main { gap: 34px; }
+.service-page .reference-telegram { width: 39px; height: 39px; flex-basis: 39px; }
+
 .service-banner {
   width: calc(100% - 4px);
   margin-left: 2px;
@@ -226,4 +235,59 @@
   .reference-contact {
     padding-left: 12px;
   }
+}
+
+/* Service rows remain visually faithful while reporting that no destinations are configured. */
+.service-page .reference-contact {
+  width: 100%;
+  border: 0;
+  text-align: left;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+
+.service-page .reference-contact:focus-visible {
+  outline: 2px solid #222;
+  outline-offset: 2px;
+}
+
+.service-page .contact-chevron {
+  flex: 0 0 auto;
+  color: #333;
+  font-size: 31px;
+  line-height: 1;
+}
+
+.service-unavailable {
+  width: min(390px, calc(100% - 32px));
+  border: 0;
+  border-radius: 7px;
+  padding: 22px;
+  color: #222;
+  box-shadow: 0 12px 40px #0004;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.service-unavailable::backdrop {
+  background: #0008;
+}
+
+.service-unavailable h2 {
+  margin: 0 0 11px;
+  font-size: 17px;
+}
+
+.service-unavailable p {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.service-unavailable button {
+  display: block;
+  margin-left: auto;
+  border: 0;
+  border-radius: 4px;
+  padding: 10px 20px;
+  background: #e50920;
+  color: #fff;
 }

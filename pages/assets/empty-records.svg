@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 204" fill="none">
+  <defs>
+    <linearGradient id="mist" x1="124" y1="121" x2="124" y2="187" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F1F2F4"/><stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="90" y1="53" x2="158" y2="159" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5F6F7"/><stop offset="1" stop-color="#E7E9EC"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="124" cy="157" rx="112" ry="39" fill="url(#mist)"/>
+  <path d="M54 43c-10-10-12-16-12-16 13 0 21 7 23 18-4 2-8 1-11-2Z" fill="#E5E7EA"/>
+  <path d="M196 50c-1-12 4-19 15-26 2 17-2 25-14 30l-1-4Z" fill="#E5E7EA"/>
+  <path d="M53 123c-8-5-11-11-10-20 9 4 14 10 14 19l-4 1Z" fill="#E7E9EB"/>
+  <path d="M72 52h104v126H72z" fill="url(#paper)"/>
+  <path d="M85 65h78v94H85z" fill="#fff"/>
+  <path d="M95 84h53M95 105h53M95 126h35" stroke="#E6E8EB" stroke-width="5" stroke-linecap="square"/>
+  <path d="M110 49V40a14 14 0 0 1 28 0v9" fill="#E7E9EC"/>
+  <path d="M97 42h55v15H97z" fill="#DCDDDF"/>
+  <path d="M80 150h76v13H90c-6 0-10-5-10-13Z" fill="#D9DBDE"/>
+  <path d="M156 150h8v13c-5 0-8-5-8-13Z" fill="#E5E7E9"/>
+</svg>

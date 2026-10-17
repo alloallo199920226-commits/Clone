@@ -74,11 +74,27 @@ class AccountFlowTests(unittest.TestCase):
         _, _, body = self.request("GET", "/api/team", cookie=first_cookie)
         self.assertEqual(json.loads(body)["levels"], [1, 0, 0])
         self.assertEqual(json.loads(body)["revenue_fcfa"], 0)
-        status, _, body = self.request("POST", "/api/wallets", {
+        member = json.loads(body)["members"][0]
+        self.assertEqual(member["level"], 1)
+        self.assertIn("•••", member["phone_masked"])
+        self.assertNotIn(second["phone"], member["phone_masked"])
+        status, _, _ = self.request("POST", "/api/wallets", {
             "provider": "TOGOCEL", "phone": "90123456",
+        }, first_cookie)
+        self.assertEqual(status, 400)
+        for name in (" ", "x" * 121, "Bad\nName"):
+            status, _, _ = self.request("POST", "/api/wallets", {
+                "provider": "TOGOCEL", "phone": "90123456", "holder_name": name,
+            }, first_cookie)
+            self.assertEqual(status, 400)
+        status, _, body = self.request("POST", "/api/wallets", {
+            "provider": "TOGOCEL", "phone": "90123456", "holder_name": "  Titulaire  de test  ",
         }, first_cookie)
         self.assertEqual(status, 201, body)
         wallet_id = json.loads(body)["wallet"]["id"]
+        self.assertEqual(json.loads(body)["wallet"]["holder_name"], "Titulaire de test")
+        _, _, body = self.request("GET", "/api/wallets", cookie=first_cookie)
+        self.assertEqual(json.loads(body)["wallets"][0]["holder_name"], "Titulaire de test")
         _, _, body = self.request("GET", "/api/wallets", cookie=second_cookie)
         self.assertEqual(json.loads(body)["wallets"], [])
         status, _, _ = self.request("DELETE", f"/api/wallets/{wallet_id}", cookie=second_cookie)
@@ -110,7 +126,7 @@ class AccountFlowTests(unittest.TestCase):
         self.assertEqual(status, 401)
 
     def test_page_protection_invalid_referral_and_assets(self):
-        for route in ("/accueil", "/compte", "/notifications", "/a-propos", "/regles"):
+        for route in ("/accueil", "/compte", "/notifications", "/a-propos", "/regles", "/mon-equipe"):
             status, headers, _ = self.request("GET", route)
             self.assertEqual(status, 302)
             self.assertEqual(headers["Location"], "/connexion")
@@ -127,3 +143,24 @@ class AccountFlowTests(unittest.TestCase):
         for asset in ("about-fleet.jpg", "about-showroom.jpg", "rules-banner.jpg", "service-t30.jpg"):
             status, _, _ = self.request("GET", f"/pages/assets/{asset}")
             self.assertEqual(status, 200)
+
+    def test_real_history_is_filtered_and_scoped_to_the_account(self):
+        user, cookie = self.create_user()
+        _, other_cookie = self.create_user()
+        with auth_backend.connect() as connection, connection.cursor() as cursor:
+            cursor.execute(
+                """INSERT INTO shineray_transactions
+                   (user_id, kind, label, amount_fcfa, provider_reference)
+                   VALUES (%s, 'recharge', 'Test de registre isolé', 4000, %s)""",
+                (user["id"], "account-test-" + secrets.token_hex(16)),
+            )
+        status, _, body = self.request("GET", "/api/activity?kind=recharge", cookie=cookie)
+        self.assertEqual(status, 200)
+        activities = json.loads(body)["activities"]
+        self.assertEqual(len(activities), 1)
+        self.assertEqual(activities[0]["amount_fcfa"], 4000)
+        self.assertEqual(activities[0]["label"], "Test de registre isolé")
+        _, _, body = self.request("GET", "/api/activity?kind=withdrawal", cookie=cookie)
+        self.assertEqual(json.loads(body)["activities"], [])
+        _, _, body = self.request("GET", "/api/activity", cookie=other_cookie)
+        self.assertEqual(json.loads(body)["activities"], [])
