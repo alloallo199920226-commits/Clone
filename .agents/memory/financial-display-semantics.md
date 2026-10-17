@@ -14,3 +14,9 @@ Purchase cost is not earned income. Withdrawal net amounts and product earnings 
 **Why:** the reference has separate purchase-price, earned-income, and amount-received figures; silently calculating one from another would present unsupported financial information.
 
 **How to apply:** display unknown financial facts as “—”. Report per-level commissions only when settled commissions can actually be attributed to members at those levels; do not distribute an unallocated total using advertised rates.
+
+Deposit recipient details will come from the administrator. Screenshot recipient information is not configuration.
+
+**Why:** the user clarified: “les information viendras de ladmin toi tu doit juste reproduire la maquette”.
+
+**How to apply:** reproduce the deposit screens and their navigation without requesting or inventing merchant details for the maquette. Keep recipient information explicitly unconfigured until supplied through administration.

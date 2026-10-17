@@ -14,6 +14,18 @@
     });
   });
   const action = document.querySelector("[data-payment-action]");
+  if (action?.dataset.paymentKind === "recharge") {
+    try {
+      const draft = JSON.parse(sessionStorage.getItem("shineray-deposit-draft"));
+      if (draft && Number.isSafeInteger(draft.amount_fcfa) && draft.amount_fcfa >= 4000 &&
+          Date.now() - draft.created_at >= 0 && Date.now() - draft.created_at < 30 * 60 * 1000) {
+        formAmount.value = draft.amount_fcfa;
+        document.querySelectorAll("[data-channel-choice]").forEach(button => {
+          button.setAttribute("aria-pressed", String(Number(button.dataset.channelChoice) === draft.channel));
+        });
+      }
+    } catch { /* No saved amount. */ }
+  }
   action?.addEventListener("click", async () => {
     const amount = Number(formAmount.value);
     const minimum = Number(formAmount.min || 1);
@@ -29,6 +41,21 @@
     if (action.dataset.walletId) body.wallet_id = Number(action.dataset.walletId);
     if (action.dataset.paymentKind === "recharge") {
       body.channel = Number(document.querySelector("[data-channel-choice][aria-pressed='true']")?.dataset.channelChoice || 2);
+      try {
+        sessionStorage.setItem("shineray-deposit-draft", JSON.stringify({
+          amount_fcfa: amount, channel: body.channel, created_at: Date.now(),
+        }));
+      } catch {
+        status.textContent = "Impossible de conserver votre choix. Autorisez le stockage du navigateur puis réessayez.";
+        return;
+      }
+      const next = document.createElement("a");
+      next.href = "/choisir-operateur";
+      next.hidden = true;
+      document.body.append(next);
+      next.click();
+      next.remove();
+      return;
     }
     action.disabled = true;
     status.textContent = "Vérification de la disponibilité…";

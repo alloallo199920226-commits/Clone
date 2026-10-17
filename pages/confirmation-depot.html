@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr" class="deposit-document">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f0bd22">
+  <title>Confirmation du dépôt — Valhalla Pay</title>
+  <link rel="stylesheet" href="/pages/deposit-flow.css">
+  <script src="/pages/deposit-flow.js" defer></script>
+</head>
+<body class="deposit-page deposit-page--confirmation">
+  <main class="deposit-shell">
+    <section class="deposit-card" aria-labelledby="deposit-title">
+      <div class="deposit-missing" data-deposit-missing hidden role="alert">
+        <p>Les informations de ce dépôt ne sont pas disponibles.</p>
+        <a href="/recharger">Retourner à Recharger</a>
+      </div>
+
+      <div class="deposit-content" data-deposit-content>
+        <header class="deposit-confirmation-header" id="deposit-title">
+          <strong class="deposit-selected-operator" data-selected-operator>—</strong>
+          <span class="deposit-timer" aria-label="Temps restant non configuré">—:—</span>
+          <button class="deposit-language" type="button" data-deposit-language title="Version anglaise à configurer" aria-label="Version anglaise à configurer" disabled>English</button>
+          <a class="deposit-close" href="/recharger" aria-label="Fermer et revenir à Recharger">×</a>
+        </header>
+
+        <div class="deposit-body">
+          <div class="deposit-details" aria-label="Détails du paiement">
+            <div class="deposit-detail-card">
+              <span class="deposit-detail-label">Nom du marchand</span>
+              <strong class="deposit-detail-value" data-merchant-name>À configurer par l’administrateur</strong>
+              <button class="deposit-copy" type="button" data-copy="merchant_name" aria-label="Copier le nom du marchand" disabled>Copier</button>
+            </div>
+            <div class="deposit-detail-card">
+              <span class="deposit-detail-label">Compte marchand</span>
+              <strong class="deposit-detail-value" data-merchant-account>À configurer par l’administrateur</strong>
+              <button class="deposit-copy" type="button" data-copy="merchant_account" aria-label="Copier le compte marchand" disabled>Copier</button>
+            </div>
+            <div class="deposit-detail-card">
+              <span class="deposit-detail-label">Montant</span>
+              <strong class="deposit-detail-value"><span data-deposit-amount>—</span></strong>
+              <button class="deposit-copy" type="button" data-copy="amount" aria-label="Copier le montant du dépôt" disabled>Copier</button>
+            </div>
+          </div>
+
+          <section class="deposit-ussd-card" aria-labelledby="ussd-heading">
+            <h2 class="deposit-ussd-heading" id="ussd-heading" data-ussd-heading>Code USSD</h2>
+            <p class="deposit-ussd-instructions">Composez le code de votre opérateur et suivez les instructions à l’écran.</p>
+            <div class="deposit-ussd-code" data-ussd-code>Code non configuré</div>
+            <div class="deposit-ussd-actions">
+              <a class="deposit-action deposit-action--primary" data-deposit-dial aria-disabled="true">Composer le code</a>
+              <button class="deposit-action" type="button" data-copy="ussd" disabled>Copier le code</button>
+            </div>
+            <div class="deposit-reference"><span>Référence</span><strong data-deposit-reference>—</strong></div>
+            <p class="deposit-ussd-note">Aucun code PIN ne vous sera demandé sur cette page. Ne le communiquez à personne.</p>
+          </section>
+
+          <section class="deposit-validation" aria-label="Validation du dépôt">
+            <h2 class="deposit-validation-title">Validation du dépôt</h2>
+            <p class="deposit-validation-status" data-deposit-validation role="status" aria-live="polite">En attente de configuration</p>
+            <button class="deposit-result" type="button" data-deposit-result disabled>Obtenir le résultat</button>
+            <p class="deposit-result-message" data-deposit-status role="status" aria-live="polite"></p>
+          </section>
+
+          <div class="deposit-payer-card">
+            <div>
+              <span class="deposit-payer-label">Numéro utilisé</span>
+              <strong class="deposit-payer-value" data-deposit-phone>—</strong>
+            </div>
+            <a class="deposit-modify" data-deposit-modify href="/choisir-operateur">Modifier</a>
+          </div>
+
+          <p class="deposit-notice"><strong>Configuration en attente.</strong> Aucun paiement n’a été initié. Les coordonnées et instructions seront fournies par l’administrateur.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

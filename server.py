@@ -21,6 +21,8 @@ PAGES = {
     "/inscription": "inscription",
 }
 MORE_PAGES = {
+    "/choisir-operateur": "choisir-operateur.html",
+    "/confirmation-depot": "confirmation-depot.html",
     "/mon-equipe": "mon-equipe.html",
     "/financement": "financement.html",
     "/recharger": "recharger.html",
@@ -34,6 +36,8 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/pages/deposit-flow.css": ("pages/deposit-flow.css", "text/css; charset=utf-8"),
+    "/pages/deposit-flow.js": ("pages/deposit-flow.js", "text/javascript; charset=utf-8"),
     "/pages/navigation-loading.css": ("pages/navigation-loading.css", "text/css; charset=utf-8"),
     "/pages/navigation-loading.js": ("pages/navigation-loading.js", "text/javascript; charset=utf-8"),
     "/pages/records-reference.css": ("pages/records-reference.css", "text/css; charset=utf-8"),

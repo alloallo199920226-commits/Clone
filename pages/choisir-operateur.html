@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr" class="deposit-document">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f0bd22">
+  <title>Choisir un opérateur — Valhalla Pay</title>
+  <link rel="stylesheet" href="/pages/deposit-flow.css">
+  <script src="/pages/deposit-flow.js" defer></script>
+</head>
+<body class="deposit-page deposit-page--operator">
+  <main class="deposit-shell">
+    <div class="deposit-topline deposit-topline--close">
+      <a class="deposit-close" href="/recharger" aria-label="Fermer et revenir à Recharger">×</a>
+    </div>
+
+    <section class="deposit-card" aria-labelledby="deposit-title">
+      <div class="deposit-missing" data-deposit-missing hidden role="alert">
+        <p>Votre montant de recharge n’a pas été sélectionné.</p>
+        <a href="/recharger">Retourner à Recharger</a>
+      </div>
+
+      <div class="deposit-content" data-deposit-content>
+        <header class="deposit-card-header">
+          <h1 class="deposit-brand" id="deposit-title">Valhalla Pay</h1>
+          <div class="deposit-heading-tools" aria-label="Outils de paiement">
+            <span class="deposit-timer" aria-label="Temps restant non configuré">—:—</span>
+            <button class="deposit-language" type="button" data-deposit-language title="Version anglaise à configurer" aria-label="Version anglaise à configurer" disabled>English</button>
+          </div>
+        </header>
+
+        <div class="deposit-body">
+          <div class="deposit-amount-bar" aria-label="Montant sélectionné">
+            <span class="deposit-amount-label">Montant du paiement</span>
+            <strong class="deposit-amount-value"><span data-deposit-amount>—</span></strong>
+          </div>
+
+          <h2 class="deposit-section-title">Veuillez sélectionner un mode de paiement</h2>
+          <div class="deposit-operator-set">
+            <div class="deposit-operator-logos" aria-hidden="true">
+              <span class="operator-logo operator-logo--mtn">MTN</span>
+              <span class="operator-logo operator-logo--moov">MOOV</span>
+            </div>
+            <div class="deposit-operator-options" role="group" aria-label="Opérateur de paiement">
+              <button class="deposit-operator" type="button" data-operator="mtn" aria-pressed="false">
+                <span>MTN</span><span class="deposit-check" aria-hidden="true">✓</span>
+              </button>
+              <button class="deposit-operator" type="button" data-operator="moov" aria-pressed="false">
+                <span>MOOV</span><span class="deposit-check" aria-hidden="true">✓</span>
+              </button>
+            </div>
+          </div>
+
+          <form id="deposit-operator-form" novalidate>
+            <label class="deposit-phone-label" for="deposit-phone">Portefeuille électronique de paiement</label>
+            <div class="deposit-phone-wrap">
+              <span class="deposit-phone-prefix" data-deposit-prefix aria-hidden="true">+</span>
+              <input class="deposit-phone-input" id="deposit-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Votre numéro de téléphone" aria-describedby="deposit-phone-warning deposit-phone-status" required>
+            </div>
+            <p class="deposit-form-warning" id="deposit-phone-warning">Veuillez vérifier le numéro de téléphone avant de soumettre.</p>
+            <button class="deposit-submit" type="submit">Soumettre <span aria-hidden="true">→</span></button>
+            <p class="deposit-form-status" id="deposit-phone-status" data-deposit-status role="alert" aria-live="polite"></p>
+          </form>
+
+          <p class="deposit-notice"><strong>Configuration en attente.</strong> Aucun paiement n’a été initié. Les informations de paiement seront fournies par l’administrateur.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

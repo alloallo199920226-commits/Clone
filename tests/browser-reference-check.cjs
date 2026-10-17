@@ -222,6 +222,55 @@ async function main() {
     assert.equal(modal.overflow, false);
     await evaluate("document.querySelector('[data-notification-close]').click()");
     assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
+    if (process.argv.includes("--deposit-flow")) {
+      await navigate("/recharger");
+      await evaluate("document.querySelector('[data-payment-action]').click()");
+      assert(await evaluate("document.querySelector('[data-payment-status]').textContent.includes('minimum')"));
+      await evaluate("document.querySelector('[data-amount-choice=\"8000\"]').click();document.querySelector('[data-channel-choice=\"1\"]').click();document.querySelector('[data-payment-action]').click()");
+      await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false' && !document.documentElement.classList.contains('site-navigation-pending')");
+      assert.equal(await evaluate("document.querySelector('[data-deposit-amount]').textContent"), "FCFA 8,000");
+      assert.equal(await evaluate("document.querySelector('[data-deposit-prefix]').textContent"), "+228");
+      assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).channel"), 1);
+      assert.equal(await evaluate("document.documentElement.scrollWidth>innerWidth"), false);
+      await screenshot("shineray-deposit-operator");
+      await evaluate("document.querySelector('[data-operator=\"moov\"]').click();document.querySelector('#deposit-phone').value='123';document.querySelector('#deposit-operator-form').requestSubmit()");
+      assert(await evaluate("document.querySelector('[data-deposit-status]').textContent.includes('8 chiffres')"));
+      await evaluate("document.querySelector('#deposit-phone').value='91234567';document.querySelector('#deposit-operator-form').requestSubmit()");
+      await waitFor("location.pathname==='/confirmation-depot' && document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false' && !document.documentElement.classList.contains('site-navigation-pending')");
+      assert.equal(await evaluate("document.querySelector('[data-selected-operator]').textContent"), "MOOV Money");
+      assert.equal(await evaluate("document.querySelector('[data-deposit-phone]').textContent"), "+228 91234567");
+      assert.equal(await evaluate("document.querySelector('[data-deposit-amount]').textContent"), "FCFA 8,000");
+      assert.equal(await evaluate("document.querySelector('[data-deposit-reference]').textContent"), "—");
+      assert.equal(await evaluate("document.querySelector('[data-copy=\"merchant_account\"]').disabled"), true);
+      assert.equal(await evaluate("document.querySelector('[data-deposit-dial]').getAttribute('href')"), null);
+      await evaluate("document.querySelector('[data-deposit-result]').click()");
+      assert(await evaluate("document.querySelector('[data-deposit-status]').textContent.includes('Aucun paiement')"));
+      await screenshot("shineray-deposit-confirmation");
+      await call("Page.reload", { ignoreCache: true });
+      await waitFor("document.querySelector('[data-deposit-phone]')?.textContent==='+228 91234567'");
+      await evaluate("document.querySelector('[data-deposit-modify]').click()");
+      await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('#deposit-phone')?.value==='91234567'");
+      assert.equal(await evaluate("document.querySelector('[data-operator=\"moov\"]').getAttribute('aria-pressed')"), "true");
+      await call("Emulation.setDeviceMetricsOverride", { width: 390, height: 744, deviceScaleFactor: 1, mobile: true });
+      await waitFor("!document.documentElement.classList.contains('site-navigation-pending')");
+      assert.equal(await evaluate("document.documentElement.scrollWidth>innerWidth"), false);
+      await screenshot("shineray-deposit-operator-small");
+      await evaluate("document.querySelector('[data-operator=\"mtn\"]').click();document.querySelector('#deposit-operator-form').requestSubmit()");
+      await waitFor("location.pathname==='/confirmation-depot' && document.querySelector('[data-selected-operator]')?.textContent==='MTN Mobile Money' && !document.documentElement.classList.contains('site-navigation-pending')");
+      assert.equal(await evaluate("document.documentElement.scrollWidth>innerWidth"), false);
+      await screenshot("shineray-deposit-confirmation-small");
+      assert.equal(await evaluate("fetch('/api/activity').then(r=>r.json()).then(data=>data.activities.length)"), 0);
+      assert.equal(await evaluate("fetch('/api/me').then(r=>r.json()).then(data=>data.balance_fcfa)"), 0);
+      await evaluate("sessionStorage.removeItem('shineray-deposit-draft')");
+      await navigate("/confirmation-depot");
+      assert.equal(await evaluate("document.querySelector('[data-deposit-missing]').hidden"), false);
+      assert.equal(await evaluate("document.querySelector('[data-deposit-content]').hidden"), true);
+      await navigate("/choisir-operateur");
+      assert.equal(await evaluate("document.querySelector('[data-deposit-missing]').hidden"), false);
+      assert.deepEqual(errors, []);
+      console.log("PASS: amount/channel entry, MTN/MOOV choice, phone validation, confirmation, modify/refresh preservation, admin placeholders, no transactions/credits, missing draft and 390/472px layouts.");
+      return;
+    }
     if (process.argv.includes("--history-links")) {
       for (const [source, destination] of [
         ["/recharger", "/historique-recharges"],
@@ -388,9 +437,10 @@ async function main() {
       await evaluate("document.querySelector('[data-channel-choice=\"1\"]').click()");
       assert.equal(await evaluate("document.querySelector('[data-channel-choice=\"1\"]').getAttribute('aria-pressed')"), "true");
       await clickText("Rechargez maintenant");
-      await waitFor("document.body.innerText.includes('Aucun montant n’a été débité ou crédité.')");
-      assert.deepEqual(paymentResponses, [503, 503]);
-      assert.equal(String(paymentRequests[1].channel), "1");
+      await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-amount]')?.textContent==='FCFA 8,000'");
+      assert.deepEqual(paymentResponses, [503]);
+      assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).channel"), 1);
+      await navigate("/recharger");
       await evaluate("window.scrollTo(0,document.body.scrollHeight)");
       await screenshot("shineray-recharge-instructions-reference");
       await navigate("/retrait");
