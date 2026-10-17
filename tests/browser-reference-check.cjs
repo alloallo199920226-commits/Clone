@@ -222,6 +222,13 @@ async function main() {
     assert.equal(modal.overflow, false);
     await evaluate("document.querySelector('[data-notification-close]').click()");
     assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
+    if (process.argv.includes("--imported-admin")) {
+      await require("./imported-admin-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, owner: registration.body.user,
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--financial-policy")) {
       await require("./financial-policy-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, owner: registration.body.user,
@@ -558,6 +565,10 @@ async function main() {
         "import sys, json, auth_backend",
         "with auth_backend.connect() as conn, conn.cursor() as cur:",
         " ids=json.loads(sys.argv[1])",
+        " cur.execute('DELETE FROM shineray_admin_vip_grants WHERE admin_id=ANY(%s) OR user_id=ANY(%s)', (ids,ids))",
+        " cur.execute(\"DELETE FROM shineray_admin_resources WHERE id IN (SELECT (details->>'id')::bigint FROM shineray_admin_audit WHERE admin_id=ANY(%s) AND event_type LIKE 'create_%%')\", (ids,))",
+        " cur.execute('DELETE FROM shineray_admin_operations WHERE admin_id=ANY(%s) OR user_id=ANY(%s)', (ids,ids))",
+        " cur.execute('DELETE FROM shineray_admin_audit WHERE admin_id=ANY(%s)', (ids,))",
         " cur.execute('DELETE FROM shineray_first_deposits WHERE user_id = ANY(%s)', (ids,))",
         " cur.execute('DELETE FROM shineray_deposit_approvals WHERE user_id = ANY(%s)', (ids,))",
         " for user_id in json.loads(sys.argv[1]):",

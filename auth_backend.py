@@ -160,7 +160,7 @@ def login(country_code: str, phone: str, password: str, remember: bool = False) 
     password_input = _password_bytes(password)
     with connect() as connection, connection.cursor() as cursor:
         cursor.execute(
-            "SELECT id, phone, password_salt, password_hash FROM shineray_users WHERE phone = %s",
+            "SELECT id, phone, password_salt, password_hash, is_banned, is_blocked FROM shineray_users WHERE phone = %s",
             (normalized,),
         )
         user = cursor.fetchone()
@@ -173,6 +173,8 @@ def login(country_code: str, phone: str, password: str, remember: bool = False) 
                 raise AuthError(429, "Trop de tentatives. Réessayez dans quelques minutes.")
             raise AuthError(401, "Numéro ou mot de passe incorrect.")
         _clear_login_failures(normalized)
+        if user["is_banned"] or user["is_blocked"]:
+            raise AuthError(403, "Ce compte est banni." if user["is_banned"] else "Ce compte est bloqué.")
         token, session_days = _create_session(cursor, user["id"], remember)
     return token, {"id": user["id"], "phone": user["phone"]}, session_days
 
@@ -187,6 +189,7 @@ def get_user_for_session(token: str | None) -> dict | None:
             FROM shineray_sessions s
             JOIN shineray_users u ON u.id = s.user_id
             WHERE s.token_hash = %s AND s.expires_at > CURRENT_TIMESTAMP
+              AND NOT u.is_banned AND NOT u.is_blocked
             """,
             (_token_hash(token),),
         )
@@ -264,6 +267,14 @@ def get_products(user_id: int) -> dict:
                ) AS owned""", (user_id,),
         )
         summary = cursor.fetchone()
+        cursor.execute("""SELECT id,product_snapshot,created_at,expires_at,status
+            FROM shineray_admin_vip_grants
+            WHERE user_id=%s AND status='active' AND expires_at>now()
+            ORDER BY created_at DESC LIMIT 101""", (user_id,))
+        grants = cursor.fetchall()
+        cursor.execute("""SELECT count(*)::bigint count FROM shineray_admin_vip_grants
+            WHERE user_id=%s AND status='active' AND expires_at>now()""", (user_id,))
+        grant_count = cursor.fetchone()["count"]
     products = []
     for row in rows:
         details = row["details"]
@@ -278,7 +289,19 @@ def get_products(user_id: int) -> dict:
             "validity_days": _receipt_number(details, "validity_days", 1, 365_000),
             "income_fcfa": _receipt_number(details, "income_fcfa"),
         })
-    return {**summary, "products": products}
+    for grant in grants[:100]:
+        product = grant["product_snapshot"]
+        vip_match = re.fullmatch(r"VIP([1-9]|1[0-2])", product.get("code", ""))
+        products.append({
+            "id": f"grant-{grant['id']}", "name": product["name"],
+            "vip": int(vip_match[1]) if vip_match else None, "amount_fcfa": 0,
+            "quantity": 1, "created_at": grant["created_at"].isoformat(),
+            "daily_income_fcfa": product["dailyIncome"], "total_income_fcfa": product["totalIncome"],
+            "validity_days": product["durationDays"], "income_fcfa": 0, "source": "admin_grant",
+        })
+    summary["quantity"] += grant_count
+    summary["has_more"] = summary["has_more"] or len(grants) > 100
+    return {**summary, "products": products[:100]}
 
 
 def get_team(user_id: int) -> dict:

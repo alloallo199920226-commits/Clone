@@ -8,6 +8,8 @@ from urllib.parse import parse_qs, unquote, urlsplit
 
 import auth_backend
 import deposit_settlement
+import admin_assets
+import admin_api
 
 ROOT = Path(__file__).resolve().parent
 SESSION_COOKIE = "shineray_session"
@@ -80,8 +82,25 @@ class Handler(BaseHTTPRequestHandler):
     def do_DELETE(self):
         self.handle_api()
 
+    def do_PATCH(self):
+        self.handle_api()
+
     def respond(self, send_body=True):
         route = unquote(urlsplit(self.path).path)
+        imported = admin_assets.browser_asset(route)
+        if imported:
+            body, content_type = imported
+            self.send_response(200)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.send_header("X-Robots-Tag", "noindex, nofollow, noarchive")
+            self.send_header("Referrer-Policy", "same-origin")
+            self.end_headers()
+            if send_body:
+                self.wfile.write(body)
+            return
         file_path, content_type = self.resolve_file(route)
         if file_path is None or not file_path.is_file():
             self.send_error(404)
@@ -244,7 +263,13 @@ class Handler(BaseHTTPRequestHandler):
             self._json(503, {"error": "Le service est temporairement indisponible."})
             return
         if not user:
-            self._json(401, {"error": "Connexion requise."})
+            message = ("Connectez-vous d’abord à votre compte sur /connexion, puis revenez dans l’administration."
+                       if route.startswith("/api/admin/") else "Connexion requise.")
+            self._json(401, {"error": message})
+            return
+
+        if route.startswith("/api/admin/") and route != "/api/admin/deposits":
+            admin_api.handle(self, user, route)
             return
 
         if route == "/api/me" and self.command == "GET":

@@ -47,6 +47,33 @@ reçu depuis `/administration-depots`, accessible depuis son compte. Aucun compt
 n’est promu automatiquement ; le choix de l’administrateur doit venir du propriétaire.
 Les tarifs et rendements des produits des captures restent des références non activées.
 
+## Administration importée
+
+La console `/administration` utilise le HTML, les styles et les scripts du ZIP
+`attached_assets/aeronova-administration-complete_1792229186027.zip`.
+`admin_assets.py` sert exclusivement ses ressources publiques autorisées, sans extraire
+ni exécuter son serveur Node. Conserver l’archive dans la publication ; ne pas exposer
+le ZIP, ses modules serveur, son dossier migrations ou ses fichiers de configuration.
+Le JavaScript `/admin-ui/general.js` doit rester strictement identique à celui du ZIP.
+
+L’administrateur doit d’abord se connecter à son compte habituel, déjà explicitement
+autorisé, puis confirmer son propre mot de passe dans la console. La session de console
+expire après dix heures et reste liée à la session client. Aucune promotion automatique
+ni aucun mot de passe administrateur commun n’est introduit.
+
+Les utilisateurs, soldes et historiques viennent des données existantes. Les crédits
+et débits sont réels, transactionnels, idempotents et audités. Les produits, codes cadeaux,
+canaux et brouillons/annonces sont persistants et séparés des paiements. Une attribution
+VIP gratuite n’est ni un achat, ni un dépôt, ni un revenu ; elle ne déclenche aucun
+versement automatique. Le blocage/bannissement révoque les sessions existantes.
+
+Les fonctions sans service métier actif (paiements automatiques, ouverture des retraits,
+pointage, diffusion des annonces côté client, utilisation des codes cadeaux, blogue et
+réception du support) ne sont pas activées par cette importation. Les actions concernées
+renvoient une erreur explicite ; aucune donnée de démonstration n’est injectée. Les
+paramètres financiers du site restent ceux de sa politique actuelle. La suppression
+massive de comptes est désactivée pour préserver les soldes et les historiques.
+
 ## Politique financière
 
 - Bonus de bienvenue : 2 300 FCFA, crédité une seule fois à la création d’un nouveau compte.

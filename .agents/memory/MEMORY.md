@@ -1,3 +1,4 @@
 - [Phone-only account flow](phone-only-auth.md) — Users requested phone + password, no email/SMS; ownership verification and password recovery are absent.
 - [Reference fidelity](reference-fidelity.md) — Match supplied screens closely; verify opened, signed-in states and use real vehicle photos, not screenshot backgrounds.
 - [Financial display semantics](financial-display-semantics.md) — Separate pending requests from settled funds; purchase cost is not income, and missing financial facts stay unknown.
+- [Administration import boundary](admin-import-boundary.md) — Keep supplied administration JavaScript unchanged; do not replace customer accounts or financial policy with imported defaults.

@@ -254,6 +254,11 @@
     .then((user) => {
       if (!user) return;
       if (user.is_admin) {
+        const consoleLink = document.createElement('a');
+        consoleLink.className = 'menu-row';
+        consoleLink.href = '/administration';
+        consoleLink.textContent = 'Console d’administration';
+        document.querySelector('[data-purpose="finance-menu-group"]').append(consoleLink);
         const link = document.createElement('a');
         link.className = 'menu-row';
         link.href = '/administration-depots';
