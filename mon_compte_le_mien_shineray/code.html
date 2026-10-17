@@ -253,6 +253,13 @@
     })
     .then((user) => {
       if (!user) return;
+      if (user.is_admin) {
+        const link = document.createElement('a');
+        link.className = 'menu-row';
+        link.href = '/administration-depots';
+        link.textContent = 'Administration — approuver un dépôt';
+        document.querySelector('[data-purpose="finance-menu-group"]').append(link);
+      }
       document.querySelector('[data-user-phone]').textContent = user.phone.replace(/^\+(\d{3})(.*)$/, '$1 $2');
       document.querySelector('[data-demo-balance]').textContent =
         new Intl.NumberFormat('fr-FR').format(user.balance_fcfa);

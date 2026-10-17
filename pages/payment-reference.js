@@ -17,7 +17,7 @@
   if (action?.dataset.paymentKind === "recharge") {
     try {
       const draft = JSON.parse(sessionStorage.getItem("shineray-deposit-draft"));
-      if (draft && Number.isSafeInteger(draft.amount_fcfa) && draft.amount_fcfa >= 4000 &&
+      if (draft && Number.isSafeInteger(draft.amount_fcfa) && draft.amount_fcfa >= 500 &&
           Date.now() - draft.created_at >= 0 && Date.now() - draft.created_at < 20 * 60 * 1000) {
         formAmount.value = draft.amount_fcfa;
         document.querySelectorAll("[data-channel-choice]").forEach(button => {

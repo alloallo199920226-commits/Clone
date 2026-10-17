@@ -71,7 +71,7 @@
       levelRows.replaceChildren();
       counts.forEach((count, index) => {
         const row = document.createElement("tr");
-        [`Équipe de niveau ${index + 1} ${[37, 3, 1][index]}%`, String(count), formatAmount(commissions[index])].forEach((value) => {
+        [`Équipe de niveau ${index + 1} ${team.referral_percentages[index]}%`, String(count), formatAmount(commissions[index])].forEach((value) => {
           const cell = document.createElement("td");
           cell.textContent = value;
           row.append(cell);

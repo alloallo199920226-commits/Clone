@@ -91,7 +91,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot }) => {
   assert(await remaining() > 1180, "Explicitly starting a new draft creates a new deadline");
   await toggle();
   await screenshot("shineray-deposit-french-timer");
-  assert.equal(await evaluate("(async()=> (await (await fetch('/api/activity')).json()).activities.length)()"), 0);
-  assert.equal(await evaluate("(async()=> (await (await fetch('/api/me')).json()).balance_fcfa)()"), 0);
+  assert.equal(await evaluate("(async()=> (await (await fetch('/api/activity')).json()).activities.length)()"), 1);
+  assert.equal(await evaluate("(async()=> (await (await fetch('/api/me')).json()).balance_fcfa)()"), 2300);
   console.log("PASS: FR/EN static/dynamic text, labels, persisted language; live 20-minute timer, navigation/reload continuity, offline/suspension catch-up, expiry guards, fresh restart, no financial changes.");
 };

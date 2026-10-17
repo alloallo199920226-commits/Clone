@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Administration des dépôts — SHINERAY</title><link rel="stylesheet" href="/pages/pages.css">
+<script src="/pages/admin-deposits.js" defer></script></head>
+<body><main class="page"><header class="page-header"><a class="back" href="/compte" aria-label="Retour au compte">‹</a><h1>Approuver un dépôt</h1><span class="header-spacer"></span></header>
+<div class="page-content">
+<p>Réservé à l’administration. Vérifiez la réception effective des fonds auprès de l’opérateur avant de créditer un compte.</p>
+<p>Minimum : <strong>500 FCFA</strong>. Seul le premier dépôt approuvé déclenche les commissions : <strong>40 % / 2 % / 1 %</strong>. Les fractions de FCFA sont arrondies à l’entier inférieur.</p>
+<form data-admin-deposit-form>
+<label class="field-label" for="deposit-account">Numéro du compte bénéficiaire</label>
+<input class="input" id="deposit-account" name="phone" type="tel" placeholder="+228… ou +225…" autocomplete="off" required>
+<label class="field-label" for="deposit-amount">Montant réellement reçu (FCFA)</label>
+<input class="input" id="deposit-amount" name="amount_fcfa" type="number" min="500" max="500000000" step="1" inputmode="numeric" required>
+<label class="field-label" for="deposit-reference">Référence unique réelle de l’opérateur</label>
+<input class="input" id="deposit-reference" name="provider_reference" type="text" maxlength="120" autocomplete="off" required>
+<p><label><input name="receipt_verified" type="checkbox" required> Je confirme avoir vérifié la réception réelle de ce paiement.</label></p>
+<button class="button-red button-wide" type="submit">Approuver et créditer le dépôt</button>
+<p class="status" data-admin-status role="status" aria-live="polite"></p>
+</form>
+<p>Une même référence ne peut être créditée qu’une seule fois. Aucun compte utilisateur ne peut s’accorder les droits administrateur.</p>
+</div></main></body></html>

@@ -68,7 +68,7 @@ class AccountFlowTests(unittest.TestCase):
         status, _, body = self.request("GET", "/api/me", cookie=first_cookie)
         self.assertEqual(status, 200)
         summary = json.loads(body)
-        self.assertEqual(summary["balance_fcfa"], 0)
+        self.assertEqual(summary["balance_fcfa"], 2300)
         self.assertNotIn("demo_balance_fcfa", summary)
         second, second_cookie = self.create_user(summary["referral_code"])
         _, _, body = self.request("GET", "/api/team", cookie=first_cookie)
@@ -113,9 +113,9 @@ class AccountFlowTests(unittest.TestCase):
                 (second["id"],),
             )
         _, _, body = self.request("GET", "/api/activity", cookie=second_cookie)
-        self.assertEqual(json.loads(body)["activities"], [])
+        self.assertEqual([row["kind"] for row in json.loads(body)["activities"]], ["bonus"])
         _, _, body = self.request("GET", "/api/me", cookie=second_cookie)
-        self.assertEqual(json.loads(body)["balance_fcfa"], 0)
+        self.assertEqual(json.loads(body)["balance_fcfa"], 2300)
         status, _, _ = self.request("POST", "/api/wallets", {
             "provider": "TOGOCEL", "phone": "90123456",
         }, first_cookie, same_origin=False)
@@ -163,7 +163,7 @@ class AccountFlowTests(unittest.TestCase):
         _, _, body = self.request("GET", "/api/activity?kind=withdrawal", cookie=cookie)
         self.assertEqual(json.loads(body)["activities"], [])
         _, _, body = self.request("GET", "/api/activity", cookie=other_cookie)
-        self.assertEqual(json.loads(body)["activities"], [])
+        self.assertEqual([row["kind"] for row in json.loads(body)["activities"]], ["bonus"])
 
     def test_receipts_owned_vips_and_team_use_only_account_facts(self):
         owner, cookie = self.create_user()

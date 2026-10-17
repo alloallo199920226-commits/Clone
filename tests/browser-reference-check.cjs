@@ -222,6 +222,13 @@ async function main() {
     assert.equal(modal.overflow, false);
     await evaluate("document.querySelector('[data-notification-close]').click()");
     assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
+    if (process.argv.includes("--financial-policy")) {
+      await require("./financial-policy-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, owner: registration.body.user,
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--deposit-i18n")) {
       await require("./deposit-i18n-browser.cjs")({ call, evaluate, waitFor, navigate, screenshot });
       assert.deepEqual(errors, []);
@@ -264,8 +271,8 @@ async function main() {
       await waitFor("location.pathname==='/confirmation-depot' && document.querySelector('[data-selected-operator]')?.textContent==='MTN Mobile Money' && !document.documentElement.classList.contains('site-navigation-pending')");
       assert.equal(await evaluate("document.documentElement.scrollWidth>innerWidth"), false);
       await screenshot("shineray-deposit-confirmation-small");
-      assert.equal(await evaluate("fetch('/api/activity').then(r=>r.json()).then(data=>data.activities.length)"), 0);
-      assert.equal(await evaluate("fetch('/api/me').then(r=>r.json()).then(data=>data.balance_fcfa)"), 0);
+      assert.equal(await evaluate("fetch('/api/activity').then(r=>r.json()).then(data=>data.activities.length)"), 1);
+      assert.equal(await evaluate("fetch('/api/me').then(r=>r.json()).then(data=>data.balance_fcfa)"), 2300);
       await evaluate("sessionStorage.removeItem('shineray-deposit-draft')");
       await navigate("/confirmation-depot");
       assert.equal(await evaluate("document.querySelector('[data-deposit-missing]').hidden"), false);
@@ -496,7 +503,7 @@ async function main() {
       }
       assert.deepEqual(errors, []);
       const currentUser = await evaluate("fetch('/api/me').then(r=>r.json())");
-      assert.equal(currentUser.balance_fcfa, 0, "Reference actions must not change real funds");
+      assert.equal(currentUser.balance_fcfa, 2300, "Reference actions must not change the welcome bonus");
       console.log("PASS: reference home, purchase dialog cancel/real provider failure, recharge presets/failure, withdrawal real balance/fee preview, support photos, no overflow at472/390, no fake funds.");
       console.log("Screenshots: /tmp/shineray-{home,purchase,recharge,withdraw,support}-reference.png");
       return;
@@ -550,6 +557,9 @@ async function main() {
       execFileSync("python3", ["-c", [
         "import sys, json, auth_backend",
         "with auth_backend.connect() as conn, conn.cursor() as cur:",
+        " ids=json.loads(sys.argv[1])",
+        " cur.execute('DELETE FROM shineray_first_deposits WHERE user_id = ANY(%s)', (ids,))",
+        " cur.execute('DELETE FROM shineray_deposit_approvals WHERE user_id = ANY(%s)', (ids,))",
         " for user_id in json.loads(sys.argv[1]):",
         "  cur.execute('DELETE FROM shineray_transactions WHERE user_id = %s', (user_id,))",
         "  cur.execute('DELETE FROM shineray_users WHERE id = %s', (user_id,))",

@@ -7,6 +7,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlsplit
 
 import auth_backend
+import deposit_settlement
 
 ROOT = Path(__file__).resolve().parent
 SESSION_COOKIE = "shineray_session"
@@ -21,6 +22,7 @@ PAGES = {
     "/inscription": "inscription",
 }
 MORE_PAGES = {
+    "/administration-depots": "administration-depots.html",
     "/choisir-operateur": "choisir-operateur.html",
     "/confirmation-depot": "confirmation-depot.html",
     "/mon-equipe": "mon-equipe.html",
@@ -36,6 +38,7 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/pages/admin-deposits.js": ("pages/admin-deposits.js", "text/javascript; charset=utf-8"),
     "/pages/deposit-flow.css": ("pages/deposit-flow.css", "text/css; charset=utf-8"),
     "/pages/deposit-flow.js": ("pages/deposit-flow.js", "text/javascript; charset=utf-8"),
     "/pages/deposit-i18n.js": ("pages/deposit-i18n.js", "text/javascript; charset=utf-8"),
@@ -95,6 +98,9 @@ class Handler(BaseHTTPRequestHandler):
                 return
             if route not in PUBLIC_AUTH_PAGES and not user:
                 self._redirect("/connexion")
+                return
+            if route == "/administration-depots" and not user["is_admin"]:
+                self._json(403, {"error": "Accès réservé à l’administration."})
                 return
             if route == "/" and user:
                 self._redirect("/accueil")
@@ -246,6 +252,30 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(200, auth_backend.account_summary(user["id"]))
             except Exception:
                 self._json(503, {"error": "Impossible de charger le compte."})
+            return
+
+        if route == "/api/admin/deposits":
+            if not user["is_admin"]:
+                self._json(403, {"error": "Accès réservé à l’administration."})
+                return
+            if self.command != "POST":
+                self._json(405, {"error": "Méthode non autorisée."})
+                return
+            try:
+                payload = self._read_json()
+                if payload is not None:
+                    if payload.get("receipt_verified") is not True:
+                        raise ValueError("Confirmez la réception réelle des fonds avant toute approbation.")
+                    result = deposit_settlement.approve_manual_deposit(
+                        user["id"], payload.get("phone"), payload.get("amount_fcfa"),
+                        payload.get("provider_reference"))
+                    self._json(200 if result["already_approved"] else 201, result)
+            except auth_backend.AuthError as exc:
+                self._json(exc.status, {"error": exc.message})
+            except ValueError as exc:
+                self._json(400, {"error": str(exc)})
+            except Exception:
+                self._json(503, {"error": "Approbation impossible. Aucun succès n’est confirmé. Vérifiez la référence avant de réessayer."})
             return
 
         if route == "/api/team" and self.command == "GET":

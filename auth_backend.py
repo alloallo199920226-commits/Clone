@@ -14,13 +14,14 @@ from datetime import datetime, timezone
 import psycopg
 from psycopg.errors import UniqueViolation
 from psycopg.rows import dict_row
+from financial_policy import WELCOME_BONUS_FCFA, MIN_DEPOSIT_FCFA, REFERRAL_PERCENTAGES
 
 PASSWORD_ITERATIONS = 310_000
 SESSION_DAYS = 7
 DEFAULT_SESSION_DAYS = 1
 PHONE_LENGTHS = {"+225": 10, "+228": 8}
 ACTIVITY_KINDS = {"recharge", "withdrawal", "purchase"}
-MIN_ACTIVITY_AMOUNTS = {"recharge": 4_000, "withdrawal": 2_200, "purchase": 4_000}
+MIN_ACTIVITY_AMOUNTS = {"recharge": MIN_DEPOSIT_FCFA, "withdrawal": 2_200, "purchase": 4_000}
 MAX_ACTIVITY_AMOUNT = 500_000_000
 _DUMMY_SALT = b"\x00" * 16
 _DUMMY_HASH = hashlib.pbkdf2_hmac("sha256", b"not-a-real-password", _DUMMY_SALT, PASSWORD_ITERATIONS)
@@ -115,6 +116,13 @@ def register(country_code: str, phone: str, password: str, referral_code: str = 
                 (normalized, salt, password_hash, referrer["id"] if referrer else None),
             )
             user = cursor.fetchone()
+            cursor.execute(
+                """INSERT INTO shineray_transactions
+                   (user_id, kind, label, amount_fcfa, provider_reference, details)
+                   VALUES (%s, 'bonus', 'Bonus de bienvenue', %s, %s,
+                           '{"policy":"welcome"}'::jsonb)""",
+                (user["id"], WELCOME_BONUS_FCFA, f"welcome:{user['id']}"),
+            )
             token, session_days = _create_session(cursor, user["id"])
     except UniqueViolation as exc:
         raise PhoneAlreadyRegistered from exc
@@ -175,7 +183,7 @@ def get_user_for_session(token: str | None) -> dict | None:
     with connect() as connection, connection.cursor() as cursor:
         cursor.execute(
             """
-            SELECT u.id, u.phone
+            SELECT u.id, u.phone, u.is_admin
             FROM shineray_sessions s
             JOIN shineray_users u ON u.id = s.user_id
             WHERE s.token_hash = %s AND s.expires_at > CURRENT_TIMESTAMP
@@ -195,7 +203,7 @@ def revoke_session(token: str | None) -> None:
 def account_summary(user_id: int) -> dict:
     with connect() as connection, connection.cursor() as cursor:
         cursor.execute(
-            """SELECT u.id, u.phone, u.referral_code,
+            """SELECT u.id, u.phone, u.referral_code, u.is_admin,
                       COALESCE((SELECT SUM(t.amount_fcfa) FROM shineray_transactions t
                                 WHERE t.user_id = u.id), 0)::bigint AS balance_fcfa
                FROM shineray_users u WHERE u.id = %s""",
@@ -333,7 +341,9 @@ def get_team(user_id: int) -> dict:
             "level_revenue_fcfa": [None if by_level.get(None, 0) else by_level.get(level, 0)
                                    for level in (1, 2, 3)],
             "members_has_more": any(count > 100 for count in counts.values()),
-            "members": members}
+            "members": members,
+            "referral_percentages": list(REFERRAL_PERCENTAGES),
+            "commission_basis": "first_approved_deposit"}
 
 
 def get_wallets(user_id: int) -> list[dict]:

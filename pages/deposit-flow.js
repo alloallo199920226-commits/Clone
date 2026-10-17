@@ -28,7 +28,7 @@
     set(missing.querySelector("p"), reason);
   }
   try { draft = JSON.parse(sessionStorage.getItem(key)); } catch { draft = null; }
-  if (!draft || !Number.isSafeInteger(draft.amount_fcfa) || draft.amount_fcfa < 4000 ||
+  if (!draft || !Number.isSafeInteger(draft.amount_fcfa) || draft.amount_fcfa < 500 ||
       ![1, 2].includes(draft.channel) || !Number.isFinite(draft.created_at) ||
       Date.now() - draft.created_at < 0) {
     showMissing();
