@@ -13,8 +13,6 @@
       document.querySelectorAll("[data-channel-choice]").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
     });
   });
-  document.querySelectorAll("[data-info-open]").forEach((button) => button.addEventListener("click", () => document.querySelector("#reference-info").showModal()));
-  document.querySelector("[data-info-close]")?.addEventListener("click", () => document.querySelector("#reference-info").close());
   const action = document.querySelector("[data-payment-action]");
   action?.addEventListener("click", async () => {
     const amount = Number(formAmount.value);

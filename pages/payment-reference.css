@@ -5,7 +5,7 @@ body{margin:0;min-height:100dvh;background:#fff;color:#111;font:14px Arial,sans-
 .finance-header{height:54px;position:sticky;z-index:5;top:0;display:grid;grid-template-columns:42px 1fr 42px;align-items:center;background:#f1f1f1;padding:0 7px}
 .finance-header h1{margin:0;font-size:15px;text-align:left;font-weight:600}
 .finance-back{color:#111;text-decoration:none;font-size:29px;line-height:1;padding-left:2px}
-.info-button{justify-self:end;border:0;width:26px;height:26px;border-radius:50%;background:linear-gradient(#555,#101010);color:#fff;font:bold italic 17px Georgia,serif;cursor:pointer}
+.info-button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;justify-self:end;border:0;width:26px;height:26px;border-radius:50%;background:linear-gradient(#555,#101010);color:#fff;font:bold italic 17px Georgia,serif;cursor:pointer}
 .finance-content{padding:0 16px 32px}
 .finance-section-label{display:flex;align-items:center;justify-content:flex-start;gap:13px;margin:29px 1px 35px;font-size:16px;font-weight:700}
 .finance-section-label small{font-size:14px;font-weight:400;white-space:nowrap}

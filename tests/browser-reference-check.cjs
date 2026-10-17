@@ -222,6 +222,25 @@ async function main() {
     assert.equal(modal.overflow, false);
     await evaluate("document.querySelector('[data-notification-close]').click()");
     assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
+    if (process.argv.includes("--history-links")) {
+      for (const [source, destination] of [
+        ["/recharger", "/historique-recharges"],
+        ["/retrait", "/historique-retraits"],
+      ]) {
+        await navigate(source);
+        assert.equal(await evaluate("document.querySelector('[data-history-link]').getAttribute('href')"), destination);
+        await evaluate("document.querySelector('[data-history-link]').click()");
+        await waitFor(`location.pathname===${JSON.stringify(destination)} &&
+          document.readyState==='complete' &&
+          !document.documentElement.classList.contains('site-navigation-pending') &&
+          document.querySelector('[data-activity-list]')?.getAttribute('aria-busy')==='false'`);
+        assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
+        assert.equal(await evaluate("document.body.inert"), false);
+      }
+      assert.deepEqual(errors, []);
+      console.log("PASS: both header i links open their matching real history page, with loader completion and no information dialog.");
+      return;
+    }
     if (process.argv.includes("--navigation-loading")) {
       await require("./navigation-loading-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, paused, base,
@@ -363,9 +382,7 @@ async function main() {
       assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice]').length"), 6);
       await noOverflow();
       await screenshot("shineray-recharge-reference");
-      await evaluate("document.querySelector('[data-info-open]').click()");
-      assert(await evaluate("Boolean(document.querySelector('#reference-info[open]'))"));
-      await evaluate("document.querySelector('[data-info-close]').click()");
+      assert.equal(await evaluate("document.querySelector('[data-history-link]').getAttribute('href')"), "/historique-recharges");
       await evaluate("document.querySelector('[data-amount-choice=\"8000\"]').click()");
       assert.equal(await evaluate("document.querySelector('#amount').value"), "8000");
       await evaluate("document.querySelector('[data-channel-choice=\"1\"]').click()");
