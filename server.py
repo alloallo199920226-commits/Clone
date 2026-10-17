@@ -34,6 +34,7 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/pages/auth-progress.js": ("pages/auth-progress.js", "text/javascript; charset=utf-8"),
     "/pages/member-reference.css": ("pages/member-reference.css", "text/css; charset=utf-8"),
     "/pages/team-reference.css": ("pages/team-reference.css", "text/css; charset=utf-8"),
     "/pages/home-reference.css": ("pages/home-reference.css", "text/css; charset=utf-8"),

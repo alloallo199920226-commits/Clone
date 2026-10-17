@@ -107,6 +107,14 @@ async function main() {
       width: 472, height: 864, deviceScaleFactor: 1, mobile: true,
     });
     await navigate("/connexion");
+    if (process.argv.includes("--auth-progress")) {
+      await require("./auth-progress-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, paused, base,
+        trackUser: id => { userId = id; },
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--countries")) {
       const pauseConfig = "/api/country-picker/config";
       const pauseCountries = "/api/countries";

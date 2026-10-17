@@ -26,3 +26,9 @@ The country selector must show its states one after another and follow the real 
 **Why:** the user repeated that the first loader’s geometry was wrong and that the stages advanced too quickly without following their connection.
 
 **How to apply:** preserve the reference panel and loader geometry, wait for actual server responses before advancing, and provide an explicit retry state on connection failure. Short minimum display times may make each stage visible on fast networks, but must never advance a pending request.
+
+Authentication submission must show the centered three orange dots from the supplied reference, then open the home page only when authentication and the session are actually confirmed.
+
+**Why:** the user requested that this indicator appear before site access and that the transition follow the real network quality rather than a preset delay.
+
+**How to apply:** keep the indicator visible during pending network work, prevent duplicate submissions, and restore the form with an explicit error on failure. Do not turn the loader into an unconditional timed redirect.
