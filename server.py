@@ -34,6 +34,8 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/pages/navigation-loading.css": ("pages/navigation-loading.css", "text/css; charset=utf-8"),
+    "/pages/navigation-loading.js": ("pages/navigation-loading.js", "text/javascript; charset=utf-8"),
     "/pages/records-reference.css": ("pages/records-reference.css", "text/css; charset=utf-8"),
     "/pages/records-reference.js": ("pages/records-reference.js", "text/javascript; charset=utf-8"),
     "/pages/auth-progress.js": ("pages/auth-progress.js", "text/javascript; charset=utf-8"),
@@ -98,6 +100,12 @@ class Handler(BaseHTTPRequestHandler):
         except OSError:
             self.send_error(404)
             return
+        if content_type.startswith("text/html") and route not in PUBLIC_AUTH_PAGES:
+            navigation_assets = (
+                b'<link rel="stylesheet" href="/pages/navigation-loading.css">'
+                b'<script src="/pages/navigation-loading.js"></script>'
+            )
+            body = body.replace(b"<head>", b"<head>" + navigation_assets, 1)
         self.send_response(200)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))

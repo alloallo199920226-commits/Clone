@@ -32,3 +32,9 @@ Authentication submission must show the centered three orange dots from the supp
 **Why:** the user requested that this indicator appear before site access and that the transition follow the real network quality rather than a preset delay.
 
 **How to apply:** keep the indicator visible during pending network work, prevent duplicate submissions, and restore the form with an explicit error on failure. Do not turn the loader into an unconditional timed redirect.
+
+Internal page links must show the full-screen light-gray loading view with the centered blue segmented indicator. Navigation bars are explicitly excluded.
+
+**Why:** the user requested this loading view whenever they click a page in the site, “sauf les navbar”.
+
+**How to apply:** retain the separate authentication and country-picker indicators. Follow actual page, data and image loading rather than a fake success delay; keep navbar navigation free of the full-screen loader.

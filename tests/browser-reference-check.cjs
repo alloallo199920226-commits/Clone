@@ -222,6 +222,13 @@ async function main() {
     assert.equal(modal.overflow, false);
     await evaluate("document.querySelector('[data-notification-close]').click()");
     assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
+    if (process.argv.includes("--navigation-loading")) {
+      await require("./navigation-loading-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, paused, base,
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--filled-records")) {
       await require("./filled-records-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, paused, base,

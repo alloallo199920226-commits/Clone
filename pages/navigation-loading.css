@@ -1,0 +1,102 @@
+#site-navigation-loading {
+  display: none;
+}
+
+#site-navigation-loading[hidden] {
+  display: none !important;
+}
+
+html.site-navigation-pending #site-navigation-loading:not([hidden]) {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483640;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  padding: 24px;
+  overflow: auto;
+  background: #eee;
+  color: #182b45;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  text-align: center;
+}
+
+#site-navigation-loading .site-navigation-spinner {
+  display: block;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  color: #2674c8;
+  animation: site-navigation-spin 800ms steps(8, end) infinite;
+}
+
+#site-navigation-loading .site-navigation-spinner rect {
+  fill: currentColor;
+}
+
+#site-navigation-loading .site-navigation-message {
+  display: none;
+  width: min(100%, 320px);
+  box-sizing: border-box;
+  padding: 16px 18px;
+  border: 1px solid rgb(24 43 69 / 9%);
+  border-radius: 8px;
+  background: #fff;
+  color: #27384d;
+  font-size: 14px;
+  line-height: 1.45;
+  box-shadow: 0 3px 12px rgb(22 41 63 / 8%);
+}
+
+#site-navigation-loading .site-navigation-message[hidden] {
+  display: none !important;
+}
+
+#site-navigation-loading[data-state="error"] .site-navigation-message:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+#site-navigation-loading[data-state="error"] .site-navigation-spinner {
+  animation: none;
+}
+
+#site-navigation-loading .site-navigation-message button {
+  min-height: 36px;
+  padding: 7px 13px;
+  border: 1px solid #2674c8;
+  border-radius: 5px;
+  background: #2674c8;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#site-navigation-loading .site-navigation-message button:hover {
+  background: #1d61aa;
+  border-color: #1d61aa;
+}
+
+#site-navigation-loading .site-navigation-message button:focus-visible {
+  outline: 3px solid rgb(38 116 200 / 28%);
+  outline-offset: 2px;
+}
+
+@keyframes site-navigation-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #site-navigation-loading .site-navigation-spinner {
+    animation: none;
+  }
+}
