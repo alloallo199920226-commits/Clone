@@ -49,6 +49,28 @@ class AccountFlowTests(unittest.TestCase):
         connection.close()
         return result
 
+    def test_registration_and_login_for_added_countries(self):
+        status, _, body = self.request("GET", "/api/countries")
+        self.assertEqual(status, 200)
+        eligible = {country["code"]: country for country in json.loads(body)["countries"]}
+        for code, length in [("+229", 10), ("+226", 8), ("+227", 8), ("+237", 9)]:
+            with self.subTest(country=code):
+                self.assertEqual(eligible[code]["phone_length"], length)
+                phone = ("01" if code == "+229" else "6") + "".join(
+                    str(secrets.randbelow(10)) for _ in range(length - (2 if code == "+229" else 1)))
+                status, _, body = self.request("POST", "/api/auth/register", {
+                    "country_code": code, "phone": phone, "password": "integration-test-password",
+                })
+                self.assertEqual(status, 201, body)
+                with auth_backend.connect() as connection, connection.cursor() as cursor:
+                    cursor.execute("SELECT id FROM shineray_users WHERE phone=%s", (code + phone,))
+                    self.user_ids.append(cursor.fetchone()["id"])
+                status, headers, body = self.request("POST", "/api/auth/login", {
+                    "country_code": code, "phone": code + phone, "password": "integration-test-password",
+                })
+                self.assertEqual(status, 200, body)
+                self.assertIn("Set-Cookie", headers)
+
     def create_user(self, referral=""):
         phone = "9" + "".join(str(secrets.randbelow(10)) for _ in range(7))
         status, headers, body = self.request("POST", "/api/auth/register", {

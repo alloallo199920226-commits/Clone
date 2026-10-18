@@ -19,7 +19,11 @@ from financial_policy import WELCOME_BONUS_FCFA, MIN_DEPOSIT_FCFA, REFERRAL_PERC
 PASSWORD_ITERATIONS = 310_000
 SESSION_DAYS = 7
 DEFAULT_SESSION_DAYS = 1
-PHONE_LENGTHS = {"+225": 10, "+228": 8}
+PHONE_LENGTHS = {"+228": 8, "+225": 10, "+229": 10, "+226": 8, "+227": 8, "+237": 9}
+COUNTRY_NAMES = {
+    "+228": "Togo", "+225": "Côte d’Ivoire", "+229": "Bénin",
+    "+226": "Burkina Faso", "+227": "Niger", "+237": "Cameroun",
+}
 ACTIVITY_KINDS = {"recharge", "withdrawal", "purchase"}
 MIN_ACTIVITY_AMOUNTS = {"recharge": MIN_DEPOSIT_FCFA, "withdrawal": 2_200, "purchase": 4_000}
 MAX_ACTIVITY_AMOUNT = 500_000_000
@@ -50,7 +54,7 @@ def connect():
 def normalize_phone(country_code: str, phone: str) -> str:
     country_code = str(country_code or "").strip()
     if country_code not in PHONE_LENGTHS:
-        raise ValueError("Choisissez le Togo ou la Côte d’Ivoire.")
+        raise ValueError("Choisissez un pays éligible dans la liste.")
     digits = re.sub(r"\D", "", str(phone or ""))
     country_digits = country_code[1:]
     expected_length = PHONE_LENGTHS[country_code]

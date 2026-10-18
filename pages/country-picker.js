@@ -86,7 +86,7 @@ window.setupCountryPicker = () => {
       ]);
       if (current !== generation || overlay.hidden) return;
       if (!Array.isArray(data.countries) || !data.countries.length ||
-          data.countries.some(country => !["+228", "+225"].includes(country.code) ||
+          data.countries.some(country => !/^\+\d{1,3}$/.test(country.code) ||
             typeof country.name !== "string" || !country.name.trim())) {
         throw new Error("La liste des pays est indisponible.");
       }

@@ -4,6 +4,17 @@ import auth_backend
 
 
 class PhoneNormalizationTests(unittest.TestCase):
+    def test_new_eligible_countries_local_and_international_numbers(self):
+        for code, local in [
+            ("+229", "0190123456"), ("+226", "70123456"),
+            ("+227", "90123456"), ("+237", "690123456"),
+        ]:
+            with self.subTest(country=code):
+                self.assertEqual(auth_backend.normalize_phone(code, local), code + local)
+                self.assertEqual(auth_backend.normalize_phone(code, code + local), code + local)
+                with self.assertRaises(ValueError):
+                    auth_backend.normalize_phone(code, local[:-1])
+
     def test_normalizes_country_code_and_separators(self):
         self.assertEqual(
             auth_backend.normalize_phone("+225", "225 01 02 03 04 05"),

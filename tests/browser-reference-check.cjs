@@ -194,7 +194,7 @@ async function main() {
       await screenshot("shineray-country-dots");
       await resume(pauseCountries);
       await waitFor("document.querySelector('[data-country-overlay]').dataset.stage === 'ready'");
-      assert.equal(await evaluate("document.querySelectorAll('.country-option').length"), 2);
+      assert.equal(await evaluate("document.querySelectorAll('.country-option').length"), 6);
       await screenshot("shineray-country-ready");
       await evaluate("document.querySelector('[data-country-code=\"+225\"]').click()");
       assert.equal(await evaluate("document.querySelector('[name=country]').value"), "+225");

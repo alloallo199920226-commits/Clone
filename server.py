@@ -210,10 +210,9 @@ class Handler(BaseHTTPRequestHandler):
             elif route.endswith("/config"):
                 self._json(200, {"countries_url": "/api/countries"})
             else:
-                names = {"+228": "Togo", "+225": "Côte d’Ivoire"}
                 self._json(200, {"countries": [
-                    {"code": code, "name": names[code], "phone_length": auth_backend.PHONE_LENGTHS[code]}
-                    for code in ("+228", "+225")
+                    {"code": code, "name": name, "phone_length": auth_backend.PHONE_LENGTHS[code]}
+                    for code, name in auth_backend.COUNTRY_NAMES.items()
                 ]})
             return
 

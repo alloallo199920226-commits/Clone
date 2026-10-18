@@ -28,11 +28,8 @@
     }
     if (!form.reportValidity()) return;
     const digits = form.elements.phone.value.replace(/\D/g, "");
-    const countryDigits = countryInput.value.slice(1);
-    const expectedLength = countryInput.value === "+225" ? 10 : 8;
-    const phone = digits.length === expectedLength + countryDigits.length && digits.startsWith(countryDigits)
-      ? digits.slice(countryDigits.length)
-      : digits;
+    // The server normalizes local and international numbers for each eligible country.
+    const phone = digits;
     await window.submitAuthForm(form, "/api/auth/register", {
           country_code: countryInput.value,
           phone,

@@ -5,8 +5,16 @@ CREATE TABLE IF NOT EXISTS shineray_users (
     password_hash BYTEA NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT shineray_phone_format CHECK (
-        phone ~ '^\+225[0-9]{10}$' OR phone ~ '^\+228[0-9]{8}$'
+        phone ~ '^\+(225|229)[0-9]{10}$' OR phone ~ '^\+(228|226|227)[0-9]{8}$'
+        OR phone ~ '^\+237[0-9]{9}$'
     )
+);
+
+-- Update existing databases as well as fresh installations.
+ALTER TABLE shineray_users DROP CONSTRAINT IF EXISTS shineray_phone_format;
+ALTER TABLE shineray_users ADD CONSTRAINT shineray_phone_format CHECK (
+    phone ~ '^\+(225|229)[0-9]{10}$' OR phone ~ '^\+(228|226|227)[0-9]{8}$'
+    OR phone ~ '^\+237[0-9]{9}$'
 );
 
 CREATE TABLE IF NOT EXISTS shineray_sessions (

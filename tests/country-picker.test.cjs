@@ -62,6 +62,8 @@ function setup() {
 const settle = () => new Promise(resolve => setImmediate(resolve));
 const countries = { countries: [
   { code: "+228", name: "Togo" }, { code: "+225", name: "Côte d’Ivoire" },
+  { code: "+229", name: "Bénin" }, { code: "+226", name: "Burkina Faso" },
+  { code: "+227", name: "Niger" }, { code: "+237", name: "Cameroun" },
 ] };
 
 test("each loading stage waits for its own real response, even after its display minimum", async () => {
@@ -84,7 +86,9 @@ test("each loading stage waits for its own real response, even after its display
   ui.requests[1].resolve(countries);
   await settle();
   assert.equal(ui.overlay.dataset.stage, "ready");
-  assert.equal(ui.options.children.length, 2);
+  assert.equal(ui.options.children.length, 6);
+  assert.deepEqual(ui.options.children.map(option => option.dataset.countryCode),
+    ["+228", "+225", "+229", "+226", "+227", "+237"]);
   ui.overlay.listeners.click({ target: ui.options.children[1] });
   assert.equal(ui.input.value, "+225");
   assert.equal(ui.label.textContent, "Côte d’Ivoire (+225)");
