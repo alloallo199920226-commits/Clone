@@ -341,7 +341,12 @@ def get_team(user_id: int) -> dict:
                         COALESCE((SELECT SUM(abs(t.amount_fcfa))
                                   FROM shineray_transactions t
                                   WHERE t.user_id = r.id AND t.kind = 'purchase'), 0)::bigint
-                        AS investment_fcfa
+                        AS investment_fcfa,
+                        COALESCE((SELECT SUM(t.amount_fcfa)
+                                  FROM shineray_transactions t
+                                  WHERE t.user_id = r.id AND t.kind = 'recharge'
+                                    AND t.amount_fcfa > 0), 0)::bigint
+                        AS deposits_fcfa
                  FROM ranked r WHERE rank <= 100
                  ORDER BY r.level, r.created_at DESC, r.id DESC""",
             (user_id,),
@@ -350,7 +355,8 @@ def get_team(user_id: int) -> dict:
             {"level": row["level"],
              "phone_masked": row["phone"][4:6] + "****" + row["phone"][-3:],
              "created_at": row["created_at"].isoformat(),
-             "investment_fcfa": row["investment_fcfa"]}
+             "investment_fcfa": row["investment_fcfa"],
+             "deposits_fcfa": row["deposits_fcfa"]}
             for row in cursor.fetchall()
         ]
         cursor.execute(

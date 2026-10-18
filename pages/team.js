@@ -119,7 +119,9 @@
         details.append(phone, date);
         const investment = document.createElement("strong");
         investment.className = "team-member-investment";
-        investment.textContent = Number.isSafeInteger(member.investment_fcfa) ? number.format(member.investment_fcfa) : "—";
+        investment.textContent = Number.isSafeInteger(member.deposits_fcfa) ? number.format(member.deposits_fcfa) : "—";
+        investment.title = "Total des dépôts validés (FCFA)";
+        investment.setAttribute("aria-label", `Dépôts validés : ${formatAmount(member.deposits_fcfa)}`);
         row.append(avatar, details, investment);
         memberList?.append(row);
       });

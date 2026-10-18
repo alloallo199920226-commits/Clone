@@ -123,11 +123,16 @@ class FinancialPolicyTests(unittest.TestCase):
         # Retry through the automatic service converges on the same deposit.
         result = settle_approved_deposit(child["id"], 500, body["provider_reference"], approval_method="automatic")
         self.assertTrue(result["already_approved"])
+        self.assertEqual(auth_backend.get_team(level1["id"])["members"][0]["deposits_fcfa"], 500)
         status, result = self.request("/api/admin/deposits", token, {
             **body, "amount_fcfa": 1000, "provider_reference": "second-" + secrets.token_hex(12)})
         self.assertEqual(status, 201)
         self.assertFalse(json.loads(result)["first_deposit"])
         self.assertEqual(auth_backend.account_summary(child["id"])["balance_fcfa"], 3800)
+        for ancestor, depth in ((admin, 3), (level2, 2), (level1, 1)):
+            child_member = next(member for member in auth_backend.get_team(ancestor["id"])["members"]
+                                if member["level"] == depth)
+            self.assertEqual(child_member["deposits_fcfa"], 1500)
         for user, _ in chain[:3]:
             self.assertEqual(len(self.ledger(user["id"], "commission")), 1)
         with self.assertRaises(ValueError):

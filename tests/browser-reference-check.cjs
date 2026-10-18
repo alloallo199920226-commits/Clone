@@ -465,6 +465,11 @@ async function main() {
         })}).then(async r=>({status:r.status,body:await r.json()}))`);
       assert.equal(child.status, 201, JSON.stringify(child));
       childUserIds.push(child.body.user.id);
+      execFileSync("python3", ["-c", [
+        "import sys, uuid, auth_backend",
+        "with auth_backend.connect() as conn, conn.cursor() as cur:",
+        " cur.execute(\"INSERT INTO shineray_transactions (user_id,kind,label,amount_fcfa,provider_reference,details) VALUES (%s,'recharge','Dépôt validé de test',1500,%s,'{}')\", (int(sys.argv[1]), 'team-browser-' + str(uuid.uuid4())))",
+      ].join("\n"), String(child.body.user.id)]);
       const login = await evaluate(`fetch('/api/auth/login',{
         method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(${JSON.stringify(payload)})
       }).then(r=>r.status)`);
@@ -473,6 +478,9 @@ async function main() {
       await waitFor("document.querySelector('[data-team-members]').children.length===1");
       assert.equal(await evaluate("document.querySelector('[data-team-level-count=\"1\"]').textContent"), "1");
       assert.equal(await evaluate("document.querySelector('[data-team-detail-empty]').hidden"), true);
+      assert.equal(await evaluate("document.querySelector('.team-member-investment').textContent"), "1,500");
+      assert(await evaluate("document.querySelector('.team-member-investment').getAttribute('aria-label').includes('Dépôts validés')"));
+      await screenshot("shineray-team-deposits-reference");
       assert(await evaluate("document.querySelector('[data-team-members]').innerText.includes('****')"));
       assert.equal(await evaluate(`document.querySelector('[data-team-members]').innerText.includes(${JSON.stringify(childPhone)})`), false);
       await evaluate("document.querySelector('[data-team-level-tab=\"2\"]').click()");

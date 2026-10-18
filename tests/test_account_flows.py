@@ -203,6 +203,8 @@ class AccountFlowTests(unittest.TestCase):
                 "validity_days": 180, "quantity": 1, "income_fcfa": 6000,
             }),
             (child["id"], "purchase", "VIP1", -4000, {"vip": 1}),
+            (child["id"], "recharge", "Dépôt vérifié", 500, {}),
+            (child["id"], "recharge", "Deuxième dépôt vérifié", 700, {}),
             (grandchild["id"], "purchase", "VIP2", -8000, {"vip": 2}),
             (owner["id"], "commission", "Commission niveau 1", 1480, {"source_user_id": child["id"]}),
             (owner["id"], "commission", "Commission niveau 2", 240, {"source_user_id": grandchild["id"]}),
@@ -238,6 +240,7 @@ class AccountFlowTests(unittest.TestCase):
         self.assertEqual(team["level_revenue_fcfa"], [1480, 240, 0])
         self.assertEqual(team["revenue_fcfa"], 1720)
         self.assertEqual([member["investment_fcfa"] for member in team["members"]], [4000, 8000])
+        self.assertEqual([member["deposits_fcfa"] for member in team["members"]], [1200, 0])
         with auth_backend.connect() as connection, connection.cursor() as cursor:
             cursor.execute(
                 """INSERT INTO shineray_transactions

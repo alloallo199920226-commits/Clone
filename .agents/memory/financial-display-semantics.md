@@ -9,6 +9,12 @@ Keep pending deposit/withdrawal requests separate from the settled financial led
 
 **How to apply:** a future manual-payment flow needs separate request storage and an explicit verification/approval step before a settled entry is recorded.
 
+Dans « Mon équipe », le montant à droite de chaque filleul représente ses dépôts validés cumulés, pas ses achats VIP. Les montants en haut représentent les commissions du parrain par niveau.
+
+**Why:** l’utilisateur attend de voir « le montant déposé par les investisseurs » dans cette colonne ; un achat VIP et un dépôt ne sont pas interchangeables.
+
+**How to apply:** conserver cette distinction lors des modifications de l’équipe ; exclure les bonus, crédits administratifs et demandes non validées des dépôts affichés.
+
 Purchase cost is not earned income. Withdrawal net amounts and product earnings must come from verified stored facts, not calculations based on advertised percentages or screenshot values.
 
 **Why:** the reference has separate purchase-price, earned-income, and amount-received figures; silently calculating one from another would present unsupported financial information.
