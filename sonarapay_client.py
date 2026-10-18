@@ -38,7 +38,7 @@ def request(method, path, payload=None, idempotency_key=None):
     key = os.environ.get("SONARAPAY_KEY", "").strip()
     if not key:
         raise ProviderError("not_configured")
-    headers = {"Api-Key": key, "Accept": "application/json"}
+    headers = {"Api-Key": key, "Accept": "application/json", "User-Agent": "IVECO-Pay/1.0"}
     data = None
     if payload is not None:
         headers["Content-Type"] = "application/json"
@@ -53,11 +53,14 @@ def request(method, path, payload=None, idempotency_key=None):
         # OTP-required responses may be returned with HTTP 400.
         try:
             value = json.loads(error.read(131_072))
-        except (ValueError, OSError):
-            value = {}
+        except (ValueError, UnicodeError, OSError):
+            value = None
         if error.code == 400 and isinstance(value, dict) and value.get("requiresOtp") is True:
             return value
-        raise ProviderError("credentials" if error.code in (401, 403) else "rejected"
+        if error.code in (401, 403):
+            # An HTML gateway denial is not evidence that the SDK key is invalid.
+            raise ProviderError("credentials" if isinstance(value, dict) else "access_blocked") from None
+        raise ProviderError("rejected"
                             if error.code == 400 else "unavailable") from None
     except (URLError, TimeoutError, OSError):
         # The POST may have reached SonaraPay. Retry ONLY this same order/key.

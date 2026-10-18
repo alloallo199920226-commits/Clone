@@ -17,3 +17,14 @@ serveur ; faire également transférer au compte manuel pourrait provoquer un do
 
 **How to apply:** distinguer clairement le suivi du paiement automatique des instructions
 de transfert manuel, même si les deux parcours partagent l’habillage IVECO.
+
+Le point d’entrée SonaraPay peut refuser le client Python par défaut avec une
+réponse HTML 403, indépendamment de la validité d’une clé.
+
+**Why:** des requêtes GET sans authentification ont reçu un refus HTML avec
+Python-urllib, mais la réponse JSON 401 normale avec un User-Agent identifiant
+l’application. Un refus de passerelle avait été présenté à tort comme une erreur de clé.
+
+**How to apply:** identifier honnêtement le client HTTP de l’application ; distinguer
+les refus HTML de la passerelle des erreurs JSON d’authentification du prestataire.
+Vérifier uniquement par GET lors du diagnostic, sans créer un paiement réel.

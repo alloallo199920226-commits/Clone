@@ -2,6 +2,7 @@
 import concurrent.futures
 import copy
 import http.client
+import io
 import json
 import os
 import secrets
@@ -10,6 +11,7 @@ import unittest
 import uuid
 from http.server import ThreadingHTTPServer
 from unittest.mock import patch
+from urllib.error import HTTPError
 
 import auth_backend
 import sonarapay_client as client
@@ -59,6 +61,24 @@ class VerificationTests(unittest.TestCase):
             self.assertNotIn("otp", request.call_args.args[2])
             self.assertEqual(first.args[1], "/api/public/v1/payments")
         self.assertIsNone(client.NoRedirects().redirect_request(None, None, 302, "", {}, "https://other.test"))
+
+    def test_identifies_client_and_distinguishes_gateway_from_credentials(self):
+        for status, body, expected in [
+            (403, b"<html>Access denied</html>", "access_blocked"),
+            (401, b'{"error":"Unauthorized"}', "credentials"),
+            (403, b'{"error":"Forbidden"}', "credentials"),
+        ]:
+            with self.subTest(status=status, expected=expected):
+                error = HTTPError("https://sonarapay.app/api/public/v1/payments/test",
+                                  status, "Rejected", {}, io.BytesIO(body))
+                with patch.dict(os.environ, {"SONARAPAY_KEY": "isolated-test-key-not-live"}), \
+                        patch.object(client, "build_opener") as opener:
+                    opener.return_value.open.side_effect = error
+                    with self.assertRaises(client.ProviderError) as raised:
+                        client.check("test")
+                    self.assertEqual(raised.exception.code, expected)
+                    request = opener.return_value.open.call_args.args[0]
+                    self.assertEqual(request.get_header("User-agent"), "IVECO-Pay/1.0")
 
 
 @unittest.skipUnless(os.environ.get("RUN_ACCOUNT_INTEGRATION_TESTS") == "1", "Development DB opt-in")
