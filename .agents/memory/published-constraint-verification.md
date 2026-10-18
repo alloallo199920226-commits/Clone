@@ -20,3 +20,13 @@ environments. Preserve the welcome bonus and its true category; do not relabel i
 a commission or remove it to bypass the failure. Resolve schema synchronization through
 the supported publishing/database interface, never production startup DDL or custom
 production migration scripts.
+
+The user can apply a targeted constraint correction through the production Database
+SQL editor with editing enabled; Agent's read-only production access does not mean
+the user must contact support.
+
+**Why:** the user successfully applied the correction through that interface, and
+read-only introspection then confirmed the intended production constraint.
+
+**How to apply:** distinguish Agent access limits from user permissions, explain the
+effect before suggesting SQL, and verify the resulting constraint read-only afterward.
