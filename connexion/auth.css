@@ -14,13 +14,8 @@ body { min-width: 320px; min-height: 100vh; margin: 0; background: linear-gradie
 button, input { font: inherit; }
 .auth-page { width: min(100%, 520px); min-height: 100vh; margin: 0 auto; padding: 18px 22px 56px; position: relative; }
 .back-link { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 40px; color: #222; font-size: 38px; line-height: 1; text-decoration: none; }
-.brand { display: flex; align-items: center; justify-content: center; width: max-content; max-width: 100%; margin: 42px auto 52px; padding: 9px 10px; border-radius: 4px; color: #fff; background: #171717; text-decoration: none; box-shadow: 0 2px 4px #0002; }
-.brand-mark { margin-right: 5px; font-size: 17px; color: #fff; }
-.brand-name { font-size: clamp(20px, 5.2vw, 27px); font-weight: 600; letter-spacing: -.7px; white-space: nowrap; }
-.brand-name span { color: var(--brand-red); }
-.brand-divider { width: 1px; height: 29px; margin: 0 10px; background: #858585; }
-.brand-swm { color: #e20c2b; font-size: 24px; font-weight: 800; font-style: italic; letter-spacing: -1px; line-height: .8; }
-.brand-swm small { display: block; margin-top: 4px; color: #eee; font-size: 6px; font-style: normal; font-weight: 600; letter-spacing: 1.2px; text-align: center; }
+.brand { display: block; width: min(244px, 100%); max-width: 100%; margin: 42px auto 52px; padding: 0; background: transparent; text-decoration: none; }
+.brand-image { display: block; width: 100%; height: auto; }
 .auth-card { width: 100%; }
 .auth-card form { display: grid; gap: 20px; }
 .field { display: flex; width: 100%; min-height: 52px; align-items: center; border: 1px solid #eee; border-radius: 5px; padding: 0 19px; background: #fff; color: #333; font-size: 15px; text-align: left; box-shadow: 0 1px 2px #00000008; }
