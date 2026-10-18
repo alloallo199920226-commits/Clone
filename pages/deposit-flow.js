@@ -10,6 +10,65 @@
   const { t, set } = window.depositI18n;
   const notify = (key, params) => set(status, key, params);
   const money = value => `FCFA ${new Intl.NumberFormat("en-US").format(value)}`;
+  const updateTitle = () => {
+    document.title = document.documentElement.lang === "en"
+      ? `IVECO Pay — ${form ? "Choose an operator" : "Deposit instructions"}`
+      : `IVECO Pay — ${form ? "Choisir un opérateur" : "Instructions du dépôt"}`;
+  };
+  updateTitle();
+  document.addEventListener("deposit-language-change", updateTitle);
+  const operatorBrand = channel => {
+    const name = `${channel.operatorName || ""} ${channel.logoText || ""}`.toLowerCase();
+    if (name.includes("mtn")) return "mtn";
+    if (name.includes("moov")) return "moov";
+    return "other";
+  };
+  function fallbackLogo(node, channel, brand) {
+    const label = document.createElement("span");
+    label.className = "operator-logo-fallback";
+    label.textContent = String(channel.logoText || channel.operatorName || "").trim().slice(0, 12);
+    node.dataset.brand = brand;
+    node.append(label);
+  }
+  function populateLogo(logo, channel, brand) {
+    logo.dataset.brand = brand;
+    const configured = String(channel.logoUrl || "").trim();
+    const source = configured || (brand === "mtn" ? "/pages/assets/mtn-logo.png"
+      : brand === "moov" ? "/pages/assets/moov-africa-logo.png" : "");
+    if (!source) { fallbackLogo(logo, channel, brand); return; }
+    try {
+      const parsed = new URL(source, location.origin);
+      if (!["http:", "https:"].includes(parsed.protocol) ||
+          (parsed.origin !== location.origin && parsed.protocol !== "https:")) {
+        fallbackLogo(logo, channel, brand);
+        return;
+      }
+      const image = document.createElement("img");
+      image.src = parsed.href;
+      image.alt = "";
+      image.addEventListener("error", () => {
+        image.remove();
+        fallbackLogo(logo, channel, brand);
+      }, { once: true });
+      logo.append(image);
+    } catch { fallbackLogo(logo, channel, brand); }
+  }
+  const flagMarkup = prefix => {
+    const flags = {
+      "+229": '<svg viewBox="0 0 30 20" role="presentation"><path fill="#008751" d="M0 0h12v20H0z"/><path fill="#fcd116" d="M12 0h18v10H12z"/><path fill="#e8112d" d="M12 10h18v10H12z"/></svg>',
+      "+227": '<svg viewBox="0 0 30 20" role="presentation"><path fill="#e05206" d="M0 0h30v6.67H0z"/><path fill="#fff" d="M0 6.67h30v6.66H0z"/><path fill="#0db02b" d="M0 13.33h30V20H0z"/><circle cx="15" cy="10" r="2.6" fill="#e05206"/></svg>',
+      "+228": '<svg viewBox="0 0 30 20" role="presentation"><path fill="#006a4e" d="M0 0h30v20H0z"/><path fill="#ffce00" d="M0 0h30v4H0zM0 8h30v4H0zM0 16h30v4H0z"/><path fill="#d21034" d="M0 0h12v10H0z"/><path fill="#fff" d="m6 1.8 1.3 2.5 2.8.4-2 2 .5 2.8L6 8.2l-2.6 1.3.5-2.8-2-2 2.8-.4z"/></svg>',
+      "+225": '<svg viewBox="0 0 30 20" role="presentation"><path fill="#f77f00" d="M0 0h10v20H0z"/><path fill="#fff" d="M10 0h10v20H10z"/><path fill="#009e60" d="M20 0h10v20H20z"/></svg>',
+      "+226": '<svg viewBox="0 0 30 20" role="presentation"><path fill="#ef2b2d" d="M0 0h30v10H0z"/><path fill="#009e49" d="M0 10h30v10H0z"/><path fill="#fcd116" d="m15 5 1.2 3.6H20l-3.1 2.2 1.2 3.6-3.1-2.2-3.1 2.2 1.2-3.6L10 8.6h3.8z"/></svg>',
+      "+221": '<svg viewBox="0 0 30 20" role="presentation"><path fill="#00853f" d="M0 0h10v20H0z"/><path fill="#fdef42" d="M10 0h10v20H10z"/><path fill="#e31b23" d="M20 0h10v20H20z"/><path fill="#00853f" d="m15 5 1.1 3.3h3.5l-2.8 2 1.1 3.3-2.9-2-2.9 2 1.1-3.3-2.8-2h3.5z"/></svg>',
+      "+223": '<svg viewBox="0 0 30 20" role="presentation"><path fill="#14b53a" d="M0 0h10v20H0z"/><path fill="#fcd116" d="M10 0h10v20H10z"/><path fill="#ce1126" d="M20 0h10v20H20z"/></svg>',
+      "+224": '<svg viewBox="0 0 30 20" role="presentation"><path fill="#ce1126" d="M0 0h10v20H0z"/><path fill="#fcd116" d="M10 0h10v20H10z"/><path fill="#009460" d="M20 0h10v20H20z"/></svg>',
+      "+234": '<svg viewBox="0 0 30 20" role="presentation"><path fill="#008751" d="M0 0h10v20H0z"/><path fill="#fff" d="M10 0h10v20H10z"/><path fill="#008751" d="M20 0h10v20H20z"/></svg>',
+      "+233": '<svg viewBox="0 0 30 20" role="presentation"><path fill="#ce1126" d="M0 0h30v7H0z"/><path fill="#fcd116" d="M0 7h30v6H0z"/><path fill="#006b3f" d="M0 13h30v7H0z"/><path fill="#111" d="m15 8 1 2.2h2.4l-1.9 1.4.7 2.3-2.2-1.4-2.2 1.4.7-2.3-1.9-1.4h2.4z"/></svg>',
+      "+237": '<svg viewBox="0 0 30 20" role="presentation"><path fill="#007a5e" d="M0 0h10v20H0z"/><path fill="#ce1126" d="M10 0h10v20H10z"/><path fill="#fcd116" d="M20 0h10v20H20z"/><path fill="#fcd116" d="m15 6 1 2.5h2.6l-2.1 1.5.8 2.5-2.3-1.5-2.3 1.5.8-2.5-2.1-1.5H14z"/></svg>'
+    };
+    return flags[prefix] || '<svg viewBox="0 0 30 20" role="presentation"><rect width="30" height="20" fill="#e8edf1"/><path d="M0 0h30v6H0z" fill="#cbd4dc"/><path d="M0 14h30v6H0z" fill="#cbd4dc"/></svg>';
+  };
   let draft;
   function save() {
     try { sessionStorage.setItem(key, JSON.stringify(draft)); return true; }
@@ -91,6 +150,7 @@
     draft.country_code = prefix;
     if (!save()) return;
     document.querySelectorAll("[data-deposit-prefix]").forEach(node => { node.textContent = prefix; });
+    document.querySelectorAll("[data-deposit-flag]").forEach(node => { node.innerHTML = flagMarkup(prefix); });
     if (!channels.length) {
       if (confirmation) showMissing("channelUnavailable");
       else notify("noChannels");
@@ -108,6 +168,8 @@
     if (confirmation) {
       const channel = channels.find(item => String(item.id) === String(draft.operator));
       if (!channel) { showMissing("channelUnavailable"); return; }
+      const confirmationLogo = document.querySelector("[data-confirmation-logo]");
+      if (confirmationLogo) populateLogo(confirmationLogo, channel, operatorBrand(channel));
       if (!new RegExp(`^\\d{${length}}$`).test(draft.phone || "")) {
         showMissing();
         return;
@@ -130,8 +192,9 @@
         dial.removeAttribute("aria-disabled");
       }
       for (const name of ["merchant_name", "merchant_account", "ussd"]) {
-        const button = document.querySelector(`[data-copy="${name}"]`);
-        if (button) button.disabled = !copyValues[name];
+        document.querySelectorAll(`[data-copy="${name}"]`).forEach(button => {
+          button.disabled = !copyValues[name];
+        });
       }
       document.querySelector("[data-selected-operator]").textContent = operators[draft.operator];
       set(document.querySelector("[data-ussd-heading]"), "ussdHeading", { operator: operators[draft.operator] });
@@ -148,20 +211,30 @@
     input.value = draft.phone || "";
     input.maxLength = 24;
     const options = document.querySelector(".deposit-operator-options");
-    const logos = document.querySelector(".deposit-operator-logos");
     channels.forEach(channel => {
       const id = String(channel.id);
+      const brand = operatorBrand(channel);
       const logo = document.createElement("span");
-      logo.className = "operator-logo";
-      logo.textContent = channel.logoText || channel.operatorName;
+      logo.className = `operator-logo${brand === "other" ? "" : ` operator-logo--${brand}`}`;
+      populateLogo(logo, channel, brand);
       if (/^#[0-9a-f]{6}$/i.test(channel.logoColor)) logo.style.backgroundColor = channel.logoColor;
-      logos.append(logo);
       const button = document.createElement("button");
       button.type = "button";
       button.className = "deposit-operator";
       button.dataset.operator = id;
-      button.textContent = channel.operatorName;
-      options.append(button);
+      button.dataset.brand = brand;
+      const name = document.createElement("span");
+      name.className = "deposit-operator-name";
+      name.textContent = channel.operatorName;
+      const check = document.createElement("span");
+      check.className = "deposit-check";
+      check.setAttribute("aria-hidden", "true");
+      check.textContent = "✓";
+      button.append(name, check);
+      const choice = document.createElement("div");
+      choice.className = "deposit-operator-choice";
+      choice.append(logo, button);
+      options.append(choice);
     });
     const choose = operator => {
       draft.operator = operator;

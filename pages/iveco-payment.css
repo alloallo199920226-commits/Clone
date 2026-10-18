@@ -1,0 +1,617 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap");
+
+/* IVECO Pay operator view only; confirmation keeps its existing visual system. */
+/* Local brand fallbacks only when admin logos are absent.
+   Source URLs are documented in pages/assets/payment-brand-sources.md. */
+html.deposit-document:has(body.deposit-page--operator) {
+  min-height: 100%;
+  background: #17232d;
+}
+
+body.deposit-page--operator {
+  min-height: 100dvh;
+  display: block;
+  padding: 0;
+  color: #14253a;
+  background:
+    linear-gradient(180deg, #eaf0f3 0, #d9e0e4 42%, #26323a 100%);
+  font: 14px/1.4 "DM Sans", sans-serif;
+}
+
+body.deposit-page--operator::before,
+body.deposit-page--operator::after { content: none; }
+
+.iveco-payment-page {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 472px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 0 17px 26px;
+  overflow: hidden;
+  background-color: #f5f6f7;
+  background-image:
+    linear-gradient(180deg, rgba(245, 247, 248, .04) 0%, rgba(245, 247, 248, .02) 38%, rgba(18, 27, 35, .08) 66%, rgba(13, 20, 27, .28) 100%),
+    url("/pages/assets/iveco-payment-scene.jpg");
+  background-repeat: no-repeat;
+  background-position: center top, center top;
+  background-size: 100% 100dvh, 100% 100dvh;
+}
+
+.iveco-payment-page::after {
+  position: absolute;
+  z-index: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 34%;
+  pointer-events: none;
+  background:
+    linear-gradient(164deg, transparent 0 47%, rgba(201, 20, 50, .76) 47.4% 48.4%, transparent 48.8%),
+    linear-gradient(164deg, transparent 0 59%, rgba(217, 30, 55, .38) 59.3% 60%, transparent 60.4%);
+  content: "";
+}
+
+.iveco-scene {
+  position: relative;
+  height: 191px;
+  margin: 0 -17px;
+  overflow: hidden;
+  isolation: isolate;
+  background-color: #dce4e8;
+  background-image:
+    linear-gradient(90deg, rgba(248,250,251,.78) 0%, rgba(248,250,251,.38) 46%, transparent 72%),
+    linear-gradient(180deg, rgba(244,248,250,.04) 35%, rgba(26,36,44,.38) 100%),
+    url("/pages/assets/iveco-payment-scene.jpg");
+  background-position: center, center, 53% 18%;
+  background-size: cover;
+}
+
+.iveco-scene::after {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  width: 54px;
+  height: 79px;
+  background: #c91432;
+  clip-path: polygon(46% 0, 100% 0, 100% 100%, 82% 100%, 0 31%);
+  content: "";
+  pointer-events: none;
+}
+
+.iveco-scene-brand {
+  position: absolute;
+  top: 18px;
+  left: 22px;
+  display: grid;
+  grid-template-columns: 35px 180px;
+  grid-template-rows: 48px 12px;
+  align-items: center;
+  column-gap: 6px;
+  color: #101d2b;
+}
+
+.iveco-mark {
+  width: 30px;
+  height: 43px;
+  grid-row: 1;
+  background: #cf102d;
+  clip-path: polygon(68% 0, 100% 0, 32% 100%, 0 100%);
+}
+
+.iveco-wordmark {
+  align-self: end;
+  display: block;
+  width: 176px;
+  height: 39px;
+  overflow: hidden;
+  font-size: 0;
+  background: #0b1927;
+  mask: url("/pages/assets/iveco-wordmark.png") center / contain no-repeat;
+  -webkit-mask: url("/pages/assets/iveco-wordmark.png") center / contain no-repeat;
+}
+
+.iveco-tagline {
+  grid-column: 2;
+  align-self: start;
+  color: #52606c;
+  font: 600 8px/1.2 "DM Sans", sans-serif;
+  letter-spacing: .45em;
+  white-space: nowrap;
+}
+
+.iveco-assurances {
+  position: absolute;
+  right: auto;
+  bottom: 55px;
+  left: 16px;
+  width: 210px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.iveco-assurance {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: #182638;
+}
+
+.iveco-assurance svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  fill: none;
+  stroke: #c91532;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.iveco-assurance span { display: grid; justify-items: center; gap: 1px; }
+.iveco-assurance strong { font-size: 7px; line-height: 1.15; font-weight: 700; white-space: nowrap; }
+.iveco-assurance small { color: #596572; font-size: 6px; line-height: 1.2; white-space: nowrap; }
+
+body.deposit-page--operator .deposit-shell { width: 100%; }
+body.deposit-page--operator .deposit-card {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  margin: -14px 0 0;
+  border: 1px solid rgba(24, 39, 55, .08);
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(20, 35, 49, .2), 0 2px 5px rgba(20, 35, 49, .08);
+  animation: iveco-card-in 220ms ease both;
+}
+
+body.deposit-page--operator .deposit-card-header {
+  min-height: 77px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 18px 11px;
+  border: 0;
+  text-align: left;
+}
+
+body.deposit-page--operator .deposit-brand {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0 13px;
+  color: #13253a;
+  font: 800 27px/1 "Outfit", sans-serif;
+  letter-spacing: -.055em;
+  white-space: nowrap;
+}
+
+body.deposit-page--operator .deposit-brand::after {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 4px;
+  height: 26px;
+  border-radius: 3px;
+  background: #c91432;
+  content: "";
+  transform: translateY(-50%);
+}
+
+body.deposit-page--operator .deposit-brand em {
+  color: #c91432;
+  font-style: normal;
+}
+
+body.deposit-page--operator .deposit-heading-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin: 0;
+}
+
+body.deposit-page--operator .deposit-heading-tools .deposit-timer,
+body.deposit-page--operator .deposit-heading-tools .deposit-language {
+  height: 31px;
+  min-height: 31px;
+  border: 1px solid #e1e5e9;
+  border-radius: 7px;
+  background: #fff;
+  color: #273547;
+}
+
+body.deposit-page--operator .deposit-card-header > .deposit-close {
+  width: 27px;
+  height: 27px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dce1e6;
+  border-radius: 50%;
+  color: #5e6b78;
+  background: #fff;
+  text-decoration: none;
+  font: 400 19px/1 "DM Sans", sans-serif;
+  transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+body.deposit-page--operator .deposit-card-header > .deposit-close:hover {
+  border-color: #c9d0d7;
+  background: #f6f7f8;
+  color: #17283b;
+  transform: none;
+}
+
+body.deposit-page--operator .deposit-heading-tools .deposit-timer {
+  position: relative;
+  min-width: 64px;
+  padding-left: 17px;
+  font: 600 11px/1 "DM Sans", sans-serif;
+  letter-spacing: .02em;
+}
+
+body.deposit-page--operator .deposit-heading-tools .deposit-timer::before {
+  position: absolute;
+  left: 7px;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid #71808d;
+  border-radius: 50%;
+  content: "";
+}
+
+body.deposit-page--operator .deposit-heading-tools .deposit-timer::after {
+  position: absolute;
+  left: 12px;
+  width: 1px;
+  height: 4px;
+  background: #71808d;
+  box-shadow: 2px 3px 0 -0.2px #71808d;
+  content: "";
+}
+
+body.deposit-page--operator .deposit-heading-tools .deposit-language {
+  padding: 0 9px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+body.deposit-page--operator .deposit-language::before {
+  content: "";
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  vertical-align: -3px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #002395 0 33.33%, #fff 33.33% 66.66%, #ed2939 66.66%);
+}
+body.deposit-page--operator .deposit-language[data-language="en"]::before {
+  background: linear-gradient(0deg, transparent 40%, #fff 40% 45%, #c8102e 45% 55%, #fff 55% 60%, transparent 60%),
+    linear-gradient(90deg, #012169 38%, #fff 38% 44%, #c8102e 44% 56%, #fff 56% 62%, #012169 62%);
+}
+
+body.deposit-page--operator .deposit-body { padding: 4px 18px 20px; }
+
+body.deposit-page--operator .deposit-amount-bar {
+  min-height: 44px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 7px;
+  background: #f2f3f5;
+}
+
+body.deposit-page--operator .deposit-amount-label {
+  color: #67717c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+body.deposit-page--operator .deposit-amount-value {
+  color: #c91432;
+  font: 800 19px/1 "Outfit", sans-serif;
+  letter-spacing: -.03em;
+}
+
+body.deposit-page--operator .deposit-section-title {
+  position: relative;
+  margin: 19px 0 11px;
+  padding-left: 17px;
+  color: #18283a;
+  font: 700 13px/1.35 "Outfit", sans-serif;
+}
+
+body.deposit-page--operator .deposit-section-title::before,
+body.deposit-page--operator .deposit-phone-label::before {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  width: 4px;
+  height: 16px;
+  border-radius: 3px;
+  background: #c91432;
+  content: "";
+}
+
+body.deposit-page--operator .deposit-operator-set { display: grid; gap: 7px; }
+body.deposit-page--operator .deposit-operator-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+body.deposit-page--operator .deposit-operator-logos { display: none; }
+body.deposit-page--operator .deposit-operator-choice { display: grid; grid-template-rows: 56px auto; gap: 7px; min-width: 0; }
+body.deposit-page--operator .deposit-operator-choice > .operator-logo { justify-self: center; }
+.operator-logo {
+  width: 62px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(21, 36, 53, .08);
+  border-radius: 8px;
+  background: #f0f2f4;
+  color: #233248;
+  box-shadow: 0 2px 6px rgba(20, 35, 50, .11);
+  font: 800 11px/1 "Outfit", sans-serif;
+  letter-spacing: -.02em;
+}
+
+.operator-logo img { display: block; width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+.operator-logo--mtn { background: #ffdc27; color: #20262c; }
+.operator-logo--moov { background: #f5f8fa; color: #1d3348; }
+.operator-logo--moov img { width: 60px; height: auto; max-height: 40px; padding: 0; object-fit: contain; }
+.operator-logo--mtn .operator-logo-fallback {
+  padding: 4px 8px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  font-style: italic;
+}
+.operator-logo--moov .operator-logo-fallback { font-size: 12px; font-weight: 800; }
+.operator-logo-fallback { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+body.deposit-page--operator .deposit-operator {
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid #e0e3e7;
+  border-radius: 8px;
+  background: #fff;
+  color: #1c2b3d;
+  font: 700 14px/1.1 "Outfit", sans-serif;
+  cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+
+body.deposit-page--operator .deposit-operator:hover { border-color: #b8c1ca; }
+body.deposit-page--operator .deposit-operator[data-brand="mtn"][aria-pressed="true"] {
+  border-color: #f1c900;
+  background: #ffce00;
+  color: #172334;
+}
+body.deposit-page--operator .deposit-operator[data-brand="moov"][aria-pressed="true"] {
+  border-color: #147db9;
+  background: #1785c5;
+  color: #fff;
+}
+body.deposit-page--operator .deposit-operator[aria-pressed="true"]:not([data-brand="mtn"]):not([data-brand="moov"]) {
+  border-color: #c91432;
+  background: #f9e9ec;
+}
+
+.deposit-check {
+  width: 21px;
+  height: 21px;
+  flex: 0 0 21px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fff;
+  color: #c91432;
+  font: 800 13px/1 "DM Sans", sans-serif;
+}
+
+body.deposit-page--operator .deposit-operator[aria-pressed="true"] .deposit-check { display: inline-flex; }
+body.deposit-page--operator .deposit-phone-label {
+  position: relative;
+  margin: 18px 0 8px;
+  padding-left: 17px;
+  color: #1d2c3e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+body.deposit-page--operator .deposit-phone-label::before { top: -1px; }
+
+body.deposit-page--operator .deposit-phone-wrap {
+  min-height: 58px;
+  border: 1px solid #d9dee3;
+  border-radius: 8px;
+  background: #fff;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+body.deposit-page--operator .deposit-phone-wrap:focus-within {
+  border-color: #b9c1c9;
+  background: #fbfcfd;
+  box-shadow: none;
+}
+
+.deposit-country-flag {
+  width: 22px;
+  height: 16px;
+  flex: 0 0 22px;
+  margin-left: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(20, 35, 48, .12);
+  border-radius: 2px;
+  background: #edf0f2;
+}
+.deposit-country-flag svg { display: block; width: 100%; height: 100%; }
+
+body.deposit-page--operator .deposit-phone-prefix {
+  align-self: center;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  margin: 0 0 0 9px;
+  padding: 0 10px 0 0;
+  border-right: 1px solid #e1e5e9;
+  color: #1d2b3c;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+body.deposit-page--operator .deposit-phone-input {
+  width: 100%;
+  min-width: 0;
+  height: 56px;
+  padding: 0 12px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #1a2b3e;
+  font: 400 16px/1.2 "DM Sans", sans-serif;
+}
+
+body.deposit-page--operator .deposit-phone-input::placeholder { color: #8b929a; opacity: 1; }
+/* This page's supplied reference includes a neutral resting field boundary.
+   Keep the same boundary on focus, without restoring Safari-era colored halos. */
+@layer form-controls {
+  html body .iveco-payment-page .deposit-phone-wrap,
+  html body .iveco-payment-page .deposit-phone-wrap:focus-within {
+    border: 1px solid #e1e4e8 !important;
+  }
+}
+body.deposit-page--operator .deposit-form-warning {
+  margin: 7px 0 0;
+  color: #b5333b;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+body.deposit-page--operator .deposit-submit {
+  position: relative;
+  width: 100%;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 8px;
+  background: #cf102d;
+  box-shadow: 0 3px 7px rgba(136, 14, 35, .18);
+  color: #fff;
+  font: 700 15px/1 "Outfit", sans-serif;
+  cursor: pointer;
+  transition: background-color 170ms ease, box-shadow 170ms ease, transform 170ms ease;
+}
+
+body.deposit-page--operator .deposit-submit:hover { background: #b90d28; box-shadow: 0 4px 9px rgba(136, 14, 35, .22); }
+body.deposit-page--operator .deposit-submit:active { transform: scale(.994); }
+body.deposit-page--operator .deposit-submit:disabled { opacity: .62; cursor: wait; }
+body.deposit-page--operator .deposit-submit span[aria-hidden="true"] {
+  position: absolute;
+  right: 17px;
+  font: 500 24px/1 "DM Sans", sans-serif;
+}
+
+body.deposit-page--operator .deposit-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 11px 0 0;
+  padding: 12px;
+  border: 1px solid #e8dfc5;
+  border-radius: 8px;
+  background: #fbf6e9;
+  color: #675a3c;
+  font-size: 10px;
+  line-height: 1.42;
+}
+
+.iveco-notice-mark {
+  width: 23px;
+  height: 23px;
+  flex: 0 0 23px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #756338;
+  color: #fff;
+  font: 700 15px/1 Georgia, serif;
+}
+.iveco-notice-copy { min-width: 0; }
+body.deposit-page--operator .deposit-notice strong { color: #5b4b28; font-weight: 700; }
+body.deposit-page--operator .deposit-form-status { margin-top: 5px; color: #a82b37; font-size: 11px; }
+body.deposit-page--operator [data-deposit-content][aria-busy="true"] .deposit-submit { cursor: wait; }
+
+body.deposit-page--operator .deposit-missing {
+  padding: 28px 22px;
+  color: #35475a;
+  font-size: 13px;
+}
+body.deposit-page--operator .deposit-missing a { color: #bd1230; }
+body.deposit-page--operator :focus-visible { outline: 3px solid rgba(201, 20, 50, .35); outline-offset: 3px; }
+
+@keyframes iveco-card-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (min-width: 700px) {
+  .iveco-payment-page { box-shadow: 0 0 40px rgba(16, 29, 42, .15); }
+}
+
+@media (max-width: 390px) {
+  .iveco-payment-page { padding-right: 12px; padding-left: 12px; }
+  .iveco-scene { margin-right: -12px; margin-left: -12px; }
+  body.deposit-page--operator .deposit-card-header { padding-right: 14px; padding-left: 14px; }
+  body.deposit-page--operator .deposit-body { padding-right: 14px; padding-left: 14px; }
+  body.deposit-page--operator .deposit-brand { font-size: 24px; }
+  body.deposit-page--operator .deposit-heading-tools { gap: 4px; }
+  body.deposit-page--operator .deposit-heading-tools .deposit-language { padding: 0 7px; }
+}
+
+@media (max-width: 430px) {
+  .iveco-scene-brand { grid-template-columns: 28px 142px; grid-template-rows: 39px 11px; }
+  .iveco-mark { width: 24px; height: 35px; }
+  .iveco-wordmark { width: 142px; height: 32px; }
+  .iveco-tagline { font-size: 7px; }
+  body.deposit-page--operator .deposit-card-header { grid-template-columns: minmax(0, 1fr) auto auto; gap: 5px; }
+  body.deposit-page--operator .deposit-brand { padding-left: 10px; font-size: 23px; }
+  body.deposit-page--operator .deposit-heading-tools .deposit-timer { min-width: 55px; }
+  body.deposit-page--operator .deposit-heading-tools .deposit-language { padding-right: 7px; padding-left: 7px; }
+  body.deposit-page--operator .deposit-card-header > .deposit-close { width: 25px; height: 25px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.deposit-page--operator .deposit-card { animation: none; }
+  body.deposit-page--operator *, body.deposit-page--operator *::before, body.deposit-page--operator *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+@media (max-width: 340px) {
+  body.deposit-page--operator .deposit-card-header { gap: 4px; padding-right: 12px; padding-left: 12px; }
+  body.deposit-page--operator .deposit-brand { font-size: 20px; letter-spacing: -.045em; }
+  body.deposit-page--operator .deposit-heading-tools { gap: 3px; }
+  body.deposit-page--operator .deposit-heading-tools .deposit-timer { min-width: 51px; font-size: 10px; }
+  body.deposit-page--operator .deposit-heading-tools .deposit-language { padding: 0 5px; font-size: 9px; }
+  body.deposit-page--operator .deposit-language::before { width: 12px; height: 12px; margin-right: 3px; vertical-align: -2px; }
+  body.deposit-page--operator .deposit-card-header > .deposit-close { width: 22px; height: 25px; }
+}

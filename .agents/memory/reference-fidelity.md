@@ -21,6 +21,12 @@ Use real photos of attractive modern vehicles, not screenshots as image backgrou
 
 **How to apply:** inspect the rendered asset itself and compare the vehicle to the reference, rather than trusting a filename or VIP label. Match layout without presenting reference financial figures as real funds or activated returns.
 
+Verify brand identity in downloaded logos, not just the search result name.
+
+**Why:** searches for Moov Africa returned unrelated Moov Inc. assets, and MTN results mixed older multicolor marks with the requested black/yellow mark.
+
+**How to apply:** inspect each logo image before using it and retain its source URL. An administrator-supplied logo remains authoritative.
+
 The country selector must show its states one after another and follow the real Internet connection, not just run a fast fixed animation. The user describes the first indicator as resembling a pulley, not a circle.
 
 **Why:** the user repeated that the first loader’s geometry was wrong and that the stages advanced too quickly without following their connection.

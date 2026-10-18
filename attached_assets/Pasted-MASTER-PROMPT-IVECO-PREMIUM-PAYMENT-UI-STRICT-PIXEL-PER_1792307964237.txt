@@ -1,0 +1,451 @@
+MASTER PROMPT — IVECO PREMIUM PAYMENT UI
+
+STRICT PIXEL-PERFECT RECONSTRUCTION PROTOCOL — ZERO GEOMETRY TOLERANCE
+
+1. MISSION ABSOLUE
+
+Tu es une équipe d’élite réunissant :
+
+* Un directeur artistique spécialisé dans les interfaces automobiles de luxe.
+* Un ingénieur frontend expert en reconstruction pixel-perfect.
+* Un spécialiste des systèmes de design IVECO et des interfaces de paiement mobile.
+* Un expert en géométrie CSS, responsive design, micro-interactions et animations.
+* Un spécialiste du contrôle visuel et de la comparaison d’images.
+
+Ta mission est de reproduire dans le projet existant la page de paiement visible dans la capture de référence fournie.
+
+L’objectif est une reconstruction visuellement quasi identique, avec une finition exceptionnelle, digne d’une entreprise internationale de vente de camions IVECO.
+
+RÈGLE FONDAMENTALE : LA FIDÉLITÉ À LA MAQUETTE PASSE AVANT TOUT.
+
+Une interface séduisante mais géométriquement différente constitue un échec.
+
+Une interface premium ne signifie pas ajouter des éléments partout. Elle signifie maîtriser parfaitement les proportions, les alignements, les espaces, la profondeur, les couleurs, les matières et les animations.
+
+Ne transforme surtout pas cette page en page d’accueil commerciale. Il s’agit exclusivement d’une page de paiement.
+
+⸻
+
+2. VERROUILLAGE DE LA GÉOMÉTRIE
+
+La capture d’écran est la source de vérité.
+
+Avant toute modification, analyse la référence et établis un relevé précis de :
+
+* La largeur et la hauteur de la page.
+* La position de chaque section.
+* Les marges extérieures et intérieures.
+* Les dimensions de la carte principale.
+* Les rayons de bordure.
+* Les proportions de chaque composant.
+* Les coordonnées relatives des logos, textes, champs et boutons.
+* Les espacements verticaux entre les éléments.
+* Les alignements horizontaux.
+* Les épaisseurs de bordure.
+* Les tailles de police, graisses, hauteurs de ligne et espacements typographiques.
+* Les couleurs dominantes et leurs variations.
+* Les ombres, dégradés, transparences et effets de profondeur.
+
+Convertis les dimensions observées en valeurs relatives au viewport, puis en règles CSS stables.
+
+Ne déplace aucun élément pour des raisons purement esthétiques.
+
+Ne modifie pas la structure globale pour obtenir une composition que tu juges plus moderne.
+
+Ne centre pas arbitrairement les éléments.
+
+Ne transforme pas les espacements existants.
+
+Ne redimensionne pas un composant isolément si cela déséquilibre les autres éléments.
+
+Chaque élément doit conserver sa relation géométrique avec les éléments qui l’entourent.
+
+Tolérance cible : aucun décalage perceptible à l’œil nu sur le viewport de référence.
+
+⸻
+
+3. ARCHITECTURE VISUELLE À REPRODUIRE
+
+Respecte strictement l’ordre suivant, sans permutation.
+
+A. En-tête du navigateur
+
+Conserve la zone supérieure visible sur la capture :
+
+* Barre de statut iOS.
+* Barre d’adresse affichant iveco.courses.
+* Dimensions, positions et espacements similaires à la référence.
+
+Cet environnement sert de référence visuelle. Ne cherche pas à recréer artificiellement les commandes natives du navigateur à l’intérieur de l’application web.
+
+B. Arrière-plan automobile IVECO
+
+Reproduis le fond de la capture :
+
+* Univers visuel industriel et automobile haut de gamme.
+* Camion IVECO placé dans la même zone relative que sur la référence.
+* Couleurs, lumière, contraste et perspective cohérents.
+* Accents rouges diagonaux élégants.
+* Route et profondeur visuelle maîtrisées.
+* Zones suffisamment calmes derrière la carte de paiement.
+
+Le fond doit soutenir le formulaire, jamais entrer en compétition avec lui.
+
+Ne modifie pas le cadrage du camion au hasard. Le sujet principal doit conserver une taille, une perspective et une position comparables à celles de la capture.
+
+Si l’image source exacte est disponible, privilégie-la. Sinon, utilise un visuel adapté et ajuste précisément background-size, background-position et le recadrage.
+
+C. Carte principale de paiement
+
+C’est le composant central et prioritaire.
+
+Reproduis fidèlement :
+
+* Sa position verticale et horizontale.
+* Sa largeur et sa hauteur.
+* Ses marges.
+* Son fond blanc.
+* Son rayon de bordure.
+* Son ombre extérieure.
+* Son padding interne.
+* La disposition de tous ses éléments.
+
+La carte doit présenter un aspect solide, propre, raffiné et parfaitement équilibré.
+
+Ne la fais ni trop large ni trop étroite.
+
+Ne la déplace pas pour mettre davantage le camion en valeur.
+
+Ne lui ajoute pas de sections décoratives.
+
+D. En-tête de paiement
+
+Reproduis la ligne contenant :
+
+* Le titre IVECO Pay.
+* Le mot IVECO en bleu nuit.
+* Le mot Pay en rouge.
+* Le petit trait rouge sous le titre.
+* Le contrôle horaire.
+* Le sélecteur de langue.
+
+Conserve les relations de taille, les espacements et l’alignement observés dans la référence.
+
+E. Résumé du montant
+
+Reproduis la bande de montant :
+
+* Libellé Montant du paiement.
+* Valeur FCFA 500.
+* Fond gris très clair.
+* Coins arrondis.
+* Texte du montant aligné à droite.
+* Espacement intérieur régulier.
+
+Le montant est déjà fourni par l’application. Ne crée pas de deuxième formulaire de saisie du montant.
+
+F. Sélection des opérateurs — POINT CRITIQUE
+
+Reproduis exactement la disposition visible dans la référence :
+
+* Le titre Veuillez sélectionner un mode de paiement.
+* Deux colonnes de sélection : MTN et MOOV.
+* Chaque opérateur possède son propre logo compact.
+* Chaque logo se situe au-dessus de sa carte de sélection correspondante.
+* Les deux cartes de sélection sont sur une même ligne.
+* Les cartes ont la même hauteur et des largeurs cohérentes.
+* L’espacement horizontal entre les deux colonnes est constant.
+* Les logos restent à l’intérieur de leur colonne respective.
+* Le logo et sa carte doivent être visuellement associés sans ambiguïté.
+
+INTERDICTION ABSOLUE DE SÉPARER UN LOGO DE SA CARTE PAR UN POSITIONNEMENT INCORRECT.
+
+Ne place pas le logo MTN à l’extrême droite de toute la page lorsque sa colonne se trouve à gauche.
+
+Ne transforme pas les logos en boutons géants.
+
+Ne fais pas occuper à un opérateur toute la largeur si deux opérateurs sont configurés.
+
+N’étire pas une petite carte carrée pour remplir un espace vide.
+
+N’invente pas une troisième colonne.
+
+Le comportement responsive doit préserver cette structure autant que possible. Sur les écrans étroits, réduis les espacements et adapte les dimensions sans casser l’association entre logo et carte.
+
+État sélectionné :
+
+* MTN : fond jaune conforme à son identité visuelle.
+* MOOV : fond blanc et contour discret lorsque non sélectionné.
+* Indicateur de sélection aligné proprement à l’intérieur de la carte.
+* Animation légère et rapide lors du changement de sélection.
+
+Les logos doivent être des assets propres et reconnaissables, idéalement des fichiers SVG ou PNG adaptés. N’improvise pas des logos approximatifs en texte si des ressources officielles sont disponibles.
+
+G. Champ de numéro de téléphone
+
+Reproduis le champ horizontal :
+
+* Indicatif +229.
+* Séparateur vertical.
+* Placeholder Votre numéro de téléphone.
+* Hauteur, largeur et alignement de référence.
+* Coins arrondis et bordure très discrète.
+* Padding interne précis.
+
+Le champ doit rester parfaitement aligné sur la largeur utile du formulaire.
+
+Ne déplace pas le séparateur.
+
+Ne modifie pas arbitrairement la taille du texte.
+
+Préserve la validation du numéro et le fonctionnement réel du champ.
+
+H. Message de validation
+
+Texte exact :
+
+Veuillez vérifier le numéro de téléphone avant de soumettre.
+
+Conserve sa couleur rouge, sa taille, son alignement et sa distance par rapport au champ.
+
+Il doit rester lisible sans pousser les autres composants hors de leur position prévue.
+
+I. Bouton de soumission
+
+Texte exact : Soumettre
+
+Reproduis :
+
+* La largeur disponible.
+* La hauteur de référence.
+* Le fond rouge premium.
+* Les coins arrondis.
+* La typographie et la graisse.
+* La flèche positionnée à droite.
+* L’alignement du texte.
+* Les ombres très légères.
+* Les états de survol, de pression, de chargement et de désactivation.
+
+Le bouton doit être visuellement dominant sans devenir disproportionné.
+
+Aucune animation ne doit déplacer sa géométrie ou provoquer un saut de mise en page.
+
+J. Mention administrative
+
+Conserve exactement le texte :
+
+Coordonnées fournies par l’administration. Aucun paiement n’a été initié ou confirmé par cette page.
+
+Reproduis le panneau beige clair, le contour fin, les coins arrondis et les espacements intérieurs.
+
+Ne supprime pas cette mention.
+
+Ne la transforme pas en bannière publicitaire.
+
+⸻
+
+4. IDENTITÉ VISUELLE IVECO PREMIUM
+
+Respecte une direction artistique cohérente :
+
+* Bleu nuit profond pour les textes et éléments structurels.
+* Rouge IVECO pour les accents, le titre secondaire et le bouton principal.
+* Blanc pour la carte.
+* Gris froid très clair pour les surfaces secondaires.
+* Jaune MTN pour l’opérateur MTN.
+* Bleu MOOV pour son identité lorsque nécessaire.
+* Beige très discret pour l’avertissement administratif.
+
+Les couleurs des opérateurs doivent rester distinctes des couleurs de la marque IVECO.
+
+Utilise une typographie moderne, nette et professionnelle.
+
+Les bordures doivent être fines et régulières.
+
+Les ombres doivent donner une impression de profondeur naturelle, sans halo excessif.
+
+Les dégradés doivent être subtils et cohérents avec l’éclairage de la scène.
+
+Évite les effets de verre trop transparents, les néons, les reflets artificiels excessifs, les bordures multicolores et les éléments décoratifs inutiles.
+
+Le résultat doit évoquer une interface de paiement automobile internationale : précise, rassurante, haut de gamme et fonctionnelle.
+
+⸻
+
+5. ANIMATIONS ET MICRO-INTERACTIONS
+
+Les animations doivent améliorer la perception de qualité sans modifier la géométrie.
+
+Prévois uniquement des transitions discrètes :
+
+* Apparition douce de la carte.
+* Transition légère de sélection entre MTN et MOOV.
+* Changement subtil de l’ombre du bouton au survol.
+* Compression très légère du bouton à l’appui.
+* Transition propre de focus du champ téléphonique.
+* Feedback de chargement sans déplacement des composants.
+
+Utilise des durées cohérentes, généralement entre 140 et 240 ms pour les interactions courantes.
+
+Évite :
+
+* Les rebonds excessifs.
+* Les zooms visibles.
+* Les rotations inutiles.
+* Les déplacements de composants.
+* Les animations qui changent les dimensions.
+* Les effets qui ralentissent la saisie ou la validation.
+
+Respecte prefers-reduced-motion.
+
+⸻
+
+6. EXIGENCES TECHNIQUES
+
+Avant de coder :
+
+1. Inspecte le projet existant.
+2. Identifie le framework et les fichiers de la page.
+3. Localise les styles, les assets, les composants et les fonctionnalités de paiement.
+4. Repère les règles CSS responsables des dimensions et espacements.
+5. Vérifie le fonctionnement actuel des opérateurs et du formulaire.
+
+Ensuite, modifie uniquement ce qui est nécessaire.
+
+Ne migre pas le projet vers un autre framework.
+
+Ne remplace pas toute l’application pour reconstruire une seule page.
+
+Ne supprime aucune intégration existante.
+
+Ne modifie pas les routes, les API, les variables d’environnement, les webhooks ou les paramètres de paiement sans nécessité démontrée.
+
+Préserve le comportement du formulaire, la validation du numéro et la sélection de l’opérateur.
+
+Si le montant est transmis par une intégration existante, conserve sa source de données et sa logique.
+
+Le design ne doit jamais simuler une confirmation de paiement qui n’a pas été réellement retournée par le système de paiement.
+
+Utilise des composants clairement structurés et des styles maintenables.
+
+Évite les valeurs CSS dispersées et les correctifs contradictoires.
+
+Centralise les paramètres géométriques importants dans des variables CSS lorsque cela facilite les ajustements.
+
+⸻
+
+7. MÉTHODE DE VALIDATION PIXEL-PERFECT
+
+Ne considère jamais la première version comme terminée.
+
+Utilise la capture fournie comme image de référence et compare le rendu réel de l’application.
+
+Étape 1 — Reproduction initiale :
+
+* Reproduis toutes les zones.
+* Contrôle les dimensions globales.
+* Vérifie la position de la carte.
+
+Étape 2 — Audit géométrique :
+
+* Compare les bords de la carte.
+* Vérifie les marges et les paddings.
+* Compare la position du titre, du montant et des opérateurs.
+* Contrôle l’alignement des champs.
+* Compare la hauteur du bouton.
+* Vérifie les proportions des logos.
+
+Étape 3 — Audit visuel :
+
+* Compare les couleurs.
+* Vérifie les tailles de police.
+* Contrôle les rayons de bordure.
+* Vérifie les ombres et les dégradés.
+* Compare le cadrage du camion.
+
+Étape 4 — Audit des animations :
+
+* Vérifie qu’aucune transition ne modifie la mise en page.
+* Teste les changements de sélection.
+* Vérifie l’absence de clignotement et de décalage.
+
+Étape 5 — Corrections :
+
+* Corrige les écarts les plus visibles en premier.
+* Répète les captures et les comparaisons.
+* Ne t’arrête pas tant qu’il reste des différences importantes.
+
+Si possible, utilise une superposition à 50 % entre la référence et le rendu, ainsi qu’une carte de différence visuelle.
+
+Mesure séparément :
+
+* Les écarts de position.
+* Les écarts de dimension.
+* Les écarts de couleur.
+* Les écarts de composition.
+
+Ne prétends pas avoir atteint 100 % de fidélité sans avoir effectué de comparaison visuelle réelle.
+
+⸻
+
+8. RESPONSIVE DESIGN
+
+La capture mobile fournie est le viewport de référence prioritaire.
+
+Commence par reproduire exactement sa composition à cette taille.
+
+Teste ensuite les autres largeurs :
+
+* Petits écrans mobiles.
+* Écrans mobiles standards.
+* Écrans plus larges.
+* Tablettes, si la page doit les prendre en charge.
+
+Sur les autres tailles, préserve les proportions et les relations entre les composants.
+
+N’applique pas simplement un zoom global à toute la page.
+
+Évite les débordements horizontaux.
+
+Ne laisse pas le bouton sortir de la carte.
+
+Ne fais pas disparaître les informations importantes.
+
+La version de référence doit rester prioritaire dans les décisions de mise en page.
+
+⸻
+
+9. CRITÈRES DE LIVRAISON
+
+La page est terminée uniquement lorsque :
+
+* La composition générale correspond à la référence.
+* La carte principale est au bon emplacement.
+* La géométrie interne est cohérente.
+* MTN et MOOV sont correctement positionnés.
+* Chaque logo est associé à sa propre carte.
+* Les textes sont exacts.
+* Le montant et le champ téléphonique sont correctement alignés.
+* Le bouton conserve sa taille et sa position.
+* Les animations restent discrètes.
+* Le rendu mobile est propre.
+* Le formulaire fonctionne toujours.
+* Aucune fonctionnalité existante n’a été cassée.
+* Aucune décoration superflue n’a été ajoutée.
+* Les écarts visuels majeurs ont été corrigés après comparaison.
+
+10. INSTRUCTION FINALE
+
+Travaille comme si chaque pixel était contrôlé par un directeur artistique particulièrement exigeant.
+
+Ne réinterprète pas la structure.
+
+Ne déplace pas les éléments pour improviser une nouvelle composition.
+
+Ne confonds pas luxe et surcharge.
+
+Le luxe doit venir de la précision géométrique, de la qualité des ressources, de la typographie, des contrastes, des espacements, des ombres et des micro-interactions.
+
+Priorité absolue : fidélité à la référence, géométrie exacte, disposition correcte des opérateurs, puis finition premium.
+
+Commence par analyser la capture et le code existant. Implémente ensuite la page dans le projet actuel, lance-la, compare le rendu à la référence, corrige les écarts et livre le résultat final sans détruire les fonctionnalités existantes.

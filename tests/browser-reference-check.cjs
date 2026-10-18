@@ -251,7 +251,7 @@ async function main() {
     assert.equal(registration.status, 201, JSON.stringify(registration.body));
     userId = registration.body.user.id;
     if (process.argv.includes("--deposit-channels")) {
-      await require("./deposit-channels-browser.cjs")({ evaluate, navigate, waitFor, screenshot });
+      await require("./deposit-channels-browser.cjs")({ call, evaluate, navigate, waitFor, screenshot });
       assert.deepEqual(errors, []);
       return;
     }

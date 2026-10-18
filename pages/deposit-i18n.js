@@ -1,6 +1,11 @@
 /* Local translations: no external service or network dependency. */
 (() => {
   const messages = {
+    securePayment: ["Paiement sécurisé", "Secure payment"],
+    reliable: ["100% fiable", "100% reliable"],
+    fastValidation: ["Validation rapide", "Fast processing"],
+    processingWindow: ["1 à 10 minutes", "1 to 10 minutes"],
+    alwaysAvailable: ["Toujours disponible", "Always available"],
     operatorTitle: ["Choisir un opérateur — Valhalla Pay", "Choose an operator — Valhalla Pay"],
     confirmationTitle: ["Confirmation du dépôt — Valhalla Pay", "Deposit confirmation — Valhalla Pay"],
     close: ["Fermer et revenir à Recharger", "Close and return to Top up"],
@@ -51,8 +56,8 @@
     manualDetails: ["Coordonnées fournies par l’administration. Aucun paiement n’a été initié ou confirmé par cette page.", "Details provided by the administrator. No payment has been initiated or confirmed by this page."],
     noPayment: ["Aucun paiement n’a été lancé. Les coordonnées et la validation seront disponibles après configuration par l’administrateur.", "No payment has been initiated. Recipient details and verification will be available after administrator configuration."],
     phoneError: ["Saisissez un numéro de paiement de {length} chiffres pour {prefix}.", "Enter a {length}-digit payment phone number for {prefix}."],
-    copied: ["Montant copié.", "Amount copied."],
-    copyError: ["La copie est indisponible. Vous pouvez recopier le montant affiché.", "Copying is unavailable. You can manually copy the displayed amount."],
+    copied: ["Copié.", "Copied."],
+    copyError: ["La copie est indisponible. Vous pouvez recopier la valeur affichée.", "Copying is unavailable. You can manually copy the displayed value."],
     dialError: ["Le code de transfert doit être configuré par l’administrateur.", "The transfer code must be configured by the administrator."]
   };
   let language = "fr";
@@ -81,7 +86,8 @@
     ".deposit-detail-card:nth-child(3) .deposit-detail-label": "amountLabel",
     "[data-copy='merchant_name'], [data-copy='merchant_account'], [data-copy='amount']": "copy",
     "[data-ussd-heading]": "ussd", ".deposit-ussd-instructions": "ussdInstructions", "[data-ussd-code]": "noCode",
-    "[data-deposit-dial]": "dial", "[data-copy='ussd']": "copyCode",
+    "[data-deposit-dial]": "dial", ".deposit-action[data-copy='ussd']": "copyCode",
+    ".deposit-inline-copy": "copy",
     ".deposit-reference > span": "reference", ".deposit-ussd-note": "pin",
     ".deposit-validation-title": "validation", "[data-deposit-validation]": "pending",
     "[data-deposit-result]": "result", ".deposit-payer-label": "phone", "[data-deposit-modify]": "modify"
@@ -104,7 +110,10 @@
     }
     document.querySelectorAll("[data-deposit-language]").forEach(button => {
       button.disabled = false;
-      button.textContent = language === "fr" ? "English" : "Français";
+      button.textContent = document.querySelector(".iveco-payment-page")
+        ? (language === "fr" ? "Français" : "English")
+        : (language === "fr" ? "English" : "Français");
+      button.dataset.language = language;
       button.title = t("switchLanguage");
     });
     document.dispatchEvent(new Event("deposit-language-change"));

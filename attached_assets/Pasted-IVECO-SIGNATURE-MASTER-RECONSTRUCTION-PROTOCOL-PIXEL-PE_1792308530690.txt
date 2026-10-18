@@ -1,0 +1,556 @@
+IVECO SIGNATURE — MASTER RECONSTRUCTION PROTOCOL
+
+PIXEL-PERFECT UI · PRECISION GEOMETRY · PREMIUM AUTOMOTIVE FINISH
+
+MISSION
+
+Tu dois intervenir directement dans le projet existant et transformer la page de transfert MTN par USSD fournie en référence en une interface IVECO de qualité exceptionnelle.
+
+Tu agis comme une équipe réunissant :
+
+* Un directeur artistique spécialisé dans les interfaces automobiles premium.
+* Un ingénieur frontend expert en reproduction pixel-perfect.
+* Un expert en géométrie CSS, typographie et responsive design.
+* Un spécialiste des animations professionnelles et du motion design.
+* Un ingénieur QA chargé de comparer les captures de référence avec le rendu réel.
+
+L’objectif n’est pas de créer une nouvelle page, mais de reproduire fidèlement la composition de la capture fournie, tout en appliquant une finition IVECO professionnelle, maîtrisée et cohérente.
+
+RÈGLE ABSOLUE : 99 % de ressemblance visuelle ne constitue pas un objectif final satisfaisant. Il faut mesurer les écarts, corriger les différences et recommencer jusqu’à obtenir le meilleur résultat techniquement possible.
+
+Ne prétends jamais avoir atteint 100 % sans comparaison réelle.
+
+⸻
+
+1. PRIORITÉ NUMÉRO UN : LA GÉOMÉTRIE
+
+La capture fournie est la référence visuelle obligatoire.
+
+Avant de coder, analyse-la et relève précisément :
+
+* La largeur et la hauteur du viewport.
+* La hauteur de la barre de statut iOS et celle de la barre d’adresse.
+* La position du logo IVECO.
+* La hauteur de la zone héro avec le camion.
+* La position verticale du grand panneau principal.
+* La largeur, la hauteur et les marges de ce panneau.
+* La position de chaque carte secondaire.
+* Les espacements entre toutes les sections.
+* Les rayons des angles.
+* Les bordures, séparateurs et ombres.
+* Les tailles, graisses et hauteurs de ligne des textes.
+* Les dimensions des boutons.
+* La largeur et la hauteur du bloc USSD.
+* La position du numéro de téléphone et du bouton Modifier.
+* La position de la mention administrative finale.
+
+Établis un relevé géométrique avant toute modification.
+
+Pour chaque élément, détermine ses coordonnées relatives au viewport et à son conteneur parent.
+
+Utilise une structure de mise en page cohérente avec des conteneurs, des grilles et des flexbox lorsque cela convient. Évite les positionnements absolus généralisés qui risquent de casser la page.
+
+Interdictions strictes
+
+* Ne déplace pas les sections arbitrairement.
+* Ne modifie pas les proportions pour créer plus d’espace.
+* Ne change pas l’ordre des cartes.
+* Ne grossis pas les boutons sans raison issue de la référence.
+* Ne réduis pas la carte principale au hasard.
+* Ne modifie pas le nombre de colonnes.
+* Ne crée pas de nouveaux panneaux décoratifs.
+* Ne supprime aucun élément visible de la maquette.
+* Ne transforme pas la page en page d’accueil.
+* Ne change pas la géométrie pendant les animations.
+
+Chaque élément doit conserver sa position relative, sa taille visuelle et sa relation spatiale avec les autres éléments.
+
+⸻
+
+2. DIRECTION ARTISTIQUE IVECO
+
+Applique une identité automobile premium cohérente :
+
+* Bleu nuit profond pour les surfaces structurelles.
+* Noir graphite pour les panneaux principaux.
+* Rouge IVECO pour les accents, les icônes et les actions prioritaires.
+* Blanc froid pour les textes principaux.
+* Gris argenté pour les descriptions et séparateurs.
+* Jaune MTN uniquement pour les éléments liés à l’opérateur MTN et les actions secondaires correspondantes.
+* Reflets métalliques subtils.
+* Contraste maîtrisé entre le premier plan et le fond.
+* Ombres réalistes et profondes, sans halos excessifs.
+
+Les couleurs de MTN doivent rester reconnaissables. Ne recolore pas son logo en rouge pour uniformiser artificiellement l’identité visuelle.
+
+L’interface doit évoquer un portail professionnel de vente de camions et de services automobiles, et non un tableau de bord générique ou un site de jeux.
+
+Le luxe vient de la précision, de la qualité des matières visuelles, de la hiérarchie typographique et de la cohérence des espacements.
+
+Ne surcharge jamais la page pour donner une impression de richesse.
+
+⸻
+
+3. ARRIÈRE-PLAN AUTOMOBILE
+
+Reproduis la scène de la référence :
+
+* Un camion IVECO imposant et réaliste.
+* Un environnement industriel ou routier professionnel.
+* Une perspective crédible.
+* Un éclairage cinématographique maîtrisé.
+* Des accents rouges diagonaux cohérents avec l’identité IVECO.
+* Une profondeur de champ discrète.
+* Un contraste suffisant pour que le panneau de paiement reste parfaitement lisible.
+
+Respecte le cadrage de la capture.
+
+Ne change pas la position du camion sans raison.
+
+Si une image source est disponible, privilégie-la. Sinon, choisis un visuel adapté et ajuste précisément le recadrage, background-size, background-position et les éventuelles superpositions.
+
+Le fond doit mettre en valeur la page, jamais concurrencer les informations de paiement.
+
+Évite les effets lumineux excessifs, les routes artificiellement brillantes et les textures qui nuisent à la lecture.
+
+⸻
+
+4. PANNEAU PRINCIPAL
+
+Le grand panneau doit conserver la géométrie de la référence.
+
+Reproduis avec précision :
+
+* La position de son bord supérieur.
+* Sa largeur et ses marges latérales.
+* Ses proportions verticales.
+* Son rayon de bordure.
+* Sa bordure extérieure.
+* Son ombre.
+* Ses espacements internes.
+* La distance entre les sections.
+
+Utilise une surface graphite profonde, avec une légère variation de tonalité et une séparation subtile du fond.
+
+La finition doit être haut de gamme, mais les effets de verre, de transparence et de lumière doivent rester discrets.
+
+Ne rajoute pas une nouvelle barre de navigation si elle n’existe pas dans la référence.
+
+⸻
+
+5. BARRE SUPÉRIEURE DE L’INTERFACE
+
+Reproduis la ligne contenant :
+
+* Le logo MTN et son nom.
+* L’heure affichée dans l’interface.
+* Le sélecteur de langue.
+* Le bouton de fermeture.
+
+Respecte les dimensions, les espacements et les alignements de la capture.
+
+La zone MTN doit rester compacte et alignée avec les autres commandes.
+
+Les boutons de langue, d’heure et de fermeture doivent conserver des dimensions visuellement cohérentes.
+
+Ne laisse aucun contrôle déborder du panneau ou se rapprocher excessivement d’un autre élément.
+
+Le logo MTN doit rester proportionné et net.
+
+⸻
+
+6. CARTE DES INFORMATIONS MARCHAND
+
+Cette section comporte trois lignes distinctes :
+
+1. Nom du marchand : Omar.
+2. Compte marchand : 72727722.
+3. Montant : FCFA 500.
+
+Reproduis la disposition de ces trois lignes, leurs séparateurs et leurs espacements.
+
+Chaque ligne doit conserver :
+
+* Un libellé secondaire gris.
+* Une valeur principale blanche.
+* Un bouton Copier aligné à droite.
+* Une zone cliquable adaptée.
+* Une séparation fine entre les entrées.
+
+Les boutons Copier doivent avoir une largeur et une hauteur cohérentes.
+
+Le texte ne doit jamais toucher les boutons.
+
+Préserve les valeurs réelles provenant de l’application. Ne les remplace pas par des valeurs codées en dur si elles sont dynamiques.
+
+Ajoute un feedback discret et compréhensible lorsque la copie fonctionne réellement.
+
+⸻
+
+7. SECTION DE TRANSFERT USSD
+
+Titre exact :
+
+Comment transférer vers MTN via USSD :
+
+Texte explicatif :
+
+Composez le code de votre opérateur et suivez les instructions à l’écran.
+
+Cette section doit conserver l’ordre, les proportions et la géométrie de la référence.
+
+Bloc du code
+
+Le code visible dans la capture est :
+
+*123*1*1*72727722*500#
+
+Il doit apparaître dans un conteneur sombre, bordé par une ligne pointillée discrète.
+
+Respecte :
+
+* La hauteur du bloc.
+* Son padding.
+* La taille du code.
+* Son alignement vertical.
+* Les proportions de l’icône.
+* La position du bouton Copier lorsqu’il est présent.
+
+Le code doit rester lisible sur un écran mobile.
+
+Ne coupe pas les chiffres et ne laisse pas le contenu déborder horizontalement.
+
+Boutons d’action
+
+Les deux boutons sont :
+
+* Composer le code
+* Copier le code
+
+Ils doivent rester sur une même ligne lorsque l’espace le permet, avec des largeurs et des hauteurs cohérentes.
+
+Le bouton secondaire doit conserver un contraste suffisant.
+
+Le bouton principal peut utiliser un jaune MTN raffiné, sans gradient agressif ni effet lumineux disproportionné.
+
+Les deux boutons doivent avoir :
+
+* Des bordures cohérentes.
+* Des rayons de bordure identiques.
+* Une typographie bien alignée.
+* Un état de survol discret.
+* Un état d’appui très léger.
+* Un état de focus accessible.
+
+La copie doit utiliser une véritable action de presse-papiers. La composition du code doit conserver le fonctionnement prévu par l’application.
+
+Ne prétends jamais qu’une copie ou une action a réussi si elle a échoué.
+
+⸻
+
+8. SECTION RÉFÉRENCE ET SÉCURITÉ
+
+Conserve la ligne Référence ainsi que sa valeur réelle.
+
+Lorsque la référence est indisponible, affiche le symbole ou l’état vide prévu par le système.
+
+Conserve exactement le texte de sécurité :
+
+Aucun code PIN ne vous sera demandé sur cette page. Ne le communiquez à personne.
+
+Respecte sa position, sa taille, sa couleur et sa distance par rapport au séparateur.
+
+Ne transforme pas cette mention en un nouveau panneau disproportionné.
+
+⸻
+
+9. VALIDATION DU DÉPÔT
+
+Titre exact :
+
+Validation du dépôt
+
+Texte :
+
+Coordonnées fournies par l’administration. Aucun paiement n’a été initié ou confirmé par cette page.
+
+Bouton :
+
+Obtenir le résultat
+
+Reproduis la géométrie de la carte :
+
+* Largeur.
+* Hauteur.
+* Marges internes.
+* Position du titre.
+* Espacement du texte descriptif.
+* Position et hauteur du bouton.
+
+Le bouton de validation doit être clairement visible et professionnel.
+
+Tu peux employer un rouge IVECO maîtrisé ou le traitement de couleur existant si le projet impose cette cohérence.
+
+Ne simule pas un statut de paiement confirmé.
+
+L’état affiché doit correspondre à la réponse réelle du système.
+
+Le clic sur le bouton doit conserver la logique de vérification existante.
+
+⸻
+
+10. CARTE DU NUMÉRO UTILISÉ
+
+Cette section doit afficher :
+
+* Le libellé Numéro utilisé.
+* Le numéro réel associé à la transaction.
+* Le bouton Modifier.
+
+Respecte strictement la disposition horizontale de la référence.
+
+Le numéro doit rester lisible et correctement aligné.
+
+Le bouton Modifier doit être placé dans sa zone prévue, sans chevaucher le numéro.
+
+La fonction de modification doit continuer à fonctionner comme dans le projet existant.
+
+Ne transforme pas ce bloc en formulaire permanent si la référence montre une simple carte récapitulative.
+
+⸻
+
+11. MENTION ADMINISTRATIVE FINALE
+
+Conserve la mention administrative finale présente sur la capture.
+
+Respecte :
+
+* Sa position sous les autres sections.
+* Son fond.
+* Son contour.
+* Ses espacements.
+* Sa taille de texte.
+* Son rayon de bordure.
+
+Le texte doit rester lisible sur le fond jaune.
+
+Cette mention ne doit pas être confondue avec une confirmation de paiement.
+
+Ne la supprime pas et ne la déplace pas dans une autre section.
+
+⸻
+
+12. MICRO-INTERACTIONS ET ANIMATIONS
+
+Les animations doivent être sophistiquées, discrètes et techniquement stables.
+
+Implémente uniquement les interactions utiles :
+
+* Apparition douce du panneau principal.
+* Transition subtile des bordures au focus.
+* Feedback de copie.
+* Transition légère des boutons à l’appui.
+* Indicateur de chargement lors de la vérification.
+* Retour visuel propre en cas de succès ou d’erreur.
+
+Les transitions courantes doivent généralement durer entre 140 et 240 ms.
+
+Utilise des courbes d’accélération naturelles.
+
+Interdiction :
+
+* De déplacer les cartes pendant les transitions.
+* De modifier les dimensions au survol.
+* D’ajouter des rebonds exagérés.
+* De multiplier les animations décoratives.
+* De faire clignoter les boutons.
+* De créer des effets qui ralentissent l’utilisation.
+* De provoquer un décalage de mise en page pendant le chargement.
+
+Respecte la préférence système prefers-reduced-motion.
+
+⸻
+
+13. TYPOGRAPHIE ET FINITIONS
+
+La typographie doit être cohérente dans toute l’interface.
+
+Définis une hiérarchie claire entre :
+
+* Les titres.
+* Les valeurs principales.
+* Les libellés.
+* Les instructions.
+* Les mentions de sécurité.
+
+Vérifie les hauteurs de ligne, les graisses, les espacements et les retours à la ligne.
+
+Les textes ne doivent pas changer de taille sans raison.
+
+Évite les polices fantaisistes, les effets de texte métallisé artificiels et les ombres lourdes.
+
+Les icônes doivent provenir d’une bibliothèque cohérente ou d’assets appropriés.
+
+Aucune icône ne doit être étirée.
+
+Aucun logo ne doit être déformé.
+
+Tous les boutons doivent partager une logique de rayons, d’espacement et d’alignement.
+
+⸻
+
+14. RESPONSIVE DESIGN
+
+Le viewport de la capture mobile constitue la référence principale.
+
+Reproduis d’abord la composition sur cette largeur avant d’adapter la page aux autres écrans.
+
+Vérifie :
+
+* Les marges latérales.
+* Les hauteurs des cartes.
+* Les espaces verticaux.
+* Le code USSD.
+* Les boutons côte à côte.
+* La lisibilité du numéro de compte.
+* L’absence de débordement horizontal.
+* L’absence de chevauchement.
+
+Sur les écrans plus étroits, adapte les espaces de manière contrôlée.
+
+Ne réduis pas toute l’interface par un simple zoom.
+
+Ne déplace pas arbitrairement les cartes.
+
+Ne fais pas disparaître les mentions importantes.
+
+Les zones interactives doivent rester accessibles au toucher.
+
+⸻
+
+15. PRÉSERVATION DU PROJET EXISTANT
+
+Avant toute modification, inspecte le projet :
+
+* Framework.
+* Structure des composants.
+* Styles.
+* Ressources graphiques.
+* Routes.
+* API.
+* Variables d’environnement.
+* Logique de paiement.
+* Gestion des erreurs.
+* États de chargement.
+
+Modifie uniquement les éléments nécessaires à cette page.
+
+N’effectue aucune migration de framework non demandée.
+
+Ne supprime pas les fonctionnalités existantes.
+
+Ne remplace pas les intégrations réelles par des données fictives.
+
+Ne modifie pas les webhooks ou les secrets de paiement.
+
+Ne change pas le format des données transmises au backend sans nécessité.
+
+Ne stocke jamais les secrets côté navigateur.
+
+Conserve les contrôles de sécurité et les validations.
+
+⸻
+
+16. PROTOCOLE DE CONTRÔLE VISUEL
+
+Tu dois effectuer un véritable cycle de comparaison.
+
+Phase A — Capture initiale
+
+Lance le projet et capture le rendu au même viewport que la référence.
+
+Phase B — Comparaison géométrique
+
+Compare les positions et dimensions :
+
+* Barre supérieure.
+* Panneau principal.
+* Carte marchand.
+* Bloc USSD.
+* Boutons.
+* Carte de validation.
+* Carte du numéro.
+* Mention finale.
+
+Phase C — Comparaison des finitions
+
+Compare :
+
+* Couleurs.
+* Contrastes.
+* Typographie.
+* Bordures.
+* Ombres.
+* Rayons.
+* Icônes.
+* Recadrage du camion.
+* Effets de lumière.
+
+Phase D — Corrections
+
+Corrige les écarts les plus importants, puis refais une capture.
+
+Répète le processus jusqu’à obtenir un résultat stable.
+
+Si possible, crée :
+
+* Une superposition de la référence et du rendu.
+* Une image de différence.
+* Un relevé des dimensions.
+* Une liste des écarts restants.
+
+Ne confonds pas une impression visuelle satisfaisante avec une validation pixel-perfect.
+
+Ne prétends pas avoir effectué des comparaisons que tu n’as pas réellement réalisées.
+
+⸻
+
+17. CRITÈRES DE LIVRAISON
+
+La page ne peut être considérée comme terminée que lorsque :
+
+* La géométrie générale correspond à la capture.
+* Les cartes conservent leurs proportions.
+* Les espacements sont cohérents.
+* Les textes sont correctement positionnés.
+* Le code USSD est lisible.
+* Les boutons sont alignés.
+* Les fonctions de copie fonctionnent.
+* Le bouton Composer le code conserve son comportement prévu.
+* La vérification du dépôt conserve son fonctionnement réel.
+* Le numéro utilisé et sa modification restent opérationnels.
+* Les animations n’introduisent aucun décalage.
+* Le rendu mobile est propre.
+* Aucune fonctionnalité existante n’a été cassée.
+* Aucun effet décoratif superflu n’a été ajouté.
+
+INSTRUCTION FINALE
+
+Travaille directement sur le projet existant.
+
+Analyse la référence, inspecte le code, implémente les modifications, lance le site, prends des captures et corrige les écarts.
+
+La priorité absolue est :
+
+1. Géométrie exacte.
+2. Disposition identique.
+3. Hiérarchie typographique correcte.
+4. Identité visuelle IVECO premium.
+5. Finitions et micro-interactions.
+6. Validation visuelle et fonctionnelle.
+
+Ne cherche pas à impressionner par la quantité d’effets.
+
+Impressionne par la précision, la cohérence, la sobriété et la qualité de finition.
+
+Le résultat doit être une page de transfert MTN professionnelle, fidèle à la référence, habillée d’une identité IVECO haut de gamme et techniquement fiable.

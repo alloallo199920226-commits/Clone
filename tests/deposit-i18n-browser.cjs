@@ -16,7 +16,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, moovId 
   assert(await remaining() < initial, "The timer must actually tick");
   await toggle();
   assert.equal(await evaluate("document.documentElement.lang"), "en");
-  assert.equal(await evaluate("document.querySelector('[data-deposit-language]').textContent"), "Français");
+  assert.equal(await evaluate("document.querySelector('[data-deposit-language]').textContent"), "English");
   assert.equal(await evaluate("document.querySelector('[data-submit-label]').textContent"), "Submit");
   assert.equal(await evaluate("document.querySelector('#deposit-phone').placeholder"), "Your phone number");
   assert.equal(await evaluate("document.querySelector('.deposit-close').getAttribute('aria-label')"), "Close and return to Top up");
