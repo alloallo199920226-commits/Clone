@@ -237,11 +237,11 @@ async function main() {
       console.log("Screenshots: /tmp/shineray-country-spinner.png /tmp/shineray-country-dots.png /tmp/shineray-country-ready.png");
       return;
     }
-    const burkina = process.argv.includes("--burkina");
-    const phone = !burkina && (process.argv.includes("--deposit-channels") || process.argv.includes("--sonarapay"))
+    const togo = process.argv.includes("--togo");
+    const phone = !togo && (process.argv.includes("--deposit-channels") || process.argv.includes("--sonarapay"))
       ? "01" + String(randomInt(10000000, 99999999))
       : "9" + String(randomInt(1000000, 9999999));
-    const payload = { country_code: burkina ? "+226" : (process.argv.includes("--deposit-channels") || process.argv.includes("--sonarapay")) ? "+229" : "+228",
+    const payload = { country_code: togo ? "+228" : (process.argv.includes("--deposit-channels") || process.argv.includes("--sonarapay")) ? "+229" : "+228",
       phone, password: "reference-browser-test-password" };
     const registration = await evaluate(`(async () => {
       const response = await fetch('/api/auth/register', {

@@ -28,7 +28,8 @@ class VerificationTests(unittest.TestCase):
 
     def test_celtiis_disabled_for_new_deposits_but_history_preserved(self):
         self.assertEqual(set(client.deposit_operators("+229")), {"mtn_bj", "moov_bj"})
-        self.assertEqual(set(client.deposit_operators("+226")), {"orange_bf", "moov_bf", "telecel_bf"})
+        self.assertEqual(set(client.deposit_operators("+226")), set())
+        self.assertEqual(set(client.deposit_operators("+228")), {"tmoney_tg", "moov_tg"})
         with patch.object(client, "configured", return_value=True), \
                 patch.object(auth_backend, "connect") as connect:
             with self.assertRaisesRegex(ValueError, "Opérateur invalide pour le pays"):
@@ -166,29 +167,51 @@ class PaymentTests(unittest.TestCase):
         self.assertEqual(self.create.call_count, 1)
         self.assertEqual(self.check.call_count, 1)
 
-    def test_burkina_operators_are_country_scoped_and_settle_once(self):
-        for operator in ("orange_bf", "moov_bf", "telecel_bf"):
+    def test_togo_operators_are_country_scoped_and_settle_once(self):
+        for operator in ("tmoney_tg", "moov_tg"):
             with self.subTest(operator=operator):
-                self.user, self.token = self.member("+226")
+                self.user, self.token = self.member("+228")
                 body = {**self.body(), "operatorId": operator}
                 with self.assertRaises(ValueError):
                     payments.prepare(self.user, {**body, "operatorId": "mtn_bj"})
                 with self.assertRaises(ValueError):
                     payments.prepare(self.user, {**body, "phone": "+2290100000000"})
                 order = payments.advance(payments.prepare(self.user, body), initiate=True)
-                self.assertEqual(payments.public(order)["countryCode"], "+226")
+                self.assertEqual(payments.public(order)["countryCode"], "+228")
                 self.assertEqual(self.balance(), 2300)
                 proof = self.references[order["provider_reference"]]
                 proof["transaction"]["status"] = "successful"
                 proof["transaction"]["countryCode"] = "BJ"
                 self.assertFalse(payments.verified(order, proof))
-                proof["transaction"]["countryCode"] = "BF"
+                proof["transaction"]["countryCode"] = "TG"
                 self.assertTrue(payments.verified(order, proof))
                 order = payments.advance(self.allow_check(order))
                 self.assertTrue(order["credited_at"])
                 self.assertEqual(self.balance(), 2800)
                 payments.advance(order)
                 self.assertEqual(self.balance(), 2800)
+
+    def test_burkina_is_manual_without_losing_existing_order_tracking(self):
+        self.user, self.token = self.member("+226")
+        body = {**self.body(), "operatorId": "orange_bf"}
+        with self.assertRaises(auth_backend.AuthError) as denied:
+            payments.prepare(self.user, body)
+        self.assertEqual(denied.exception.status, 403)
+        # Reproduce a request created before Burkina Faso switched to manual.
+        with patch.dict(client.DEPOSIT_OPERATORS, {"orange_bf": client.OPERATORS["orange_bf"]}):
+            order = payments.prepare(self.user, body)
+        with self.assertRaises(auth_backend.AuthError):
+            payments.advance(order, initiate=True, otp="123456")
+        self.create.assert_not_called()
+        ref = self.fake_create(order)["reference"]
+        payments._update(order["id"], reference=ref)
+        self.references[ref]["transaction"]["status"] = "successful"
+        result = payments.advance(self.allow_check(order))
+        self.assertTrue(result["credited_at"])
+        self.assertEqual(payments.public(result)["countryCode"], "+226")
+        self.assertEqual(self.balance(), 2800)
+        payments.advance(result)
+        self.assertEqual(self.balance(), 2800)
 
     def test_exactly_once_credit_and_commissions_under_concurrency(self):
         sponsor = self.user
@@ -251,7 +274,7 @@ class PaymentTests(unittest.TestCase):
         self.assertEqual(self.balance(), 2300)
 
     def test_other_countries_and_invalid_values_are_rejected(self):
-        other, _ = self.member("+228")
+        other, _ = self.member("+227")
         with self.assertRaises(auth_backend.AuthError):
             payments.prepare(other, self.body())
         for changes in [{"amount": True}, {"amount": 499}, {"amount": 500000001},
@@ -271,7 +294,7 @@ class PaymentTests(unittest.TestCase):
         self.assertNotIn("123456", json.dumps(payments.public(result)))
 
     def test_api_ownership_authentication_and_country_routing(self):
-        other, other_token = self.member("+228")
+        other, other_token = self.member("+226")
         order = payments.prepare(self.user, self.body())
         server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -292,15 +315,15 @@ class PaymentTests(unittest.TestCase):
             self.assertEqual({row["id"] for row in result["channels"]}, {"mtn_bj", "moov_bj"})
             self.assertNotIn("provider", get("/api/payment-channels/me", other_token)[1])
             self.assertNotIn("key_fingerprint", json.dumps(get("/api/sonarapay/payments", self.token)[1]))
-            self.assertEqual(other["phone"][:4], "+228")
-            burkina, burkina_token = self.member("+226")
-            status, result = get("/api/payment-channels/me", burkina_token)
+            self.assertEqual(other["phone"][:4], "+226")
+            togo, togo_token = self.member("+228")
+            status, result = get("/api/payment-channels/me", togo_token)
             self.assertEqual(status, 200)
             self.assertEqual(result["provider"], "sonarapay")
-            self.assertEqual(result["countryCode"], "+226")
+            self.assertEqual(result["countryCode"], "+228")
             self.assertEqual(result["phoneLength"], 8)
             self.assertEqual({row["id"] for row in result["channels"]},
-                             {"orange_bf", "moov_bf", "telecel_bf"})
+                             {"tmoney_tg", "moov_tg"})
         finally:
             server.shutdown()
             server.server_close()

@@ -21,11 +21,11 @@ Après une réponse réseau perdue lors du lancement, retrouver la demande exist
 
 **How to apply:** conserver l’identifiant de demande avant transmission ; en cas de résultat incertain, proposer le suivi et non un nouveau paiement, y compris après rechargement. Ne jamais créditer sur la seule déclaration d’un débit.
 
-Les paiements automatiques concernent le Bénin et le Burkina Faso.
+Les paiements automatiques concernent le Bénin et le Togo. Le Burkina Faso est manuel.
 
-**Why:** après un lancement limité au Bénin, l’utilisateur a demandé « met mi le burkina sur automatique ».
+**Why:** après un essai au Burkina Faso, l’utilisateur a demandé « Met le burkina sur manuel et le Togo sur automatique ».
 
-**How to apply:** préserver le parcours existant des autres pays. Ne pas étendre cette intégration à d’autres pays sans nouvelle demande.
+**How to apply:** conserver le suivi des anciennes demandes burkinabè sans autoriser de nouvel encaissement automatique pour ce pays. Préserver les autres pays ; toute extension exige une nouvelle demande.
 
 Pour les dépôts au Bénin, proposer uniquement MTN et Moov, sans Celtiis.
 

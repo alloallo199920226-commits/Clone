@@ -14,11 +14,13 @@ OPERATORS = {
     "orange_bf": {"id": "orange_bf", "operatorName": "Orange Money", "logoText": "Orange", "logoColor": "#f97316"},
     "moov_bf": {"id": "moov_bf", "operatorName": "Moov Money", "logoText": "MOOV", "logoColor": "#3b82f6"},
     "telecel_bf": {"id": "telecel_bf", "operatorName": "Telecel Cash", "logoText": "Telecel", "logoColor": "#ef4444"},
+    "tmoney_tg": {"id": "tmoney_tg", "operatorName": "T-Money (Togocom)", "logoText": "T-Money", "logoColor": "#facc15"},
+    "moov_tg": {"id": "moov_tg", "operatorName": "Moov Money Togo (Flooz)", "logoText": "MOOV", "logoColor": "#3b82f6"},
 }
 # Keep the full catalog for existing orders, but allow only these for new deposits.
-COUNTRY_CODES = {"+229": "BJ", "+226": "BF"}
+COUNTRY_CODES = {"+229": "BJ", "+226": "BF", "+228": "TG"}
 DEPOSIT_OPERATORS = {key: OPERATORS[key] for key in
-                     ("mtn_bj", "moov_bj", "orange_bf", "moov_bf", "telecel_bf")}
+                     ("mtn_bj", "moov_bj", "tmoney_tg", "moov_tg")}
 
 
 def country_prefix(phone):

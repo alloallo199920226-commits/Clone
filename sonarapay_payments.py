@@ -1,4 +1,4 @@
-"""Bénin and Burkina Faso Payin orders; pending requests never affect the ledger."""
+"""Bénin/Togo Payin orders; disabled-country history remains readable."""
 import logging
 import re
 import threading
@@ -51,8 +51,8 @@ def recent(user_id):
 
 def prepare(user, body):
     prefix = provider.country_prefix(user["phone"])
-    if not prefix:
-        raise auth_backend.AuthError(403, "Le paiement automatique est disponible au Bénin et au Burkina Faso uniquement.")
+    if not provider.deposit_operators(prefix):
+        raise auth_backend.AuthError(403, "Le paiement automatique est disponible au Bénin et au Togo uniquement.")
     if not provider.configured():
         raise auth_backend.AuthError(503, "Le paiement automatique n’est pas configuré.")
     if set(body) - {"amount", "operatorId", "phone", "requestId"}:
@@ -152,6 +152,8 @@ def verified(order, result):
 
 
 def advance(order, *, initiate=False, otp=None):
+    if initiate and not provider.deposit_operators(order["payer_phone"]):
+        raise auth_backend.AuthError(403, "Ce pays utilise désormais le paiement manuel. Les demandes existantes restent consultables.")
     if order["status"] == "failed" or order["credited_at"]:
         return order
     claimed = _claim(order, initiate)
