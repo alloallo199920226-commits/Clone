@@ -46,27 +46,70 @@
             <span class="signature-operator-logo" data-confirmation-logo aria-hidden="true"></span>
             <strong class="deposit-selected-operator" data-selected-operator>—</strong>
           </div>
-          <span class="deposit-timer" aria-label="Temps restant pour terminer ce parcours">20:00</span>
+          <time class="deposit-timer" data-deposit-clock aria-label="Heure locale">--:--</time>
           <button class="deposit-language" type="button" data-deposit-language aria-label="Passer en anglais">English</button>
           <a class="deposit-close" href="/recharger" aria-label="Fermer et revenir à Recharger">×</a>
         </header>
 
         <div class="deposit-body">
           <section class="sonara-panel" data-sonara-panel hidden aria-label="Suivi du paiement">
-            <h2 data-i18n="sonaraTitle">Paiement · Bénin</h2>
-            <p><strong data-sonara-amount>—</strong></p>
-            <p data-sonara-status role="status" aria-live="polite"></p>
-            <p><span data-i18n="sonaraReference">Référence de suivi</span><br><strong data-sonara-reference>—</strong></p>
-            <p class="sonara-safety" data-i18n="sonaraSafety">Validez uniquement auprès de votre opérateur. Ne saisissez jamais votre code PIN Mobile Money sur ce site.</p>
-            <form hidden>
-              <p data-sonara-ussd></p>
-              <label for="sonara-otp" data-i18n="sonaraOtpLabel">Code temporaire de l’opérateur (pas votre PIN)</label>
-              <input id="sonara-otp" inputmode="numeric" autocomplete="one-time-code" maxlength="12" pattern="[0-9]{4,12}" required>
-              <button class="deposit-result" type="submit" data-i18n="sonaraOtpSubmit">Envoyer le code temporaire</button>
-            </form>
-            <button class="deposit-result" type="button" data-sonara-check data-i18n="sonaraCheck">Vérifier le paiement</button>
-            <button class="deposit-result" type="button" data-sonara-retry hidden data-i18n="sonaraRetry">Reprendre la même demande</button>
-            <p><a href="/historique-recharges" data-i18n="sonaraHistory">Voir mes dépôts</a></p>
+            <div class="sonara-success" data-sonara-success hidden>
+              <div class="sonara-success-summary" role="status" aria-live="polite" aria-atomic="true">
+                <span class="sonara-success-mark" aria-hidden="true">
+                  <svg viewBox="0 0 48 48" focusable="false"><path d="m14 24 7 7 14-15"/></svg>
+                </span>
+                <h1 data-i18n="successTitle">Paiement effectué avec succès</h1>
+                <strong class="sonara-success-amount" data-sonara-amount>—</strong>
+                <p data-i18n="successLineOne">Votre paiement a été traité avec succès.</p>
+                <p data-i18n="successLineTwo">Votre compte a été crédité.</p>
+              </div>
+              <div class="sonara-transaction">
+                <span class="sonara-transaction-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false"><path d="M7 3.5h7l4 4V21H7z"/><path d="M14 3.5V8h4M10 12h5M10 15h5"/></svg>
+                </span>
+                <div class="sonara-transaction-copy">
+                  <span class="sonara-label" data-i18n="transactionReference">Référence de transaction</span>
+                  <strong data-sonara-reference>—</strong>
+                </div>
+                <button class="sonara-copy" type="button" data-sonara-copy="reference" data-i18n="copy">Copier</button>
+              </div>
+              <div class="sonara-confirmed-status">
+                <span class="sonara-confirmed-mark" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false"><path d="m6 12.5 4 4L18.5 8"/></svg>
+                </span>
+                <div>
+                  <span class="sonara-label" data-i18n="statusLabel">Statut</span>
+                  <strong data-i18n="paymentValidated">Paiement validé</strong>
+                  <small data-i18n="transactionConfirmed">La transaction a été confirmée.</small>
+                </div>
+              </div>
+              <p class="sonara-safety">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 2.5 8 3v5.8c0 4.7-3.4 8.2-8 10.2-4.6-2-8-5.5-8-10.2V5.5l8-3Z"/><path d="m9 11.8 2 2 4-4"/></svg>
+                <span><strong data-i18n="safetyTitle">Validez uniquement auprès de votre opérateur.</strong><small data-i18n="safetyBody">Ne saisissez jamais votre code PIN Mobile Money sur ce site.</small></span>
+              </p>
+              <a class="sonara-history-button" href="/historique-recharges">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 3.5h7l4 4V21H7z"/><path d="M14 3.5V8h4M10 12h5M10 15h5"/></svg>
+                <span data-i18n="sonaraHistory">Voir mes dépôts</span>
+                <svg class="sonara-history-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+              </a>
+            </div>
+            <div class="sonara-nonsuccess" data-sonara-nonsuccess>
+              <h2 data-i18n="sonaraTitle">Suivi du paiement</h2>
+              <p class="sonara-status-message" data-sonara-status role="status" aria-live="polite"></p>
+              <p class="sonara-amount-line"><span data-i18n="amountLabel">Montant</span><strong data-sonara-amount>—</strong></p>
+              <p class="sonara-reference-line"><span data-i18n="sonaraReference">Référence de suivi</span><strong data-sonara-reference>—</strong></p>
+              <p class="sonara-safety" data-i18n="sonaraSafety">Validez uniquement auprès de votre opérateur. Ne saisissez jamais votre code PIN Mobile Money sur ce site.</p>
+              <form hidden>
+                <p data-sonara-ussd></p>
+                <label for="sonara-otp" data-i18n="sonaraOtpLabel">Code temporaire de l’opérateur (pas votre PIN)</label>
+                <input id="sonara-otp" inputmode="numeric" autocomplete="one-time-code" maxlength="12" pattern="[0-9]{4,12}" required>
+                <button class="deposit-result" type="submit" data-i18n="sonaraOtpSubmit">Envoyer le code temporaire</button>
+              </form>
+              <button class="deposit-result" type="button" data-sonara-check data-i18n="sonaraCheck">Vérifier le paiement</button>
+              <button class="deposit-result" type="button" data-sonara-retry hidden data-i18n="sonaraRetry">Reprendre la même demande</button>
+              <p><a href="/historique-recharges" data-i18n="sonaraHistory">Voir mes dépôts</a></p>
+            </div>
+            <p class="sonara-copy-feedback" data-sonara-copy-feedback role="status" aria-live="polite" aria-atomic="true"></p>
           </section>
 
           <div class="deposit-details" aria-label="Détails du paiement">

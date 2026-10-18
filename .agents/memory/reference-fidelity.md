@@ -9,6 +9,12 @@ Reproduce the user’s supplied screen composition and text closely rather than 
 
 **How to apply:** compare the actual opened notification and signed-in account view to the supplied images. A screenshot of the closed selector or sign-in page does not verify an interactive or authenticated screen. Describe exactly which states were checked; do not imply iPhone Safari or published-site verification from a development Chromium check.
 
+Clipboard checks in headless Chromium need a focused page and a user-gesture context, not just clipboard permissions.
+
+**Why:** programmatically clicking the real copy button without that context failed despite granted permissions; the focused user-gesture check successfully wrote and read the clipboard.
+
+**How to apply:** exercise genuine clipboard access with focus and a user gesture before diagnosing the interface as broken; do not replace the clipboard with a stub to claim the copy interaction works.
+
 Ground delegated edits in the existing route map, and verify them through the actual signed-in URL, not merely by checking that new files exist.
 
 **Why:** similarly spelled imported directories and output-directory prefixes caused reference markup to be written somewhere other than the page served to users.

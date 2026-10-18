@@ -1,0 +1,497 @@
+IVECO SIGNATURE X — MASTER UI RECONSTRUCTION
+
+ZERO-GUESSWORK · PIXEL-PERFECT · PREMIUM AUTOMOTIVE EXPERIENCE
+
+MISSION PRINCIPALE
+
+Tu es un directeur artistique automobile de classe internationale, un ingénieur frontend senior spécialisé en reproduction pixel-perfect, un expert en CSS geometry, un spécialiste des interfaces mobiles premium et un ingénieur QA chargé de la validation visuelle.
+
+Ta mission consiste à reconstruire la page de confirmation de paiement visible dans l’image de référence fournie.
+
+Le résultat doit présenter une identité IVECO de niveau international, avec une finition graphique exceptionnelle, tout en respectant la géométrie, la hiérarchie, les dimensions et les positions de la maquette.
+
+La fidélité à la référence est prioritaire sur toute initiative créative.
+
+Une belle interface qui ne correspond pas à la géométrie de la capture est un échec. Une interface remplie d’effets mais dont les espacements sont incorrects est également un échec.
+
+Ne transforme pas cette page en page d’accueil. Ne reconstruis pas le formulaire de paiement initial. Il s’agit exclusivement de l’écran de résultat et de confirmation.
+
+⸻
+
+1. VERROUILLAGE ABSOLU DE LA GÉOMÉTRIE
+
+Avant toute modification, analyse la capture de référence et établis un relevé précis de tous les éléments.
+
+Mesure :
+
+* La largeur et la hauteur du viewport.
+* La zone de statut iOS et la barre d’adresse.
+* La hauteur du bandeau automobile.
+* La position du logo IVECO.
+* La position du camion et son recadrage.
+* La position du panneau principal.
+* Les marges extérieures et intérieures.
+* Les dimensions de chaque carte.
+* Les espacements verticaux entre les sections.
+* Les proportions des boutons.
+* Les rayons des coins.
+* Les épaisseurs de bordure.
+* Les tailles et graisses typographiques.
+* Les positions des icônes.
+* Les ombres, reflets, dégradés et transparences.
+
+Construis ensuite la page avec une hiérarchie de conteneurs stable.
+
+Chaque composant doit conserver ses proportions et sa position relative par rapport à son parent.
+
+Utilise des variables CSS pour les paramètres géométriques importants. Évite les corrections ponctuelles contradictoires et les positionnements absolus généralisés.
+
+Interdictions
+
+* Ne déplace pas le panneau principal.
+* Ne change pas l’ordre des sections.
+* Ne modifie pas arbitrairement la largeur des cartes.
+* Ne grossis pas les boutons.
+* Ne réduis pas les espacements sans justification visuelle.
+* Ne change pas le cadrage du camion au hasard.
+* Ne déforme aucun logo.
+* Ne supprime aucun texte visible.
+* N’ajoute pas de nouvelles sections.
+* Ne laisse pas les animations modifier la géométrie.
+
+La composition de la capture est contractuelle : ne la réinterprète pas.
+
+⸻
+
+2. IDENTITÉ IVECO HAUT DE GAMME
+
+Reproduis l’univers visuel de la référence :
+
+* Bleu nuit profond.
+* Noir graphite.
+* Blanc net.
+* Rouge IVECO intense, réservé aux accents principaux.
+* Vert lumineux réservé au statut de confirmation.
+* Jaune MTN pour l’identité de l’opérateur et les éléments associés.
+* Gris argenté pour les textes secondaires.
+* Reflets métalliques subtils.
+* Éclairage cinématographique contrôlé.
+
+Le design doit évoquer une marque automobile industrielle internationale.
+
+Il ne doit pas ressembler à un tableau de bord générique, à une interface de jeu vidéo ou à une publicité surchargée.
+
+Les surfaces sombres doivent avoir une profondeur subtile, avec des dégradés très maîtrisés et des bordures discrètes.
+
+Les effets lumineux doivent être localisés et justifiés. Le rouge doit souligner les éléments importants, le vert doit confirmer le statut et le jaune doit conserver sa fonction liée à MTN.
+
+Ne mélange pas les couleurs des identités de marque sans raison.
+
+⸻
+
+3. BANDEAU AUTOMOBILE ET LOGO
+
+Reproduis le bandeau supérieur avec :
+
+* Le logo IVECO blanc et son accent rouge.
+* La mention « VENTE DE CAMIONS ».
+* Le camion placé à droite.
+* Le décor industriel et routier.
+* Les accents rouges diagonaux.
+* Les trois indicateurs de service présents dans la référence.
+
+Les textes des indicateurs sont :
+
+* Paiement sécurisé — 100% fiable.
+* Validation rapide — 1 à 10 minutes.
+* Support 24/7 — Toujours disponible.
+
+Respecte leur ordre, leur alignement, leurs proportions et leurs distances.
+
+Le camion doit rester le sujet visuel principal du bandeau, sans recouvrir les informations de service.
+
+Si les ressources graphiques originales sont disponibles, utilise-les. Sinon, utilise une image automobile adaptée, puis ajuste précisément son cadrage avec background-position, background-size ou object-position.
+
+Ne crée pas un logo IVECO approximatif si un asset propre existe déjà dans le projet.
+
+⸻
+
+4. PANNEAU PRINCIPAL DE CONFIRMATION
+
+Le panneau principal constitue le cœur de l’interface.
+
+Reproduis :
+
+* Sa position verticale.
+* Sa largeur.
+* Sa hauteur.
+* Son rayon de bordure.
+* Son fond graphite.
+* Son contour.
+* Son ombre.
+* Son espacement avec le bandeau automobile.
+* Son padding intérieur.
+
+Le panneau doit se détacher du fond sans devenir excessivement lumineux.
+
+Applique une finition premium à travers :
+
+* Des bordures fines.
+* Une profondeur maîtrisée.
+* Des ombres naturelles.
+* Des contrastes typographiques précis.
+* Des séparateurs cohérents.
+
+N’ajoute pas de décoration à l’intérieur du panneau si elle n’existe pas dans la référence.
+
+⸻
+
+5. BARRE OPÉRATEUR, HEURE ET LANGUE
+
+Conserve la disposition de la ligne supérieure du panneau :
+
+1. Logo MTN.
+2. Nom MTN.
+3. Contrôle horaire.
+4. Sélecteur de langue.
+5. Bouton de fermeture.
+
+Respecte la taille de chaque contrôle et l’espacement entre eux.
+
+Le logo MTN doit être propre, proportionné et contenu dans sa zone.
+
+Le sélecteur de langue doit présenter un alignement régulier entre le drapeau, le texte et la flèche.
+
+Le bouton de fermeture doit rester compact.
+
+Aucun élément ne doit déborder ou se chevaucher.
+
+⸻
+
+6. ZONE DE SUCCÈS — PRIORITÉ VISUELLE
+
+Reproduis exactement la hiérarchie suivante :
+
+1. Icône de confirmation circulaire.
+2. Titre de réussite.
+3. Montant.
+4. Texte explicatif.
+
+Le titre exact est :
+
+« Paiement effectué avec succès »
+
+Le montant de référence est :
+
+« FCFA 500 »
+
+Les deux lignes explicatives sont :
+
+« Votre paiement a été traité avec succès. »
+
+« Votre compte a été crédité. »
+
+L’icône doit être centrée dans sa zone, avec un cercle rouge lumineux fin et une coche blanche nette.
+
+Les petits éléments lumineux autour du cercle doivent rester discrets.
+
+Le titre doit être parfaitement centré, avec une taille, une graisse et une hauteur de ligne conformes à la capture.
+
+Le montant doit être immédiatement visible en rouge IVECO.
+
+Les descriptions doivent rester en gris clair et être moins dominantes que le titre et le montant.
+
+Ne transforme pas cette zone en animation spectaculaire. La confirmation doit inspirer confiance et sérieux.
+
+Important : les textes de réussite et le statut confirmé ne doivent apparaître que si le backend confirme réellement le paiement. Ne simule jamais une transaction réussie.
+
+⸻
+
+7. RÉFÉRENCE DE TRANSACTION
+
+Reproduis la ligne de référence avec :
+
+* L’icône de document.
+* Le libellé « Référence de transaction ».
+* La référence réelle.
+* Le bouton « Copier ».
+* Les séparateurs horizontaux.
+
+La référence doit rester lisible sur mobile.
+
+Si elle est longue, adapte uniquement les règles de retour à la ligne ou de réduction typographique nécessaires, sans faire déborder la carte.
+
+Le bouton Copier doit rester aligné à droite.
+
+La copie doit utiliser une véritable action presse-papiers. Affiche un feedback discret après une copie réussie.
+
+Ne remplace pas la référence dynamique par une valeur statique.
+
+⸻
+
+8. STATUT DE LA TRANSACTION
+
+Reproduis le bloc de statut avec :
+
+* L’icône circulaire verte.
+* Le libellé « Statut ».
+* Le texte « Paiement validé ».
+* La description « La transaction a été confirmée. »
+
+Le vert doit être réservé à l’état confirmé.
+
+Utilise un cercle lumineux discret, une coche précise et une typographie claire.
+
+Le statut ne doit pas sembler être un second titre principal.
+
+Ne crée pas de faux statut, de progression artificielle ou de confirmation visuelle prématurée.
+
+Les états en attente, échoués et confirmés doivent conserver des traitements distincts selon les véritables réponses du système.
+
+⸻
+
+9. AVERTISSEMENT DE SÉCURITÉ
+
+Texte exact :
+
+« Validez uniquement auprès de votre opérateur. »
+
+« Ne saisissez jamais votre code PIN Mobile Money sur ce site. »
+
+Reproduis le panneau jaune sombre avec :
+
+* L’icône de sécurité.
+* Une bordure jaune discrète.
+* Un fond légèrement distinct.
+* Un texte lisible.
+* Des marges internes régulières.
+
+Ne laisse pas cet avertissement dominer la confirmation.
+
+Le panneau doit paraître intégré au design et non ajouté après coup.
+
+Conserve impérativement l’avertissement : ne demande jamais au client de communiquer son code PIN Mobile Money.
+
+⸻
+
+10. BOUTON « VOIR MES DÉPÔTS »
+
+Reproduis le bouton principal rouge :
+
+« Voir mes dépôts »
+
+Il doit conserver :
+
+* Sa largeur.
+* Sa hauteur.
+* Son positionnement.
+* Ses coins arrondis.
+* Son icône de document.
+* Sa flèche à droite.
+* Son alignement typographique.
+
+Utilise un rouge IVECO profond avec un dégradé très subtil si celui-ci améliore la fidélité à la référence.
+
+L’effet lumineux rouge doit être contrôlé, sans halo excessif.
+
+Prévois des états de survol, d’appui, de focus et de chargement cohérents.
+
+Aucune animation ne doit modifier la largeur, la hauteur ou la position du bouton.
+
+Le bouton doit conduire vers l’historique réel des dépôts de l’utilisateur.
+
+⸻
+
+11. CARTE DU NUMÉRO UTILISÉ
+
+Reproduis la carte située sous le panneau principal :
+
+* Icône téléphone rouge.
+* Libellé « Numéro utilisé ».
+* Numéro réel associé à la transaction.
+* Bouton « Modifier ».
+
+Respecte les marges, les dimensions et les alignements.
+
+Le numéro doit être lisible et ne doit pas entrer en collision avec le bouton.
+
+La fonction Modifier doit préserver le fonctionnement existant.
+
+Ne transforme pas cette carte en formulaire permanent.
+
+⸻
+
+12. MICRO-INTERACTIONS ET ANIMATIONS
+
+Crée des animations premium, légères et stables.
+
+Apparition
+
+Le panneau peut apparaître avec une transition d’opacité subtile. Ne lui applique pas un déplacement vertical visible si cela nuit à la fidélité à la référence.
+
+Confirmation
+
+L’icône de réussite peut présenter une apparition douce de la coche, sans mouvement important du cercle.
+
+Boutons
+
+Les boutons peuvent présenter :
+
+* Une légère variation de luminosité.
+* Une transition de bordure.
+* Une compression très légère à l’appui.
+* Un retour visuel après une action réussie.
+
+Copie
+
+Le bouton Copier peut afficher brièvement une confirmation visuelle après la réussite de l’action.
+
+Statut
+
+Le statut peut apparaître sans clignotement ni pulsation agressive.
+
+Contraintes
+
+* Transitions courantes : environ 140 à 240 ms.
+* Aucun changement de géométrie.
+* Aucun saut de mise en page.
+* Aucun effet néon excessif.
+* Aucune animation permanente inutile.
+* Respect de prefers-reduced-motion.
+
+La finition doit être extraordinaire par sa précision, et non par une accumulation d’effets.
+
+⸻
+
+13. RESPONSIVE DESIGN ET FIDÉLITÉ MOBILE
+
+Le viewport de la capture est le viewport de référence prioritaire.
+
+Commence par obtenir un rendu aussi proche que possible sur cette taille d’écran.
+
+Vérifie ensuite les autres dimensions mobiles.
+
+Préserve :
+
+* Les marges.
+* La position du panneau.
+* La largeur utile des cartes.
+* Les espaces entre les sections.
+* La lisibilité de la référence.
+* Les proportions du bouton principal.
+* Le positionnement de la carte du numéro.
+
+N’utilise pas un simple zoom global.
+
+N’applique pas des dimensions fixes qui provoquent des débordements sur d’autres appareils.
+
+Ne recrée pas artificiellement les commandes natives du navigateur dans le site. La barre de statut et les commandes Safari visibles dans la capture servent de référence visuelle ; l’application web ne doit pas prétendre contrôler l’interface native.
+
+⸻
+
+14. PRÉSERVATION DU CODE ET DES FONCTIONNALITÉS
+
+Avant de coder, inspecte :
+
+* Le framework existant.
+* La structure des composants.
+* Les feuilles de style.
+* Les images et logos.
+* Les routes.
+* Les API.
+* La source de la référence de transaction.
+* Le système de confirmation du paiement.
+* La navigation vers l’historique.
+* La modification du numéro.
+
+Interviens uniquement sur les éléments nécessaires.
+
+Ne migre pas le projet vers un autre framework.
+
+Ne supprime aucune fonctionnalité existante.
+
+Ne remplace pas le backend par des données fictives.
+
+Ne modifie pas les webhooks ou les secrets de paiement sans nécessité.
+
+Préserve la gestion des erreurs et les états d’attente.
+
+La page doit fonctionner réellement, et pas uniquement ressembler à une image.
+
+⸻
+
+15. VALIDATION VISUELLE OBLIGATOIRE
+
+Après l’implémentation, lance le projet et réalise une capture réelle au même viewport que la référence.
+
+Effectue une comparaison en plusieurs passes.
+
+Passe 1 — Géométrie
+
+Compare les coordonnées et dimensions de tous les conteneurs.
+
+Passe 2 — Typographie
+
+Compare les tailles, les graisses, les retours à la ligne et les alignements.
+
+Passe 3 — Couleurs
+
+Compare les fonds, les accents, les bordures et les contrastes.
+
+Passe 4 — Effets
+
+Compare les ombres, les reflets, les dégradés et les effets lumineux.
+
+Passe 5 — Interactions
+
+Vérifie la copie, la navigation, le bouton de fermeture et les états de transaction.
+
+Si possible, crée une superposition des captures à 50 % et une image de différence.
+
+Corrige les écarts majeurs, puis répète les tests.
+
+Ne prétends pas avoir effectué une comparaison si tu n’as pas réellement généré les captures.
+
+Ne déclare pas la tâche terminée tant que des différences visuelles importantes restent présentes.
+
+⸻
+
+16. CRITÈRES FINAUX D’ACCEPTATION
+
+La page est acceptable lorsque :
+
+* La composition correspond à la référence.
+* Le camion conserve son cadrage.
+* Le logo IVECO est correctement proportionné.
+* Le panneau principal respecte la géométrie attendue.
+* Les cartes intérieures sont correctement alignées.
+* Le montant est immédiatement identifiable.
+* La référence de transaction reste lisible.
+* Le statut correspond à la réalité.
+* L’avertissement de sécurité est conservé.
+* Le bouton Voir mes dépôts fonctionne.
+* La carte du numéro conserve sa disposition.
+* Les animations n’entraînent aucun déplacement.
+* Le rendu mobile est stable.
+* Les fonctionnalités existantes restent opérationnelles.
+* Aucun effet décoratif inutile n’a été ajouté.
+
+INSTRUCTION FINALE
+
+Commence par analyser la capture et le code existant.
+
+Reproduis la structure. Mesure les dimensions. Implémente la page. Lance-la. Compare le rendu. Corrige les écarts. Recommence.
+
+La priorité absolue est :
+
+1. Géométrie.
+2. Disposition.
+3. Proportions.
+4. Typographie.
+5. Couleurs et matières.
+6. Animations.
+7. Validation fonctionnelle.
+
+Le résultat attendu est une page de confirmation IVECO de niveau international : précise, spectaculaire sans surcharge, cohérente avec l’industrie automobile et fidèle à la capture de référence.
+
+Ne privilégie jamais un effet premium au détriment de la géométrie.

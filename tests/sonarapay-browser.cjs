@@ -16,6 +16,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone }
   await evaluate(`document.querySelector('#deposit-phone').value=${JSON.stringify(phone)};
     document.querySelector('#deposit-operator-form').requestSubmit()`);
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'pending'");
+  assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), true);
   await noProviderBrand();
   assert.equal(await balance(), 2300);
   assert.equal(await evaluate("getComputedStyle(document.querySelector('.deposit-details')).display"), "none");
@@ -35,10 +36,42 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone }
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'successful'");
   await noProviderBrand();
   assert.equal(await balance(), 2800);
+  assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), false);
+  assert.equal(await evaluate("document.querySelector('[data-sonara-success] h1').textContent"), "Paiement effectué avec succès");
+  assert.match(await evaluate("document.querySelector('[data-deposit-clock]').textContent"), /^\d{2}:\d{2}$/);
+  const origin = await evaluate("location.origin");
+  await call("Browser.grantPermissions", { origin, permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"] });
+  const actualReference = await evaluate("document.querySelector('[data-sonara-reference]').textContent");
+  await call("Page.bringToFront");
+  await call("Runtime.evaluate", { expression: "document.querySelector('[data-sonara-copy]').click()", userGesture: true });
+  await waitFor("document.querySelector('[data-sonara-copy]').classList.contains('is-copied')");
+  assert.equal(await evaluate("navigator.clipboard.readText()"), actualReference);
+  await evaluate("document.querySelector('[data-deposit-language]').click()");
+  assert.equal(await evaluate("document.querySelector('[data-sonara-success] h1').textContent"), "Payment completed successfully");
+  await noProviderBrand();
+  await evaluate("document.querySelector('[data-deposit-language]').click()");
+  await call("Emulation.setDeviceMetricsOverride", { width: 472, height: 802, deviceScaleFactor: 1, mobile: true });
   await screenshot("sonarapay-success");
+  console.log("Success geometry:", await evaluate(`JSON.stringify(Object.fromEntries(
+    ['.iveco-signature-hero','.deposit-card','.deposit-confirmation-header','.sonara-success','.deposit-payer-card'].map(selector => {
+      const r=document.querySelector(selector).getBoundingClientRect();return [selector,{x:r.x,y:r.y,width:r.width,height:r.height}];
+    })))`));
+  await evaluate("document.querySelector('.sonara-history-button').click()");
+  await waitFor("location.pathname === '/historique-recharges'");
+  await waitFor("document.querySelector('[data-activity-list]').textContent.includes('Succès')");
+  await noProviderBrand();
   await navigate(paymentPath);
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'successful'");
   assert.equal(await balance(), 2800);
+  await evaluate("document.querySelector('[data-deposit-modify]').click()");
+  await waitFor("location.pathname === '/choisir-operateur'");
+  assert.equal(await balance(), 2800);
+  await navigate(paymentPath);
+  await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'successful'");
+  await evaluate("document.querySelector('.deposit-close').click()");
+  await waitFor("location.pathname === '/recharger'");
+  await navigate(paymentPath);
+  await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'successful'");
   for (const width of [320, 390, 472, 768]) {
     await call("Emulation.setDeviceMetricsOverride", { width, height: 844, deviceScaleFactor: 1, mobile: true });
     assert(await evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), `Overflow at ${width}px`);
@@ -67,6 +100,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone }
     body:JSON.stringify({status:'failed'})})`);
   await evaluate("document.querySelector('[data-sonara-check]').click()");
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'failed'");
+  assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), true);
   await noProviderBrand();
   assert.equal(await balance(), 2800);
   console.log("PASS: Bénin-only SDK UI, real account/isolated provider, pending history, reload, exactly-once credit, OTP clearing, refusal, 4 widths. NO live provider calls.");

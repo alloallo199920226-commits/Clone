@@ -28,37 +28,60 @@
       const input = panel.querySelector("input");
       const check = panel.querySelector("[data-sonara-check]");
       const retry = panel.querySelector("[data-sonara-retry]");
-      let payment, busy = false, timer;
+      const success = panel.querySelector("[data-sonara-success]");
+      const nonsuccess = panel.querySelector("[data-sonara-nonsuccess]");
+      const copyFeedback = panel.querySelector("[data-sonara-copy-feedback]");
+      const clock = document.querySelector("[data-deposit-clock]");
+      let payment, busy = false, pollTimer, clockTimer, copyTimer, lastState;
       content.hidden = false;
       document.querySelector("[data-deposit-missing]").hidden = true;
-      content.querySelectorAll(".deposit-details,.deposit-ussd-card,.deposit-validation,.deposit-notice,.deposit-modify")
+      content.querySelectorAll(".deposit-details,.deposit-ussd-card,.deposit-validation,.deposit-notice")
         .forEach(node => { node.hidden = true; });
       panel.hidden = false;
-      document.querySelectorAll(".deposit-timer").forEach(node => { node.hidden = true; });
-      const stateKey = () => payment?.credited ? "sonaraSuccessful"
+      document.querySelectorAll(".deposit-timer").forEach(node => { node.hidden = false; });
+      const stateKey = () => payment?.credited === true ? "sonaraSuccessful"
         : ["credentials", "credentials_changed"].includes(payment?.errorCode) ? "sonaraCredentials"
         : payment?.status === "failed" ? "sonaraFailed"
         : payment?.status === "review" ? "sonaraReview"
         : payment?.status === "otp_required" ? "sonaraOtp"
         : payment?.errorCode ? "sonaraUnknown" : "sonaraPending";
+      const updateClock = () => {
+        if (!clock) return;
+        const now = new Date();
+        const locale = document.documentElement.lang === "en" ? "en-GB" : "fr-FR";
+        clock.textContent = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" }).format(now);
+        clock.dateTime = now.toISOString();
+        clock.setAttribute("aria-label", t("clockLabel", { time: clock.textContent }));
+      };
       const paint = () => {
         if (!payment) return;
-        set(message, stateKey());
-        panel.dataset.paymentStatus = payment.credited ? "successful" : payment.status;
-        panel.querySelector("[data-sonara-reference]").textContent = payment.reference || payment.id;
-        panel.querySelector("[data-sonara-amount]").textContent =
-          `FCFA ${new Intl.NumberFormat("en-US").format(payment.amount_fcfa)}`;
-        document.querySelector("[data-selected-operator]").textContent = payment.operator.operatorName;
-        document.querySelector("[data-deposit-phone]").textContent = payment.phone;
+        const credited = payment.credited === true;
+        const reference = String(payment.reference || payment.id || "");
+        const validAmount = Number.isSafeInteger(payment.amount_fcfa) && payment.amount_fcfa >= 0;
+        const amount = validAmount ? `FCFA ${new Intl.NumberFormat("en-US").format(payment.amount_fcfa)}` : "—";
+        const currentState = stateKey();
+        if (lastState !== currentState || !message.dataset.i18n) {
+          set(message, currentState);
+          lastState = currentState;
+        }
+        panel.dataset.paymentStatus = credited ? "successful" : String(payment.status || "pending");
+        panel.querySelectorAll("[data-sonara-reference]").forEach(node => { node.textContent = reference || "—"; });
+        panel.querySelectorAll("[data-sonara-amount]").forEach(node => { node.textContent = amount; });
+        const operator = payment.operator || {};
+        document.querySelector("[data-selected-operator]").textContent = operator.operatorName || "—";
+        document.querySelector("[data-deposit-phone]").textContent = payment.phone || "—";
         const logo = document.querySelector("[data-confirmation-logo]");
         logo.replaceChildren();
-        populateLogo(logo, payment.operator, operatorBrand(payment.operator));
-        otpForm.hidden = payment.status !== "otp_required" || payment.credited;
+        populateLogo(logo, operator, operatorBrand(operator));
+        success.hidden = !credited;
+        nonsuccess.hidden = credited;
+        otpForm.hidden = payment.status !== "otp_required" || credited;
         panel.querySelector("[data-sonara-ussd]").textContent = payment.ussdCode || "";
-        retry.hidden = payment.credited || payment.status === "failed" || !!payment.reference
+        retry.hidden = credited || payment.status === "failed" || !!payment.reference
           || !payment.errorCode || payment.status === "otp_required";
-        if (payment.credited || payment.status === "failed") {
-          clearInterval(timer);
+        panel.querySelectorAll("[data-sonara-copy]").forEach(button => { button.disabled = !reference; });
+        if (credited || payment.status === "failed") {
+          clearInterval(pollTimer);
           check.hidden = true;
         }
       };
@@ -70,16 +93,44 @@
         try {
           payment = (await api("/" + encodeURIComponent(id) + path, body)).payment;
           paint();
-        } catch (error) { message.textContent = error.message || t("sonaraUnavailable"); }
+        } catch (error) {
+          message.removeAttribute("data-i18n");
+          message.textContent = error.message || t("sonaraUnavailable");
+        }
         finally {
           busy = false;
           panel.setAttribute("aria-busy", "false");
-          panel.querySelectorAll("button").forEach(button => { button.disabled = false; });
+          panel.querySelectorAll("button").forEach(button => { if (!button.hidden) button.disabled = false; });
+          panel.querySelectorAll("[data-sonara-copy]").forEach(button => {
+            button.disabled = !String(payment?.reference || payment?.id || "");
+          });
         }
       };
+      updateClock();
+      clockTimer = setInterval(updateClock, 30000);
       set(message, "sonaraPending");
       check.addEventListener("click", () => refresh());
       retry.addEventListener("click", () => refresh("/retry", {}));
+      panel.querySelectorAll("[data-sonara-copy]").forEach(button => {
+        button.addEventListener("click", async () => {
+          if (!payment) return;
+          const value = String(payment.reference || payment.id || "");
+          if (!value) return;
+          try {
+            await navigator.clipboard.writeText(value);
+            set(copyFeedback, "copied");
+            button.textContent = t("copied");
+            button.classList.add("is-copied");
+            button.disabled = true;
+            clearTimeout(copyTimer);
+            copyTimer = setTimeout(() => {
+              button.textContent = t("copy");
+              button.classList.remove("is-copied");
+              button.disabled = false;
+            }, 1800);
+          } catch { set(copyFeedback, "copyError"); }
+        });
+      });
       otpForm.addEventListener("submit", event => {
         event.preventDefault();
         const otp = input.value.trim();
@@ -87,9 +138,13 @@
         if (!/^\d{4,12}$/.test(otp)) { set(message, "sonaraOtpInvalid"); return; }
         refresh("/retry", { otp });
       });
-      timer = setInterval(() => { if (!document.hidden) refresh(); }, 5000);
-      document.addEventListener("deposit-language-change", paint);
-      window.addEventListener("pagehide", () => clearInterval(timer), { once: true });
+      pollTimer = setInterval(() => { if (!document.hidden) refresh(); }, 5000);
+      document.addEventListener("deposit-language-change", () => { updateClock(); paint(); });
+      window.addEventListener("pagehide", () => {
+        clearInterval(pollTimer);
+        clearInterval(clockTimer);
+        clearTimeout(copyTimer);
+      }, { once: true });
       await refresh();
     },
   };

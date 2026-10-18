@@ -1,7 +1,8 @@
 /* Local translations: no external service or network dependency. */
 (() => {
   const messages = {
-    sonaraTitle: ["Paiement · Bénin", "Payment · Benin"],
+    sonaraTitle: ["Suivi du paiement", "Payment status"],
+    sonaraPanel: ["Suivi du paiement", "Payment status"],
     sonaraConsent: ["Ce bouton déclenche une demande de paiement réelle. Validez-la auprès de votre opérateur, jamais avec votre PIN sur ce site.", "This button starts a real payment request. Approve it with your operator; never enter your PIN on this site."],
     sonaraStart: ["Lancer le paiement", "Start payment"],
     sonaraCreating: ["Transmission de votre demande… Ne lancez pas un autre paiement.", "Sending your request… Do not start another payment."],
@@ -17,6 +18,16 @@
     sonaraOtpLabel: ["Code temporaire de l’opérateur (pas votre PIN)", "Temporary operator code (not your PIN)"],
     sonaraOtpSubmit: ["Envoyer le code temporaire", "Send temporary code"],
     sonaraReference: ["Référence de suivi", "Tracking reference"],
+    successTitle: ["Paiement effectué avec succès", "Payment completed successfully"],
+    successLineOne: ["Votre paiement a été traité avec succès.", "Your payment was processed successfully."],
+    successLineTwo: ["Votre compte a été crédité.", "Your account has been credited."],
+    transactionReference: ["Référence de transaction", "Transaction reference"],
+    statusLabel: ["Statut", "Status"],
+    paymentValidated: ["Paiement validé", "Payment validated"],
+    transactionConfirmed: ["La transaction a été confirmée.", "The transaction has been confirmed."],
+    safetyTitle: ["Validez uniquement auprès de votre opérateur.", "Approve only with your operator."],
+    safetyBody: ["Ne saisissez jamais votre code PIN Mobile Money sur ce site.", "Never enter your Mobile Money PIN on this site."],
+    clockLabel: ["Heure locale : {time}", "Local time: {time}"],
     sonaraSafety: ["Validez uniquement auprès de votre opérateur. Ne saisissez jamais votre code PIN Mobile Money sur ce site.", "Approve only with your operator. Never enter your Mobile Money PIN on this site."],
     sonaraCheck: ["Vérifier le paiement", "Check payment"],
     sonaraRetry: ["Reprendre la même demande", "Resume the same request"],
@@ -27,7 +38,7 @@
     processingWindow: ["1 à 10 minutes", "1 to 10 minutes"],
     alwaysAvailable: ["Toujours disponible", "Always available"],
     operatorTitle: ["Choisir un opérateur — Valhalla Pay", "Choose an operator — Valhalla Pay"],
-    confirmationTitle: ["Confirmation du dépôt — Valhalla Pay", "Deposit confirmation — Valhalla Pay"],
+    confirmationTitle: ["Confirmation du dépôt — IVECO Pay", "Deposit confirmation — IVECO Pay"],
     close: ["Fermer et revenir à Recharger", "Close and return to Top up"],
     missing: ["Les informations de ce dépôt ne sont pas disponibles. Sélectionnez un montant de recharge.", "Deposit details are unavailable. Select a top-up amount."],
     expired: ["Le délai de 20 minutes est écoulé. Revenez à Recharger pour recommencer. Aucun paiement n’a été validé automatiquement.", "The 20-minute session has expired. Return to Top up to start again. No payment was automatically approved."],
@@ -117,7 +128,8 @@
     ".deposit-close": "close", ".deposit-heading-tools": "tools", ".deposit-amount-bar": "selectedAmount",
     ".deposit-operator-options": "operator", ".deposit-details": "details", ".deposit-validation": "validation",
     "[data-copy='merchant_name']": "copyName", "[data-copy='merchant_account']": "copyAccount",
-    "[data-copy='amount']": "copyAmount", "[data-deposit-language]": "switchLanguage"
+    "[data-copy='amount']": "copyAmount", "[data-deposit-language]": "switchLanguage",
+    ".sonara-panel": "sonaraPanel", "[data-deposit-clock]": "clockLabel"
   }).forEach(([selector, key]) => mark(selector, key, "Aria"));
   mark("#deposit-phone", "phonePlaceholder", "Placeholder");
   function apply() {
@@ -130,7 +142,7 @@
     }
     document.querySelectorAll("[data-deposit-language]").forEach(button => {
       button.disabled = false;
-      button.textContent = document.querySelector(".iveco-payment-page")
+      button.textContent = document.querySelector(".iveco-payment-page, .deposit-page--confirmation")
         ? (language === "fr" ? "Français" : "English")
         : (language === "fr" ? "English" : "Français");
       button.dataset.language = language;

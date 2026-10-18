@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap");
+
 [hidden] { display: none !important; }
 body.deposit-page--confirmation .sonara-panel {
   margin-top: 11px;
@@ -14,8 +16,6 @@ body.deposit-page--confirmation .sonara-panel {
 .sonara-panel input { display: block; width: 100%; min-height: 48px; margin: 12px 0; padding: 12px; border-radius: 8px; background: #fff; color: #15191f; font-size: 16px; box-sizing: border-box; }
 .sonara-panel .deposit-result { margin-top: 12px; }
 .sonara-panel[data-payment-status="successful"] [data-sonara-status] { color: #86efac; }
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap");
-
 /* IVECO signature confirmation only; operator selection styles are untouched. */
 :root {
   --signature-ink: #f1f3f5;
@@ -869,4 +869,398 @@ body.deposit-page--confirmation :focus-visible {
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
   }
+}
+
+/* Real-payment confirmation: keep the supplied mobile composition fixed,
+   while allowing text and long references to reflow without clipping. */
+body.deposit-page--confirmation .deposit-shell {
+  padding-right: 18px;
+  padding-left: 18px;
+}
+
+.iveco-signature-hero {
+  height: 199px;
+  margin-right: -18px;
+  margin-left: -18px;
+}
+
+body.deposit-page--confirmation .deposit-card {
+  padding: 14px 12px 10px;
+}
+
+body.deposit-page--confirmation .deposit-confirmation-header {
+  margin-bottom: 8px;
+}
+
+body.deposit-page--confirmation .sonara-panel {
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.sonara-success {
+  min-height: 436px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 18px 10px 8px;
+  border: 1px solid rgba(205, 214, 222, .2);
+  border-radius: 9px;
+  background:
+    linear-gradient(153deg, rgba(16, 22, 31, .99), rgba(12, 18, 26, .98) 68%, rgba(17, 22, 30, .99));
+  color: #f1f3f5;
+  box-sizing: border-box;
+}
+
+.sonara-success-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.sonara-success-mark {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #ed1b38;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(226, 27, 53, .18), rgba(17, 22, 30, .08) 70%);
+  box-shadow: 0 0 0 4px rgba(226, 27, 53, .09), 0 0 15px rgba(226, 27, 53, .28);
+}
+
+.sonara-success-mark svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: #f7f8fa;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: signature-check-in 260ms ease both;
+}
+
+.sonara-success-summary h1 {
+  margin: 10px 0 2px;
+  color: #f3f4f6;
+  font: 700 20px/1.2 Arial, sans-serif;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+
+.sonara-success-amount {
+  display: block;
+  margin: 1px 0 2px;
+  color: #f0223e;
+  font: 700 24px/1.12 Arial, sans-serif;
+  letter-spacing: -.025em;
+}
+
+.sonara-success-summary p {
+  margin: 1px 0 0;
+  color: #b5bdc6;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.sonara-transaction {
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: 29px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 4px;
+  border-top: 1px solid rgba(205, 215, 225, .16);
+  border-bottom: 1px solid rgba(205, 215, 225, .16);
+}
+
+.sonara-transaction-icon {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(226, 27, 53, .52);
+  border-radius: 5px;
+  background: rgba(226, 27, 53, .09);
+  color: #ef334b;
+}
+
+.sonara-transaction-icon svg,
+.sonara-history-button > svg:first-child {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sonara-transaction-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.sonara-label {
+  display: block;
+  color: #aeb6c0;
+  font-size: 9px;
+  line-height: 1.2;
+}
+
+.sonara-transaction-copy strong {
+  min-width: 0;
+  color: #f0f2f4;
+  font: 600 10px/1.25 "DM Sans", sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.sonara-copy {
+  min-width: 77px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 8px;
+  border: 1px solid rgba(224, 184, 62, .5);
+  border-radius: 6px;
+  background: rgba(224, 184, 62, .09);
+  color: #e8c64f;
+  font: 700 10px/1 "DM Sans", sans-serif;
+  cursor: pointer;
+  transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.sonara-copy::before {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 13px;
+  background: currentColor;
+  content: "";
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M8 3h11a2 2 0 0 1 2 2v13h-2V5H8V3ZM5 7h10a2 2 0 0 1 2 2v12H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Zm0 2v10h10V9H5Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M8 3h11a2 2 0 0 1 2 2v13h-2V5H8V3ZM5 7h10a2 2 0 0 1 2 2v12H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Zm0 2v10h10V9H5Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.sonara-copy:hover:not(:disabled),
+.sonara-copy.is-copied {
+  border-color: #edcd62;
+  background: rgba(224, 184, 62, .16);
+  color: #f2d976;
+}
+
+.sonara-copy:active:not(:disabled),
+.sonara-history-button:active { transform: scale(.99); }
+.sonara-copy:disabled { opacity: .7; cursor: default; }
+
+.sonara-confirmed-status {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 4px;
+}
+
+.sonara-confirmed-mark {
+  width: 33px;
+  height: 33px;
+  flex: 0 0 33px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid #43e584;
+  border-radius: 50%;
+  background: rgba(34, 212, 107, .1);
+  box-shadow: 0 0 0 3px rgba(34, 212, 107, .07), 0 0 12px rgba(34, 212, 107, .16);
+  color: #4bea89;
+}
+
+.sonara-confirmed-mark svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sonara-confirmed-status > div { min-width: 0; display: grid; gap: 2px; }
+.sonara-confirmed-status strong { color: #6ee79c; font-size: 11px; line-height: 1.2; }
+.sonara-confirmed-status small { color: #b0b8c1; font-size: 9px; line-height: 1.25; }
+
+.sonara-panel .sonara-safety {
+  min-height: 57px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 8px 11px;
+  border: 1px solid rgba(224, 184, 62, .43);
+  border-radius: 7px;
+  background: linear-gradient(100deg, rgba(89, 69, 22, .65), rgba(66, 53, 23, .6));
+  color: #e4d59f;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.sonara-safety > svg {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  fill: none;
+  stroke: #edc847;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sonara-safety > span { display: grid; gap: 2px; }
+.sonara-safety strong { color: #f0d35d; font-weight: 700; }
+.sonara-safety small { color: #d4cba9; font-size: 9px; }
+
+.sonara-panel .sonara-history-button {
+  position: relative;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 42px;
+  border: 1px solid #f14258;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ed1c36, #d70827);
+  box-shadow: 0 3px 10px rgba(144, 8, 30, .24);
+  color: #fff;
+  font: 700 15px/1 Arial, sans-serif;
+  text-decoration: none;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.sonara-history-button:hover {
+  border-color: #ff7180;
+  background: linear-gradient(180deg, #f52c45, #df102d);
+}
+
+.sonara-history-button > svg:first-child { flex: 0 0 18px; }
+.sonara-history-button .sonara-history-arrow {
+  position: absolute;
+  right: 13px;
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sonara-copy-feedback {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.deposit-page--confirmation .deposit-payer-card {
+  min-height: 49px;
+  margin-top: 8px;
+}
+
+.sonara-nonsuccess {
+  min-height: 330px;
+  padding: 18px;
+  border: 1px solid rgba(205, 214, 222, .2);
+  border-radius: 9px;
+  background: linear-gradient(153deg, rgba(16, 22, 31, .99), rgba(17, 22, 30, .99));
+  color: #f1f3f5;
+}
+
+.sonara-nonsuccess h2 {
+  margin: 0 0 12px;
+  color: #f1f3f5;
+  font: 700 16px/1.25 "Outfit", sans-serif;
+}
+
+.sonara-status-message {
+  min-height: 48px;
+  margin: 0 0 12px !important;
+  padding: 10px 11px;
+  border: 1px solid rgba(180, 193, 205, .2);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, .035);
+  color: #c1c9d1;
+  font-size: 11px;
+  line-height: 1.45 !important;
+}
+
+.sonara-panel[data-payment-status="pending"] .sonara-status-message,
+.sonara-panel[data-payment-status="processing"] .sonara-status-message,
+.sonara-panel[data-payment-status="otp_required"] .sonara-status-message { border-color: rgba(224, 184, 62, .35); color: #e6d79d; }
+.sonara-panel[data-payment-status="failed"] .sonara-status-message { border-color: rgba(226, 58, 78, .4); color: #f0a0a8; }
+.sonara-panel[data-payment-status="review"] .sonara-status-message { border-color: rgba(224, 184, 62, .4); color: #e9d18c; }
+
+.sonara-amount-line,
+.sonara-reference-line {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0 !important;
+  color: #aeb6c0;
+  font-size: 10px;
+}
+
+.sonara-amount-line strong,
+.sonara-reference-line strong {
+  color: #f0f2f4;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.sonara-nonsuccess .sonara-safety { margin-top: 14px !important; }
+.sonara-nonsuccess form { margin-top: 16px; }
+.sonara-nonsuccess form p { color: #d3d9df; font-size: 12px; }
+.sonara-nonsuccess form label { color: #e0e5e9; font-size: 12px; }
+.sonara-nonsuccess > p:last-child { margin: 16px 0 0; text-align: center; }
+.sonara-nonsuccess > p:last-child a { color: #e7c54c; font-size: 11px; font-weight: 700; }
+.sonara-panel .deposit-result { min-height: 42px; font-size: 13px; }
+.sonara-panel .deposit-result::before { content: none; }
+.sonara-panel .deposit-result::after { content: none; }
+
+body.deposit-page--confirmation [data-deposit-clock] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+}
+
+@keyframes signature-check-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 430px) {
+  body.deposit-page--confirmation .deposit-shell { padding-right: 12px; padding-left: 12px; }
+  .iveco-signature-hero { margin-right: -12px; margin-left: -12px; }
+  body.deposit-page--confirmation .deposit-card { padding-right: 11px; padding-left: 11px; }
+}
+
+@media (max-width: 380px) {
+  body.deposit-page--confirmation .deposit-shell { padding-right: 12px; padding-left: 12px; }
+  .iveco-signature-hero { margin-right: -12px; margin-left: -12px; }
+  .sonara-success { padding-right: 8px; padding-left: 8px; }
+  .sonara-transaction { grid-template-columns: 26px minmax(0, 1fr) auto; gap: 6px; }
+  .sonara-copy { min-width: 67px; padding-right: 5px; padding-left: 5px; }
+  .sonara-history-button { padding-right: 34px; padding-left: 28px; font-size: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sonara-success-mark svg { animation: none; }
 }
