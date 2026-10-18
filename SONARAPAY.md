@@ -5,7 +5,8 @@
 - Compte marchand SonaraPay avec KYC validé et autorisation **SDK Payin**.
 - Clé privée SDK dans le secret `SONARAPAY_KEY`, jamais une clé Gopay.
 - Avec cette clé configurée, les comptes du Bénin utilisent le paiement direct
-  MTN, Moov ou Celtiis. Les autres pays conservent les canaux manuels administratifs.
+  MTN ou Moov. Celtiis n’est plus proposé pour les nouveaux dépôts ; ses anciennes
+  demandes restent consultables et suivies. Les autres pays conservent les canaux manuels administratifs.
 - Disponibilité réelle et autorisation de la clé restent contrôlées par SonaraPay.
 - Le minimum du site reste 500 FCFA. Les règles de bonus et de parrainage existantes
   ne sont pas remplacées par celles d’un autre projet ou prestataire.

@@ -9,6 +9,12 @@ L’utilisateur veut intégrer SonaraPay « pour les paiements au bénin seule d
 
 **How to apply:** limiter le parcours SonaraPay aux comptes du Bénin et préserver le parcours existant des autres pays. Ne pas étendre cette intégration à d’autres pays sans nouvelle demande.
 
+Pour les dépôts au Bénin, proposer uniquement MTN et Moov, sans Celtiis.
+
+**Why:** l’utilisateur a demandé de retirer Celtiis des moyens de dépôt du Bénin.
+
+**How to apply:** refuser les nouvelles demandes Celtiis sans supprimer ni interrompre le suivi des paiements déjà initiés.
+
 Dans le parcours SDK direct, ne pas présenter les coordonnées et codes USSD des
 canaux manuels administratifs comme instructions de paiement SonaraPay.
 

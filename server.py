@@ -311,7 +311,7 @@ class Handler(BaseHTTPRequestHandler):
                 if prefix == "+229" and sonarapay_client.configured():
                     self._json(200, {"countryCode": prefix, "phoneLength": 10,
                                      "provider": "sonarapay",
-                                     "channels": list(sonarapay_client.OPERATORS.values())})
+                                     "channels": list(sonarapay_client.DEPOSIT_OPERATORS.values())})
                     return
                 with auth_backend.connect() as connection, connection.cursor() as cursor:
                     cursor.execute(

@@ -12,6 +12,8 @@ OPERATORS = {
     "moov_bj": {"id": "moov_bj", "operatorName": "MOOV", "logoText": "MOOV", "logoColor": "#1483bc"},
     "celtiis_bj": {"id": "celtiis_bj", "operatorName": "Celtiis Cash", "logoText": "Celtiis", "logoColor": "#10b981"},
 }
+# Keep the full catalog for existing orders, but allow only these for new deposits.
+DEPOSIT_OPERATORS = {key: OPERATORS[key] for key in ("mtn_bj", "moov_bj")}
 
 
 class ProviderError(Exception):

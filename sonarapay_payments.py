@@ -63,7 +63,7 @@ def prepare(user, body):
         raise ValueError("Le numéro béninois doit contenir 10 chiffres et commencer par 01.")
     if type(amount) is not int or not MIN_DEPOSIT_FCFA <= amount <= auth_backend.MAX_ACTIVITY_AMOUNT:
         raise ValueError(f"Montant invalide : de {MIN_DEPOSIT_FCFA} à {auth_backend.MAX_ACTIVITY_AMOUNT} FCFA.")
-    if not isinstance(operator, str) or operator not in provider.OPERATORS:
+    if not isinstance(operator, str) or operator not in provider.DEPOSIT_OPERATORS:
         raise ValueError("Opérateur béninois invalide.")
     request_id = identifier(body.get("requestId"))
     with auth_backend.connect() as conn, conn.cursor() as cur:

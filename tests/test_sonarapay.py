@@ -20,6 +20,18 @@ from server import Handler
 
 
 class VerificationTests(unittest.TestCase):
+    def test_celtiis_disabled_for_new_deposits_but_history_preserved(self):
+        self.assertEqual(set(client.DEPOSIT_OPERATORS), {"mtn_bj", "moov_bj"})
+        with patch.object(client, "configured", return_value=True), \
+                patch.object(auth_backend, "connect") as connect:
+            with self.assertRaisesRegex(ValueError, "Opérateur béninois invalide"):
+                payments.prepare({"phone": "+2290100000000"}, {
+                    "amount": 500, "operatorId": "celtiis_bj",
+                    "phone": "0100000000", "requestId": str(uuid.uuid4()),
+                })
+            connect.assert_not_called()
+        self.assertEqual(client.OPERATORS["celtiis_bj"]["operatorName"], "Celtiis Cash")
+
     def setUp(self):
         self.order = {"id": uuid.uuid4(), "amount_fcfa": 500, "provider_reference": "test-reference",
                       "operator_id": "mtn_bj", "payer_phone": "+2290100000000"}
@@ -240,7 +252,7 @@ class PaymentTests(unittest.TestCase):
             status, result = get("/api/payment-channels/me", self.token)
             self.assertEqual(status, 200)
             self.assertEqual(result["provider"], "sonarapay")
-            self.assertEqual({row["id"] for row in result["channels"]}, set(client.OPERATORS))
+            self.assertEqual({row["id"] for row in result["channels"]}, {"mtn_bj", "moov_bj"})
             self.assertNotIn("provider", get("/api/payment-channels/me", other_token)[1])
             self.assertNotIn("key_fingerprint", json.dumps(get("/api/sonarapay/payments", self.token)[1]))
             self.assertEqual(other["phone"][:4], "+228")
