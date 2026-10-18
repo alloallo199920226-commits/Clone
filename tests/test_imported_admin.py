@@ -8,11 +8,13 @@ import os
 import secrets
 import threading
 import unittest
+from unittest.mock import patch
 from http.server import ThreadingHTTPServer
 from zipfile import ZipFile
 
 import auth_backend
 import admin_assets
+import admin_api
 from server import Handler
 
 
@@ -21,12 +23,29 @@ class QuietHandler(Handler):
         pass
 
 
+class AdminPasswordConfigurationTests(unittest.TestCase):
+    def test_absent_or_weak_password_never_falls_back(self):
+        for value in ("", "too-short", "x" * 257):
+            with self.subTest(length=len(value)), patch("admin_api.os.getenv", return_value=value):
+                with self.assertRaises(auth_backend.AuthError) as error:
+                    admin_api.configured_password()
+                self.assertEqual(error.exception.status, 503)
+
+    def test_valid_password_is_server_only_configuration(self):
+        with patch("admin_api.os.getenv", return_value="isolated-config-password"):
+            self.assertEqual(admin_api.configured_password(), b"isolated-config-password")
+
+
 @unittest.skipUnless(os.environ.get("RUN_ACCOUNT_INTEGRATION_TESTS") == "1", "Development DB opt-in")
 class ImportedAdminTests(unittest.TestCase):
     def setUp(self):
         self.users = []
         self.resources = []
         self.password = "isolated-admin-test-password"
+        self.admin_password = "isolated-console-distinct-password"
+        self.password_patch = patch("admin_api.configured_password", return_value=self.admin_password.encode())
+        self.configured_password = self.password_patch.start()
+        self.addCleanup(self.password_patch.stop)
         self.httpd = ThreadingHTTPServer(("127.0.0.1", 0), QuietHandler)
         self.thread = threading.Thread(target=self.httpd.serve_forever, daemon=True)
         self.thread.start()
@@ -76,7 +95,7 @@ class ImportedAdminTests(unittest.TestCase):
 
     def login(self):
         status, data, headers = self.request("POST", "/api/admin/login",
-            {"path": admin_assets.ADMIN_PATH, "password": self.password})
+            {"path": admin_assets.ADMIN_PATH, "password": self.admin_password})
         self.assertEqual(status, 200, data)
         self.assertIn("HttpOnly", headers["Set-Cookie"])
         self.assertIn("Secure", headers["Set-Cookie"])
@@ -113,14 +132,23 @@ class ImportedAdminTests(unittest.TestCase):
 
     def test_separate_auth_csrf_expiry_and_logout(self):
         self.assertEqual(self.request("GET", "/api/admin/overview", cookie=self.member_cookie)[0], 403)
+        self.assertEqual(self.request("POST", "/api/admin/login",
+            {"path": admin_assets.ADMIN_PATH, "password": self.admin_password}, cookie=self.member_cookie)[0], 403)
         self.assertEqual(self.request("GET", "/api/admin/overview")[0], 401)
+        self.assertEqual(self.request("POST", "/api/admin/deposits",
+            {"phone": self.member_user["phone"], "amount_fcfa": 500,
+             "provider_reference": "unauthorized-test-receipt", "receipt_verified": True})[0], 401)
+        self.assertEqual(self.request("GET", "/administration-depots", raw=True)[0], 302)
         self.assertEqual(self.request("POST", "/api/admin/login",
             {"path": "administration", "password": self.password})[0], 404)
         self.assertEqual(self.request("POST", "/api/admin/login",
             {"path": admin_assets.ADMIN_PATH, "password": self.password}, origin=False)[0], 403)
         self.assertEqual(self.request("POST", "/api/admin/login",
             {"path": admin_assets.ADMIN_PATH, "password": "incorrect-password"})[0], 401)
+        self.assertEqual(self.request("POST", "/api/admin/login",
+            {"path": admin_assets.ADMIN_PATH, "password": self.password})[0], 401)
         self.login()
+        self.assertEqual(self.request("GET", "/administration-depots", raw=True)[0], 200)
         self.assertEqual(self.request("GET", "/api/admin/overview?summary=true")[0], 200)
         self.assertEqual(self.request("POST", "/api/admin/logout")[0], 200)
         self.assertEqual(self.request("GET", "/api/admin/overview")[0], 401)
@@ -135,7 +163,18 @@ class ImportedAdminTests(unittest.TestCase):
                 {"path": admin_assets.ADMIN_PATH, "password": "incorrect-password"})
             self.assertEqual(status, 429 if attempt == 4 else 401)
         self.assertEqual(self.request("POST", "/api/admin/login",
-            {"path": admin_assets.ADMIN_PATH, "password": self.password})[0], 429)
+            {"path": admin_assets.ADMIN_PATH, "password": self.admin_password})[0], 429)
+
+    def test_password_rotation_invalidates_existing_console_sessions(self):
+        self.login()
+        self.assertEqual(self.request("GET", "/api/admin/overview?summary=true")[0], 200)
+        self.configured_password.return_value = b"rotated-isolated-console-password"
+        self.assertEqual(self.request("GET", "/api/admin/overview?summary=true")[0], 401)
+        self.assertEqual(self.request("POST", "/api/admin/login",
+            {"path": admin_assets.ADMIN_PATH, "password": self.admin_password})[0], 401)
+        self.admin_password = "rotated-isolated-console-password"
+        self.login()
+        self.assertEqual(self.request("GET", "/api/admin/overview?summary=true")[0], 200)
 
     def test_real_credit_debit_idempotency_search_and_history(self):
         self.login()

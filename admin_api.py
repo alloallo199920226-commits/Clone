@@ -7,6 +7,7 @@ not yet connected are rejected explicitly, never represented as successful payme
 import hashlib
 import hmac
 import json
+import os
 import re
 import secrets
 from datetime import datetime, timedelta, timezone
@@ -86,18 +87,32 @@ def audit(cur, actor, event, details=None):
                    VALUES (%s,%s,%s)""", (actor, event, Jsonb(details or {})))
 
 
+def configured_password():
+    """Read only on the server; a missing/weak secret must never enable fallback."""
+    password = os.getenv("ADMIN_ACCESS_PASSWORD", "")
+    if not 16 <= len(password) <= 256 or len(password.encode("utf-8")) > 1024:
+        fail(503, "L’accès administrateur exige un mot de passe dédié de 16 à 256 caractères configuré dans les secrets.")
+    return password.encode("utf-8")
+
+
+def admin_token_hash(token, password=None):
+    # Binding sessions to the secret also revokes older sessions after rotation.
+    key = configured_password() if password is None else password
+    return hmac.new(key, ("admin-session:" + token).encode("utf-8"), hashlib.sha256).hexdigest()
+
+
 def require_admin(cur, handler, user):
     if not user["is_admin"]:
         fail(403, "Accès réservé à l’administration.")
     token = cookie_token(handler)
     if not token or len(token) > 128:
-        fail(401, "Confirmez le mot de passe de votre compte administrateur.")
+        fail(401, "Saisissez le mot de passe réservé à l’administration.")
     cur.execute("""SELECT 1 FROM shineray_admin_sessions a
                    JOIN shineray_users u ON u.id=a.user_id
                    WHERE a.token_hash=%s AND a.user_id=%s
                    AND a.customer_session_hash=%s AND a.expires_at>now()
                    AND u.is_admin AND NOT u.is_banned AND NOT u.is_blocked""",
-                (db._token_hash(token), user["id"], db._token_hash(handler._session_token())))
+                (admin_token_hash(token), user["id"], db._token_hash(handler._session_token())))
     if not cur.fetchone():
         fail(401, "Session administrateur expirée. Reconnectez-vous.")
 
@@ -109,12 +124,15 @@ def login(handler, user, body):
     if not user["is_admin"]:
         fail(403, "Ce compte n’est pas autorisé à administrer le site.")
     password = body.get("password")
-    password_bytes = db._password_bytes(password)
+    if not isinstance(password, str) or len(password) > 256 or len(password.encode("utf-8")) > 1024:
+        raise ValueError("Mot de passe invalide.")
+    password_bytes = password.encode("utf-8")
+    expected_password = configured_password()
     denied = False
     limited = False
     with db.connect() as conn, conn.cursor() as cur:
         # Serialize attempts in PostgreSQL, including attempts from other workers.
-        cur.execute("SELECT password_salt,password_hash,is_admin,is_banned,is_blocked FROM shineray_users WHERE id=%s FOR UPDATE", (user["id"],))
+        cur.execute("SELECT is_admin,is_banned,is_blocked FROM shineray_users WHERE id=%s FOR UPDATE", (user["id"],))
         member = cur.fetchone()
         if not member or not member["is_admin"] or member["is_banned"] or member["is_blocked"]:
             fail(403, "Accès administrateur refusé.")
@@ -123,8 +141,8 @@ def login(handler, user, body):
         now = datetime.now(timezone.utc)
         if attempt and attempt["locked_until"] and attempt["locked_until"] > now:
             fail(429, "Trop de tentatives. Réessayez dans quinze minutes.")
-        derived = hashlib.pbkdf2_hmac("sha256", password_bytes, bytes(member["password_salt"]), db.PASSWORD_ITERATIONS)
-        if not hmac.compare_digest(derived, bytes(member["password_hash"])):
+        if not hmac.compare_digest(hashlib.sha256(password_bytes).digest(),
+                                   hashlib.sha256(expected_password).digest()):
             denied = True
             failures = attempt["failures"] + 1 if attempt and now - attempt["window_start"] < timedelta(minutes=15) else 1
             limited = failures >= 5
@@ -143,7 +161,7 @@ def login(handler, user, body):
                         (db._token_hash(handler._session_token()),))
             cur.execute("""INSERT INTO shineray_admin_sessions(token_hash,user_id,customer_session_hash,expires_at)
                            VALUES (%s,%s,%s,%s)""",
-                        (db._token_hash(token), user["id"], db._token_hash(handler._session_token()),
+                        (admin_token_hash(token, expected_password), user["id"], db._token_hash(handler._session_token()),
                          now + timedelta(hours=10)))
             audit(cur, user["id"], "login_succeeded")
     # Raise only after the failed-attempt transaction has committed.
@@ -577,7 +595,7 @@ def handle(handler, user, route):
             if route == "/api/admin/logout":
                 if handler.command != "POST":
                     fail(405, "Méthode non autorisée.")
-                cur.execute("DELETE FROM shineray_admin_sessions WHERE token_hash=%s", (db._token_hash(cookie_token(handler)),))
+                cur.execute("DELETE FROM shineray_admin_sessions WHERE token_hash=%s", (admin_token_hash(cookie_token(handler)),))
                 audit(cur, user["id"], "logout")
                 result, status = {"ok": True}, 200
             else:

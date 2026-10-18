@@ -61,9 +61,15 @@ latérale et rend les quatorze sections accessibles par défilement horizontal s
 sans modifier les scripts ni les styles d’origine.
 
 L’administrateur doit d’abord se connecter à son compte habituel, déjà explicitement
-autorisé, puis confirmer son propre mot de passe dans la console. La session de console
-expire après dix heures et reste liée à la session client. Aucune promotion automatique
-ni aucun mot de passe administrateur commun n’est introduit.
+autorisé, puis saisir le mot de passe dédié configuré dans le secret
+`ADMIN_ACCESS_PASSWORD` (16 à 256 caractères). Le mot de passe client n’ouvre pas
+la console. Un secret absent ou trop court bloque l’accès, sans solution de repli.
+La session de console expire après dix heures et reste liée à la session client
+ainsi qu’au mot de passe dédié : changer ce dernier invalide les sessions de console
+existantes au redémarrage. Après cinq échecs, blocage de quinze minutes.
+Aucune promotion automatique n’est introduite.
+L’ancien écran `/administration-depots` et son API exigent eux aussi la session
+de console ; un compte autorisé sans cette session est renvoyé vers la console.
 L’adresse personnalisée a été choisie par l’utilisateur ; l’ancienne adresse
 `/administration` renvoie 404. Connaître le lien ne donne aucun droit administrateur.
 

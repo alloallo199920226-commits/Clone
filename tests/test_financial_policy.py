@@ -6,9 +6,11 @@ import os
 import secrets
 import threading
 import unittest
+from unittest.mock import patch
 from http.server import ThreadingHTTPServer
 
 import auth_backend
+from admin_assets import ADMIN_PATH
 from deposit_settlement import settle_approved_deposit
 from server import Handler
 
@@ -17,6 +19,10 @@ from server import Handler
 class FinancialPolicyTests(unittest.TestCase):
     def setUp(self):
         self.ids = []
+        self.console_cookies = {}
+        self.password_patch = patch("admin_api.configured_password", return_value=b"isolated-financial-console-password")
+        self.password_patch.start()
+        self.addCleanup(self.password_patch.stop)
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
@@ -24,6 +30,7 @@ class FinancialPolicyTests(unittest.TestCase):
     def tearDown(self):
         try:
             with auth_backend.connect() as conn, conn.cursor() as cur:
+                cur.execute("DELETE FROM shineray_admin_audit WHERE admin_id=ANY(%s)", (self.ids,))
                 cur.execute("DELETE FROM shineray_first_deposits WHERE user_id=ANY(%s)", (self.ids,))
                 cur.execute("DELETE FROM shineray_deposit_approvals WHERE user_id=ANY(%s)", (self.ids,))
                 cur.execute("DELETE FROM shineray_transactions WHERE user_id=ANY(%s)", (self.ids,))
@@ -50,12 +57,14 @@ class FinancialPolicyTests(unittest.TestCase):
 
     def request(self, path, token, payload=None, origin=True):
         conn = http.client.HTTPConnection("127.0.0.1", self.server.server_port)
-        headers = {"Cookie": f"shineray_session={token}", "Content-Type": "application/json"}
+        headers = {"Cookie": f"shineray_session={token}" + self.console_cookies.get(token, ""), "Content-Type": "application/json"}
         if origin:
             headers["Origin"] = f"http://127.0.0.1:{self.server.server_port}"
         conn.request("POST" if payload is not None else "GET", path,
                      json.dumps(payload) if payload is not None else None, headers)
         response = conn.getresponse()
+        if response.getheader("Set-Cookie") and path == "/api/admin/login":
+            self.console_cookies[token] = "; " + response.getheader("Set-Cookie").split(";")[0]
         body = response.read()
         conn.close()
         return response.status, body
@@ -83,6 +92,10 @@ class FinancialPolicyTests(unittest.TestCase):
             cur.execute("UPDATE shineray_users SET is_admin=TRUE WHERE id=%s", (admin["id"],))
         body = {"phone": child["phone"], "amount_fcfa": 499,
                 "provider_reference": "manual-" + secrets.token_hex(12), "receipt_verified": True}
+        self.assertEqual(self.request("/api/admin/deposits", token, body)[0], 401)
+        self.assertEqual(self.request("/administration-depots", token)[0], 302)
+        self.assertEqual(self.request("/api/admin/login", token,
+            {"path": ADMIN_PATH, "password": "isolated-financial-console-password"})[0], 200)
         self.assertEqual(self.request("/api/admin/deposits", token, body)[0], 400)
         body["amount_fcfa"] = 500
         self.assertEqual(self.request("/api/admin/deposits", token, body, origin=False)[0], 403)

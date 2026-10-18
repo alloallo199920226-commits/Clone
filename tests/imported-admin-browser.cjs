@@ -22,6 +22,9 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
     "7ef5a51fb30564fc1ffc06f1a191ca0ed9ec9bc8f18a7449f514614a4868526c");
   await screenshot("shineray-original-admin-login");
   await evaluate("document.querySelector('#admin-password').value='reference-browser-test-password';document.querySelector('#admin-login').requestSubmit()");
+  await waitFor("document.querySelector('#login-error')?.textContent.includes('incorrect')");
+  assert.equal((await api("/api/admin/overview")).status, 401);
+  await evaluate("document.querySelector('#admin-password').value='isolated-browser-console-password';document.querySelector('#admin-login').requestSubmit()");
   await waitFor("document.querySelector('#dashboard-view')?.hidden===false && document.querySelector('#admin-content').textContent.includes('État de la plateforme')");
   await call("Emulation.setDeviceMetricsOverride", { width: 1360, height: 900, deviceScaleFactor: 1, mobile: false });
   await screenshot("shineray-original-admin-desktop");

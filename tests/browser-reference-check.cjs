@@ -9,7 +9,8 @@ const fs = require("node:fs");
 async function main() {
   const domain = process.env.REPLIT_DEV_DOMAIN;
   assert(domain, "Development preview domain is required");
-  const base = `https://${domain}`;
+  let base = `https://${domain}`;
+  let fixtureServer;
   const profile = fs.mkdtempSync("/tmp/shineray-reference-browser-");
   const browser = spawn("chromium", [
     "--headless", "--no-sandbox", "--disable-dev-shm-usage",
@@ -19,6 +20,25 @@ async function main() {
   let userId;
   const childUserIds = [];
   try {
+    if (process.argv.includes("--imported-admin")) {
+      // Isolated test server only: never read or replace the real admin secret.
+      fixtureServer = spawn("python3", ["-u", "-c", [
+        "import os",
+        "os.environ['ADMIN_ACCESS_PASSWORD']='isolated-browser-console-password'",
+        "from server import Handler, ThreadingHTTPServer",
+        "server=ThreadingHTTPServer(('127.0.0.1',0),Handler)",
+        "print(server.server_port,flush=True)",
+        "server.serve_forever()",
+      ].join("\n")], { stdio: ["ignore", "pipe", "ignore"] });
+      const port = await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error("Isolated admin server did not start")), 15000);
+        fixtureServer.once("error", error => { clearTimeout(timeout); reject(error); });
+        fixtureServer.once("exit", () => { clearTimeout(timeout); reject(new Error("Isolated admin server exited")); });
+        fixtureServer.stdout.once("data", data => { clearTimeout(timeout); resolve(Number(String(data).trim())); });
+      });
+      assert(Number.isSafeInteger(port) && port > 0);
+      base = `http://127.0.0.1:${port}`;
+    }
     let tabs;
     for (let attempt = 0; attempt < 60; attempt++) {
       try {
@@ -560,6 +580,7 @@ async function main() {
   } finally {
     socket?.close();
     browser.kill("SIGTERM");
+    fixtureServer?.kill("SIGTERM");
     if (Number.isSafeInteger(userId)) {
       execFileSync("python3", ["-c", [
         "import sys, json, auth_backend",

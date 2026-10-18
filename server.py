@@ -121,6 +121,19 @@ class Handler(BaseHTTPRequestHandler):
             if route == "/administration-depots" and not user["is_admin"]:
                 self._json(403, {"error": "Accès réservé à l’administration."})
                 return
+            if route == "/administration-depots":
+                try:
+                    with auth_backend.connect() as conn, conn.cursor() as cur:
+                        admin_api.require_admin(cur, self, user)
+                except auth_backend.AuthError as exc:
+                    if exc.status == 401:
+                        self._redirect(admin_assets.ADMIN_ROUTE)
+                    else:
+                        self._json(exc.status, {"error": exc.message})
+                    return
+                except Exception:
+                    self._json(503, {"error": "Vérification administrateur temporairement indisponible."})
+                    return
             if route == "/" and user:
                 self._redirect("/accueil")
                 return
@@ -287,6 +300,8 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(405, {"error": "Méthode non autorisée."})
                 return
             try:
+                with auth_backend.connect() as conn, conn.cursor() as cur:
+                    admin_api.require_admin(cur, self, user)
                 payload = self._read_json()
                 if payload is not None:
                     if payload.get("receipt_verified") is not True:
