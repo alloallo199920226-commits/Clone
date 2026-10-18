@@ -14,8 +14,8 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
     "import sys,auth_backend\nwith auth_backend.connect() as c,c.cursor() as q:q.execute('UPDATE shineray_users SET is_admin=TRUE WHERE id=%s',(int(sys.argv[1]),))",
     String(owner.id)]);
   await navigate("/compte");
-  await waitFor("Boolean(document.querySelector('a[href=\"/administration\"]'))");
-  await navigate("/administration");
+  await waitFor("Boolean(document.querySelector('a[href=\"/omarshark-junior-panam\"]'))");
+  await navigate("/omarshark-junior-panam");
   await waitFor("document.querySelector('#login-view')?.hidden===false");
   const originalScript = await evaluate("fetch('/admin-ui/general.js').then(r=>r.text())");
   assert.equal(createHash("sha256").update(originalScript).digest("hex"),

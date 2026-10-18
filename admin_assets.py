@@ -10,6 +10,8 @@ from zipfile import ZipFile
 
 ARCHIVE = Path(__file__).resolve().parent / "attached_assets/aeronova-administration-complete_1792229186027.zip"
 PREFIX = "aeronova-admin/"
+ADMIN_PATH = "omarshark-junior-panam"
+ADMIN_ROUTE = "/" + ADMIN_PATH
 ADMIN_SCRIPTS = {
     "general.js": "admin.js",
     "transaction-history.js": "transaction-history.js",
@@ -33,7 +35,7 @@ def browser_asset(route):
         return stylesheet.read_bytes(), "text/css; charset=utf-8"
     member = None
     content_type = None
-    if route in {"/administration", "/administration/"}:
+    if route in {ADMIN_ROUTE, ADMIN_ROUTE + "/"}:
         member, content_type = "administration/index.html", "text/html; charset=utf-8"
     elif route.startswith("/admin-ui/"):
         name = route.removeprefix("/admin-ui/")

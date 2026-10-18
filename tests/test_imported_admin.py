@@ -76,7 +76,7 @@ class ImportedAdminTests(unittest.TestCase):
 
     def login(self):
         status, data, headers = self.request("POST", "/api/admin/login",
-            {"path": "administration", "password": self.password})
+            {"path": admin_assets.ADMIN_PATH, "password": self.password})
         self.assertEqual(status, 200, data)
         self.assertIn("HttpOnly", headers["Set-Cookie"])
         self.assertIn("Secure", headers["Set-Cookie"])
@@ -92,19 +92,20 @@ class ImportedAdminTests(unittest.TestCase):
     def test_assets_are_identical_and_private_sources_are_unreachable(self):
         with ZipFile(admin_assets.ARCHIVE) as archive:
             for route, member in {
-                "/administration": "administration/index.html",
+                admin_assets.ADMIN_ROUTE: "administration/index.html",
                 "/admin-ui/general.js": "administration/admin.js",
                 "/admin-ui/styles.css": "administration/styles/admin.css",
                 "/admin-ui/transaction-history.js": "administration/transaction-history.js",
             }.items():
                 status, data, _ = self.request("GET", route, raw=True)
                 self.assertEqual(status, 200)
-                if route == "/administration":
+                if route == admin_assets.ADMIN_ROUTE:
                     self.assertIn(admin_assets.COMPAT_LINK, data)
                     data = data.replace(admin_assets.COMPAT_LINK, b"", 1)
                 self.assertEqual(hashlib.sha256(data).digest(),
                                  hashlib.sha256(archive.read(admin_assets.PREFIX + member)).digest())
-        for route in ("/server.js", "/admin_api.py", "/schema.sql", "/administration/index.html",
+        self.assertEqual(self.request("GET", admin_assets.ADMIN_ROUTE + "/", raw=True)[0], 200)
+        for route in ("/administration", "/administration/", "/server.js", "/admin_api.py", "/schema.sql", "/administration/index.html",
                       "/administration/admin.js", "/payments/routes.js",
                       "/attached_assets/aeronova-administration-complete_1792229186027.zip",
                       "/sprite-assets/../server.js", "/admin-ui/../../server.py"):
@@ -114,9 +115,11 @@ class ImportedAdminTests(unittest.TestCase):
         self.assertEqual(self.request("GET", "/api/admin/overview", cookie=self.member_cookie)[0], 403)
         self.assertEqual(self.request("GET", "/api/admin/overview")[0], 401)
         self.assertEqual(self.request("POST", "/api/admin/login",
-            {"path": "administration", "password": self.password}, origin=False)[0], 403)
+            {"path": "administration", "password": self.password})[0], 404)
         self.assertEqual(self.request("POST", "/api/admin/login",
-            {"path": "administration", "password": "incorrect-password"})[0], 401)
+            {"path": admin_assets.ADMIN_PATH, "password": self.password}, origin=False)[0], 403)
+        self.assertEqual(self.request("POST", "/api/admin/login",
+            {"path": admin_assets.ADMIN_PATH, "password": "incorrect-password"})[0], 401)
         self.login()
         self.assertEqual(self.request("GET", "/api/admin/overview?summary=true")[0], 200)
         self.assertEqual(self.request("POST", "/api/admin/logout")[0], 200)
@@ -129,10 +132,10 @@ class ImportedAdminTests(unittest.TestCase):
     def test_failed_logins_are_counted_and_locked(self):
         for attempt in range(5):
             status, _, _ = self.request("POST", "/api/admin/login",
-                {"path": "administration", "password": "incorrect-password"})
+                {"path": admin_assets.ADMIN_PATH, "password": "incorrect-password"})
             self.assertEqual(status, 429 if attempt == 4 else 401)
         self.assertEqual(self.request("POST", "/api/admin/login",
-            {"path": "administration", "password": self.password})[0], 429)
+            {"path": admin_assets.ADMIN_PATH, "password": self.password})[0], 429)
 
     def test_real_credit_debit_idempotency_search_and_history(self):
         self.login()

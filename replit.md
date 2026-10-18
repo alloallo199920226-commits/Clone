@@ -49,7 +49,7 @@ Les tarifs et rendements des produits des captures restent des références non 
 
 ## Administration importée
 
-La console `/administration` utilise le HTML, les styles et les scripts du ZIP
+La console `/omarshark-junior-panam` utilise le HTML, les styles et les scripts du ZIP
 `attached_assets/aeronova-administration-complete_1792229186027.zip`.
 `admin_assets.py` sert exclusivement ses ressources publiques autorisées, sans extraire
 ni exécuter son serveur Node. Conserver l’archive dans la publication ; ne pas exposer
@@ -64,6 +64,8 @@ L’administrateur doit d’abord se connecter à son compte habituel, déjà ex
 autorisé, puis confirmer son propre mot de passe dans la console. La session de console
 expire après dix heures et reste liée à la session client. Aucune promotion automatique
 ni aucun mot de passe administrateur commun n’est introduit.
+L’adresse personnalisée a été choisie par l’utilisateur ; l’ancienne adresse
+`/administration` renvoie 404. Connaître le lien ne donne aucun droit administrateur.
 
 Les utilisateurs, soldes et historiques viennent des données existantes. Les crédits
 et débits sont réels, transactionnels, idempotents et audités. Les produits, codes cadeaux,

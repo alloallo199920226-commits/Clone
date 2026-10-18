@@ -17,6 +17,7 @@ from psycopg.errors import UniqueViolation
 from psycopg.types.json import Jsonb
 
 import auth_backend as db
+from admin_assets import ADMIN_PATH
 from financial_policy import MIN_DEPOSIT_FCFA, WELCOME_BONUS_FCFA
 
 COOKIE = "shineray_admin"
@@ -103,7 +104,7 @@ def require_admin(cur, handler, user):
 
 def login(handler, user, body):
     fields(body, {"path", "password"})
-    if body.get("path") != "administration":
+    if body.get("path") != ADMIN_PATH:
         fail(404, "Administration indisponible.")
     if not user["is_admin"]:
         fail(403, "Ce compte n’est pas autorisé à administrer le site.")
