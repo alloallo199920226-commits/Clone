@@ -359,6 +359,20 @@ async function main() {
       console.log("PASS: amount/channel entry, MTN/MOOV choice, phone validation, confirmation, modify/refresh preservation, admin placeholders, no transactions/credits, missing draft and 390/472px layouts.");
       return;
     }
+    if (process.argv.includes("--home-branding")) {
+      for (const width of [320, 390, 472]) {
+        await call("Emulation.setDeviceMetricsOverride", { width, height: 844, deviceScaleFactor: 1, mobile: true });
+        await navigate("/accueil");
+        await waitFor("document.querySelector('[data-purpose=\"logo-container\"] img')?.naturalWidth > 0");
+        assert.equal(await evaluate("document.querySelector('[data-purpose=\"logo-container\"] img').getAttribute('alt')"), "IVECO");
+        assert(!await evaluate("/SHINERAY/i.test(document.querySelector('.home-header').textContent)"));
+        assert(await evaluate("document.documentElement.scrollWidth <= innerWidth"), `Header must fit ${width}px`);
+        assert(await evaluate("(() => { const title=document.querySelector('.home-header h1').getBoundingClientRect(), logo=document.querySelector('[data-purpose=\"logo-container\"]').getBoundingClientRect(); return title.right <= logo.left && logo.right <= innerWidth; })()"));
+        if (width === 390) await screenshot("iveco-home-logo-mobile");
+      }
+      console.log("PASS: signed-in home uses the supplied IVECO logo, loaded image, accessible name, no overlapping title or horizontal overflow at 320/390/472px.");
+      return;
+    }
     if (process.argv.includes("--history-links")) {
       for (const [source, destination] of [
         ["/recharger", "/historique-recharges"],
