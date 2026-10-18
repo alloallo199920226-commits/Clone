@@ -1,5 +1,4 @@
 const assert = require("node:assert/strict");
-const { execFileSync } = require("node:child_process");
 const { createHash } = require("node:crypto");
 
 module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }) => {
@@ -7,14 +6,9 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
     method:${JSON.stringify(method)},headers:{'Content-Type':'application/json'},
     ${body ? `body:JSON.stringify(${JSON.stringify(body)})` : ""}
   }).then(async r=>({status:r.status,body:await r.json()}))`);
-  assert.equal((await api("/api/admin/overview")).status, 403);
+  assert.equal((await api("/api/admin/overview")).status, 401);
   assert(Number.isSafeInteger(owner.id));
-  // Only this newly created fixture is promoted; cleanup removes it and its writes.
-  execFileSync("python3", ["-c",
-    "import sys,auth_backend\nwith auth_backend.connect() as c,c.cursor() as q:q.execute('UPDATE shineray_users SET is_admin=TRUE WHERE id=%s',(int(sys.argv[1]),))",
-    String(owner.id)]);
-  await navigate("/compte");
-  await waitFor("Boolean(document.querySelector('a[href=\"/omarshark-junior-panam\"]'))");
+  // No customer fixture is promoted; only the console password authorizes.
   await navigate("/omarshark-junior-panam");
   await waitFor("document.querySelector('#login-view')?.hidden===false");
   const originalScript = await evaluate("fetch('/admin-ui/general.js').then(r=>r.text())");
@@ -94,5 +88,5 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
   await evaluate("document.querySelector('#logout').click()");
   await waitFor("document.querySelector('#login-view').hidden===false");
   assert.equal((await api("/api/admin/overview")).status, 401);
-  console.log("PASS: byte-identical imported JS; original login/desktop/mobile; role enforcement; product create/edit; user search and confirmed real credit; saved channel and draft; real settled receipt history; original policy; independent console logout.");
+  console.log("PASS: byte-identical imported JS; original login/desktop/mobile; dedicated password without promotion; product create/edit; user search and confirmed real credit; saved channel and draft; real settled receipt history; original policy; independent console logout.");
 };

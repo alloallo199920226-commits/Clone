@@ -11,6 +11,7 @@ async function main() {
   assert(domain, "Development preview domain is required");
   let base = `https://${domain}`;
   let fixtureServer;
+  const adminFixture = "browser-console-" + randomInt(1e9);
   const profile = fs.mkdtempSync("/tmp/shineray-reference-browser-");
   const browser = spawn("chromium", [
     "--headless", "--no-sandbox", "--disable-dev-shm-usage",
@@ -26,6 +27,9 @@ async function main() {
         "import os",
         "os.environ['ADMIN_ACCESS_PASSWORD']='isolated-browser-console-password'",
         "from server import Handler, ThreadingHTTPServer",
+        "import admin_api",
+        "original_audit=admin_api.audit",
+        `admin_api.audit=lambda cur,actor,event,details=None:original_audit(cur,actor,event,{**(details or {}),'test_fixture':${JSON.stringify(adminFixture)}})`,
         "server=ThreadingHTTPServer(('127.0.0.1',0),Handler)",
         "print(server.server_port,flush=True)",
         "server.serve_forever()",
@@ -596,15 +600,15 @@ async function main() {
         "with auth_backend.connect() as conn, conn.cursor() as cur:",
         " ids=json.loads(sys.argv[1])",
         " cur.execute('DELETE FROM shineray_admin_vip_grants WHERE admin_id=ANY(%s) OR user_id=ANY(%s)', (ids,ids))",
-        " cur.execute(\"DELETE FROM shineray_admin_resources WHERE id IN (SELECT (details->>'id')::bigint FROM shineray_admin_audit WHERE admin_id=ANY(%s) AND event_type LIKE 'create_%%')\", (ids,))",
+        " cur.execute(\"DELETE FROM shineray_admin_resources WHERE id IN (SELECT (details->>'id')::bigint FROM shineray_admin_audit WHERE (admin_id=ANY(%s) OR details->>'test_fixture'=%s) AND event_type LIKE 'create_%%')\", (ids,sys.argv[2]))",
         " cur.execute('DELETE FROM shineray_admin_operations WHERE admin_id=ANY(%s) OR user_id=ANY(%s)', (ids,ids))",
-        " cur.execute('DELETE FROM shineray_admin_audit WHERE admin_id=ANY(%s)', (ids,))",
+        " cur.execute(\"DELETE FROM shineray_admin_audit WHERE admin_id=ANY(%s) OR details->>'test_fixture'=%s\", (ids,sys.argv[2]))",
         " cur.execute('DELETE FROM shineray_first_deposits WHERE user_id = ANY(%s)', (ids,))",
         " cur.execute('DELETE FROM shineray_deposit_approvals WHERE user_id = ANY(%s)', (ids,))",
         " for user_id in json.loads(sys.argv[1]):",
         "  cur.execute('DELETE FROM shineray_transactions WHERE user_id = %s', (user_id,))",
         "  cur.execute('DELETE FROM shineray_users WHERE id = %s', (user_id,))",
-      ].join("\n"), JSON.stringify([...childUserIds.reverse(), userId])], { stdio: "inherit" });
+      ].join("\n"), JSON.stringify([...childUserIds.reverse(), userId]), adminFixture], { stdio: "inherit" });
     }
     await new Promise(resolve => setTimeout(resolve, 200));
     fs.rmSync(profile, { recursive: true, force: true });

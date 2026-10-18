@@ -42,9 +42,9 @@ Les soldes et historiques utilisent uniquement le registre des transactions rée
 Les anciennes simulations sont conservées dans leur table séparée, sans être affichées.
 Aucun prestataire de paiement n’est configuré : les achats et retraits restent
 indisponibles, et le parcours de recharge utilisateur reste une maquette.
-Un administrateur explicitement autorisé peut toutefois approuver un dépôt réellement
-reçu depuis `/administration-depots`, accessible depuis son compte. Aucun compte
-n’est promu automatiquement ; le choix de l’administrateur doit venir du propriétaire.
+Le propriétaire connecté à la console dédiée peut toutefois approuver un dépôt
+réellement reçu depuis `/administration-depots`. Aucun compte client n’est promu
+automatiquement et le lien seul ne suffit jamais à autoriser cette opération.
 Les tarifs et rendements des produits des captures restent des références non activées.
 
 ## Administration importée
@@ -60,16 +60,21 @@ Le HTML charge aussi `/admin-ui/import-compat.css`, une feuille indépendante da
 latérale et rend les quatorze sections accessibles par défilement horizontal sur mobile,
 sans modifier les scripts ni les styles d’origine.
 
-L’administrateur doit d’abord se connecter à son compte habituel, déjà explicitement
-autorisé, puis saisir le mot de passe dédié configuré dans le secret
+La connexion administrateur est indépendante des comptes clients : le lien personnalisé
+affiche directement le formulaire du mot de passe dédié configuré dans le secret
 `ADMIN_ACCESS_PASSWORD` (16 à 256 caractères). Le mot de passe client n’ouvre pas
 la console. Un secret absent ou trop court bloque l’accès, sans solution de repli.
-La session de console expire après dix heures et reste liée à la session client
-ainsi qu’au mot de passe dédié : changer ce dernier invalide les sessions de console
+La session de console expire après dix heures et reste liée au mot de passe
+dédié : changer ce dernier invalide les sessions de console
 existantes au redémarrage. Après cinq échecs, blocage de quinze minutes.
-Aucune promotion automatique n’est introduite.
+Aucun compte client n’est créé ou promu pour ouvrir la console. Les opérations
+du propriétaire sont identifiées par le principal `dedicated_console` dans l’audit,
+sans attribuer ces actions à un client fictif. Les anciennes sessions liées aux clients
+ne sont plus acceptées. Le compteur de tentatives utilise le pair réseau réel,
+jamais un en-tête fourni par le visiteur ; derrière un proxy partagé, la limite peut
+être partagée entre visiteurs.
 L’ancien écran `/administration-depots` et son API exigent eux aussi la session
-de console ; un compte autorisé sans cette session est renvoyé vers la console.
+de console ; sans cette session, la page renvoie vers la connexion administrateur.
 L’adresse personnalisée a été choisie par l’utilisateur ; l’ancienne adresse
 `/administration` renvoie 404. Connaître le lien ne donne aucun droit administrateur.
 

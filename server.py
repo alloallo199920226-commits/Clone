@@ -7,7 +7,6 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlsplit
 
 import auth_backend
-import deposit_settlement
 import admin_assets
 import admin_api
 
@@ -118,7 +117,17 @@ class Handler(BaseHTTPRequestHandler):
             self.send_error(404)
             return
 
-        if route in PAGES or route in MORE_PAGES:
+        if route == "/administration-depots":
+            try:
+                with auth_backend.connect() as conn, conn.cursor() as cur:
+                    admin_api.require_admin(cur, self)
+            except auth_backend.AuthError:
+                self._redirect(admin_assets.ADMIN_ROUTE)
+                return
+            except Exception:
+                self._json(503, {"error": "Vérification administrateur temporairement indisponible."})
+                return
+        elif route in PAGES or route in MORE_PAGES:
             try:
                 user = auth_backend.get_user_for_session(self._session_token())
             except Exception:
@@ -130,22 +139,6 @@ class Handler(BaseHTTPRequestHandler):
             if route not in PUBLIC_AUTH_PAGES and not user:
                 self._redirect("/connexion")
                 return
-            if route == "/administration-depots" and not user["is_admin"]:
-                self._json(403, {"error": "Accès réservé à l’administration."})
-                return
-            if route == "/administration-depots":
-                try:
-                    with auth_backend.connect() as conn, conn.cursor() as cur:
-                        admin_api.require_admin(cur, self, user)
-                except auth_backend.AuthError as exc:
-                    if exc.status == 401:
-                        self._redirect(admin_assets.ADMIN_ROUTE)
-                    else:
-                        self._json(exc.status, {"error": exc.message})
-                    return
-                except Exception:
-                    self._json(503, {"error": "Vérification administrateur temporairement indisponible."})
-                    return
             if route == "/" and user:
                 self._redirect("/accueil")
                 return
@@ -283,19 +276,18 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(503, {"error": "Impossible de fermer la session pour le moment."})
             return
 
+        # Console authentication is independent of customer login and flags.
+        if route.startswith("/api/admin/"):
+            admin_api.handle(self, None, route)
+            return
+
         try:
             user = auth_backend.get_user_for_session(self._session_token())
         except Exception:
             self._json(503, {"error": "Le service est temporairement indisponible."})
             return
         if not user:
-            message = ("Connectez-vous d’abord à votre compte sur /connexion, puis revenez dans l’administration."
-                       if route.startswith("/api/admin/") else "Connexion requise.")
-            self._json(401, {"error": message})
-            return
-
-        if route.startswith("/api/admin/") and route != "/api/admin/deposits":
-            admin_api.handle(self, user, route)
+            self._json(401, {"error": "Connexion requise."})
             return
 
         if route == "/api/me" and self.command == "GET":
@@ -303,32 +295,6 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(200, auth_backend.account_summary(user["id"]))
             except Exception:
                 self._json(503, {"error": "Impossible de charger le compte."})
-            return
-
-        if route == "/api/admin/deposits":
-            if not user["is_admin"]:
-                self._json(403, {"error": "Accès réservé à l’administration."})
-                return
-            if self.command != "POST":
-                self._json(405, {"error": "Méthode non autorisée."})
-                return
-            try:
-                with auth_backend.connect() as conn, conn.cursor() as cur:
-                    admin_api.require_admin(cur, self, user)
-                payload = self._read_json()
-                if payload is not None:
-                    if payload.get("receipt_verified") is not True:
-                        raise ValueError("Confirmez la réception réelle des fonds avant toute approbation.")
-                    result = deposit_settlement.approve_manual_deposit(
-                        user["id"], payload.get("phone"), payload.get("amount_fcfa"),
-                        payload.get("provider_reference"))
-                    self._json(200 if result["already_approved"] else 201, result)
-            except auth_backend.AuthError as exc:
-                self._json(exc.status, {"error": exc.message})
-            except ValueError as exc:
-                self._json(400, {"error": str(exc)})
-            except Exception:
-                self._json(503, {"error": "Approbation impossible. Aucun succès n’est confirmé. Vérifiez la référence avant de réessayer."})
             return
 
         if route == "/api/team" and self.command == "GET":

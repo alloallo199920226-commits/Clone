@@ -25,12 +25,13 @@ explicit source-preservation requirement.
 **How to apply:** make narrow, validated server-side compatibility adaptations and
 keep browser checks for search filtering, pagination and console logout.
 
-L’utilisateur exige un mot de passe dédié à l’administration, tout en interdisant
-l’accès aux utilisateurs non autorisés. Ce mot de passe ne remplace pas l’autorisation
-explicite du compte.
+L’utilisateur a choisi une connexion administrateur indépendante des comptes clients :
+lien personnalisé et mot de passe administrateur dédié. Ne plus exiger d’autorisation
+sur un compte client pour ouvrir la console.
 
-**Why:** the user requested a separate password to protect the administration, after
-explicitly requiring that unauthorized users never gain administration access.
+**Why:** the user explicitly confirmed this replacement of the earlier account-linked
+flow after being blocked by customer-account authorization.
 
-**How to apply:** retain both account authorization and the dedicated console password.
-Never turn knowledge of the private URL or shared console password into account promotion.
+**How to apply:** require the dedicated console password and a valid console session on
+every administration operation. The private URL alone never grants access. Do not create
+or promote a customer to represent the owner; retain auditing of the independent principal.

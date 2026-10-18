@@ -9,6 +9,7 @@ import secrets
 import threading
 import unittest
 from unittest.mock import patch
+from types import SimpleNamespace
 from http.server import ThreadingHTTPServer
 from zipfile import ZipFile
 
@@ -42,22 +43,38 @@ class ImportedAdminTests(unittest.TestCase):
         self.users = []
         self.resources = []
         self.password = "isolated-admin-test-password"
-        self.admin_password = "isolated-console-distinct-password"
+        self.admin_password = "isolated-console-" + secrets.token_hex(12)
         self.password_patch = patch("admin_api.configured_password", return_value=self.admin_password.encode())
         self.configured_password = self.password_patch.start()
         self.addCleanup(self.password_patch.stop)
+        self.fixture_key = secrets.token_hex(12)
+        original_audit = admin_api.audit
+        self.audit_patch = patch("admin_api.audit", side_effect=lambda cur, actor, event, details=None:
+            original_audit(cur, actor, event, {**(details or {}), "test_fixture": self.fixture_key}))
+        self.audit_patch.start()
+        self.addCleanup(self.audit_patch.stop)
+        self.console_tokens = []
         self.httpd = ThreadingHTTPServer(("127.0.0.1", 0), QuietHandler)
         self.thread = threading.Thread(target=self.httpd.serve_forever, daemon=True)
         self.thread.start()
-        self.actor, self.actor_cookie = self.member(admin=True)
+        self.actor, self.actor_cookie = self.member()
         self.member_user, self.member_cookie = self.member()
-        self.console_cookie = self.actor_cookie
+        self.console_cookie = ""
 
     def tearDown(self):
         try:
             with auth_backend.connect() as conn, conn.cursor() as cur:
                 for table in ("shineray_admin_vip_grants", "shineray_admin_operations", "shineray_admin_audit"):
-                    cur.execute(f"DELETE FROM {table} WHERE admin_id=ANY(%s)", (self.users,))
+                    if table == "shineray_admin_audit":
+                        cur.execute(f"DELETE FROM {table} WHERE details->>'test_fixture'=%s", (self.fixture_key,))
+                    else:
+                        cur.execute(f"DELETE FROM {table} WHERE user_id=ANY(%s)", (self.users,))
+                for token_hash in self.console_tokens:
+                    cur.execute("DELETE FROM shineray_console_sessions WHERE token_hash=%s",
+                                (token_hash,))
+                cur.execute("DELETE FROM shineray_console_login_attempts WHERE client_hash=%s",
+                            (admin_api.admin_console_auth.client_key(
+                                SimpleNamespace(client_address=("127.0.0.1", 0)), self.admin_password.encode()),))
                 cur.execute("DELETE FROM shineray_first_deposits WHERE user_id=ANY(%s)", (self.users,))
                 cur.execute("DELETE FROM shineray_deposit_approvals WHERE user_id=ANY(%s)", (self.users,))
                 cur.execute("DELETE FROM shineray_transactions WHERE user_id=ANY(%s)", (self.users,))
@@ -79,7 +96,7 @@ class ImportedAdminTests(unittest.TestCase):
 
     def request(self, method, route, body=None, cookie=None, origin=True, raw=False):
         connection = http.client.HTTPConnection("127.0.0.1", self.httpd.server_port, timeout=15)
-        headers = {"Cookie": cookie or self.console_cookie}
+        headers = {"Cookie": self.console_cookie if cookie is None else cookie}
         if origin:
             headers["Origin"] = f"http://127.0.0.1:{self.httpd.server_port}"
         payload = None
@@ -90,6 +107,9 @@ class ImportedAdminTests(unittest.TestCase):
         response = connection.getresponse()
         data = response.read()
         result = response.status, data if raw else json.loads(data), dict(response.getheaders())
+        if response.status == 200 and route == "/api/admin/login":
+            token = result[2]["Set-Cookie"].split(";")[0].split("=", 1)[1]
+            self.console_tokens.append(admin_api.admin_token_hash(token))
         connection.close()
         return result
 
@@ -99,7 +119,7 @@ class ImportedAdminTests(unittest.TestCase):
         self.assertEqual(status, 200, data)
         self.assertIn("HttpOnly", headers["Set-Cookie"])
         self.assertIn("Secure", headers["Set-Cookie"])
-        self.console_cookie = self.actor_cookie + "; " + headers["Set-Cookie"].split(";")[0]
+        self.console_cookie = headers["Set-Cookie"].split(";")[0]
 
     def create(self, route, body, result_key):
         status, data, _ = self.request("POST", "/api/admin/" + route, body)
@@ -132,9 +152,7 @@ class ImportedAdminTests(unittest.TestCase):
             self.assertEqual(self.request("GET", route, raw=True)[0], 404, route)
 
     def test_separate_auth_csrf_expiry_and_logout(self):
-        self.assertEqual(self.request("GET", "/api/admin/overview", cookie=self.member_cookie)[0], 403)
-        self.assertEqual(self.request("POST", "/api/admin/login",
-            {"path": admin_assets.ADMIN_PATH, "password": self.admin_password}, cookie=self.member_cookie)[0], 403)
+        self.assertEqual(self.request("GET", "/api/admin/overview", cookie=self.member_cookie)[0], 401)
         self.assertEqual(self.request("GET", "/api/admin/overview")[0], 401)
         self.assertEqual(self.request("POST", "/api/admin/deposits",
             {"phone": self.member_user["phone"], "amount_fcfa": 500,
@@ -155,7 +173,8 @@ class ImportedAdminTests(unittest.TestCase):
         self.assertEqual(self.request("GET", "/api/admin/overview")[0], 401)
         self.login()
         with auth_backend.connect() as conn, conn.cursor() as cur:
-            cur.execute("UPDATE shineray_admin_sessions SET expires_at=now()-interval '1 minute' WHERE user_id=%s", (self.actor["id"],))
+            cur.execute("UPDATE shineray_console_sessions SET expires_at=now()-interval '1 minute' WHERE token_hash=%s",
+                        (self.console_tokens[-1],))
         self.assertEqual(self.request("GET", "/api/admin/overview")[0], 401)
 
     def test_failed_logins_are_counted_and_locked(self):
@@ -188,7 +207,7 @@ class ImportedAdminTests(unittest.TestCase):
         self.assertEqual(results, [200, 200])
         self.assertEqual(auth_backend.account_summary(uid)["balance_fcfa"], 2400)
         self.assertEqual(self.request("POST", base + "/credit", {**body, "amount": 101})[0], 409)
-        self.assertEqual(self.request("POST", base + "/credit", body, cookie=self.member_cookie)[0], 403)
+        self.assertEqual(self.request("POST", base + "/credit", body, cookie=self.member_cookie)[0], 401)
         self.assertEqual(self.request("POST", base + "/credit", {**body, "is_admin": True})[0], 400)
         self.assertEqual(self.request("POST", base + "/debit",
             {"amount": 2500, "requestId": "test-debit-" + secrets.token_hex(8)})[0], 409)
@@ -269,7 +288,7 @@ class ImportedAdminTests(unittest.TestCase):
         next_page = self.request("GET", route + reference + "&amp;cursor=" + body["nextCursor"])[1]
         self.assertNotEqual(next_page["transactions"][0]["id"], body["transactions"][0]["id"])
 
-    def test_banning_revokes_sessions_and_self_lockout_is_prevented(self):
+    def test_banning_customer_revokes_only_customer_sessions(self):
         self.login()
         base = f"/api/admin/users/{self.member_user['id']}"
         self.assertEqual(self.request("POST", base + "/ban", {})[0], 200)
@@ -278,7 +297,34 @@ class ImportedAdminTests(unittest.TestCase):
             auth_backend.login("+228", self.member_user["phone"], self.password)
         self.assertEqual(self.request("POST", base + "/unban", {})[0], 200)
         self.assertEqual(self.request("GET", "/api/me", cookie=self.member_cookie)[0], 401)
-        self.assertEqual(self.request("POST", f"/api/admin/users/{self.actor['id']}/ban", {})[0], 409)
+        self.assertEqual(self.request("POST", f"/api/admin/users/{self.actor['id']}/ban", {})[0], 200)
+        self.assertEqual(self.request("GET", "/api/admin/overview")[0], 200)
+        # Even after customer logout there is no coupling to the console.
+        self.assertEqual(self.request("POST", "/api/auth/logout", cookie=self.actor_cookie)[0], 200)
+        self.assertEqual(self.request("GET", "/api/admin/overview")[0], 200)
+
+    def test_forged_session_and_customer_privileges_do_not_authorize(self):
+        self.assertEqual(self.request("GET", "/api/admin/overview",
+                                    cookie="shineray_admin=" + secrets.token_urlsafe(32))[0], 401)
+        with auth_backend.connect() as conn, conn.cursor() as cur:
+            cur.execute("UPDATE shineray_users SET is_admin=true WHERE id=%s", (self.actor["id"],))
+        self.assertEqual(self.request("GET", "/api/admin/overview", cookie=self.actor_cookie)[0], 401)
+        self.assertEqual(self.request("GET", "/api/me", cookie="")[0], 401)
+        self.login()
+        self.assertEqual(self.request("GET", "/api/me")[0], 401)
+        self.assertEqual(self.request("GET", "/api/admin/overview")[0], 200)
+
+    def test_no_customer_lookup_or_creation_is_needed_for_console(self):
+        with auth_backend.connect() as conn, conn.cursor() as cur:
+            cur.execute("SELECT count(*) AS total FROM shineray_users")
+            before = cur.fetchone()["total"]
+        with patch("auth_backend.get_user_for_session", side_effect=AssertionError("Customer auth must not run")):
+            self.login()
+            self.assertEqual(self.request("GET", "/api/admin/overview")[0], 200)
+            self.assertEqual(self.request("GET", "/administration-depots", raw=True)[0], 200)
+        with auth_backend.connect() as conn, conn.cursor() as cur:
+            cur.execute("SELECT count(*) AS total FROM shineray_users")
+            self.assertEqual(cur.fetchone()["total"], before)
 
 
 if __name__ == "__main__":

@@ -23,7 +23,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
   assert.equal(await evaluate("document.querySelector('[data-deposit-amount]').textContent"), "FCFA 500");
   await navigate("/administration-depots");
   assert((await evaluate("document.body.innerText")).includes("Accès réservé"));
-  assert.equal(await evaluate("fetch('/api/admin/deposits',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).then(r=>r.status)"), 403);
+  assert.equal(await evaluate("fetch('/api/admin/deposits',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).then(r=>r.status)"), 401);
   // Explicit privilege only on this temporary test user, removed by the runner.
   assert(Number.isSafeInteger(owner.id));
   execFileSync("python3", ["-c",

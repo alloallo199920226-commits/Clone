@@ -10,6 +10,7 @@ from unittest.mock import patch
 from http.server import ThreadingHTTPServer
 
 import auth_backend
+import admin_api
 from admin_assets import ADMIN_PATH
 from deposit_settlement import settle_approved_deposit
 from server import Handler
@@ -20,6 +21,12 @@ class FinancialPolicyTests(unittest.TestCase):
     def setUp(self):
         self.ids = []
         self.console_cookies = {}
+        self.fixture_key = secrets.token_hex(12)
+        original_audit = admin_api.audit
+        audit_patch = patch("admin_api.audit", side_effect=lambda cur, actor, event, details=None:
+            original_audit(cur, actor, event, {**(details or {}), "test_fixture": self.fixture_key}))
+        audit_patch.start()
+        self.addCleanup(audit_patch.stop)
         self.password_patch = patch("admin_api.configured_password", return_value=b"isolated-financial-console-password")
         self.password_patch.start()
         self.addCleanup(self.password_patch.stop)
@@ -31,6 +38,11 @@ class FinancialPolicyTests(unittest.TestCase):
         try:
             with auth_backend.connect() as conn, conn.cursor() as cur:
                 cur.execute("DELETE FROM shineray_admin_audit WHERE admin_id=ANY(%s)", (self.ids,))
+                cur.execute("DELETE FROM shineray_admin_audit WHERE details->>'test_fixture'=%s", (self.fixture_key,))
+                for cookie in self.console_cookies.values():
+                    token = cookie.strip("; ").split("=", 1)[1]
+                    cur.execute("DELETE FROM shineray_console_sessions WHERE token_hash=%s",
+                                (admin_api.admin_token_hash(token),))
                 cur.execute("DELETE FROM shineray_first_deposits WHERE user_id=ANY(%s)", (self.ids,))
                 cur.execute("DELETE FROM shineray_deposit_approvals WHERE user_id=ANY(%s)", (self.ids,))
                 cur.execute("DELETE FROM shineray_transactions WHERE user_id=ANY(%s)", (self.ids,))
@@ -80,10 +92,10 @@ class FinancialPolicyTests(unittest.TestCase):
             self.assertEqual(self.ledger(user["id"], "commission"), [])
             auth_backend.login("+228", user["phone"], "financial-policy-test-password")
             self.assertEqual(auth_backend.account_summary(user["id"])["balance_fcfa"], 2300)
-            self.assertEqual(self.request("/administration-depots", token)[0], 403)
+            self.assertEqual(self.request("/administration-depots", token)[0], 302)
             self.assertEqual(self.request("/api/admin/deposits", token, {
                 "phone": user["phone"], "amount_fcfa": 500, "provider_reference": "spoof",
-                "receipt_verified": True, "is_admin": True, "approval_method": "automatic"})[0], 403)
+                "receipt_verified": True, "is_admin": True, "approval_method": "automatic"})[0], 401)
 
     def test_manual_first_approved_only_idempotency_minimum_and_origin(self):
         chain = self.chain()

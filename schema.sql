@@ -151,3 +151,27 @@ CREATE TABLE IF NOT EXISTS shineray_admin_vip_grants (
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     expires_at TIMESTAMPTZ NOT NULL
 );
+
+-- Dedicated console principal: no customer account is created or promoted.
+CREATE TABLE IF NOT EXISTS shineray_console_sessions (
+    token_hash CHAR(64) PRIMARY KEY,
+    expires_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS shineray_console_login_attempts (
+    client_hash CHAR(64) PRIMARY KEY,
+    failures INTEGER NOT NULL DEFAULT 0,
+    window_start TIMESTAMPTZ NOT NULL DEFAULT now(),
+    locked_until TIMESTAMPTZ
+);
+-- NULL actor denotes the dedicated console; old account-linked history remains.
+ALTER TABLE shineray_admin_operations ALTER COLUMN admin_id DROP NOT NULL;
+ALTER TABLE shineray_admin_audit ALTER COLUMN admin_id DROP NOT NULL;
+ALTER TABLE shineray_admin_vip_grants ALTER COLUMN admin_id DROP NOT NULL;
+ALTER TABLE shineray_deposit_approvals ADD COLUMN IF NOT EXISTS approved_console BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE shineray_deposit_approvals DROP CONSTRAINT IF EXISTS shineray_deposit_approvals_check;
+ALTER TABLE shineray_deposit_approvals ADD CONSTRAINT shineray_deposit_approvals_check CHECK (
+    (approval_method='manual' AND
+        ((approved_by IS NOT NULL AND NOT approved_console) OR (approved_by IS NULL AND approved_console)))
+    OR (approval_method='automatic' AND approved_by IS NULL AND NOT approved_console)
+);
