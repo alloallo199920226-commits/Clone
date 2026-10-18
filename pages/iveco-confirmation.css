@@ -1,3 +1,19 @@
+[hidden] { display: none !important; }
+body.deposit-page--confirmation .sonara-panel {
+  margin-top: 11px;
+  padding: 18px;
+  border: 1px solid var(--signature-border);
+  border-radius: 9px;
+  background: rgba(24, 30, 38, .96);
+  overflow-wrap: anywhere;
+}
+.sonara-panel p { margin: 14px 0; line-height: 1.5; }
+.sonara-panel h2 { font-size: 18px; }
+.sonara-panel a { color: #ffdc4b; }
+.sonara-panel .sonara-safety { font-size: 13px; color: #d9dce0; }
+.sonara-panel input { display: block; width: 100%; min-height: 48px; margin: 12px 0; padding: 12px; border-radius: 8px; background: #fff; color: #15191f; font-size: 16px; box-sizing: border-box; }
+.sonara-panel .deposit-result { margin-top: 12px; }
+.sonara-panel[data-payment-status="successful"] [data-sonara-status] { color: #86efac; }
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap");
 
 /* IVECO signature confirmation only; operator selection styles are untouched. */

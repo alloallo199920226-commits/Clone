@@ -35,11 +35,12 @@ async function main() {
         "print(json.dumps(ids))",
       ].join("\n")], {encoding:"utf8"}));
     }
-    if (process.argv.includes("--imported-admin")) {
+    if (process.argv.includes("--imported-admin") || process.argv.includes("--sonarapay") || process.argv.includes("--deposit-channels")) {
       // Isolated test server only: never read or replace the real admin secret.
-      fixtureServer = spawn("python3", ["-u", "-c", [
+      fixtureServer = spawn("python3", process.argv.includes("--sonarapay") ? ["-u", "tests/sonarapay_fixture.py"] : ["-u", "-c", [
         "import os",
         "os.environ['ADMIN_ACCESS_PASSWORD']='isolated-browser-console-password'",
+        "os.environ['SONARAPAY_KEY']=''", // Legacy manual-flow checks must never call a live provider.
         "from server import Handler, ThreadingHTTPServer",
         "import admin_api",
         "original_audit=admin_api.audit",
@@ -132,7 +133,7 @@ async function main() {
     }
     async function navigate(path) {
       await call("Page.navigate", { url: base + path });
-      await waitFor(`document.readyState === 'complete' && location.pathname === ${JSON.stringify(path)}`);
+      await waitFor(`document.readyState === 'complete' && location.pathname + location.search === ${JSON.stringify(path)}`);
     }
     async function screenshot(name) {
       const result = await call("Page.captureScreenshot", { format: "png" });
@@ -236,10 +237,10 @@ async function main() {
       console.log("Screenshots: /tmp/shineray-country-spinner.png /tmp/shineray-country-dots.png /tmp/shineray-country-ready.png");
       return;
     }
-    const phone = process.argv.includes("--deposit-channels")
+    const phone = (process.argv.includes("--deposit-channels") || process.argv.includes("--sonarapay"))
       ? "01" + String(randomInt(10000000, 99999999))
       : "9" + String(randomInt(1000000, 9999999));
-    const payload = { country_code: process.argv.includes("--deposit-channels") ? "+229" : "+228",
+    const payload = { country_code: (process.argv.includes("--deposit-channels") || process.argv.includes("--sonarapay")) ? "+229" : "+228",
       phone, password: "reference-browser-test-password" };
     const registration = await evaluate(`(async () => {
       const response = await fetch('/api/auth/register', {
@@ -250,6 +251,11 @@ async function main() {
     })()`);
     assert.equal(registration.status, 201, JSON.stringify(registration.body));
     userId = registration.body.user.id;
+    if (process.argv.includes("--sonarapay")) {
+      await require("./sonarapay-browser.cjs")({ call, evaluate, navigate, waitFor, screenshot, phone });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--deposit-channels")) {
       await require("./deposit-channels-browser.cjs")({ call, evaluate, navigate, waitFor, screenshot });
       assert.deepEqual(errors, []);
@@ -621,6 +627,7 @@ async function main() {
         "import sys, json, auth_backend",
         "with auth_backend.connect() as conn, conn.cursor() as cur:",
         " ids=json.loads(sys.argv[1])",
+        " cur.execute('DELETE FROM shineray_sonarapay_orders WHERE user_id=ANY(%s)', (ids,))",
         " cur.execute('DELETE FROM shineray_admin_vip_grants WHERE admin_id=ANY(%s) OR user_id=ANY(%s)', (ids,ids))",
         " cur.execute(\"DELETE FROM shineray_admin_resources WHERE id IN (SELECT (details->>'id')::bigint FROM shineray_admin_audit WHERE (admin_id=ANY(%s) OR details->>'test_fixture'=%s) AND event_type LIKE 'create_%%')\", (ids,sys.argv[2]))",
         " cur.execute('DELETE FROM shineray_admin_operations WHERE admin_id=ANY(%s) OR user_id=ANY(%s)', (ids,ids))",

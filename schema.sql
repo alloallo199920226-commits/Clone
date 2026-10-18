@@ -183,3 +183,31 @@ ALTER TABLE shineray_deposit_approvals ADD CONSTRAINT shineray_deposit_approvals
         ((approved_by IS NOT NULL AND NOT approved_console) OR (approved_by IS NULL AND approved_console)))
     OR (approval_method='automatic' AND approved_by IS NULL AND NOT approved_console)
 );
+
+-- SonaraPay Payin: requests remain separate from the settled ledger.
+CREATE TABLE IF NOT EXISTS shineray_sonarapay_orders (
+    id UUID PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES shineray_users(id),
+    request_id UUID NOT NULL,
+    amount_fcfa BIGINT NOT NULL CHECK (amount_fcfa BETWEEN 500 AND 500000000),
+    operator_id TEXT NOT NULL CHECK (operator_id IN ('mtn_bj','moov_bj','celtiis_bj')),
+    payer_phone TEXT NOT NULL CHECK (payer_phone ~ '^\+22901[0-9]{8}$'),
+    key_fingerprint CHAR(64) NOT NULL,
+    provider_reference VARCHAR(120) UNIQUE,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN
+        ('pending','processing','settling','otp_required','successful','failed','unknown','review')),
+    ussd_code VARCHAR(100) NOT NULL DEFAULT '',
+    last_error VARCHAR(40),
+    lease_until TIMESTAMPTZ,
+    checked_at TIMESTAMPTZ,
+    initiated_at TIMESTAMPTZ,
+    attempts INTEGER NOT NULL DEFAULT 0 CHECK (attempts BETWEEN 0 AND 12),
+    credited_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE(user_id,request_id),
+    CHECK (credited_at IS NULL OR (status='successful' AND provider_reference IS NOT NULL))
+);
+CREATE INDEX IF NOT EXISTS shineray_sonarapay_member_idx
+    ON shineray_sonarapay_orders(user_id,created_at DESC);
+CREATE INDEX IF NOT EXISTS shineray_sonarapay_pending_idx
+    ON shineray_sonarapay_orders(checked_at) WHERE credited_at IS NULL AND status<>'failed';

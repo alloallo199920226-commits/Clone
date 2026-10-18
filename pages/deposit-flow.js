@@ -1,4 +1,4 @@
-/* UI-only deposit draft. No payment request, financial credit or fake result. */
+/* Manual instructions elsewhere; Bénin Payin through the authenticated server. */
 (() => {
   const key = "shineray-deposit-draft";
   const content = document.querySelector("[data-deposit-content]");
@@ -70,6 +70,13 @@
     return flags[prefix] || '<svg viewBox="0 0 30 20" role="presentation"><rect width="30" height="20" fill="#e8edf1"/><path d="M0 0h30v6H0z" fill="#cbd4dc"/><path d="M0 14h30v6H0z" fill="#cbd4dc"/></svg>';
   };
   let draft;
+  const requestedPayment = new URL(location.href).searchParams.get("payment");
+  if (!form && requestedPayment) {
+    if (/^[0-9a-f-]{36}$/i.test(requestedPayment)) {
+      window.sonaraPay.mount(requestedPayment, populateLogo, operatorBrand);
+    } else showMissing();
+    return;
+  }
   function save() {
     try { sessionStorage.setItem(key, JSON.stringify(draft)); return true; }
     catch { notify("storage"); return false; }
@@ -88,6 +95,10 @@
     set(missing.querySelector("p"), reason);
   }
   try { draft = JSON.parse(sessionStorage.getItem(key)); } catch { draft = null; }
+  if (!form && draft?.payment_id) {
+    window.sonaraPay.mount(draft.payment_id, populateLogo, operatorBrand);
+    return;
+  }
   if (!draft || !Number.isSafeInteger(draft.amount_fcfa) || draft.amount_fcfa < 500 ||
       ![1, 2].includes(draft.channel) || !Number.isFinite(draft.created_at) ||
       Date.now() - draft.created_at < 0) {
@@ -141,6 +152,7 @@
     if (!prefix) throw new Error("countryError");
     const length = configuration.phoneLength;
     const channels = configuration.channels;
+    const automatic = configuration.provider === "sonarapay";
     channels.forEach(channel => { operators[String(channel.id)] = channel.operatorName; });
     if (draft.country_code && draft.country_code !== prefix) {
       delete draft.phone;
@@ -165,6 +177,10 @@
     document.querySelector(".deposit-notice strong")?.setAttribute("hidden", "");
     const notice = document.querySelector("[data-notice-body]");
     if (notice) set(notice, "manualDetails");
+    if (automatic && !confirmation) {
+      if (notice) set(notice, "sonaraConsent");
+      set(submit.querySelector("[data-submit-label]"), "sonaraStart");
+    }
     if (confirmation) {
       const channel = channels.find(item => String(item.id) === String(draft.operator));
       if (!channel) { showMissing("channelUnavailable"); return; }
@@ -247,7 +263,7 @@
       button.addEventListener("click", () => choose(button.dataset.operator));
     });
     submit.disabled = false;
-    form.addEventListener("submit", event => {
+    form.addEventListener("submit", async event => {
       event.preventDefault();
       if (expired()) return;
       let phone = input.value.replace(/\D/g, "");
@@ -258,6 +274,22 @@
         return;
       }
       draft.phone = phone;
+      if (automatic) {
+        if (!draft.request_id) draft.request_id = crypto.randomUUID();
+        if (!save()) return;
+        submit.disabled = true;
+        notify("sonaraCreating");
+        try {
+          const payment = await window.sonaraPay.create(draft);
+          draft.payment_id = payment.id;
+          save();
+          go("/confirmation-depot?payment=" + encodeURIComponent(payment.id));
+        } catch (error) {
+          status.removeAttribute("data-i18n");
+          status.textContent = error.message || t("sonaraUnavailable");
+        } finally { submit.disabled = false; }
+        return;
+      }
       if (save()) go("/confirmation-depot");
     });
   }).catch(error => {

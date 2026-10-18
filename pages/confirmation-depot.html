@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/pages/deposit-flow.css">
   <link rel="stylesheet" href="/pages/iveco-confirmation.css">
   <script src="/pages/deposit-i18n.js" defer></script>
+  <script src="/pages/sonarapay.js" defer></script>
   <script src="/pages/deposit-flow.js" defer></script>
 </head>
 <body class="deposit-page deposit-page--confirmation">
@@ -51,6 +52,23 @@
         </header>
 
         <div class="deposit-body">
+          <section class="sonara-panel" data-sonara-panel hidden aria-label="Suivi SonaraPay">
+            <h2 data-i18n="sonaraTitle">Paiement SonaraPay · Bénin</h2>
+            <p><strong data-sonara-amount>—</strong></p>
+            <p data-sonara-status role="status" aria-live="polite"></p>
+            <p><span data-i18n="sonaraReference">Référence de suivi</span><br><strong data-sonara-reference>—</strong></p>
+            <p class="sonara-safety" data-i18n="sonaraSafety">Validez uniquement auprès de votre opérateur. Ne saisissez jamais votre code PIN Mobile Money sur ce site.</p>
+            <form hidden>
+              <p data-sonara-ussd></p>
+              <label for="sonara-otp" data-i18n="sonaraOtpLabel">Code temporaire de l’opérateur (pas votre PIN)</label>
+              <input id="sonara-otp" inputmode="numeric" autocomplete="one-time-code" maxlength="12" pattern="[0-9]{4,12}" required>
+              <button class="deposit-result" type="submit" data-i18n="sonaraOtpSubmit">Envoyer le code temporaire</button>
+            </form>
+            <button class="deposit-result" type="button" data-sonara-check data-i18n="sonaraCheck">Vérifier le paiement</button>
+            <button class="deposit-result" type="button" data-sonara-retry hidden data-i18n="sonaraRetry">Reprendre la même demande</button>
+            <p><a href="/historique-recharges" data-i18n="sonaraHistory">Voir mes dépôts</a></p>
+          </section>
+
           <div class="deposit-details" aria-label="Détails du paiement">
             <div class="deposit-detail-card">
               <span class="deposit-detail-label">Nom du marchand</span>

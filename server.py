@@ -9,6 +9,8 @@ from urllib.parse import parse_qs, unquote, urlsplit
 import auth_backend
 import admin_assets
 import admin_api
+import sonarapay_payments
+import sonarapay_client
 
 ROOT = Path(__file__).resolve().parent
 SESSION_COOKIE = "shineray_session"
@@ -45,6 +47,7 @@ STATIC_FILES = {
     "/pages/iveco-payment.css": ("pages/iveco-payment.css", "text/css; charset=utf-8"),
     "/pages/iveco-confirmation.css": ("pages/iveco-confirmation.css", "text/css; charset=utf-8"),
     "/pages/deposit-flow.js": ("pages/deposit-flow.js", "text/javascript; charset=utf-8"),
+    "/pages/sonarapay.js": ("pages/sonarapay.js", "text/javascript; charset=utf-8"),
     "/pages/deposit-i18n.js": ("pages/deposit-i18n.js", "text/javascript; charset=utf-8"),
     "/pages/navigation-loading.css": ("pages/navigation-loading.css", "text/css; charset=utf-8"),
     "/pages/navigation-loading.js": ("pages/navigation-loading.js", "text/javascript; charset=utf-8"),
@@ -305,6 +308,11 @@ class Handler(BaseHTTPRequestHandler):
             try:
                 prefix = next((code for code in auth_backend.PHONE_LENGTHS
                                if user["phone"].startswith(code)), None)
+                if prefix == "+229" and sonarapay_client.configured():
+                    self._json(200, {"countryCode": prefix, "phoneLength": 10,
+                                     "provider": "sonarapay",
+                                     "channels": list(sonarapay_client.OPERATORS.values())})
+                    return
                 with auth_backend.connect() as connection, connection.cursor() as cursor:
                     cursor.execute(
                         """SELECT id,value FROM shineray_admin_resources
@@ -322,6 +330,9 @@ class Handler(BaseHTTPRequestHandler):
                                  "channels": channels})
             except Exception:
                 self._json(503, {"error": "Impossible de charger les moyens de paiement."})
+            return
+
+        if sonarapay_payments.handle(self, user, route):
             return
 
         if route == "/api/team" and self.command == "GET":
@@ -448,5 +459,6 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    sonarapay_payments.start_reconciliation()
     print("SHINERAY listening on 0.0.0.0:5000", flush=True)
     ThreadingHTTPServer(("0.0.0.0", 5000), Handler).serve_forever()

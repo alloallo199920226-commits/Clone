@@ -32,8 +32,17 @@
     const error = document.querySelector("[data-activity-error]");
     activityRoot.setAttribute("aria-busy", "true");
     activityRoot.innerHTML = '<div class="records-skeleton" aria-hidden="true"></div><div class="records-skeleton" aria-hidden="true"></div>';
-    getJson(`/api/activity?kind=${encodeURIComponent(kind)}`).then((payload) => {
+    const activities = getJson(`/api/activity?kind=${encodeURIComponent(kind)}`);
+    // Pending requests are shown separately from settled ledger entries.
+    const requests = kind === "recharge" ? getJson("/api/sonarapay/payments") : Promise.resolve({ payments: [] });
+    Promise.all([activities, requests]).then(([payload, pending]) => {
       if (!Array.isArray(payload.activities)) throw new Error("Les données sont indisponibles.");
+      payload.activities.push(...pending.payments.filter(payment => !payment.credited).map(payment => ({
+        id: payment.id, amount_fcfa: payment.amount_fcfa, reference: payment.reference || payment.id,
+        channel: `SonaraPay · ${payment.operator.operatorName}`, created_at: payment.created_at,
+        status: payment.status === "failed" ? "failed" : "pending", payment_id: payment.id,
+      })));
+      payload.activities.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       activityRoot.replaceChildren();
       payload.activities.forEach((item) => {
         const card = document.createElement("article");
@@ -54,6 +63,13 @@
         card.append(row("État", stateLabel, `reference-status`));
         card.lastElementChild.querySelector(".reference-activity-value").dataset.status = state;
         card.append(row("Temps", displayDate(item.created_at)));
+        if (item.payment_id) {
+          const follow = document.createElement("a");
+          follow.href = "/confirmation-depot?payment=" + encodeURIComponent(item.payment_id);
+          follow.textContent = "Suivre ce paiement";
+          follow.className = "wallet-link";
+          card.append(follow);
+        }
         activityRoot.append(card);
       });
       if (empty) empty.hidden = payload.activities.length !== 0;

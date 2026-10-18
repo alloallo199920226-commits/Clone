@@ -162,11 +162,14 @@ def transaction_rows(cur, query):
         details = row["details"]
         result.append({
             "id": row["id"], "userId": row["user_id"], "userPhone": row["phone"],
-            "registrationNumber": row["phone"], "countryCode": "CI" if row["phone"].startswith("+225") else "TG",
+            "registrationNumber": row["phone"], "countryCode": next(
+                (country for prefix, country in {"+225": "CI", "+228": "TG", "+229": "BJ",
+                                                 "+226": "BF", "+227": "NE", "+237": "CM"}.items()
+                 if row["phone"].startswith(prefix)), ""),
             "amount": abs(row["amount_fcfa"]), "status": "completed", "type": row["type"],
             "reference": row["provider_reference"], "orderNumber": row["provider_reference"],
             "createdAt": row["created_at"].isoformat(), "initiatedAt": row["created_at"].isoformat(),
-            "paymentProvider": details.get("approval_method", "manual"),
+            "paymentProvider": details.get("provider", details.get("approval_method", "manual")),
             "operatorName": details.get("channel") or "Non renseigné",
             "payerNumber": details.get("payer_number") or row["phone"],
             "destination": details.get("destination"), "receiverName": details.get("receiver_name"),

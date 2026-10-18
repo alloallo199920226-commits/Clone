@@ -1,0 +1,88 @@
+"""Server-only SonaraPay SDK Payin transport. Never log payloads or credentials."""
+import hashlib
+import json
+import os
+from urllib.error import HTTPError, URLError
+from urllib.parse import quote
+from urllib.request import Request, build_opener, HTTPRedirectHandler
+
+BASE_URL = "https://sonarapay.app"
+OPERATORS = {
+    "mtn_bj": {"id": "mtn_bj", "operatorName": "MTN", "logoText": "MTN", "logoColor": "#ffdd00"},
+    "moov_bj": {"id": "moov_bj", "operatorName": "MOOV", "logoText": "MOOV", "logoColor": "#1483bc"},
+    "celtiis_bj": {"id": "celtiis_bj", "operatorName": "Celtiis Cash", "logoText": "Celtiis", "logoColor": "#10b981"},
+}
+
+
+class ProviderError(Exception):
+    def __init__(self, code="unavailable"):
+        self.code = code
+        super().__init__(code)
+
+
+class NoRedirects(HTTPRedirectHandler):
+    # Do not forward Api-Key or a POST to a redirected destination.
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+def configured():
+    return bool(os.environ.get("SONARAPAY_KEY", "").strip())
+
+
+def fingerprint():
+    return hashlib.sha256(os.environ.get("SONARAPAY_KEY", "").strip().encode()).hexdigest()
+
+
+def request(method, path, payload=None, idempotency_key=None):
+    key = os.environ.get("SONARAPAY_KEY", "").strip()
+    if not key:
+        raise ProviderError("not_configured")
+    headers = {"Api-Key": key, "Accept": "application/json"}
+    data = None
+    if payload is not None:
+        headers["Content-Type"] = "application/json"
+        data = json.dumps(payload).encode()
+    if idempotency_key:
+        headers["Idempotency-Key"] = idempotency_key
+    req = Request(BASE_URL + path, data=data, headers=headers, method=method)
+    try:
+        with build_opener(NoRedirects()).open(req, timeout=20) as response:
+            raw = response.read(131_073)
+    except HTTPError as error:
+        # OTP-required responses may be returned with HTTP 400.
+        try:
+            value = json.loads(error.read(131_072))
+        except (ValueError, OSError):
+            value = {}
+        if error.code == 400 and isinstance(value, dict) and value.get("requiresOtp") is True:
+            return value
+        raise ProviderError("credentials" if error.code in (401, 403) else "rejected"
+                            if error.code == 400 else "unavailable") from None
+    except (URLError, TimeoutError, OSError):
+        # The POST may have reached SonaraPay. Retry ONLY this same order/key.
+        raise ProviderError("unavailable") from None
+    if len(raw) > 131_072:
+        raise ProviderError("invalid_response")
+    try:
+        value = json.loads(raw)
+    except (ValueError, UnicodeError):
+        raise ProviderError("invalid_response") from None
+    if not isinstance(value, dict):
+        raise ProviderError("invalid_response")
+    return value
+
+
+def create(order, otp=None):
+    payload = {
+        "amount": order["amount_fcfa"], "currency": "XOF", "countryCode": "BJ",
+        "operatorId": order["operator_id"], "customerPhone": order["payer_phone"],
+        "description": "IVECO:" + str(order["id"]),
+    }
+    if otp:
+        payload["otp"] = otp
+    return request("POST", "/api/public/v1/payments", payload, "iveco-" + str(order["id"]))
+
+
+def check(reference):
+    return request("GET", "/api/public/v1/payments/" + quote(reference, safe=""))

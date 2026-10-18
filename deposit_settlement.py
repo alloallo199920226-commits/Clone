@@ -11,7 +11,7 @@ from financial_policy import MIN_DEPOSIT_FCFA, REFERRAL_PERCENTAGES
 
 
 def settle_approved_deposit(user_id, amount_fcfa, provider_reference, *,
-                            approval_method, approved_by=None, console_handler=None):
+                            approval_method, approved_by=None, console_handler=None, receipt_details=None):
     if type(user_id) is not int or type(amount_fcfa) is not int:
         raise ValueError("Compte ou montant invalide.")
     if not MIN_DEPOSIT_FCFA <= amount_fcfa <= auth_backend.MAX_ACTIVITY_AMOUNT:
@@ -25,6 +25,9 @@ def settle_approved_deposit(user_id, amount_fcfa, provider_reference, *,
         raise ValueError("Mode d’approbation invalide.")
     if approval_method == "automatic" and (approved_by is not None or console_handler is not None):
         raise ValueError("Une validation automatique doit provenir du prestataire vérifié.")
+    if receipt_details is not None and (approval_method != "automatic" or not isinstance(receipt_details, dict)
+                                       or set(receipt_details) - {"provider", "channel", "payer_number"}):
+        raise ValueError("Détails de reçu invalides.")
 
     with auth_backend.connect() as connection, connection.cursor() as cursor:
         if approval_method == "manual":
@@ -76,7 +79,8 @@ def settle_approved_deposit(user_id, amount_fcfa, provider_reference, *,
                VALUES (%s,'recharge','Dépôt approuvé',%s,%s,%s::jsonb)""",
             (user_id, amount_fcfa, f"approved-deposit:{reference}",
              json.dumps({"deposit_id": deposit_id, "approval_method": approval_method,
-                         "channel": "Validation administrative" if approval_method == "manual" else "Prestataire vérifié"})),
+                         "channel": "Validation administrative" if approval_method == "manual" else "Prestataire vérifié",
+                         **(receipt_details or {})})),
         )
         ancestor = member["referred_by"]
         visited = {user_id}
