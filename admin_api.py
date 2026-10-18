@@ -567,7 +567,10 @@ def handle(handler, user, route):
                 fail(405, "Méthode non autorisée.")
             login(handler, user, body)
             return
-        query = {key: values[0] for key, values in parse_qs(urlsplit(handler.path).query).items()}
+        # The supplied external history script retains HTML-escaped separators.
+        # Normalize its wire format here instead of rewriting the original JS.
+        raw_query = urlsplit(handler.path).query.replace("&amp;", "&")
+        query = {key: values[0] for key, values in parse_qs(raw_query).items()}
         with db.connect() as conn, conn.cursor() as cur:
             require_admin(cur, handler, user)
             if route == "/api/admin/logout":
@@ -580,6 +583,9 @@ def handle(handler, user, route):
                 status, result = dispatch(cur, user, route, handler.command, body, query)
         cookie = f"{COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict" if route.endswith("/logout") else None
         handler._json(status, result, cookie=cookie)
+    except (BrokenPipeError, ConnectionResetError):
+        # Search plugins abort superseded requests; there is no client to reply to.
+        return
     except db.AuthError as error:
         handler._json(error.status, {"error": error.message})
     except ValueError as error:

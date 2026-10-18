@@ -52,9 +52,14 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
   assert.equal((await api("/api/me")).body.balance_fcfa, 2400);
   await call("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   await screenshot("shineray-original-admin-users-mobile");
+  await evaluate("document.querySelector('.admin-user-panel .admin-panel-close')?.click()");
   await evaluate("document.querySelector('[data-tab=settings]').click()");
   await waitFor("document.querySelector('[name=signupBonus]')?.value==='2300'");
   assert.equal(await evaluate("document.querySelector('[name=depositMin]').value"), "500");
+  assert.equal(await evaluate("document.documentElement.scrollWidth<=innerWidth"), true, "Settings must fit the mobile viewport");
+  assert.equal(await evaluate("document.querySelector('.admin-runtime-nav').getBoundingClientRect().width<=innerWidth"), true);
+  await evaluate("document.querySelector('[data-tab=support]').scrollIntoView({block:'nearest',inline:'center'})");
+  assert.equal(await evaluate("(()=>{const r=document.querySelector('[data-tab=support]').getBoundingClientRect();return r.left>=0&&r.right<=innerWidth})()"), true, "Last navigation section must be reachable");
   await screenshot("shineray-original-admin-settings-mobile");
   await evaluate("document.querySelector('[data-tab=channels]').click()");
   await waitFor("Boolean(document.querySelector('[data-form=channel]'))");
@@ -75,6 +80,12 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
   await waitFor("Boolean(document.querySelector('[data-history-search]'))");
   await evaluate(`(()=>{const s=document.querySelector('[data-history-search]');s.value=${JSON.stringify(receipt)};s.dispatchEvent(new Event('input',{bubbles:true}))})()`);
   await waitFor(`document.querySelector('[data-history-list]')?.textContent.includes(${JSON.stringify(receipt)})`);
+  await evaluate("(()=>{const s=document.querySelector('[data-history-search]');s.value='missing-isolated-receipt';s.dispatchEvent(new Event('input',{bubbles:true}))})()");
+  await waitFor("!document.querySelector('[data-history-list]')?.textContent.includes('browser-imported-admin-')");
+  assert.equal(await evaluate("document.querySelectorAll('[data-history-list] .admin-transaction-card').length"), 0);
+  await evaluate(`(()=>{const s=document.querySelector('[data-history-search]');s.value=${JSON.stringify(receipt)};s.dispatchEvent(new Event('input',{bubbles:true}))})()`);
+  await waitFor(`document.querySelector('[data-history-list]')?.textContent.includes(${JSON.stringify(receipt)})`);
+  assert.equal(await evaluate("document.documentElement.scrollWidth<=innerWidth"), true, "History must fit the mobile viewport");
   await screenshot("shineray-original-admin-history-mobile");
   assert.equal((await api("/api/me")).body.balance_fcfa, 2900);
   await evaluate("document.querySelector('#logout').click()");

@@ -14,3 +14,13 @@ replacing existing accounts or changing the previously requested financial rules
 **How to apply:** verify the served administration JavaScript against the original archive.
 Keep compatibility changes outside that script, preserve existing accounts, and obtain
 an explicit decision before activating additional financial services or changing policy.
+
+When preserving an imported client exactly, verify its actual browser requests as well
+as direct API tests. A successful API test alone does not prove wire compatibility.
+
+**Why:** the source bundle's history script sends HTML-escaped query separators, and
+its logout sends no JSON body. Rewriting that JavaScript would break the user's
+explicit source-preservation requirement.
+
+**How to apply:** make narrow, validated server-side compatibility adaptations and
+keep browser checks for search filtering, pagination and console logout.

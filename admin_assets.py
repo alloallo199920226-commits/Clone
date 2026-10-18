@@ -1,7 +1,7 @@
-"""Serve the uploaded administration verbatim, never its server/private files.
+"""Serve original administration assets, never the bundle's server/private files.
 
 Reading the original ZIP avoids reformatting or patching the supplied JavaScript.
-Only the browser entry point and explicitly public assets are exposed.
+The entry point also loads a separate responsive layout adapter.
 """
 
 from functools import lru_cache
@@ -23,10 +23,14 @@ ADMIN_STYLES = {
     "admin-credit.css": "admin-credit.css",
     "history.css": "history.css",
 }
+COMPAT_LINK = b'<link rel="stylesheet" href="/admin-ui/import-compat.css?v=1">'
 
 
 @lru_cache(maxsize=100)
 def browser_asset(route):
+    if route == "/admin-ui/import-compat.css":
+        stylesheet = Path(__file__).resolve().parent / "pages/admin-import-compat.css"
+        return stylesheet.read_bytes(), "text/css; charset=utf-8"
     member = None
     content_type = None
     if route in {"/administration", "/administration/"}:
@@ -60,4 +64,8 @@ def browser_asset(route):
             return None
         if info.file_size > 2_000_000:
             return None
-        return bundle.read(info), content_type
+        body = bundle.read(info)
+        if member == "administration/index.html":
+            # Add a separate layout adapter, leaving every original asset intact.
+            body = body.replace(b"</head>", COMPAT_LINK + b"</head>", 1)
+        return body, content_type

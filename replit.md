@@ -55,6 +55,10 @@ La console `/administration` utilise le HTML, les styles et les scripts du ZIP
 ni exécuter son serveur Node. Conserver l’archive dans la publication ; ne pas exposer
 le ZIP, ses modules serveur, son dossier migrations ou ses fichiers de configuration.
 Le JavaScript `/admin-ui/general.js` doit rester strictement identique à celui du ZIP.
+Le HTML charge aussi `/admin-ui/import-compat.css`, une feuille indépendante dans
+`pages/admin-import-compat.css` : elle corrige le calcul de largeur avec la barre
+latérale et rend les quatorze sections accessibles par défilement horizontal sur mobile,
+sans modifier les scripts ni les styles d’origine.
 
 L’administrateur doit d’abord se connecter à son compte habituel, déjà explicitement
 autorisé, puis confirmer son propre mot de passe dans la console. La session de console

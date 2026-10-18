@@ -99,6 +99,9 @@ class ImportedAdminTests(unittest.TestCase):
             }.items():
                 status, data, _ = self.request("GET", route, raw=True)
                 self.assertEqual(status, 200)
+                if route == "/administration":
+                    self.assertIn(admin_assets.COMPAT_LINK, data)
+                    data = data.replace(admin_assets.COMPAT_LINK, b"", 1)
                 self.assertEqual(hashlib.sha256(data).digest(),
                                  hashlib.sha256(archive.read(admin_assets.PREFIX + member)).digest())
         for route in ("/server.js", "/admin_api.py", "/schema.sql", "/administration/index.html",
@@ -201,6 +204,27 @@ class ImportedAdminTests(unittest.TestCase):
         self.assertEqual(self.request("PATCH", apath, {"title": "Cannot edit published"})[0], 409)
         self.assertEqual(self.request("POST", apath + "/withdraw", {})[0], 200)
         self.assertEqual(self.request("DELETE", apath, {})[0], 200)
+
+    def test_original_history_escaped_query_filters_and_pagination(self):
+        self.login()
+        reference = "history-fixture-" + secrets.token_hex(8)
+        for suffix in ("-first", "-second"):
+            status, body, _ = self.request("POST", "/api/admin/deposits", {
+                "phone": self.member_user["phone"], "amount_fcfa": 500,
+                "provider_reference": reference + suffix, "receipt_verified": True,
+            })
+            self.assertEqual(status, 201, body)
+        route = "/api/admin/transaction-history?type=deposit&amp;status=approved&amp;limit=1&amp;search="
+        status, body, _ = self.request("GET", route + reference + "-first")
+        self.assertEqual(status, 200, body)
+        self.assertEqual(body["total"], 1)
+        self.assertEqual(body["transactions"][0]["reference"], "approved-deposit:" + reference + "-first")
+        self.assertIsNone(body["nextCursor"])
+        body = self.request("GET", route + reference)[1]
+        self.assertEqual(body["total"], 2)
+        self.assertIsNotNone(body["nextCursor"])
+        next_page = self.request("GET", route + reference + "&amp;cursor=" + body["nextCursor"])[1]
+        self.assertNotEqual(next_page["transactions"][0]["id"], body["transactions"][0]["id"])
 
     def test_banning_revokes_sessions_and_self_lockout_is_prevented(self):
         self.login()
