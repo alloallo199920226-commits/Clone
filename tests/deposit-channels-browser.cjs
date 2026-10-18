@@ -5,7 +5,7 @@ module.exports = async ({ evaluate, navigate, waitFor, screenshot }) => {
   const fixture = JSON.parse(execFileSync("python3", ["-c", [
     "import json, auth_backend",
     "from psycopg.types.json import Jsonb",
-    "value={'country':'Bénin','countryCode':'+229','operatorName':'MTN test Benin','receiverNumber':'0190123456','receiverName':'Test merchant','isActive':True,'sortOrder':0,'ussdTemplate':'*123*{amount}#','logoText':'MTN','logoColor':'#ffda28'}",
+    "value={'country':'Bénin','countryCode':'+229','operatorName':'MTN test Benin','receiverNumber':'0190123456','receiverName':'Test merchant','isActive':True,'sortOrder':0,'ussdTemplate':'*123*1*1{account}*{amount}#','logoText':'MTN','logoColor':'#ffda28'}",
     "with auth_backend.connect() as conn, conn.cursor() as cur:",
     " cur.execute(\"INSERT INTO shineray_admin_resources(kind,value) VALUES('channel',%s) RETURNING id\",(Jsonb(value),))",
     " print(json.dumps(cur.fetchone()))",
@@ -23,7 +23,9 @@ module.exports = async ({ evaluate, navigate, waitFor, screenshot }) => {
     await waitFor(`location.pathname==='/confirmation-depot' && ${ready}`);
     assert.equal(await evaluate("document.querySelector('[data-merchant-name]').textContent"), "Test merchant");
     assert.equal(await evaluate("document.querySelector('[data-merchant-account]').textContent"), "0190123456");
-    assert.equal(await evaluate("document.querySelector('[data-ussd-code]').textContent"), "*123*8000#");
+    assert.equal(await evaluate("document.querySelector('[data-ussd-code]').textContent"), "*123*1*10190123456*8000#");
+    assert.equal(await evaluate("document.querySelector('[data-deposit-dial]').getAttribute('href')"), "tel:*123*1*10190123456*8000%23");
+    assert.equal(await evaluate("document.querySelector('[data-copy=\"ussd\"]').disabled"), false);
     await evaluate("document.querySelector('[data-deposit-language]').click()");
     assert.equal(await evaluate("document.querySelector('[data-merchant-name]').textContent"), "Test merchant");
     assert.equal(await evaluate("(async()=> (await (await fetch('/api/me')).json()).balance_fcfa)()"), 2300);

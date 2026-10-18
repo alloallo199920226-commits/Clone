@@ -118,6 +118,7 @@
       copyValues.merchant_account = channel.receiverNumber;
       const ussd = String(channel.ussdTemplate || "")
         .replaceAll("{amount}", String(draft.amount_fcfa))
+        .replaceAll("{account}", channel.receiverNumber)
         .replaceAll("{number}", channel.receiverNumber)
         .replaceAll("{receiverNumber}", channel.receiverNumber)
         .replaceAll("{phone}", draft.phone);
