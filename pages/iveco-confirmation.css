@@ -24,10 +24,12 @@ body.deposit-page--confirmation {
   color: var(--signature-ink);
   background-color: #11161c;
   background-image:
+    linear-gradient(136deg, transparent 0 68%, rgba(226, 27, 53, .68) 68.2% 69.2%, transparent 69.5%),
+    linear-gradient(136deg, transparent 0 77%, rgba(226, 27, 53, .34) 77.2% 77.8%, transparent 78.1%),
     linear-gradient(180deg, rgba(7, 15, 24, .2) 0%, rgba(10, 15, 21, .44) 42%, rgba(8, 12, 17, .34) 100%),
     url("/pages/assets/iveco-confirmation-scene.jpg");
   background-repeat: no-repeat;
-  background-position: center top;
+  background-position: center top, center top, center top, center top;
   background-size: 100% 100dvh;
   font: 13px/1.4 "DM Sans", sans-serif;
 }
@@ -54,8 +56,21 @@ body.deposit-page--confirmation .deposit-shell {
     linear-gradient(90deg, rgba(8, 20, 32, .22) 0%, rgba(7, 17, 28, .04) 55%, rgba(9, 18, 27, .08) 100%),
     url("/pages/assets/iveco-confirmation-scene.jpg");
   background-repeat: no-repeat;
-  background-position: center, 75% 35%;
+  background-position: center, 58% 35%;
   background-size: cover, 145% auto;
+}
+
+.iveco-signature-hero::after {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  width: 64px;
+  height: 72px;
+  background: linear-gradient(130deg, rgba(226, 27, 53, .92), rgba(173, 15, 38, .82));
+  clip-path: polygon(100% 0, 74% 0, 0 100%, 27% 100%);
+  content: "";
+  pointer-events: none;
 }
 
 .iveco-signature-brand {
@@ -154,13 +169,14 @@ body.deposit-page--confirmation .deposit-confirmation-header {
   min-height: 38px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin: 0 0 10px;
 }
 
 .signature-operator {
   min-width: 0;
-  flex: 1 1 auto;
+  width: 191px;
+  flex: 1 1 191px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -214,8 +230,8 @@ body.deposit-page--confirmation .deposit-confirmation-header .deposit-language {
 
 body.deposit-page--confirmation .deposit-confirmation-header .deposit-timer {
   position: relative;
-  min-width: 62px;
-  flex: 0 0 62px;
+  min-width: 73px;
+  flex: 0 0 73px;
   padding-left: 17px;
   font: 600 10px/1 "DM Sans", sans-serif;
   letter-spacing: .02em;
@@ -242,7 +258,8 @@ body.deposit-page--confirmation .deposit-confirmation-header .deposit-timer::aft
 }
 
 body.deposit-page--confirmation .deposit-confirmation-header .deposit-language {
-  min-width: 68px;
+  min-width: 88px;
+  flex: 0 0 88px;
   padding: 0 8px;
   font-size: 9px;
   font-weight: 700;
@@ -250,14 +267,32 @@ body.deposit-page--confirmation .deposit-confirmation-header .deposit-language {
 }
 
 body.deposit-page--confirmation .deposit-confirmation-header .deposit-close {
-  width: 27px;
-  height: 27px;
-  flex: 0 0 27px;
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
   border: 1px solid rgba(207, 217, 226, .25);
   color: #e7ebef;
   background: rgba(25, 31, 39, .9);
   font-size: 18px;
   text-decoration: none;
+}
+
+body.deposit-page--confirmation .deposit-confirmation-header .deposit-language::before {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  border: 1px solid rgba(0, 0, 0, .08);
+  border-radius: 50%;
+  background: linear-gradient(90deg, #002395 0 33.33%, #fff 33.33% 66.66%, #ed2939 66.66%);
+  content: "";
+  vertical-align: -3px;
+}
+
+html[lang="en"] body.deposit-page--confirmation .deposit-confirmation-header .deposit-language::before {
+  background:
+    linear-gradient(0deg, transparent 40%, #fff 40% 45%, #c8102e 45% 55%, #fff 55% 60%, transparent 60%),
+    linear-gradient(90deg, #012169 38%, #fff 38% 44%, #c8102e 44% 56%, #fff 56% 62%, #012169 62%);
 }
 
 body.deposit-page--confirmation .deposit-confirmation-header .deposit-close:hover {
@@ -273,7 +308,7 @@ body.deposit-page--confirmation .deposit-body {
 
 body.deposit-page--confirmation .deposit-details {
   display: block;
-  height: 165px;
+  min-height: 165px;
   padding: 0 13px;
   border: 1px solid var(--signature-border);
   border-radius: 9px;
@@ -284,7 +319,7 @@ body.deposit-page--confirmation .deposit-detail-card {
   position: relative;
   min-height: 54px;
   display: grid;
-  grid-template-columns: 26px minmax(0, 1fr) 82px;
+  grid-template-columns: 34px minmax(0, 1fr) 82px;
   align-content: center;
   align-items: center;
   gap: 2px 10px;
@@ -324,7 +359,7 @@ body.deposit-page--confirmation .deposit-detail-label {
   grid-row: 1;
   min-width: 0;
   color: #aab2bc;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   line-height: 1.2;
 }
@@ -335,7 +370,7 @@ body.deposit-page--confirmation .deposit-detail-value {
   min-width: 0;
   overflow-wrap: anywhere;
   color: #f2f4f6;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.25;
 }
@@ -355,7 +390,7 @@ body.deposit-page--confirmation .deposit-copy {
   border-radius: 6px;
   background: rgba(224, 184, 62, .08);
   color: #e1bf59;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   cursor: pointer;
   transition: color 170ms ease, border-color 170ms ease, background-color 170ms ease, transform 170ms ease;
@@ -415,7 +450,7 @@ body.deposit-page--confirmation .deposit-validation-title::before {
 body.deposit-page--confirmation .deposit-ussd-instructions {
   margin: 0 0 9px;
   color: #aeb6c0;
-  font-size: 9px;
+  font-size: 10px;
   line-height: 1.4;
 }
 
@@ -479,7 +514,7 @@ body.deposit-page--confirmation .deposit-action {
   background: #252c35;
   color: #edf0f3;
   text-decoration: none;
-  font: 700 9px/1.15 "DM Sans", sans-serif;
+  font: 700 10px/1.15 "DM Sans", sans-serif;
   text-align: center;
   cursor: pointer;
   transition: color 170ms ease, border-color 170ms ease, background-color 170ms ease, transform 170ms ease;
@@ -545,7 +580,7 @@ body.deposit-page--confirmation .deposit-reference strong {
 
 body.deposit-page--confirmation .deposit-ussd-note {
   position: relative;
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   padding-left: 20px;
   color: #aeb6c0;
   font-size: 8px;
@@ -777,6 +812,14 @@ body.deposit-page--confirmation .deposit-missing a { color: #f06a7b; }
 body.deposit-page--confirmation :focus-visible {
   outline: 2px solid rgba(239, 243, 247, .76);
   outline-offset: 2px;
+}
+
+@media (max-width: 430px) {
+  body.deposit-page--confirmation .deposit-confirmation-header { gap: 5px; }
+  .signature-operator { width: auto; flex: 1 1 auto; }
+  body.deposit-page--confirmation .deposit-confirmation-header .deposit-timer { min-width: 56px; flex-basis: 56px; }
+  body.deposit-page--confirmation .deposit-confirmation-header .deposit-language { min-width: 66px; flex-basis: 66px; padding-right: 5px; padding-left: 5px; }
+  body.deposit-page--confirmation .deposit-confirmation-header .deposit-close { width: 25px; height: 25px; flex-basis: 25px; }
 }
 
 @keyframes signature-card-in {

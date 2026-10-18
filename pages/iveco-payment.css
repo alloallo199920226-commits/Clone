@@ -183,23 +183,34 @@ body.deposit-page--operator .deposit-card-header {
 body.deposit-page--operator .deposit-brand {
   position: relative;
   margin: 0;
-  padding: 0 0 0 13px;
+  padding: 0 0 10px 18px;
   color: #13253a;
-  font: 800 27px/1 "Outfit", sans-serif;
+  font: 800 32px/1 "Outfit", sans-serif;
   letter-spacing: -.055em;
   white-space: nowrap;
 }
 
-body.deposit-page--operator .deposit-brand::after {
+body.deposit-page--operator .deposit-brand::before {
   position: absolute;
-  top: 50%;
+  top: 2px;
   left: 0;
   width: 4px;
-  height: 26px;
-  border-radius: 3px;
+  height: .8em;
+  border-radius: 2px;
   background: #c91432;
   content: "";
-  transform: translateY(-50%);
+}
+
+body.deposit-page--operator .deposit-brand::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 44px;
+  height: 3px;
+  margin: 0;
+  border-radius: 2px;
+  background: #c91432;
+  content: "";
 }
 
 body.deposit-page--operator .deposit-brand em {
@@ -424,7 +435,7 @@ body.deposit-page--operator .deposit-operator[aria-pressed="true"]:not([data-bra
 body.deposit-page--operator .deposit-operator[aria-pressed="true"] .deposit-check { display: inline-flex; }
 body.deposit-page--operator .deposit-phone-label {
   position: relative;
-  margin: 18px 0 8px;
+  margin: 23px 0 8px;
   padding-left: 17px;
   color: #1d2c3e;
   font-size: 12px;
@@ -507,7 +518,7 @@ body.deposit-page--operator .deposit-submit {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 12px;
+  margin-top: 17px;
   border: 0;
   border-radius: 8px;
   background: #cf102d;
@@ -531,7 +542,7 @@ body.deposit-page--operator .deposit-notice {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  margin: 11px 0 0;
+  margin: 12px 0 0;
   padding: 12px;
   border: 1px solid #e8dfc5;
   border-radius: 8px;
@@ -574,7 +585,7 @@ body.deposit-page--operator :focus-visible { outline: 3px solid rgba(201, 20, 50
   .iveco-payment-page { box-shadow: 0 0 40px rgba(16, 29, 42, .15); }
 }
 
-@media (max-width: 390px) {
+@media (max-width: 430px) {
   .iveco-payment-page { padding-right: 12px; padding-left: 12px; }
   .iveco-scene { margin-right: -12px; margin-left: -12px; }
   body.deposit-page--operator .deposit-card-header { padding-right: 14px; padding-left: 14px; }

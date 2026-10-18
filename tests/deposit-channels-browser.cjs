@@ -23,23 +23,32 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot }) => {
     await evaluate("document.fonts.ready");
     await waitFor("[...document.images].every(image=>image.complete)");
     await evaluate("Promise.allSettled(document.getAnimations().map(animation=>animation.finished))");
-    for (const width of [320, 390, 472, 768]) {
+    for (const width of [320, 360, 390, 430, 440, 471, 472, 591, 768]) {
       await call("Emulation.setDeviceMetricsOverride", {width, height:909, deviceScaleFactor:1, mobile:true});
       const geometry = await evaluate(`(()=>{
         const logos=[...document.querySelectorAll('.operator-logo')].map(n=>n.getBoundingClientRect());
         const buttons=[...document.querySelectorAll('[data-operator]')].map(n=>n.getBoundingClientRect());
+        const title=document.querySelector('.deposit-brand'), titleRange=document.createRange();
+        titleRange.selectNodeContents(title);
+        const underline=getComputedStyle(title,'::after');
         return {overflow:document.documentElement.scrollWidth>innerWidth,
           fontSize:parseFloat(getComputedStyle(document.querySelector('#deposit-phone')).fontSize),
-          titleFits:document.querySelector('.deposit-brand').getBoundingClientRect().right<=document.querySelector('.deposit-heading-tools').getBoundingClientRect().left,
+          titleFits:titleRange.getBoundingClientRect().right<=document.querySelector('.deposit-heading-tools').getBoundingClientRect().left,
+          underline:parseFloat(underline.width)>parseFloat(underline.height)*5 && parseFloat(underline.top)>=parseFloat(getComputedStyle(title).lineHeight),
           aligned:logos.length===buttons.length && logos.every((r,i)=>Math.abs(r.x+r.width/2-buttons[i].x-buttons[i].width/2)<2),
           row:buttons.length<2 || Math.abs(buttons[0].y-buttons[1].y)<2};
       })()`);
       assert.equal(geometry.overflow, false, `No horizontal overflow at ${width}px`);
       assert(geometry.fontSize >= 16, `No autozoom-size input at ${width}px`);
       assert(geometry.titleFits, `Header controls do not overlap the title at ${width}px`);
+      assert(geometry.underline, `Horizontal underline below the title at ${width}px`);
       assert(geometry.aligned, `Each logo centered above its own operator at ${width}px`);
       assert(geometry.row, `Two operators remain on same row at ${width}px`);
       if (width === 472 || width === 320) await screenshot(`iveco-payment-${width}`);
+      if (width === 472) {
+        const blocks=await evaluate(`Object.fromEntries(Object.entries({card:'.deposit-card',amount:'.deposit-amount-bar',phone:'.deposit-phone-wrap',submit:'.deposit-submit',notice:'.deposit-notice'}).map(([name,selector])=>{const r=document.querySelector(selector).getBoundingClientRect();return [name,{x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height)}]}))`);
+        console.log("Operator reference geometry (472px):",JSON.stringify(blocks));
+      }
     }
     await call("Emulation.setDeviceMetricsOverride", {width:472,height:909,deviceScaleFactor:1,mobile:true});
     await evaluate(`document.querySelector('[data-operator="${fixture.secondId}"]').click()`);
@@ -56,11 +65,20 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot }) => {
     await evaluate("document.fonts.ready");
     await waitFor("[...document.images].every(image=>image.complete)");
     await evaluate("Promise.allSettled(document.getAnimations().map(animation=>animation.finished))");
-    for (const width of [320, 390, 472, 768]) {
+    for (const width of [320, 360, 390, 430, 440, 471, 472, 591, 768]) {
       await call("Emulation.setDeviceMetricsOverride", {width,height:909,deviceScaleFactor:1,mobile:true});
       assert.equal(await evaluate("document.documentElement.scrollWidth>innerWidth"), false, `Confirmation overflow at ${width}px`);
       assert.equal(await evaluate("document.querySelector('[data-ussd-code]').scrollWidth>document.querySelector('[data-ussd-code]').clientWidth+1"), false, `Readable code at ${width}px`);
+      assert(await evaluate(`(()=>{
+        const header=document.querySelector('.deposit-confirmation-header').getBoundingClientRect();
+        const controls=[...document.querySelector('.deposit-confirmation-header').children].flatMap(n=>n.matches('.deposit-confirmation-tools')?[...n.children]:[n]).map(n=>n.getBoundingClientRect());
+        return controls.every(r=>r.left>=header.left-1&&r.right<=header.right+1);
+      })()`), `Confirmation header stays inside its panel at ${width}px`);
       if (width === 472 || width === 320) await screenshot(`iveco-confirmation-${width}`);
+      if (width === 472) {
+        const blocks=await evaluate(`Object.fromEntries(Object.entries({card:'.deposit-card',merchant:'.deposit-details',ussd:'.deposit-ussd-card',validation:'.deposit-validation',payer:'.deposit-payer-card',notice:'.deposit-notice'}).map(([name,selector])=>{const r=document.querySelector(selector).getBoundingClientRect();return [name,{x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height)}]}))`);
+        console.log("Confirmation reference geometry (472px):",JSON.stringify(blocks));
+      }
     }
     await call("Page.bringToFront");
     await call("Browser.grantPermissions", {origin:await evaluate("location.origin"),permissions:["clipboardReadWrite","clipboardSanitizedWrite"]});
