@@ -23,6 +23,9 @@ No source screenshot or financial reference image is used as a background.
 | Owned products banner | iveco-products.jpg | X-Way natural-gas chassis |
 | About, first photo | iveco-about-fleet.jpg | S-Way with trailer in the mountains |
 | About, second photo | iveco-about-truck.jpg | Eurocargo CNG box truck |
+| About, road | iveco-about-road.jpg | S-Way exterior, distinct editorial photo |
+| About, professional work | iveco-about-work.jpg | X-Way tractor |
+| About, powerful presence | iveco-about-power.jpg | T-Way, distinct exterior photo |
 | Support | iveco-support.jpg | White Stralis |
 
 Original IVECO payment/confirmation scene images and supplied brand logos are

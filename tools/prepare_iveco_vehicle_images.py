@@ -21,6 +21,9 @@ SOURCES = {
     "iveco-products.jpg": "IVECO-X-Way-Natural-Gas.jpg",
     "iveco-about-fleet.jpg": "16-IVECO-S-WAY-NGrange-Profitability-and-Sustainability-5.jpg",
     "iveco-about-truck.jpg": "9.IVECO-EUROCARGO-CNG-2.jpg",
+    "iveco-about-road.jpg": "13.IVECO-S_Way-Range-Whats-New-Stylish-in-all-enciroments.jpg",
+    "iveco-about-work.jpg": "IVECO-X-Way-Range-Versions-Artic-1.jpg",
+    "iveco-about-power.jpg": "IVECO-T-Way-Legendary-robustness-2.jpg",
     "iveco-support.jpg": "https://www.truck1.eu/img/misc/tags/misc/iveco/IVECO-Stralis-1.jpg",
 }
 

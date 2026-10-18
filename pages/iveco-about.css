@@ -1,0 +1,213 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+/* A restrained, road-ready editorial treatment, scoped to the About route. */
+.about-page {
+  --about-red: #c91f2c;
+  --about-ink: #202122;
+  --about-muted: #777773;
+  --about-paper: #fbfaf8;
+  --about-rule: #e9e5e1;
+  width: 100%;
+  max-width: 480px;
+  overflow: clip;
+  background: var(--about-paper);
+  color: var(--about-ink);
+  font-family: "DM Sans", sans-serif;
+  box-shadow: none;
+}
+
+.about-page .page-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  min-height: 58px;
+  border-bottom: 1px solid #ebe8e5;
+  background: rgb(251 250 248 / 96%);
+  backdrop-filter: blur(12px);
+}
+
+.about-page .page-header h1 {
+  color: #363534;
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.about-page .back {
+  color: var(--about-red);
+}
+
+.about-page .about-content {
+  padding: 33px 22px 28px;
+}
+
+.about-page .about-section {
+  padding: 0 0 43px;
+}
+
+.about-page .about-opening {
+  padding-bottom: 44px;
+}
+
+.about-page .about-kicker,
+.about-page .about-index {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 17px;
+  color: var(--about-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.about-page .about-kicker span {
+  color: var(--about-red);
+}
+
+.about-page h2 {
+  max-width: 385px;
+  margin: 0 0 17px;
+  color: #252526;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(27px, 7vw, 35px);
+  font-weight: 800;
+  letter-spacing: -.055em;
+  line-height: 1.08;
+}
+
+.about-page h2 em {
+  color: var(--about-red);
+  font-style: normal;
+}
+
+.about-page .about-lead {
+  margin: 0 0 22px;
+  color: #414141;
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.about-page .about-section > p:not(.about-kicker):not(.about-index):not(.about-signoff) {
+  margin: 19px 0 0;
+  color: #454442;
+  font-size: 14px;
+  line-height: 1.82;
+}
+
+.about-page .about-photo {
+  width: 100%;
+  margin: 24px 0 0;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #edeae6;
+}
+
+.about-page .about-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 422 / 238;
+  object-fit: contain;
+  background: #efeeeb;
+}
+
+.about-page .about-photo-hero img {
+  aspect-ratio: 422 / 236;
+}
+
+.about-page .about-photo figcaption {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 2px 0;
+  color: #77736f;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.about-page .about-photo figcaption span {
+  flex: 0 0 auto;
+  color: var(--about-red);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.about-page .about-index {
+  margin-bottom: 14px;
+}
+
+.about-page .about-index:first-letter { color: var(--about-red); }
+.about-page .about-index span {
+  padding-left: 10px;
+  border-left: 1px solid var(--about-rule);
+  color: #817e79;
+  font-size: 9px;
+}
+
+.about-page .about-section + .about-section {
+  border-top: 1px solid var(--about-rule);
+  padding-top: 30px;
+}
+
+.about-page .about-finale {
+  padding-bottom: 28px;
+}
+
+.about-page .about-signoff {
+  margin: 30px 0 0;
+  padding-top: 18px;
+  border-top: 2px solid var(--about-red);
+  color: var(--about-ink);
+  font-family: "Manrope", sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.about-page .about-signoff span {
+  margin-left: 7px;
+  color: var(--about-red);
+  font-weight: 600;
+}
+
+.about-page .about-legal {
+  margin: 7px -22px 0;
+  border-top: 1px solid var(--about-rule);
+  padding: 17px 22px 4px;
+  color: #898681;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+@media (min-width: 700px) {
+  .about-page {
+    margin: 18px auto;
+    min-height: calc(100vh - 36px);
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .about-page .about-content { padding-right: 17px; padding-left: 17px; }
+  .about-page .about-legal { margin-right: -17px; margin-left: -17px; padding-right: 17px; padding-left: 17px; }
+  .about-page .about-photo figcaption { gap: 7px; font-size: 9px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .about-page .about-section {
+    animation: about-arrive .6s both;
+  }
+  .about-page .about-section:nth-child(2) { animation-delay: .04s; }
+  .about-page .about-section:nth-child(3) { animation-delay: .08s; }
+  @keyframes about-arrive {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}

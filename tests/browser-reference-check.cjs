@@ -359,6 +359,37 @@ async function main() {
       console.log("PASS: amount/channel entry, MTN/MOOV choice, phone validation, confirmation, modify/refresh preservation, admin placeholders, no transactions/credits, missing draft and 390/472px layouts.");
       return;
     }
+    if (process.argv.includes("--iveco-about")) {
+      await navigate("/a-propos");
+      await waitFor("Boolean(document.querySelector('.about-opening h2'))");
+      assert.equal(await evaluate("document.querySelector('.about-page .back').getAttribute('href')"), "/compte");
+      assert.equal(await evaluate("document.querySelectorAll('.about-section').length"), 6);
+      assert(await evaluate("document.querySelector('.about-content').innerText.split(/\\s+/).length >= 500"));
+      const images = await evaluate("Array.from(document.querySelectorAll('.about-photo img'),image=>image.getAttribute('src'))");
+      assert.equal(images.length, 5);
+      assert.equal(new Set(images).size, 5);
+      assert(!await evaluate("/\\b(?:SHINERAY|SWM|Sprite|AERONOVA)\\b/i.test(document.body.innerText + document.title)"));
+      await waitFor("Array.from(document.styleSheets).some(sheet=>sheet.href?.includes('/pages/iveco-about.css') && sheet.cssRules.length > 10)");
+      for (let i=0;i<images.length;i++) {
+        await evaluate(`document.querySelectorAll('.about-photo img')[${i}].scrollIntoView({block:'center'})`);
+        await waitFor(`document.querySelectorAll('.about-photo img')[${i}].complete && document.querySelectorAll('.about-photo img')[${i}].naturalWidth > 0`);
+      }
+      for (const [width,height] of [[390,844],[320,744],[1360,900]]) {
+        await call("Emulation.setDeviceMetricsOverride", {width,height,deviceScaleFactor:1,mobile:width<700});
+        assert.equal(await evaluate("document.documentElement.scrollWidth > innerWidth"), false);
+      }
+      await call("Emulation.setDeviceMetricsOverride", {width:390,height:844,deviceScaleFactor:1,mobile:true});
+      await evaluate("scrollTo(0,0)");
+      await screenshot("iveco-about-editorial-top");
+      await evaluate("document.querySelector('.about-work').scrollIntoView({block:'start'})");
+      await screenshot("iveco-about-editorial-middle");
+      await evaluate("document.querySelector('.about-finale').scrollIntoView({block:'start'})");
+      await screenshot("iveco-about-editorial-bottom");
+      await evaluate("document.querySelector('.about-page .back').click()");
+      await waitFor("location.pathname === '/compte'");
+      console.log("PASS: six French editorial sections, 500+ words, five distinct loaded IVECO photos, served scoped CSS, no overflow at 320/390/1360px and working account return. No financial operation submitted.");
+      return;
+    }
     if (process.argv.includes("--iveco-branding")) {
       const branded = async () => {
         await waitFor("! /\\b(?:SHINERAY|SWM|Sprite|AERONOVA)\\b/i.test(document.title + ' ' + document.body.innerText)");
