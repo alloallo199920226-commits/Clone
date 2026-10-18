@@ -503,6 +503,12 @@ async function main() {
       assert.deepEqual(errors, []);
       return;
     }
+    if (process.argv.includes("--about-loading")) {
+      await require("./about-loading-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, paused, base,
+      });
+      return;
+    }
     if (process.argv.includes("--filled-records")) {
       await require("./filled-records-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, paused, base,

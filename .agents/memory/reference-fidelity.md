@@ -71,6 +71,15 @@ Internal page links must show the full-screen light-gray loading view with the c
 
 **How to apply:** retain the separate authentication and country-picker indicators. Follow actual page, data and image loading rather than a fake success delay; keep navbar navigation free of the full-screen loader.
 
+Vérifier l’ouverture d’une page en cliquant sur son lien réel depuis le compte,
+en complément de l’accès direct à son URL.
+
+**Why:** les contrôles directs de la page « À propos » avaient réussi, mais ils
+contournaient l’état de navigation qui bloquait les utilisateurs derrière le chargeur.
+
+**How to apply:** tester la transition réelle, le retour et les ressources différées
+ou indisponibles, pas seulement le contenu de la destination déjà ouverte.
+
 Les zones de saisie du site doivent rester sans contours ni halos colorés et ne pas
 déclencher de zoom automatique sur Safari.
 

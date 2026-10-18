@@ -8,6 +8,8 @@
   let watchdog;
   let frame;
   let originalInert = false;
+  let documentReady = document.readyState === "complete";
+  document.addEventListener("DOMContentLoaded", () => { documentReady = true; }, { once: true });
   const overlay = document.createElement("div");
   overlay.id = "site-navigation-loading";
   overlay.setAttribute("role", "status");
@@ -43,13 +45,16 @@
   function check() {
     if (phase !== "incoming") return;
     const busy = document.querySelector('[aria-busy="true"]');
-    if (document.readyState === "complete" && pending.size === 0 && !busy &&
-        [...document.images].every(image => image.complete)) {
+    // Below-the-fold lazy images may not start until the user can scroll.
+    // Waiting for them while the document is inert deadlocks navigation.
+    const waitingForImages = () => [...document.images].some(image =>
+      image.getAttribute("loading")?.toLowerCase() !== "lazy" && !image.complete);
+    if (documentReady && pending.size === 0 && !busy && !waitingForImages()) {
       // Let response handlers and their newly inserted images render first.
       frame = requestAnimationFrame(() => {
         if (phase !== "incoming") return;
         if (pending.size || document.querySelector('[aria-busy="true"]') ||
-            [...document.images].some(image => !image.complete)) frame = requestAnimationFrame(check);
+            waitingForImages()) frame = requestAnimationFrame(check);
         else finish();
       });
     } else frame = requestAnimationFrame(check);
