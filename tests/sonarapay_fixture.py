@@ -21,7 +21,8 @@ def create(order, otp=None):
     calls.append(str(order["id"]))
     records.setdefault(ref, {"reference": ref, "transaction": {
         "status": "pending", "amount": order["amount_fcfa"], "currency": "XOF",
-        "description": "IVECO:" + str(order["id"]), "countryCode": "BJ",
+        "description": "IVECO:" + str(order["id"]),
+        "countryCode": client.COUNTRY_CODES[client.country_prefix(order["payer_phone"])],
         "operatorId": order["operator_id"], "customerPhone": order["payer_phone"]}})
     if mode == "otp" and not otp:
         records[ref]["transaction"]["status"] = "otp_required"

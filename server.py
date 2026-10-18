@@ -308,10 +308,10 @@ class Handler(BaseHTTPRequestHandler):
             try:
                 prefix = next((code for code in auth_backend.PHONE_LENGTHS
                                if user["phone"].startswith(code)), None)
-                if prefix == "+229" and sonarapay_client.configured():
-                    self._json(200, {"countryCode": prefix, "phoneLength": 10,
+                if prefix in sonarapay_client.COUNTRY_CODES and sonarapay_client.configured():
+                    self._json(200, {"countryCode": prefix, "phoneLength": auth_backend.PHONE_LENGTHS[prefix],
                                      "provider": "sonarapay",
-                                     "channels": list(sonarapay_client.DEPOSIT_OPERATORS.values())})
+                                     "channels": list(sonarapay_client.deposit_operators(prefix).values())})
                     return
                 with auth_backend.connect() as connection, connection.cursor() as cursor:
                     cursor.execute(

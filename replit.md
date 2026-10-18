@@ -20,7 +20,7 @@
 - `/connexion` : connexion par numéro de téléphone et mot de passe
 - `/inscription` : création d’un compte avec numéro de téléphone et mot de passe
 - `/financement` : registre des opérations réelles du compte
-- `/recharger` : dépôt automatique au Bénin, suivi par confirmation serveur
+- `/recharger` : dépôt automatique au Bénin et au Burkina Faso, suivi par confirmation serveur
 - `/retrait` : retraits non activés
 - `/historique-recharges` et `/historique-retraits` : historiques réels, avec état vide lorsqu’il n’y a aucune opération
 - `/gestion-compte-bancaire` et `/ajouter-compte-retrait` : portefeuilles persistants avec nom du titulaire
@@ -35,7 +35,10 @@ données d’activité sont isolées par compte.
 ## Limites
 
 Les comptes, parrainages et portefeuilles sont persistants. Les dépôts automatiques
-sont limités au Bénin.
+sont limités au Bénin et au Burkina Faso. Le Burkina Faso utilise Orange Money,
+Moov Money et Telecel Cash, avec un numéro local de huit chiffres (+226).
+Sur une base existante, appliquer `migrations/sonarapay_burkina.sql` avant
+d’activer cette extension en production ; aucun changement de schéma au démarrage.
 L’authentification fonctionne sans e-mail ni SMS, conformément au parcours demandé.
 Les numéros ne sont donc pas vérifiés ; aucun mécanisme de récupération du mot de
 passe oublié n’est disponible. Les pages préviennent l’utilisateur de cette limite.

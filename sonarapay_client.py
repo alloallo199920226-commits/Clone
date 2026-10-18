@@ -11,9 +11,24 @@ OPERATORS = {
     "mtn_bj": {"id": "mtn_bj", "operatorName": "MTN", "logoText": "MTN", "logoColor": "#ffdd00"},
     "moov_bj": {"id": "moov_bj", "operatorName": "MOOV", "logoText": "MOOV", "logoColor": "#1483bc"},
     "celtiis_bj": {"id": "celtiis_bj", "operatorName": "Celtiis Cash", "logoText": "Celtiis", "logoColor": "#10b981"},
+    "orange_bf": {"id": "orange_bf", "operatorName": "Orange Money", "logoText": "Orange", "logoColor": "#f97316"},
+    "moov_bf": {"id": "moov_bf", "operatorName": "Moov Money", "logoText": "MOOV", "logoColor": "#3b82f6"},
+    "telecel_bf": {"id": "telecel_bf", "operatorName": "Telecel Cash", "logoText": "Telecel", "logoColor": "#ef4444"},
 }
 # Keep the full catalog for existing orders, but allow only these for new deposits.
-DEPOSIT_OPERATORS = {key: OPERATORS[key] for key in ("mtn_bj", "moov_bj")}
+COUNTRY_CODES = {"+229": "BJ", "+226": "BF"}
+DEPOSIT_OPERATORS = {key: OPERATORS[key] for key in
+                     ("mtn_bj", "moov_bj", "orange_bf", "moov_bf", "telecel_bf")}
+
+
+def country_prefix(phone):
+    return next((prefix for prefix in COUNTRY_CODES if str(phone).startswith(prefix)), None)
+
+
+def deposit_operators(phone):
+    code = COUNTRY_CODES.get(country_prefix(phone))
+    return {key: value for key, value in DEPOSIT_OPERATORS.items()
+            if code and key.endswith("_" + code.lower())}
 
 
 class ProviderError(Exception):
@@ -79,8 +94,11 @@ def request(method, path, payload=None, idempotency_key=None):
 
 
 def create(order, otp=None):
+    country = COUNTRY_CODES.get(country_prefix(order["payer_phone"]))
+    if not country or order["operator_id"] not in OPERATORS or not order["operator_id"].endswith("_" + country.lower()):
+        raise ProviderError("invalid_country")
     payload = {
-        "amount": order["amount_fcfa"], "currency": "XOF", "countryCode": "BJ",
+        "amount": order["amount_fcfa"], "currency": "XOF", "countryCode": country,
         "operatorId": order["operator_id"], "customerPhone": order["payer_phone"],
         "description": "IVECO:" + str(order["id"]),
     }

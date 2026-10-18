@@ -190,8 +190,11 @@ CREATE TABLE IF NOT EXISTS shineray_sonarapay_orders (
     user_id BIGINT NOT NULL REFERENCES shineray_users(id),
     request_id UUID NOT NULL,
     amount_fcfa BIGINT NOT NULL CHECK (amount_fcfa BETWEEN 500 AND 500000000),
-    operator_id TEXT NOT NULL CHECK (operator_id IN ('mtn_bj','moov_bj','celtiis_bj')),
-    payer_phone TEXT NOT NULL CHECK (payer_phone ~ '^\+22901[0-9]{8}$'),
+    operator_id TEXT NOT NULL CHECK (operator_id IN ('mtn_bj','moov_bj','celtiis_bj','orange_bf','moov_bf','telecel_bf')),
+    payer_phone TEXT NOT NULL CHECK (
+      (operator_id IN ('mtn_bj','moov_bj','celtiis_bj') AND payer_phone ~ '^\+22901[0-9]{8}$')
+      OR (operator_id IN ('orange_bf','moov_bf','telecel_bf') AND payer_phone ~ '^\+226[0-9]{8}$')
+    ),
     key_fingerprint CHAR(64) NOT NULL,
     provider_reference VARCHAR(120) UNIQUE,
     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN

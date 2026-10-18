@@ -1,5 +1,6 @@
 const assert = require("node:assert/strict");
-module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone }) => {
+module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, prefix = "+229" }) => {
+  const operatorCount = prefix === "+226" ? 3 : 2;
   const balance = () => evaluate("(async () => (await (await fetch('/api/me')).json()).balance_fcfa)()");
   const noProviderBrand = async () => assert(!await evaluate("/sonarapay/i.test(document.body.innerText + ' ' + Array.from(document.querySelectorAll('[aria-label]'), node => node.getAttribute('aria-label')).join(' '))"), "Provider name must not be displayed");
   await call("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
@@ -8,9 +9,13 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone }
     amount_fcfa:500,channel:1,created_at:Date.now()
   }))`);
   await navigate("/choisir-operateur");
-  await waitFor("document.querySelectorAll('[data-operator]').length === 2");
+  await waitFor(`document.querySelectorAll('[data-operator]').length === ${operatorCount}`);
   await noProviderBrand();
-  assert.equal(await evaluate("document.querySelector('[data-deposit-prefix]').textContent"), "+229");
+  assert.equal(await evaluate("document.querySelector('[data-deposit-prefix]').textContent"), prefix);
+  if (prefix === "+226") {
+    assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-operator]')].map(node=>node.dataset.operator)"),
+      ["orange_bf", "moov_bf", "telecel_bf"]);
+  }
   assert.match(await evaluate("document.querySelector('[data-notice-body]').textContent"), /réelle/);
   await screenshot("sonarapay-operators");
   // The operator has accepted the request, but Safari loses its response.
@@ -114,7 +119,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone }
     amount_fcfa:500,channel:1,created_at:Date.now()
   }))`);
   await navigate("/choisir-operateur");
-  await waitFor("document.querySelectorAll('[data-operator]').length === 2");
+  await waitFor(`document.querySelectorAll('[data-operator]').length === ${operatorCount}`);
   await evaluate(`document.querySelector('#deposit-phone').value=${JSON.stringify(phone)};
     document.querySelector('#deposit-operator-form').requestSubmit()`);
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'otp_required'");

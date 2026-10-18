@@ -1,4 +1,4 @@
-/* Manual instructions elsewhere; Bénin Payin through the authenticated server. */
+/* Manual instructions elsewhere; enabled countries use authenticated server Payin. */
 (() => {
   const key = "shineray-deposit-draft";
   const content = document.querySelector("[data-deposit-content]");

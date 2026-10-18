@@ -27,10 +27,11 @@ class VerificationTests(unittest.TestCase):
         self.assertIsNone(auth_backend.payment_display_text(None))
 
     def test_celtiis_disabled_for_new_deposits_but_history_preserved(self):
-        self.assertEqual(set(client.DEPOSIT_OPERATORS), {"mtn_bj", "moov_bj"})
+        self.assertEqual(set(client.deposit_operators("+229")), {"mtn_bj", "moov_bj"})
+        self.assertEqual(set(client.deposit_operators("+226")), {"orange_bf", "moov_bf", "telecel_bf"})
         with patch.object(client, "configured", return_value=True), \
                 patch.object(auth_backend, "connect") as connect:
-            with self.assertRaisesRegex(ValueError, "Opérateur béninois invalide"):
+            with self.assertRaisesRegex(ValueError, "Opérateur invalide pour le pays"):
                 payments.prepare({"phone": "+2290100000000"}, {
                     "amount": 500, "operatorId": "celtiis_bj",
                     "phone": "0100000000", "requestId": str(uuid.uuid4()),
@@ -78,6 +79,11 @@ class VerificationTests(unittest.TestCase):
             self.assertEqual(first.args[2]["otp"], "123456")
             self.assertNotIn("otp", request.call_args.args[2])
             self.assertEqual(first.args[1], "/api/public/v1/payments")
+            burkina = {**self.order, "operator_id": "orange_bf", "payer_phone": "+22670000000"}
+            client.create(burkina, "123456")
+            self.assertEqual(request.call_args.args[2]["countryCode"], "BF")
+            self.assertEqual(request.call_args.args[2]["customerPhone"], "+22670000000")
+            self.assertEqual(request.call_args.args[2]["otp"], "123456")
         self.assertIsNone(client.NoRedirects().redirect_request(None, None, 302, "", {}, "https://other.test"))
 
     def test_identifies_client_and_distinguishes_gateway_from_credentials(self):
@@ -136,7 +142,8 @@ class PaymentTests(unittest.TestCase):
         ref = "test-" + str(order["id"])
         self.references[ref] = {"reference": ref, "transaction": {
             "status": "pending", "amount": order["amount_fcfa"], "currency": "XOF",
-            "description": "IVECO:" + str(order["id"]), "countryCode": "BJ",
+            "description": "IVECO:" + str(order["id"]),
+            "countryCode": client.COUNTRY_CODES[client.country_prefix(order["payer_phone"])],
             "operatorId": order["operator_id"], "customerPhone": order["payer_phone"]}}
         # A creation response claiming success must never be enough.
         return {"reference": ref, "status": "successful"}
@@ -158,6 +165,30 @@ class PaymentTests(unittest.TestCase):
         self.assertEqual(self.balance(), 2300)
         self.assertEqual(self.create.call_count, 1)
         self.assertEqual(self.check.call_count, 1)
+
+    def test_burkina_operators_are_country_scoped_and_settle_once(self):
+        for operator in ("orange_bf", "moov_bf", "telecel_bf"):
+            with self.subTest(operator=operator):
+                self.user, self.token = self.member("+226")
+                body = {**self.body(), "operatorId": operator}
+                with self.assertRaises(ValueError):
+                    payments.prepare(self.user, {**body, "operatorId": "mtn_bj"})
+                with self.assertRaises(ValueError):
+                    payments.prepare(self.user, {**body, "phone": "+2290100000000"})
+                order = payments.advance(payments.prepare(self.user, body), initiate=True)
+                self.assertEqual(payments.public(order)["countryCode"], "+226")
+                self.assertEqual(self.balance(), 2300)
+                proof = self.references[order["provider_reference"]]
+                proof["transaction"]["status"] = "successful"
+                proof["transaction"]["countryCode"] = "BJ"
+                self.assertFalse(payments.verified(order, proof))
+                proof["transaction"]["countryCode"] = "BF"
+                self.assertTrue(payments.verified(order, proof))
+                order = payments.advance(self.allow_check(order))
+                self.assertTrue(order["credited_at"])
+                self.assertEqual(self.balance(), 2800)
+                payments.advance(order)
+                self.assertEqual(self.balance(), 2800)
 
     def test_exactly_once_credit_and_commissions_under_concurrency(self):
         sponsor = self.user
@@ -262,6 +293,14 @@ class PaymentTests(unittest.TestCase):
             self.assertNotIn("provider", get("/api/payment-channels/me", other_token)[1])
             self.assertNotIn("key_fingerprint", json.dumps(get("/api/sonarapay/payments", self.token)[1]))
             self.assertEqual(other["phone"][:4], "+228")
+            burkina, burkina_token = self.member("+226")
+            status, result = get("/api/payment-channels/me", burkina_token)
+            self.assertEqual(status, 200)
+            self.assertEqual(result["provider"], "sonarapay")
+            self.assertEqual(result["countryCode"], "+226")
+            self.assertEqual(result["phoneLength"], 8)
+            self.assertEqual({row["id"] for row in result["channels"]},
+                             {"orange_bf", "moov_bf", "telecel_bf"})
         finally:
             server.shutdown()
             server.server_close()

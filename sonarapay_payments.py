@@ -1,4 +1,4 @@
-"""Bénin-only Payin orders; pending requests are not financial ledger entries."""
+"""Bénin and Burkina Faso Payin orders; pending requests never affect the ledger."""
 import logging
 import re
 import threading
@@ -17,7 +17,7 @@ STATES = {"pending", "processing", "settling", "otp_required", "failed"}
 def public(order):
     return {
         "id": str(order["id"]), "requestId": str(order["request_id"]), "amount_fcfa": order["amount_fcfa"],
-        "currency": "XOF", "countryCode": "+229", "operator": provider.OPERATORS[order["operator_id"]],
+        "currency": "XOF", "countryCode": provider.country_prefix(order["payer_phone"]), "operator": provider.OPERATORS[order["operator_id"]],
         "phone": order["payer_phone"], "status": order["status"],
         "reference": order["provider_reference"], "credited": order["credited_at"] is not None,
         "ussdCode": order["ussd_code"], "errorCode": order["last_error"],
@@ -50,21 +50,22 @@ def recent(user_id):
 
 
 def prepare(user, body):
-    if not user["phone"].startswith("+229"):
-        raise auth_backend.AuthError(403, "Le paiement automatique est réservé au Bénin pour le moment.")
+    prefix = provider.country_prefix(user["phone"])
+    if not prefix:
+        raise auth_backend.AuthError(403, "Le paiement automatique est disponible au Bénin et au Burkina Faso uniquement.")
     if not provider.configured():
         raise auth_backend.AuthError(503, "Le paiement automatique n’est pas configuré.")
     if set(body) - {"amount", "operatorId", "phone", "requestId"}:
         raise ValueError("Champs de demande inattendus.")
     amount = body.get("amount")
     operator = body.get("operatorId")
-    phone = auth_backend.normalize_phone("+229", body.get("phone"))
-    if not re.fullmatch(r"\+22901\d{8}", phone):
+    phone = auth_backend.normalize_phone(prefix, body.get("phone"))
+    if prefix == "+229" and not re.fullmatch(r"\+22901\d{8}", phone):
         raise ValueError("Le numéro béninois doit contenir 10 chiffres et commencer par 01.")
     if type(amount) is not int or not MIN_DEPOSIT_FCFA <= amount <= auth_backend.MAX_ACTIVITY_AMOUNT:
         raise ValueError(f"Montant invalide : de {MIN_DEPOSIT_FCFA} à {auth_backend.MAX_ACTIVITY_AMOUNT} FCFA.")
-    if not isinstance(operator, str) or operator not in provider.DEPOSIT_OPERATORS:
-        raise ValueError("Opérateur béninois invalide.")
+    if not isinstance(operator, str) or operator not in provider.deposit_operators(prefix):
+        raise ValueError("Opérateur invalide pour le pays de votre compte.")
     request_id = identifier(body.get("requestId"))
     with auth_backend.connect() as conn, conn.cursor() as cur:
         # One open request per member; serialize across replicas and drafts.
@@ -143,7 +144,8 @@ def verified(order, result):
         return False
     if not _amount_matches(tx.get("amount"), order["amount_fcfa"]) or tx.get("currency") != "XOF":
         return False
-    expected = {"description": "IVECO:" + str(order["id"]), "countryCode": "BJ",
+    expected = {"description": "IVECO:" + str(order["id"]),
+                "countryCode": provider.COUNTRY_CODES.get(provider.country_prefix(order["payer_phone"])),
                 "operatorId": order["operator_id"], "customerPhone": order["payer_phone"]}
     # Some status responses omit these optional fields. If present, they must match.
     return all(key not in tx or tx[key] == value for key, value in expected.items())

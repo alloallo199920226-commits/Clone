@@ -21,11 +21,11 @@ Après une réponse réseau perdue lors du lancement, retrouver la demande exist
 
 **How to apply:** conserver l’identifiant de demande avant transmission ; en cas de résultat incertain, proposer le suivi et non un nouveau paiement, y compris après rechargement. Ne jamais créditer sur la seule déclaration d’un débit.
 
-L’utilisateur veut intégrer SonaraPay « pour les paiements au bénin seule d'abord ».
+Les paiements automatiques concernent le Bénin et le Burkina Faso.
 
-**Why:** l’utilisateur a explicitement limité le lancement au Bénin.
+**Why:** après un lancement limité au Bénin, l’utilisateur a demandé « met mi le burkina sur automatique ».
 
-**How to apply:** limiter le parcours SonaraPay aux comptes du Bénin et préserver le parcours existant des autres pays. Ne pas étendre cette intégration à d’autres pays sans nouvelle demande.
+**How to apply:** préserver le parcours existant des autres pays. Ne pas étendre cette intégration à d’autres pays sans nouvelle demande.
 
 Pour les dépôts au Bénin, proposer uniquement MTN et Moov, sans Celtiis.
 
