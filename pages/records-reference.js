@@ -25,6 +25,65 @@
     line.append(name, content);
     return line;
   };
+  const referenceRow = (reference) => {
+    const value = String(reference || "");
+    const shortened = value.length > 18 ? `${value.slice(0, 8)}…${value.slice(-4)}` : value;
+    const line = row("Réf. commande", "", "reference-copy-value");
+    const content = line.querySelector(".reference-activity-value");
+    const label = document.createElement("span");
+    label.className = "reference-short";
+    label.textContent = shortened || "—";
+    content.append(label);
+    const feedback = document.createElement("p");
+    feedback.className = "reference-copy-feedback";
+    feedback.setAttribute("role", "status");
+    feedback.setAttribute("aria-live", "polite");
+    feedback.setAttribute("aria-atomic", "true");
+    if (value.trim()) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "reference-copy-button";
+      button.setAttribute("aria-label", "Copier la référence complète");
+      button.title = "Copier la référence complète";
+      button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path></svg>';
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        feedback.textContent = "";
+        try {
+          try {
+            if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+            await navigator.clipboard.writeText(value);
+          } catch {
+            const field = document.createElement("textarea");
+            field.value = value;
+            field.readOnly = true;
+            field.style.cssText = "position:fixed;top:0;left:0;opacity:0;font-size:16px;";
+            document.body.append(field);
+            try {
+              field.focus({ preventScroll: true });
+              field.select();
+              field.setSelectionRange(0, value.length);
+              if (!document.execCommand("copy")) throw new Error("Copy refused");
+            } finally {
+              field.remove();
+              button.focus({ preventScroll: true });
+            }
+          }
+          feedback.dataset.state = "success";
+          feedback.textContent = "Référence complète copiée !";
+        } catch {
+          feedback.dataset.state = "error";
+          feedback.textContent = `Copie impossible. Sélectionnez et copiez : ${value}`;
+        } finally {
+          button.disabled = false;
+        }
+      });
+      content.append(button);
+    }
+    const fragment = document.createDocumentFragment();
+    fragment.append(line, feedback);
+    return fragment;
+  };
   const activityRoot = document.querySelector("[data-activity-list][data-activity-kind]");
   if (activityRoot) {
     const kind = activityRoot.dataset.activityKind;
@@ -55,7 +114,7 @@
         const amount = document.createElement("strong");
         amount.textContent = formatMoney(item.amount_fcfa);
         title.append(heading, amount);
-        card.append(title, row("Réf. commande", item.reference || "—"));
+        card.append(title, referenceRow(item.reference));
         if (kind === "recharge") card.append(row("Canal", item.channel || "Non renseigné"));
         else card.append(row("Montant reçu", formatMoney(item.net_amount_fcfa)));
         const state = String(item.status || "unknown");

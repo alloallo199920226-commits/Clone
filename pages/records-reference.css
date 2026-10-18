@@ -8,6 +8,20 @@
 .reference-activity-row:last-child { border-bottom: 0; }
 .reference-activity-label { flex: 0 0 auto; }
 .reference-activity-value { min-width: 0; overflow-wrap: anywhere; text-align: right; }
+.reference-copy-value { display: inline-flex; align-items: center; gap: 4px; }
+.reference-short { white-space: nowrap; font-size: 14px; }
+.reference-copy-button {
+  display: inline-grid; place-items: center; flex: 0 0 44px;
+  width: 44px; height: 44px; padding: 11px; border: 0; border-radius: 5px;
+  background: transparent; color: #353535; cursor: pointer;
+}
+.reference-copy-button svg { width: 21px; height: 21px; }
+.reference-copy-button:active { background: #eee; }
+.reference-copy-button:focus-visible { outline: 2px solid #353535; outline-offset: -3px; }
+.reference-copy-feedback { margin: 5px 0; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
+.reference-copy-feedback:empty { display: none; }
+.reference-copy-feedback[data-state="success"] { color: #155b35; }
+.reference-copy-feedback[data-state="error"] { color: #9b2630; }
 .reference-status { font-weight: 400; }
 .reference-status[data-status="succeeded"] { color: #398148; }
 .reference-status[data-status="pending"] { color: #d39a24; }

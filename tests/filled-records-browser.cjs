@@ -65,7 +65,10 @@ with auth_backend.connect() as conn,conn.cursor() as cur:
   const recharge = await evaluate("document.querySelector('[data-activity-list]').innerText");
   assert(recharge.includes("Ordre de dépôt") && recharge.includes("FCFA 8,000"));
   assert(recharge.includes("Recharger le canal 1") && recharge.includes("Non renseigné"));
-  assert(recharge.includes("browser-receipt-") && recharge.includes("Succès"));
+  assert(recharge.includes("Succès") && !recharge.includes("browser-receipt-"));
+  assert(await evaluate(`[...document.querySelectorAll('.reference-short')]
+    .every(node => /^browser-…[a-f0-9]{4}$/.test(node.textContent))`));
+  assert.equal(await evaluate("document.querySelectorAll('.reference-copy-button').length"), 2);
   assert(await evaluate("document.body.innerText.includes('Plus aucune donnée')"));
   await screenshot("shineray-populated-deposits");
   await navigate("/historique-retraits");

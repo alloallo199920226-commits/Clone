@@ -521,6 +521,12 @@ async function main() {
       });
       return;
     }
+    if (process.argv.includes("--history-copy")) {
+      await require("./history-copy-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, paused, base,
+      });
+      return;
+    }
     if (process.argv.includes("--filled-records")) {
       await require("./filled-records-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, paused, base,
