@@ -1,0 +1,163 @@
+1. Préparer votre intégration
+
+SDK Payin encaisse sans redirection. Gopay ouvre le paiement hébergé SonaraPay. Chaque clé appartient à votre compte marchand et autorise uniquement les dépôts, jamais les retraits.
+
+Soumettez votre dossier KYC et attendez la validation de votre identité.
+Demandez au service client l’autorisation SDK ou Gopay, puis créez une clé dans Clés SDK Payin ou Clés Gopay. Pour Gopay, renseignez votre URL de retour HTTPS.
+Copiez la clé privée depuis « Mes clés ». Le bouton Afficher permet de la retrouver après une nouvelle connexion. Seul son propriétaire peut la consulter.
+Conservez-la dans une variable d’environnement de votre serveur. Aucun secret dans le navigateur, une application mobile, une URL ou un dépôt Git.
+2. Authentification et formats
+
+Base HTTPS : https://sonarapay.app. Envoyez Api-Key avec la clé privée et Content-Type: application/json pour les requêtes POST. Les réponses utilisent les noms de champs camelCase.
+
+Une clé SDK ne crée pas de session Gopay. Une clé Gopay ne lance pas de paiement direct. La révocation bloque les nouveaux appels et les sessions encore ouvertes. Les données de paiement restent limitées au propriétaire et à la clé utilisés.
+3. SDK Payin — encaissement direct
+
+Documentation SDK Payin
+Copier
+curl -X POST https://sonarapay.app/api/public/v1/payments \
+  -H 'Api-Key: VOTRE_CLE_PRIVEE' \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-Key: commande-123' \
+  -d '{"amount":5000,"currency":"XOF","countryCode":"BJ","operatorId":"mtn_bj","customerPhone":"+229VOTRE_NUMERO","description":"Commande 123"}'
+Vérifiez le statut avec GET /api/public/v1/payments/{reference} et le même en-tête Api-Key. Seul successful confirme le paiement.
+
+Clé privée : utilisez-la sur votre serveur, jamais dans le navigateur. Payin uniquement. Pour Orange avec OTP, transmettez le code obtenu par le client dans le champ otp. Une redirection n’est pas une preuve de paiement.
+Champ	Valeur attendue
+amount	Montant positif dans la devise du pays ; plafond maximal 1 milliard, soumis aux limites réseau et plateforme.
+currency	Code devise du pays, par exemple XOF.
+countryCode	Code pays, par exemple BJ.
+operatorId	Identifiant exact de l’opérateur du pays choisi.
+customerPhone	Numéro Mobile Money du client avec indicatif international.
+description	Référence ou description de la commande.
+otp	Optionnel, obligatoire quand le réseau demande un OTP.
+customerName / customerEmail	Informations client facultatives.
+La réponse contient reference, transactionId, status et transaction. Enregistrez votre référence et vérifiez le statut depuis votre serveur.
+
+Exemple JavaScript côté serveur
+Copier
+// Sur votre serveur uniquement. La clé vient d'une variable d'environnement.
+async function createPayin(order, phone, operatorId, countryCode) {
+  const response = await fetch('https://sonarapay.app/api/public/v1/payments', {
+    method: 'POST',
+    headers: { 'Api-Key': process.env.SONARAPAY_KEY,
+      'Content-Type': 'application/json', 'Idempotency-Key': order.id },
+    body: JSON.stringify({ amount: order.amount, currency: order.currency,
+      countryCode, operatorId, customerPhone: phone, description: order.id })
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || 'Paiement refusé');
+  return result;
+}
+
+async function checkPayin(reference) {
+  const response = await fetch(
+    'https://sonarapay.app/api/public/v1/payments/' + encodeURIComponent(reference),
+    { headers: { 'Api-Key': process.env.SONARAPAY_KEY } }
+  );
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || 'Statut indisponible');
+  // Ne livrez la commande qu'après cette vérification serveur.
+  return result.transaction?.status === 'successful';
+}
+4. Gopay — paiement avec redirection
+
+Documentation Gopay
+Copier
+curl -X POST https://sonarapay.app/api/public/gopay/sessions \
+  -H 'Api-Key: VOTRE_CLE_PRIVEE' \
+  -H 'Content-Type: application/json' \
+  -d '{"amount":5000,"currency":"XOF","description":"Commande 123"}'
+La réponse contient paymentUrl et sessionId. Redirigez votre client vers paymentUrl, puis vérifiez GET /api/public/gopay/sessions/{sessionId} avec la même clé. Seul successful confirme le paiement. Le retour utilise l’URL enregistrée sur la clé.
+
+Clé privée : utilisez-la sur votre serveur, jamais dans le navigateur. Payin uniquement. Pour Orange avec OTP, transmettez le code obtenu par le client dans le champ otp. Une redirection n’est pas une preuve de paiement.
+Créez la session avec amount, currency et description (300 caractères maximum). SonaraPay renvoie paymentUrl, sessionId et expiresIn: 1800. La session expire après 30 minutes et utilise l’URL HTTPS enregistrée sur la clé ; le client ne peut pas remplacer cette URL.
+
+Enregistrez la session sur votre commande avant de rediriger le client. Le pays et les opérateurs affichés dépendent de la devise et des pays activés par l’administrateur. Une nouvelle session ne reprend pas automatiquement une ancienne commande : évitez de créer plusieurs sessions lors d’un double clic.
+
+Créer et vérifier une session Gopay
+Copier
+// Votre serveur crée la session avec votre clé Gopay, jamais dans le navigateur.
+const response = await fetch('https://sonarapay.app/api/public/gopay/sessions', {
+  method: 'POST',
+  headers: { 'Api-Key': process.env.SONARAPAY_GOPAY_KEY,
+    'Content-Type': 'application/json' },
+  body: JSON.stringify({ amount: 5000, currency: 'XOF', description: 'Commande 123' })
+});
+const session = await response.json();
+if (!response.ok) throw new Error(session.error);
+// Enregistrez session.sessionId sur votre commande, puis renvoyez paymentUrl au client.
+// Dans le navigateur : window.location.assign(paymentUrl).
+// Après le retour, votre serveur vérifie la session :
+const statusResponse = await fetch(
+  'https://sonarapay.app/api/public/gopay/sessions/' + session.sessionId,
+  { headers: { 'Api-Key': process.env.SONARAPAY_GOPAY_KEY } }
+);
+const status = await statusResponse.json();
+if (statusResponse.ok && status.status === 'successful') {
+  // Livraison unique de la commande, avec montant/devise comparés à votre commande.
+}
+5. Push Mobile Money et OTP
+
+Pour les réseaux compatibles, le paiement déclenche la demande de confirmation sur le téléphone du client. Le client la valide auprès de son opérateur. SonaraPay ne demande pas le code PIN Mobile Money.
+
+Quand la réponse contient requiresOtp: true, affichez ussdCode et errorMessage. Le client obtient lui-même le code par le canal de son opérateur. Reprenez les mêmes données de paiement et transmettez le code dans otp. Ne générez jamais un faux OTP et ne le journalisez pas.
+6. Statuts, confirmation et livraison
+
+otp_required : le code de l’opérateur est nécessaire ; aucun paiement n’est confirmé.
+pending / processing / settling : attente de traitement ou confirmation ; ne livrez pas la commande.
+successful : paiement confirmé ; comparez montant, devise et commande sur votre serveur, puis livrez une seule fois.
+failed : paiement refusé. expired : session Gopay expirée sans paiement confirmé.
+Le portefeuille est crédité uniquement après une notification BKaPay vérifiée par HMAC-SHA256. Un retour du navigateur, une capture d’écran, un HTTP 200 ou une réponse success: true n’est pas une preuve suffisante de paiement. Les endpoints de statut sont la source de confirmation pour votre application.
+
+Interrogez le statut à intervalle raisonnable, par exemple toutes les 5 secondes, et arrêtez à un état final. Après un délai réseau, conservez la référence et vérifiez l’opération avant de créer un nouveau paiement.
+7. Idempotence et doublons
+
+En SDK direct, envoyez un Idempotency-Key stable et unique pour chaque commande. Une répétition avec la même clé renvoie l’opération existante du marchand. Ne réutilisez jamais cette valeur pour une autre commande, un autre montant ou une autre clé d’intégration. Gopay lie l’initiation à la session pour empêcher deux paiements simultanés sur cette session.
+
+Votre application doit aussi empêcher la livraison et l’écriture comptable en double : enregistrez le paiement réussi dans une transaction de votre propre système et imposez l’unicité de la référence.
+8. Pays, devises et opérateurs
+
+Catalogue de la plateforme : la disponibilité réelle dépend de BKaPay, de la maintenance et, pour Gopay, des pays activés. Un pays affiché ici ne garantit pas la disponibilité de chaque réseau.
+
+Pays	Devise	Identifiants opérateurs
+Bénin (BJ)	XOF	mtn_bj, moov_bj, celtiis_bj
+Burkina Faso (BF)	XOF	orange_bf, moov_bf, telecel_bf
+Cameroun (CM)	XAF	mtn_cm, orange_cm
+Centrafrique (CF)	XAF	orange_cf, telecel_cf
+Congo (CG)	XAF	mtn_cg, airtel_cg
+Côte d’Ivoire (CI)	XOF	orange_ci, mtn_ci, moov_ci, wave_ci
+Gabon (GA)	XAF	airtel_ga, moov_ga
+Guinée (GN)	GNF	orange_gn, mtn_gn
+Mali (ML)	XOF	orange_ml, moov_ml
+Niger (NE)	XOF	airtel_ne, moov_ne, alizza_ne
+RD Congo (CD)	CDF	mpesa_cd, airtel_cd, orange_cd
+Sénégal (SN)	XOF	orange_sn, wave_sn, free_sn
+Tchad (TD)	XAF	airtel_td, moov_td
+Togo (TG)	XOF	tmoney_tg, moov_tg
+Catalogue JSON : GET /api/countries. Les frais sont calculés par SonaraPay selon les règles actives et le réseau : utilisez fee et netAmount de la transaction, pas un taux inventé.
+9. Erreurs et reprise
+
+400 : montant, pays, réseau, devise, téléphone ou paramètres invalides ; corrigez la demande.
+401 : clé absente ou invalide ; vérifiez l’en-tête Api-Key.
+403 : clé révoquée, mauvais type de clé ou compte indisponible.
+404 : paiement ou session introuvable avec cette clé.
+409 : une autre demande traite déjà la session ; relisez son statut.
+410 : session expirée ; vérifiez les paiements existants avant de la remplacer.
+503 : réseau ou service temporairement indisponible ; vérifiez d’abord le statut avant une nouvelle tentative.
+Sur une réponse d’erreur, lisez error. N’affichez jamais votre clé, l’OTP ou des informations privées dans les logs client.
+10. Vérifications avant mise en production
+
+Utilisez un compte KYC validé et une clé réelle. Le préfixe sk_live_ indique une clé de production ; aucun mode bac à sable n’est fourni par ces endpoints.
+Testez avec un téléphone autorisé et un petit montant réel. Les appels de création peuvent déclencher un débit Mobile Money.
+Vérifiez le push ou le parcours OTP, le statut final et le crédit du portefeuille.
+Testez le refus, les délais réseau, la révocation et les appels répétés sans livraison en double.
+Pour Gopay, vérifiez votre retour HTTPS puis le statut côté serveur ; ne validez pas une commande uniquement sur l’URL de retour.
+Le webhook BKaPay de SonaraPay est interne à la plateforme. Ne placez pas le secret BKaPay dans votre application. L’intégration marchande décrite ici utilise la consultation sécurisée des statuts ; les notifications marchandes sont suspendues en attendant une protection réseau supplémentaire. Utilisez les endpoints de statut.
+11. Webhooks marchands et tests
+
+Enregistrez votre URL publique HTTPS lors de la création de la clé. Les événements prévus sont payment.successful et payment.failed ; leur envoi est actuellement suspendu. Le bouton Tester le webhook indique actuellement que l’envoi est suspendu ; aucun paiement n’est déclenché. Tester la clé contrôle l’autorisation et le propriétaire ; ce n’est pas un test de débit réel.
+
+Vérifiez X-SonaraPay-Signature : HMAC-SHA256 hexadécimal du corps brut, signé avec votre clé privée SDK ou Gopay. Utilisez une comparaison constante, dédupliquez eventId, vérifiez le montant et la devise, puis relisez le statut serveur avant de livrer. X-SonaraPay-Event-ID contient le même identifiant. Un événement webhook.test ne doit jamais créditer ni livrer une commande.
+
+Les destinations locales, privées et les redirections sont refusées. Une tentative est enregistrée dans les journaux. Il n’y a pas de reprise automatique des livraisons échouées : conservez la vérification périodique des statuts. Désactiver une clé ou retirer son autorisation bloque les nouveaux paiements. Révoquer est définitif.

@@ -3,3 +3,4 @@
 - [Financial display semantics](financial-display-semantics.md) — Separate pending requests from settled funds; purchase cost is not income, and missing financial facts stay unknown.
 - [Administration import boundary](admin-import-boundary.md) — Keep supplied administration JavaScript unchanged; do not replace customer accounts or financial policy with imported defaults.
 - [Published constraint verification](published-constraint-verification.md) — Verify changed CHECK constraints in production; successful publishing alone did not synchronize them.
+- [SonaraPay rollout](sonarapay-rollout.md) — Initial payment integration is limited to Bénin; do not expand it to other countries without a request.
