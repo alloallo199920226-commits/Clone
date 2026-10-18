@@ -38,3 +38,13 @@ Internal page links must show the full-screen light-gray loading view with the c
 **Why:** the user requested this loading view whenever they click a page in the site, “sauf les navbar”.
 
 **How to apply:** retain the separate authentication and country-picker indicators. Follow actual page, data and image loading rather than a fake success delay; keep navbar navigation free of the full-screen loader.
+
+Les zones de saisie du site doivent rester sans contours ni halos colorés et ne pas
+déclencher de zoom automatique sur Safari.
+
+**Why:** l’utilisateur a demandé de corriger ce comportement partout sur le site,
+après avoir montré le champ téléphone sur iPhone.
+
+**How to apply:** conserver un texte de saisie d’au moins 16 pixels et le zoom
+manuel accessible. Indiquer le focus clavier sans contour, et distinguer les
+décorations du site des éléments natifs du clavier Safari.

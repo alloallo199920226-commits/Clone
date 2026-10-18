@@ -40,6 +40,7 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/pages/form-controls.css": ("pages/form-controls.css", "text/css; charset=utf-8"),
     "/pages/admin-deposits.js": ("pages/admin-deposits.js", "text/javascript; charset=utf-8"),
     "/pages/deposit-flow.css": ("pages/deposit-flow.css", "text/css; charset=utf-8"),
     "/pages/deposit-flow.js": ("pages/deposit-flow.js", "text/javascript; charset=utf-8"),
@@ -64,6 +65,16 @@ STATIC_FILES = {
     "/pages/team.js": ("pages/team.js", "text/javascript; charset=utf-8"),
 }
 PUBLIC_AUTH_PAGES = {"/", "/connexion", "/inscription"}
+
+def with_form_controls(body, content_type):
+    """Apply the same field behavior to every HTML route, including admin."""
+    if content_type.startswith("text/html"):
+        return body.replace(
+            b"</head>",
+            b'<link rel="stylesheet" href="/pages/form-controls.css?v=1"></head>',
+            1,
+        )
+    return body
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -90,6 +101,7 @@ class Handler(BaseHTTPRequestHandler):
         imported = admin_assets.browser_asset(route)
         if imported:
             body, content_type = imported
+            body = with_form_controls(body, content_type)
             self.send_response(200)
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(body)))
@@ -149,6 +161,7 @@ class Handler(BaseHTTPRequestHandler):
                 b'<script src="/pages/navigation-loading.js"></script>'
             )
             body = body.replace(b"<head>", b"<head>" + navigation_assets, 1)
+        body = with_form_controls(body, content_type)
         self.send_response(200)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))

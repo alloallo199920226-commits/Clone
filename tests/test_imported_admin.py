@@ -121,6 +121,7 @@ class ImportedAdminTests(unittest.TestCase):
                 if route == admin_assets.ADMIN_ROUTE:
                     self.assertIn(admin_assets.COMPAT_LINK, data)
                     data = data.replace(admin_assets.COMPAT_LINK, b"", 1)
+                    data = data.replace(b'<link rel="stylesheet" href="/pages/form-controls.css?v=1">', b"", 1)
                 self.assertEqual(hashlib.sha256(data).digest(),
                                  hashlib.sha256(archive.read(admin_assets.PREFIX + member)).digest())
         self.assertEqual(self.request("GET", admin_assets.ADMIN_ROUTE + "/", raw=True)[0], 200)

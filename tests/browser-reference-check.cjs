@@ -127,6 +127,10 @@ async function main() {
       width: 472, height: 864, deviceScaleFactor: 1, mobile: true,
     });
     await navigate("/connexion");
+    if (process.argv.includes("--form-controls")) {
+      await require("./form-controls-browser.cjs")({ call, evaluate, navigate, publicOnly: true });
+      await navigate("/connexion");
+    }
     if (process.argv.includes("--auth-progress")) {
       await require("./auth-progress-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, paused, base,
@@ -225,6 +229,11 @@ async function main() {
     })()`);
     assert.equal(registration.status, 201, JSON.stringify(registration.body));
     userId = registration.body.user.id;
+    if (process.argv.includes("--form-controls")) {
+      await require("./form-controls-browser.cjs")({ call, evaluate, navigate, publicOnly: false });
+      assert.deepEqual(errors, []);
+      return;
+    }
     await navigate("/accueil");
     await waitFor("Boolean(document.querySelector('dialog[open]'))");
     assert(await evaluate("document.querySelector('[data-notification-close]').textContent.includes('Désactiver les rappels')"));

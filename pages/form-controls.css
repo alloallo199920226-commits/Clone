@@ -1,0 +1,26 @@
+/* Keep editable text large enough to avoid iOS Safari's focus autozoom.
+   Do not restrict the viewport: manual pinch zoom must remain available. */
+/* Layered important declarations also beat the imported admin theme's
+   unlayered important rules, without modifying its original assets. */
+@layer form-controls {
+html body :is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea, [contenteditable="true"]) {
+  font-size: 16px !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Some forms put the focus decoration on the surrounding field instead. */
+html body :is(.phone-field, .deposit-phone-wrap, .input-wrap, .field-inline),
+html body :is(.phone-field, .deposit-phone-wrap, .input-wrap, .field-inline):focus-within {
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Preserve a keyboard focus cue without drawing a contour around the field.
+   Buttons, links, checkboxes and radio controls retain their focus indicators. */
+html body :is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea, [contenteditable="true"]):focus-visible {
+  background-color: #e9eef3 !important;
+}
+}
