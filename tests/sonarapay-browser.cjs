@@ -23,6 +23,9 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone }
   assert.equal(await evaluate("getComputedStyle(document.querySelector('.deposit-ussd-card')).display"), "none");
   const paymentPath = await evaluate("location.pathname + location.search");
   assert.match(paymentPath, /confirmation-depot\?payment=/);
+  assert.equal(await evaluate("document.querySelector('[data-sonara-redirect]').hidden"), true);
+  await new Promise(resolve => setTimeout(resolve, 11000));
+  assert.equal(await evaluate("location.pathname + location.search"), paymentPath, "Pending payments must not redirect");
   await screenshot("sonarapay-pending");
   await navigate("/historique-recharges");
   await waitFor("document.querySelector('a[href*=\"confirmation-depot?payment=\"]')");
@@ -32,8 +35,10 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone }
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'pending'");
   await evaluate(`fetch('/api/test/sonarapay', {method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({status:'successful'})})`);
-  await evaluate("document.querySelector('[data-sonara-check]').click()");
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'successful'");
+  const successSeenAt = Date.now();
+  assert.equal(await evaluate("document.querySelector('[data-sonara-redirect]').hidden"), false);
+  assert.match(await evaluate("document.querySelector('[data-sonara-redirect]').textContent"), /accueil.*10 s/);
   await noProviderBrand();
   assert.equal(await balance(), 2800);
   assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), false);
@@ -56,6 +61,10 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone }
     ['.iveco-signature-hero','.deposit-card','.deposit-confirmation-header','.sonara-success','.deposit-payer-card'].map(selector => {
       const r=document.querySelector(selector).getBoundingClientRect();return [selector,{x:r.x,y:r.y,width:r.width,height:r.height}];
     })))`));
+  await waitFor("location.pathname === '/accueil'");
+  assert(Date.now() - successSeenAt >= 9700, "Success redirect must wait 10 seconds, not redirect early");
+  await navigate(paymentPath);
+  await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'successful'");
   await evaluate("document.querySelector('.sonara-history-button').click()");
   await waitFor("location.pathname === '/historique-recharges'");
   await waitFor("document.querySelector('[data-activity-list]').textContent.includes('Succès')");
@@ -98,10 +107,17 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone }
   assert.equal(await balance(), 2800);
   await evaluate(`fetch('/api/test/sonarapay', {method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({status:'failed'})})`);
-  await evaluate("document.querySelector('[data-sonara-check]').click()");
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'failed'");
+  const failureSeenAt = Date.now();
   assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), true);
+  assert.equal(await evaluate("document.querySelector('[data-sonara-result-title]').textContent"), "Échec du paiement");
+  assert.equal(await evaluate("document.querySelector('[data-sonara-status]').getAttribute('role')"), "alert");
+  assert.equal(await evaluate("document.querySelector('[data-sonara-redirect]').hidden"), false);
   await noProviderBrand();
   assert.equal(await balance(), 2800);
-  console.log("PASS: Bénin-only SDK UI, real account/isolated provider, pending history, reload, exactly-once credit, OTP clearing, refusal, 4 widths. NO live provider calls.");
+  await screenshot("sonarapay-failed");
+  await waitFor("location.pathname === '/accueil'");
+  assert(Date.now() - failureSeenAt >= 9700, "Failure redirect must wait 10 seconds");
+  assert.equal(await balance(), 2800);
+  console.log("PASS: automatic success/failure detection, visible failure alert, both 10-second home redirects, no pending redirect, real account/isolated provider, exactly-once credit, OTP clearing, 4 widths. NO live provider calls.");
 };

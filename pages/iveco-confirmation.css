@@ -1205,6 +1205,14 @@ body.deposit-page--confirmation .sonara-panel {
 .sonara-panel[data-payment-status="processing"] .sonara-status-message,
 .sonara-panel[data-payment-status="otp_required"] .sonara-status-message { border-color: rgba(224, 184, 62, .35); color: #e6d79d; }
 .sonara-panel[data-payment-status="failed"] .sonara-status-message { border-color: rgba(226, 58, 78, .4); color: #f0a0a8; }
+.sonara-panel[data-payment-status="failed"] [data-sonara-result-title] { color: #f0a0a8; }
+.sonara-panel .sonara-redirect-notice {
+  margin: 10px 0 0;
+  color: #c1c9d1;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+}
 .sonara-panel[data-payment-status="review"] .sonara-status-message { border-color: rgba(224, 184, 62, .4); color: #e9d18c; }
 
 .sonara-amount-line,

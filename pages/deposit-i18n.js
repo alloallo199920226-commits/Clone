@@ -10,6 +10,8 @@
     sonaraUnknown: ["Vérification différée. Conservez cette référence et reprenez le suivi, sans lancer un autre paiement.", "Verification delayed. Keep this reference and resume tracking; do not start another payment."],
     sonaraSuccessful: ["Paiement confirmé. Votre compte a été crédité.", "Payment confirmed. Your account has been credited."],
     sonaraFailed: ["Paiement refusé. Aucun crédit n’a été ajouté pour cette demande.", "Payment declined. No credit was added for this request."],
+    sonaraFailedTitle: ["Échec du paiement", "Payment failed"],
+    sonaraRedirect: ["Retour automatique à l’accueil dans {seconds} s.", "Returning to the home page in {seconds} s."],
     sonaraReview: ["La confirmation reçue ne correspond pas à votre demande. Contactez l’assistance avec cette référence, sans payer à nouveau.", "The confirmation does not match your request. Contact support with this reference; do not pay again."],
     sonaraCredentials: ["Le suivi du paiement est temporairement indisponible. Contactez l’assistance avec votre référence ; ne relancez pas un autre paiement.", "Payment tracking is temporarily unavailable. Contact support with your reference; do not start another payment."],
     sonaraUnavailable: ["Paiement indisponible. Conservez votre demande et réessayez son suivi.", "Payment unavailable. Keep your request and try tracking it again."],

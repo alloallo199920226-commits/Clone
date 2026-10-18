@@ -32,7 +32,24 @@
       const nonsuccess = panel.querySelector("[data-sonara-nonsuccess]");
       const copyFeedback = panel.querySelector("[data-sonara-copy-feedback]");
       const clock = document.querySelector("[data-deposit-clock]");
+      const redirectNotice = panel.querySelector("[data-sonara-redirect]");
+      const resultTitle = panel.querySelector("[data-sonara-result-title]");
       let payment, busy = false, pollTimer, clockTimer, copyTimer, lastState;
+      let redirectTimer, redirectTick, redirectDeadline;
+      const updateRedirect = () => {
+        if (!redirectDeadline) return;
+        const seconds = Math.max(0, Math.ceil((redirectDeadline - Date.now()) / 1000));
+        set(redirectNotice, "sonaraRedirect", { seconds });
+        if (seconds === 0) location.replace("/accueil");
+      };
+      const startRedirect = () => {
+        if (redirectDeadline) return; // Polling and language changes must not reset the delay.
+        redirectDeadline = Date.now() + 10000;
+        redirectNotice.hidden = false;
+        updateRedirect();
+        redirectTick = setInterval(updateRedirect, 1000);
+        redirectTimer = setTimeout(() => location.replace("/accueil"), 10000);
+      };
       content.hidden = false;
       document.querySelector("[data-deposit-missing]").hidden = true;
       content.querySelectorAll(".deposit-details,.deposit-ussd-card,.deposit-validation,.deposit-notice")
@@ -40,8 +57,8 @@
       panel.hidden = false;
       document.querySelectorAll(".deposit-timer").forEach(node => { node.hidden = false; });
       const stateKey = () => payment?.credited === true ? "sonaraSuccessful"
-        : ["credentials", "credentials_changed"].includes(payment?.errorCode) ? "sonaraCredentials"
         : payment?.status === "failed" ? "sonaraFailed"
+        : ["credentials", "credentials_changed"].includes(payment?.errorCode) ? "sonaraCredentials"
         : payment?.status === "review" ? "sonaraReview"
         : payment?.status === "otp_required" ? "sonaraOtp"
         : payment?.errorCode ? "sonaraUnknown" : "sonaraPending";
@@ -60,6 +77,8 @@
         const validAmount = Number.isSafeInteger(payment.amount_fcfa) && payment.amount_fcfa >= 0;
         const amount = validAmount ? `FCFA ${new Intl.NumberFormat("en-US").format(payment.amount_fcfa)}` : "—";
         const currentState = stateKey();
+        set(resultTitle, payment.status === "failed" ? "sonaraFailedTitle" : "sonaraTitle");
+        message.setAttribute("role", payment.status === "failed" && !credited ? "alert" : "status");
         if (lastState !== currentState || !message.dataset.i18n) {
           set(message, currentState);
           lastState = currentState;
@@ -83,6 +102,7 @@
         if (credited || payment.status === "failed") {
           clearInterval(pollTimer);
           check.hidden = true;
+          startRedirect();
         }
       };
       const refresh = async (path = "", body) => {
@@ -139,11 +159,15 @@
         refresh("/retry", { otp });
       });
       pollTimer = setInterval(() => { if (!document.hidden) refresh(); }, 5000);
-      document.addEventListener("deposit-language-change", () => { updateClock(); paint(); });
+      document.addEventListener("deposit-language-change", () => { updateClock(); paint(); updateRedirect(); });
+      document.addEventListener("visibilitychange", updateRedirect);
       window.addEventListener("pagehide", () => {
         clearInterval(pollTimer);
         clearInterval(clockTimer);
         clearTimeout(copyTimer);
+        clearInterval(redirectTick);
+        clearTimeout(redirectTimer);
+        document.removeEventListener("visibilitychange", updateRedirect);
       }, { once: true });
       await refresh();
     },

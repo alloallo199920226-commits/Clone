@@ -9,6 +9,12 @@ Ne pas afficher la mention SonaraPay dans les interfaces de la plateforme.
 
 **How to apply:** employer des libellés neutres dans les messages, traductions et reçus, y compris les historiques existants ; conserver les identifiants techniques internes pour le suivi des paiements.
 
+Signaler automatiquement les dépôts échoués et rediriger vers l’accueil après 10 secondes lorsqu’un paiement est confirmé réussi ou échoué.
+
+**Why:** l’utilisateur a demandé ce comportement pour les deux résultats définitifs.
+
+**How to apply:** démarrer le délai uniquement après confirmation serveur du crédit ou d’un échec ; ne pas considérer une attente, une coupure réseau ou une vérification différée comme un échec.
+
 L’utilisateur veut intégrer SonaraPay « pour les paiements au bénin seule d'abord ».
 
 **Why:** l’utilisateur a explicitement limité le lancement au Bénin.
