@@ -20,7 +20,7 @@
       selectedCard = button.closest(".product-card");
       title.textContent = selectedCard.dataset.vip;
       image.src = selectedCard.dataset.image;
-      image.alt = `Véhicule ${selectedCard.dataset.vip}`;
+      image.alt = `Camion IVECO — offre ${selectedCard.dataset.vip}`;
       dialog.querySelector("[data-detail-price]").textContent = `Prix:FCFA ${format(selectedCard.dataset.price)}`;
       dialog.querySelector("[data-detail-daily]").textContent = `Revenu quotidien:FCFA ${format(selectedCard.dataset.daily)}`;
       dialog.querySelector("[data-detail-total]").textContent = `Revenu total:FCFA ${format(selectedCard.dataset.total)}`;

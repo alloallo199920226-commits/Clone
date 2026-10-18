@@ -359,6 +359,38 @@ async function main() {
       console.log("PASS: amount/channel entry, MTN/MOOV choice, phone validation, confirmation, modify/refresh preservation, admin placeholders, no transactions/credits, missing draft and 390/472px layouts.");
       return;
     }
+    if (process.argv.includes("--iveco-vehicles")) {
+      const expected = [
+        ["/accueil", ".home-hero img", ["iveco-home.jpg"]],
+        ["/compte", ".hero-vehicle", ["iveco-account.jpg"]],
+        ["/projet", ".owned-hero", ["iveco-products.jpg"]],
+        ["/retrait", ".vehicle-balance img", ["iveco-withdraw.jpg"]],
+        ["/a-propos", ".reference-crop img", ["iveco-about-fleet.jpg", "iveco-about-truck.jpg"]],
+        ["/service-client", ".service-banner img", ["iveco-support.jpg"]],
+      ];
+      const unique = new Set();
+      for (const [route, selector, filenames] of expected) {
+        await navigate(route);
+        await waitFor(`(() => { const images=[...document.querySelectorAll(${JSON.stringify(selector)})]; return images.length===${filenames.length} && images.every(img=>img.complete && img.naturalWidth>0); })()`);
+        assert.deepEqual(await evaluate(`[...document.querySelectorAll(${JSON.stringify(selector)})].map(img=>img.getAttribute('src').split('/').pop())`), filenames);
+        for (const name of filenames) { assert(!unique.has(name)); unique.add(name); }
+        assert(await evaluate("document.documentElement.scrollWidth <= innerWidth"), `${route} must fit the viewport`);
+        if (route === "/accueil") {
+          await waitFor("document.querySelector('.platform-notification-dialog[open] [data-notification-close]')");
+          await evaluate("document.querySelector('.platform-notification-dialog[open] [data-notification-close]').click()");
+          await waitFor("[...document.querySelectorAll('.vehicle-image img')].length===6 && [...document.querySelectorAll('.vehicle-image img')].every(img=>img.complete && img.naturalWidth>0)");
+          assert.deepEqual(await evaluate("[...document.querySelectorAll('.vehicle-image img')].map(img=>img.getAttribute('src').split('/').pop())"), Array.from({length:6},(_,i)=>`iveco-vip-${i+1}.jpg`));
+          await screenshot("iveco-vehicles-home");
+          await evaluate("document.querySelector('[data-purpose=\"vip-card-4\"] [data-purpose=\"buy-btn\"]').click()");
+          await waitFor("document.querySelector('.purchase-details img').getAttribute('src').endsWith('iveco-vip-4.jpg') && document.querySelector('.purchase-details img').naturalWidth>0");
+          await screenshot("iveco-vehicles-purchase");
+        } else {
+          await screenshot("iveco-vehicles-" + route.slice(1));
+        }
+      }
+      console.log("PASS: 13 distinct IVECO photos, six loaded VIP images, matching purchase-dialog image, account/products/withdrawal/About/support routes, no overflow. No purchase or payment submitted.");
+      return;
+    }
     if (process.argv.includes("--home-branding")) {
       for (const width of [320, 390, 472]) {
         await call("Emulation.setDeviceMetricsOverride", { width, height: 844, deviceScaleFactor: 1, mobile: true });

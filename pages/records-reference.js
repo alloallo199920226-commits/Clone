@@ -115,7 +115,7 @@
       article.dataset.productId = String(product.id);
       const image = document.createElement("img");
       const vip = Number(product.vip);
-      image.src = `/pages/assets/vip-${Number.isInteger(vip) && vip >= 1 && vip <= 6 ? vip : 1}.jpg`;
+      image.src = `/pages/assets/iveco-vip-${Number.isInteger(vip) && vip >= 1 && vip <= 6 ? vip : 1}.jpg`;
       image.alt = "";
       image.className = "owned-product-image";
       const copy = document.createElement("div");

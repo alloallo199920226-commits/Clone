@@ -27,6 +27,16 @@ Use real photos of attractive modern vehicles, not screenshots as image backgrou
 
 **How to apply:** inspect the rendered asset itself and compare the vehicle to the reference, rather than trusting a filename or VIP label. Match layout without presenting reference financial figures as real funds or activated returns.
 
+Les visuels de véhicules doivent représenter des camions IVECO, avec des photos
+différentes selon les emplacements et les offres, plutôt que des voitures.
+
+**Why:** l’utilisateur a demandé de remplacer partout les images de voitures par
+des camions IVECO « totalement différents » pour chaque partie.
+
+**How to apply:** choisir des photos réelles et distinctes pour les nouvelles
+sections ; conserver une même photo pour un même produit entre son catalogue,
+sa fenêtre d’achat et son historique.
+
 Verify brand identity in downloaded logos, not just the search result name.
 
 **Why:** searches for Moov Africa returned unrelated Moov Inc. assets, and MTN results mixed older multicolor marks with the requested black/yellow mark.
