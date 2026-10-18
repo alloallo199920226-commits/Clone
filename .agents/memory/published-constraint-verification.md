@@ -30,3 +30,12 @@ read-only introspection then confirmed the intended production constraint.
 
 **How to apply:** distinguish Agent access limits from user permissions, explain the
 effect before suggesting SQL, and verify the resulting constraint read-only afterward.
+
+For SQL-editor instructions, prefer one atomic statement when replacing constraints
+on the same table, rather than a multi-statement transaction block.
+
+**Why:** the user repeatedly saw only the editor's transaction help with a multi-statement
+block; the single-statement alternative was confirmed successful by production introspection.
+
+**How to apply:** combine compatible constraint changes into one ALTER TABLE, distinguish
+editor help from execution results, and verify the database instead of repeating selection instructions.
