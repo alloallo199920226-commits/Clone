@@ -16,7 +16,7 @@ STATES = {"pending", "processing", "settling", "otp_required", "failed"}
 
 def public(order):
     return {
-        "id": str(order["id"]), "amount_fcfa": order["amount_fcfa"],
+        "id": str(order["id"]), "requestId": str(order["request_id"]), "amount_fcfa": order["amount_fcfa"],
         "currency": "XOF", "countryCode": "+229", "operator": provider.OPERATORS[order["operator_id"]],
         "phone": order["payer_phone"], "status": order["status"],
         "reference": order["provider_reference"], "credited": order["credited_at"] is not None,

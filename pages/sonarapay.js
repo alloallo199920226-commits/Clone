@@ -3,22 +3,42 @@
   const { t, set } = window.depositI18n;
   const endpoint = "/api/sonarapay/payments";
   const api = async (path, body) => {
-    const response = await fetch(endpoint + path, {
-      method: body === undefined ? "GET" : "POST", credentials: "include", cache: "no-store",
-      headers: { "Content-Type": "application/json" },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    });
+    let response, result;
+    try {
+      response = await fetch(endpoint + path, {
+        method: body === undefined ? "GET" : "POST", credentials: "include", cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+      });
+      result = await response.json();
+    } catch {
+      throw Object.assign(new Error(t("sonaraConnectionLost")), { uncertain: true });
+    }
     if (response.status === 401) location.replace("/connexion");
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || t("sonaraUnavailable"));
+    if (!response.ok) throw Object.assign(new Error(result.error || t("sonaraUnavailable")), {
+      uncertain: response.status >= 500,
+    });
     return result;
   };
   window.sonaraPay = {
+    async recover(draft) {
+      // Read only: recovering a lost browser response must never initiate a payment.
+      const result = await api("");
+      const payment = result.payments.find(order => order.requestId === draft.request_id);
+      if (!payment) throw Object.assign(new Error(t("sonaraConnectionLost")), { uncertain: true });
+      return payment;
+    },
     async create(draft) {
-      return (await api("", {
-        amount: draft.amount_fcfa, operatorId: draft.operator,
-        phone: draft.phone, requestId: draft.request_id,
-      })).payment;
+      try {
+        return (await api("", {
+          amount: draft.amount_fcfa, operatorId: draft.operator,
+          phone: draft.phone, requestId: draft.request_id,
+        })).payment;
+      } catch (error) {
+        if (!error.uncertain) throw error;
+        try { return await this.recover(draft); }
+        catch { throw Object.assign(new Error(t("sonaraConnectionLost")), { uncertain: true }); }
+      }
     },
     async mount(id, populateLogo, operatorBrand) {
       const content = document.querySelector("[data-deposit-content]");

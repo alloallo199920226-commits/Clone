@@ -13,8 +13,30 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone }
   assert.equal(await evaluate("document.querySelector('[data-deposit-prefix]').textContent"), "+229");
   assert.match(await evaluate("document.querySelector('[data-notice-body]').textContent"), /réelle/);
   await screenshot("sonarapay-operators");
+  // The operator has accepted the request, but Safari loses its response.
+  // While GET recovery is also offline, do not offer another payment submission.
+  await evaluate(`window.paymentFetch = window.fetch; window.paymentPosts = 0;
+    window.fetch = async (url, options) => {
+      if (String(url) === '/api/sonarapay/payments') {
+        if (options?.method === 'POST') {
+          window.paymentPosts++;
+          await window.paymentFetch(url, options);
+        }
+        throw new TypeError('Load failed');
+      }
+      return window.paymentFetch(url, options);
+    }`);
   await evaluate(`document.querySelector('#deposit-phone').value=${JSON.stringify(phone)};
     document.querySelector('#deposit-operator-form').requestSubmit()`);
+  await waitFor("document.querySelector('[type=submit]').textContent.includes('Vérifier mon paiement')");
+  assert.match(await evaluate("document.querySelector('[data-deposit-status]').textContent"), /Ne payez pas une seconde fois/);
+  assert(!await evaluate("document.body.innerText.includes('Load failed')"));
+  await evaluate("document.querySelector('#deposit-operator-form').requestSubmit()");
+  await waitFor("!document.querySelector('[type=submit]').disabled");
+  assert.equal(await evaluate("window.paymentPosts"), 1, "Retry after a lost response must be GET-only");
+  await screenshot("sonarapay-connection-lost");
+  // Reload with connectivity restored: persisted request ID recovers automatically.
+  await navigate("/choisir-operateur");
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'pending'");
   assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), true);
   await noProviderBrand();

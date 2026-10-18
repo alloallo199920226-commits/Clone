@@ -15,6 +15,12 @@ Signaler automatiquement les dépôts échoués et rediriger vers l’accueil ap
 
 **How to apply:** démarrer le délai uniquement après confirmation serveur du crédit ou d’un échec ; ne pas considérer une attente, une coupure réseau ou une vérification différée comme un échec.
 
+Après une réponse réseau perdue lors du lancement, retrouver la demande existante par une lecture seule, sans relancer automatiquement un encaissement.
+
+**Why:** l’utilisateur a signalé un débit Mobile Money alors que Safari affichait « Load failed » ; une réponse navigateur perdue ne permet pas de conclure à l’absence d’encaissement.
+
+**How to apply:** conserver l’identifiant de demande avant transmission ; en cas de résultat incertain, proposer le suivi et non un nouveau paiement, y compris après rechargement. Ne jamais créditer sur la seule déclaration d’un débit.
+
 L’utilisateur veut intégrer SonaraPay « pour les paiements au bénin seule d'abord ».
 
 **Why:** l’utilisateur a explicitement limité le lancement au Bénin.

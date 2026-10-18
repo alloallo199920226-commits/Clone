@@ -263,8 +263,38 @@
       button.addEventListener("click", () => choose(button.dataset.operator));
     });
     submit.disabled = false;
+    const trackPayment = async (recoverOnly) => {
+      if (!draft.request_id) draft.request_id = crypto.randomUUID();
+      draft.request_uncertain = true;
+      if (!save()) return;
+      submit.disabled = true;
+      notify("sonaraCreating");
+      try {
+        const payment = await (recoverOnly
+          ? window.sonaraPay.recover(draft) : window.sonaraPay.create(draft));
+        draft.payment_id = payment.id;
+        delete draft.request_uncertain;
+        save();
+        go("/confirmation-depot?payment=" + encodeURIComponent(payment.id));
+      } catch (error) {
+        if (!recoverOnly && !error.uncertain) {
+          delete draft.request_uncertain;
+          save();
+        }
+        status.removeAttribute("data-i18n");
+        status.textContent = error.message || t("sonaraUnavailable");
+        if (draft.request_uncertain) {
+          set(submit, "sonaraRecover");
+          set(document.querySelector("[data-notice-body]"), "sonaraRecoverNotice");
+        }
+      } finally { submit.disabled = false; }
+    };
     form.addEventListener("submit", async event => {
       event.preventDefault();
+      if (automatic && draft.request_uncertain) {
+        await trackPayment(true);
+        return;
+      }
       if (expired()) return;
       let phone = input.value.replace(/\D/g, "");
       if (phone.startsWith(prefix.slice(1)) && phone.length === length + 3) phone = phone.slice(3);
@@ -275,23 +305,12 @@
       }
       draft.phone = phone;
       if (automatic) {
-        if (!draft.request_id) draft.request_id = crypto.randomUUID();
-        if (!save()) return;
-        submit.disabled = true;
-        notify("sonaraCreating");
-        try {
-          const payment = await window.sonaraPay.create(draft);
-          draft.payment_id = payment.id;
-          save();
-          go("/confirmation-depot?payment=" + encodeURIComponent(payment.id));
-        } catch (error) {
-          status.removeAttribute("data-i18n");
-          status.textContent = error.message || t("sonaraUnavailable");
-        } finally { submit.disabled = false; }
+        await trackPayment(false);
         return;
       }
       if (save()) go("/confirmation-depot");
     });
+    if (automatic && draft.request_uncertain) await trackPayment(true);
   }).catch(error => {
     if (!expired()) notify(["signIn", "accountError", "countryError"].includes(error.message) ? error.message : "accountError");
   }).finally(() => { content.setAttribute("aria-busy", "false"); });
