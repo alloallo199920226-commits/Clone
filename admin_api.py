@@ -167,10 +167,10 @@ def transaction_rows(cur, query):
                                                  "+226": "BF", "+227": "NE", "+237": "CM"}.items()
                  if row["phone"].startswith(prefix)), ""),
             "amount": abs(row["amount_fcfa"]), "status": "completed", "type": row["type"],
-            "reference": row["provider_reference"], "orderNumber": row["provider_reference"],
+            "reference": db.payment_display_text(row["provider_reference"]), "orderNumber": db.payment_display_text(row["provider_reference"]),
             "createdAt": row["created_at"].isoformat(), "initiatedAt": row["created_at"].isoformat(),
-            "paymentProvider": details.get("provider", details.get("approval_method", "manual")),
-            "operatorName": details.get("channel") or "Non renseigné",
+            "paymentProvider": "automatic" if details.get("provider") == "sonarapay" else details.get("provider", details.get("approval_method", "manual")),
+            "operatorName": db.payment_display_text(details.get("channel")) or "Non renseigné",
             "payerNumber": details.get("payer_number") or row["phone"],
             "destination": details.get("destination"), "receiverName": details.get("receiver_name"),
             "netAmount": details.get("net_amount_fcfa"), "fee": details.get("fee_fcfa"),

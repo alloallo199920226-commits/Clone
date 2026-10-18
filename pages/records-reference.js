@@ -39,7 +39,7 @@
       if (!Array.isArray(payload.activities)) throw new Error("Les données sont indisponibles.");
       payload.activities.push(...pending.payments.filter(payment => !payment.credited).map(payment => ({
         id: payment.id, amount_fcfa: payment.amount_fcfa, reference: payment.reference || payment.id,
-        channel: `SonaraPay · ${payment.operator.operatorName}`, created_at: payment.created_at,
+        channel: payment.operator.operatorName, created_at: payment.created_at,
         status: payment.status === "failed" ? "failed" : "pending", payment_id: payment.id,
       })));
       payload.activities.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));

@@ -3,6 +3,12 @@ name: SonaraPay rollout
 description: User-defined country scope for the initial SonaraPay integration.
 ---
 
+Ne pas afficher la mention SonaraPay dans les interfaces de la plateforme.
+
+**Why:** l’utilisateur a demandé « N'affiche la mention de sonarapay nul part ».
+
+**How to apply:** employer des libellés neutres dans les messages, traductions et reçus, y compris les historiques existants ; conserver les identifiants techniques internes pour le suivi des paiements.
+
 L’utilisateur veut intégrer SonaraPay « pour les paiements au bénin seule d'abord ».
 
 **Why:** l’utilisateur a explicitement limité le lancement au Bénin.

@@ -20,6 +20,12 @@ from server import Handler
 
 
 class VerificationTests(unittest.TestCase):
+    def test_receipts_hide_provider_brand_without_changing_reference(self):
+        self.assertEqual(auth_backend.payment_display_text("SonaraPay · MTN"), "MTN")
+        self.assertEqual(auth_backend.payment_display_text("sonarapay:PAY-123"), "PAY-123")
+        self.assertEqual(auth_backend.payment_display_text("MOOV"), "MOOV")
+        self.assertIsNone(auth_backend.payment_display_text(None))
+
     def test_celtiis_disabled_for_new_deposits_but_history_preserved(self):
         self.assertEqual(set(client.DEPOSIT_OPERATORS), {"mtn_bj", "moov_bj"})
         with patch.object(client, "configured", return_value=True), \

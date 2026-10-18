@@ -219,6 +219,11 @@ def account_summary(user_id: int) -> dict:
         return cursor.fetchone()
 
 
+def payment_display_text(value):
+    """Hide provider branding on receipts without changing stored audit facts."""
+    return re.sub(r"sonarapay\s*(?:[·:]\s*)?", "", value, flags=re.IGNORECASE).strip() if isinstance(value, str) else value
+
+
 def get_activity(user_id: int, kind: str | None = None) -> list[dict]:
     if kind is not None and kind not in ACTIVITY_KINDS:
         raise ValueError("Filtre d’historique invalide.")
@@ -235,8 +240,8 @@ def get_activity(user_id: int, kind: str | None = None) -> list[dict]:
     return [
         {"id": row["id"], "kind": row["kind"], "label": row["label"],
          "amount_fcfa": row["amount_fcfa"], "created_at": row["created_at"].isoformat(),
-         "reference": row["provider_reference"], "status": "succeeded",
-         "channel": row["details"].get("channel") if isinstance(row["details"].get("channel"), str) else None,
+         "reference": payment_display_text(row["provider_reference"]), "status": "succeeded",
+         "channel": payment_display_text(row["details"].get("channel")) if isinstance(row["details"].get("channel"), str) else None,
          "net_amount_fcfa": _receipt_number(row["details"], "net_amount_fcfa")}
         for row in rows
     ]

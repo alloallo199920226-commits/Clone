@@ -51,9 +51,9 @@ def recent(user_id):
 
 def prepare(user, body):
     if not user["phone"].startswith("+229"):
-        raise auth_backend.AuthError(403, "SonaraPay est réservé au Bénin pour le moment.")
+        raise auth_backend.AuthError(403, "Le paiement automatique est réservé au Bénin pour le moment.")
     if not provider.configured():
-        raise auth_backend.AuthError(503, "SonaraPay n’est pas configuré.")
+        raise auth_backend.AuthError(503, "Le paiement automatique n’est pas configuré.")
     if set(body) - {"amount", "operatorId", "phone", "requestId"}:
         raise ValueError("Champs de demande inattendus.")
     amount = body.get("amount")
@@ -196,7 +196,7 @@ def advance(order, *, initiate=False, otp=None):
                                         "sonarapay:" + order["provider_reference"],
                                         approval_method="automatic",
                                         receipt_details={"provider": "sonarapay",
-                                                         "channel": "SonaraPay · " + provider.OPERATORS[order["operator_id"]]["operatorName"],
+                                                         "channel": provider.OPERATORS[order["operator_id"]]["operatorName"],
                                                          "payer_number": order["payer_phone"]})
                 _update(order["id"], status="successful", credited=True)
         elif state in STATES:
