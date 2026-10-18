@@ -37,6 +37,16 @@ des camions IVECO « totalement différents » pour chaque partie.
 sections ; conserver une même photo pour un même produit entre son catalogue,
 sa fenêtre d’achat et son historique.
 
+La seule marque affichée sur le site doit être IVECO : aucune mention visible
+de SHINERAY ne doit subsister, y compris dans les notifications et l’administration.
+
+**Why:** l’utilisateur a demandé « Je ne veux plus voir SHINERAY nul part
+mentionner dans le site je veux juste […] iveco ».
+
+**How to apply:** utiliser IVECO dans les textes visibles et les titres, sans
+renommer les identifiants techniques historiques ni modifier les données des comptes.
+Ne pas attribuer l’histoire d’un autre constructeur à IVECO.
+
 Verify brand identity in downloaded logos, not just the search result name.
 
 **Why:** searches for Moov Africa returned unrelated Moov Inc. assets, and MTN results mixed older multicolor marks with the requested black/yellow mark.

@@ -1,4 +1,4 @@
-"""Serve the SHINERAY pages and a small, authenticated application API."""
+"""Serve the IVECO pages and a small, authenticated application API."""
 
 import json
 from http.cookies import SimpleCookie
@@ -11,6 +11,7 @@ import admin_assets
 import admin_api
 import sonarapay_payments
 import sonarapay_client
+from platform_brand import with_iveco_brand
 
 ROOT = Path(__file__).resolve().parent
 SESSION_COOKIE = "shineray_session"
@@ -41,6 +42,7 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/pages/iveco-brand.js": ("pages/iveco-brand.js", "text/javascript; charset=utf-8"),
     "/pages/form-controls.css": ("pages/form-controls.css", "text/css; charset=utf-8"),
     "/pages/admin-deposits.js": ("pages/admin-deposits.js", "text/javascript; charset=utf-8"),
     "/pages/deposit-flow.css": ("pages/deposit-flow.css", "text/css; charset=utf-8"),
@@ -106,6 +108,7 @@ class Handler(BaseHTTPRequestHandler):
         if imported:
             body, content_type = imported
             body = with_form_controls(body, content_type)
+            body = with_iveco_brand(body, content_type)
             self.send_response(200)
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(body)))
@@ -160,6 +163,7 @@ class Handler(BaseHTTPRequestHandler):
             )
             body = body.replace(b"<head>", b"<head>" + navigation_assets, 1)
         body = with_form_controls(body, content_type)
+        body = with_iveco_brand(body, content_type)
         self.send_response(200)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
@@ -485,5 +489,5 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     sonarapay_payments.start_reconciliation()
-    print("SHINERAY listening on 0.0.0.0:5000", flush=True)
+    print("IVECO listening on 0.0.0.0:5000", flush=True)
     ThreadingHTTPServer(("0.0.0.0", 5000), Handler).serve_forever()

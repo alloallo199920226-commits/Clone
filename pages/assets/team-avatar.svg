@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="SHINERAY">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="IVECO">
   <circle cx="40" cy="40" r="38" fill="#f2f2f2"/>
   <path d="M20 20h40v23H20z" fill="#151515"/>
   <path d="M25 24h9v14h-9zm13 0h7v14h-7zm11 0h6v14h-6z" fill="#fff"/>
   <path d="M12 47h56v13H12z" fill="#df1025"/>
   <path d="M20 51h5v3h-5zm8 0h5v3h-5zm8 0h5v3h-5zm8 0h5v3h-5zm8 0h5v3h-5z" fill="#fff"/>
-  <text x="40" y="57" fill="#fff" font-family="Arial,sans-serif" font-size="5" font-weight="700" text-anchor="middle">SHINERAY</text>
+  <text x="40" y="57" fill="#fff" font-family="Arial,sans-serif" font-size="5" font-weight="700" text-anchor="middle">IVECO</text>
 </svg>

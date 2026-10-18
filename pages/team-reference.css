@@ -23,14 +23,17 @@ html, body { margin: 0; min-width: 320px; }
   display: flex;
   height: 37px;
   align-items: center;
-  background: #e50920;
-  padding: 0 10px 0 43px;
+  width: 169px;
+  background: transparent;
+  padding: 0;
   color: #fff;
   font-size: 26px;
   font-weight: 700;
   letter-spacing: -1.5px;
 }
+.team-wordmark img { display: block; width: 100%; height: auto; max-height: 37px; object-fit: contain; }
 .team-wordmark::before {
+  display: none;
   position: absolute;
   left: 4px;
   width: 34px;

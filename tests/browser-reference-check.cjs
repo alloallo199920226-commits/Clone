@@ -359,6 +359,46 @@ async function main() {
       console.log("PASS: amount/channel entry, MTN/MOOV choice, phone validation, confirmation, modify/refresh preservation, admin placeholders, no transactions/credits, missing draft and 390/472px layouts.");
       return;
     }
+    if (process.argv.includes("--iveco-branding")) {
+      const branded = async () => {
+        await waitFor("! /\\b(?:SHINERAY|SWM|Sprite|AERONOVA)\\b/i.test(document.title + ' ' + document.body.innerText)");
+        assert(await evaluate("Boolean(document.querySelector('script[src^=\"/pages/iveco-brand.js\"]'))"));
+      };
+      for (const route of ["/accueil", "/notifications", "/compte", "/projet", "/equipe",
+        "/mon-equipe", "/a-propos", "/regles", "/service-client", "/recharger", "/retrait",
+        "/financement", "/historique-recharges", "/historique-retraits",
+        "/gestion-compte-bancaire", "/ajouter-compte-retrait"]) {
+        await navigate(route);
+        await branded();
+        if (route === "/notifications") await screenshot("iveco-branded-notification");
+        if (route === "/equipe") {
+          await waitFor("document.querySelector('.team-wordmark img[alt=\"IVECO\"]')?.naturalWidth > 0");
+          await screenshot("iveco-branded-team");
+        }
+      }
+      await evaluate(`(() => {
+        const fixture=document.createElement('section');
+        fixture.id='brand-test-fixture';
+        fixture.innerHTML='<p>SHINERAY SWM Sprite AERONOVA</p><a href="/shineray-path">SHINERAY</a><input placeholder="SHINERAY" value="SHINERAY-secret"><img alt="SHINERAY" src="/pages/assets/iveco-auth-logo.png">';
+        document.body.append(fixture);
+        sessionStorage.setItem('iveco-brand-test', 'SHINERAY-original');
+      })()`);
+      await waitFor("document.querySelector('#brand-test-fixture p').textContent === 'IVECO IVECO IVECO IVECO'");
+      assert.equal(await evaluate("document.querySelector('#brand-test-fixture input').value"), "SHINERAY-secret");
+      assert.equal(await evaluate("document.querySelector('#brand-test-fixture input').placeholder"), "IVECO");
+      assert.equal(await evaluate("document.querySelector('#brand-test-fixture a').getAttribute('href')"), "/shineray-path");
+      assert.equal(await evaluate("sessionStorage.getItem('iveco-brand-test')"), "SHINERAY-original");
+      await evaluate("document.querySelector('#brand-test-fixture p').firstChild.data='SHINERAY';document.querySelector('#brand-test-fixture img').alt='SWM';");
+      await waitFor("document.querySelector('#brand-test-fixture p').textContent === 'IVECO' && document.querySelector('#brand-test-fixture img').alt === 'IVECO'");
+      await navigate("/omarshark-junior-panam");
+      await branded();
+      await waitFor("document.querySelector('.admin-login-brand img[alt=\"IVECO\"]')?.naturalWidth > 0");
+      assert(await evaluate("document.body.textContent.includes('Administration IVECO')"));
+      assert.equal(await evaluate("fetch('/api/admin/overview').then(r=>r.status)"), 401);
+      await screenshot("iveco-branded-admin-login");
+      console.log("PASS: IVECO-only rendered branding on 16 customer routes plus admin login; dynamic text/accessible labels normalized; input values, URLs, stored data and admin authorization unchanged.");
+      return;
+    }
     if (process.argv.includes("--iveco-vehicles")) {
       const expected = [
         ["/accueil", ".home-hero img", ["iveco-home.jpg"]],
