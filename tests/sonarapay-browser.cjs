@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, prefix = "+229" }) => {
-  const operatorCount = 2;
+  const operatorCount = prefix === "+226" ? 3 : 2;
   const balance = () => evaluate("(async () => (await (await fetch('/api/me')).json()).balance_fcfa)()");
   const noProviderBrand = async () => assert(!await evaluate("/sonarapay/i.test(document.body.innerText + ' ' + Array.from(document.querySelectorAll('[aria-label]'), node => node.getAttribute('aria-label')).join(' '))"), "Provider name must not be displayed");
   await call("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
@@ -16,8 +16,12 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
     assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-operator]')].map(node=>node.dataset.operator)"),
       ["tmoney_tg", "moov_tg"]);
   }
+  if (prefix === "+226") {
+    assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-operator]')].map(node=>node.dataset.operator)"),
+      ["orange_bf", "moov_bf", "telecel_bf"]);
+  }
   assert.match(await evaluate("document.querySelector('[data-notice-body]').textContent"), /réelle/);
-  await screenshot(prefix === "+228" ? "sonarapay-togo-operators" : "sonarapay-operators");
+  await screenshot(prefix === "+226" ? "sonarapay-burkina-operators" : prefix === "+228" ? "sonarapay-togo-operators" : "sonarapay-operators");
   // The operator has accepted the request, but Safari loses its response.
   // While GET recovery is also offline, do not offer another payment submission.
   await evaluate(`window.paymentFetch = window.fetch; window.paymentPosts = 0;

@@ -28,7 +28,7 @@ class VerificationTests(unittest.TestCase):
 
     def test_celtiis_disabled_for_new_deposits_but_history_preserved(self):
         self.assertEqual(set(client.deposit_operators("+229")), {"mtn_bj", "moov_bj"})
-        self.assertEqual(set(client.deposit_operators("+226")), set())
+        self.assertEqual(set(client.deposit_operators("+226")), {"orange_bf", "moov_bf", "telecel_bf"})
         self.assertEqual(set(client.deposit_operators("+228")), {"tmoney_tg", "moov_tg"})
         with patch.object(client, "configured", return_value=True), \
                 patch.object(auth_backend, "connect") as connect:
@@ -191,27 +191,53 @@ class PaymentTests(unittest.TestCase):
                 payments.advance(order)
                 self.assertEqual(self.balance(), 2800)
 
-    def test_burkina_is_manual_without_losing_existing_order_tracking(self):
+    def test_burkina_automatic_operators_are_country_scoped_and_settle_once(self):
+        for operator in ("orange_bf", "moov_bf", "telecel_bf"):
+            with self.subTest(operator=operator):
+                self.user, self.token = self.member("+226")
+                body = {**self.body(), "operatorId": operator}
+                with self.assertRaises(ValueError):
+                    payments.prepare(self.user, {**body, "operatorId": "tmoney_tg"})
+                with self.assertRaises(ValueError):
+                    payments.prepare(self.user, {**body, "phone": "+2290100000000"})
+                order = payments.advance(payments.prepare(self.user, body), initiate=True)
+                self.assertEqual(payments.public(order)["countryCode"], "+226")
+                self.assertEqual(self.balance(), 2300)
+                proof = self.references[order["provider_reference"]]
+                proof["transaction"]["status"] = "successful"
+                proof["transaction"]["countryCode"] = "BJ"
+                self.assertFalse(payments.verified(order, proof))
+                proof["transaction"]["countryCode"] = "BF"
+                self.assertTrue(payments.verified(order, proof))
+                result = payments.advance(self.allow_check(order))
+                self.assertTrue(result["credited_at"])
+                self.assertEqual(self.balance(), 2800)
+                payments.advance(result)
+                self.assertEqual(self.balance(), 2800)
+
+    def test_disabling_country_keeps_existing_order_tracking(self):
         self.user, self.token = self.member("+226")
         body = {**self.body(), "operatorId": "orange_bf"}
-        with self.assertRaises(auth_backend.AuthError) as denied:
-            payments.prepare(self.user, body)
-        self.assertEqual(denied.exception.status, 403)
-        # Reproduce a request created before Burkina Faso switched to manual.
-        with patch.dict(client.DEPOSIT_OPERATORS, {"orange_bf": client.OPERATORS["orange_bf"]}):
-            order = payments.prepare(self.user, body)
-        with self.assertRaises(auth_backend.AuthError):
-            payments.advance(order, initiate=True, otp="123456")
-        self.create.assert_not_called()
-        ref = self.fake_create(order)["reference"]
-        payments._update(order["id"], reference=ref)
-        self.references[ref]["transaction"]["status"] = "successful"
-        result = payments.advance(self.allow_check(order))
-        self.assertTrue(result["credited_at"])
-        self.assertEqual(payments.public(result)["countryCode"], "+226")
-        self.assertEqual(self.balance(), 2800)
-        payments.advance(result)
-        self.assertEqual(self.balance(), 2800)
+        order = payments.prepare(self.user, body)
+        # Simulate a future switch back to manual without changing rollout defaults.
+        enabled = {key: value for key, value in client.DEPOSIT_OPERATORS.items()
+                   if not key.endswith("_bf")}
+        with patch.dict(client.DEPOSIT_OPERATORS, enabled, clear=True):
+            with self.assertRaises(auth_backend.AuthError) as denied:
+                payments.prepare(self.user, body)
+            self.assertEqual(denied.exception.status, 403)
+            with self.assertRaises(auth_backend.AuthError):
+                payments.advance(order, initiate=True, otp="123456")
+            self.create.assert_not_called()
+            ref = self.fake_create(order)["reference"]
+            payments._update(order["id"], reference=ref)
+            self.references[ref]["transaction"]["status"] = "successful"
+            result = payments.advance(self.allow_check(order))
+            self.assertTrue(result["credited_at"])
+            self.assertEqual(payments.public(result)["countryCode"], "+226")
+            self.assertEqual(self.balance(), 2800)
+            payments.advance(result)
+            self.assertEqual(self.balance(), 2800)
 
     def test_exactly_once_credit_and_commissions_under_concurrency(self):
         sponsor = self.user
@@ -313,7 +339,13 @@ class PaymentTests(unittest.TestCase):
             self.assertEqual(status, 200)
             self.assertEqual(result["provider"], "sonarapay")
             self.assertEqual({row["id"] for row in result["channels"]}, {"mtn_bj", "moov_bj"})
-            self.assertNotIn("provider", get("/api/payment-channels/me", other_token)[1])
+            status, result = get("/api/payment-channels/me", other_token)
+            self.assertEqual(status, 200)
+            self.assertEqual(result["provider"], "sonarapay")
+            self.assertEqual(result["countryCode"], "+226")
+            self.assertEqual(result["phoneLength"], 8)
+            self.assertEqual({row["id"] for row in result["channels"]},
+                             {"orange_bf", "moov_bf", "telecel_bf"})
             self.assertNotIn("key_fingerprint", json.dumps(get("/api/sonarapay/payments", self.token)[1]))
             self.assertEqual(other["phone"][:4], "+226")
             togo, togo_token = self.member("+228")

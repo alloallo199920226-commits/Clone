@@ -1,4 +1,4 @@
-"""Bénin/Togo Payin orders; disabled-country history remains readable."""
+"""Bénin/Burkina Faso/Togo Payin orders; disabled-country history remains readable."""
 import logging
 import re
 import threading

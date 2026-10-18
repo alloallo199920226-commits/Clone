@@ -20,7 +20,8 @@ OPERATORS = {
 # Keep the full catalog for existing orders, but allow only these for new deposits.
 COUNTRY_CODES = {"+229": "BJ", "+226": "BF", "+228": "TG"}
 DEPOSIT_OPERATORS = {key: OPERATORS[key] for key in
-                     ("mtn_bj", "moov_bj", "tmoney_tg", "moov_tg")}
+                     ("mtn_bj", "moov_bj", "orange_bf", "moov_bf", "telecel_bf",
+                      "tmoney_tg", "moov_tg")}
 
 
 def country_prefix(phone):

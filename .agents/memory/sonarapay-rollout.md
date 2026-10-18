@@ -21,11 +21,15 @@ Après une réponse réseau perdue lors du lancement, retrouver la demande exist
 
 **How to apply:** conserver l’identifiant de demande avant transmission ; en cas de résultat incertain, proposer le suivi et non un nouveau paiement, y compris après rechargement. Ne jamais créditer sur la seule déclaration d’un débit.
 
-Les paiements automatiques concernent le Bénin et le Togo. Le Burkina Faso est manuel.
+Les paiements automatiques concernent le Bénin, le Burkina Faso et le Togo.
 
-**Why:** après un essai au Burkina Faso, l’utilisateur a demandé « Met le burkina sur manuel et le Togo sur automatique ».
+**Why:** après un passage temporaire en manuel, l’utilisateur a demandé
+« Remet le burkina sur automatique ».
 
-**How to apply:** conserver le suivi des anciennes demandes burkinabè sans autoriser de nouvel encaissement automatique pour ce pays. Préserver les autres pays ; toute extension exige une nouvelle demande.
+**How to apply:** proposer Orange Money, Moov Money et Telecel Cash au Burkina Faso,
+avec les validations et codes temporaires demandés par l’opérateur. Préserver le
+suivi des anciennes demandes, les paiements au Bénin et au Togo et les autres pays ;
+toute extension exige une nouvelle demande.
 
 Pour les dépôts au Bénin, proposer uniquement MTN et Moov, sans Celtiis.
 
