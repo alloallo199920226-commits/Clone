@@ -21,7 +21,13 @@
 <!-- Phone Number Block -->
 <div>
 <p class="hero-label">Numéro de téléphone</p>
+<div class="hero-phone-row">
 <h1 class="hero-phone" data-user-phone>…</h1>
+<button class="hero-phone-copy" type="button" data-copy-phone aria-label="Copier mon numéro de téléphone" title="Copier le numéro" disabled>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path></svg>
+</button>
+</div>
+<p class="hero-copy-status" data-phone-copy-status role="status" aria-live="polite" aria-atomic="true"></p>
 </div>
 <!-- Account Balance Block -->
 <div class="hero-balance">
@@ -239,6 +245,40 @@
 </nav>
 <!-- END: BottomNavigation -->
 <script>
+  const phoneCopyButton = document.querySelector('[data-copy-phone]');
+  const phoneCopyStatus = document.querySelector('[data-phone-copy-status]');
+  phoneCopyButton.addEventListener('click', async () => {
+    const value = phoneCopyButton.dataset.phone;
+    if (!value) return;
+    phoneCopyButton.disabled = true;
+    phoneCopyStatus.textContent = '';
+    try {
+      try {
+        if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+        await navigator.clipboard.writeText(value);
+      } catch {
+        const field = document.createElement('textarea');
+        field.value = value;
+        field.readOnly = true;
+        field.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px;';
+        document.body.append(field);
+        try {
+          field.focus({ preventScroll: true });
+          field.select();
+          field.setSelectionRange(0, value.length);
+          if (!document.execCommand('copy')) throw new Error('Copy refused');
+        } finally {
+          field.remove();
+          phoneCopyButton.focus({ preventScroll: true });
+        }
+      }
+      phoneCopyStatus.textContent = 'Numéro copié !';
+    } catch {
+      phoneCopyStatus.textContent = 'Copie impossible. Maintenez le numéro pour le copier.';
+    } finally {
+      phoneCopyButton.disabled = false;
+    }
+  });
   document.querySelectorAll('[data-route]').forEach((button) => {
     button.addEventListener('click', () => { window.location.href = button.dataset.route; });
   });
@@ -266,6 +306,8 @@
         document.querySelector('[data-purpose="finance-menu-group"]').append(link);
       }
       document.querySelector('[data-user-phone]').textContent = user.phone.replace(/^\+(\d{3})(.*)$/, '$1 $2');
+      phoneCopyButton.dataset.phone = user.phone;
+      phoneCopyButton.disabled = false;
       document.querySelector('[data-demo-balance]').textContent =
         new Intl.NumberFormat('fr-FR').format(user.balance_fcfa);
     })

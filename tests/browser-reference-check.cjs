@@ -509,6 +509,18 @@ async function main() {
       });
       return;
     }
+    if (process.argv.includes("--team-copy")) {
+      await require("./team-copy-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, base,
+      });
+      return;
+    }
+    if (process.argv.includes("--account-copy")) {
+      await require("./account-copy-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, base,
+      });
+      return;
+    }
     if (process.argv.includes("--filled-records")) {
       await require("./filled-records-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, paused, base,

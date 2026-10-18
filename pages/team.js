@@ -6,6 +6,32 @@
   const decimalNumber = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   let referralUrl = "";
   let ready = false;
+  const copyTimers = new WeakMap();
+
+  async function copyText(value) {
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(value);
+      return;
+    } catch {
+      // Older Safari or blocked clipboard permission: attempt a selected text copy.
+      const previousFocus = document.activeElement;
+      const field = document.createElement("textarea");
+      field.value = value;
+      field.readOnly = true;
+      field.style.cssText = "position:fixed;top:0;left:0;opacity:0;font-size:16px;";
+      document.body.append(field);
+      try {
+        field.focus({ preventScroll: true });
+        field.select();
+        field.setSelectionRange(0, value.length);
+        if (!document.execCommand("copy")) throw new Error("Copy refused");
+      } finally {
+        field.remove();
+        previousFocus?.focus({ preventScroll: true });
+      }
+    }
+  }
 
   async function getJson(url) {
     const response = await fetch(url, { credentials: "include", headers: { Accept: "application/json" } });
@@ -23,11 +49,31 @@
         if (status) status.textContent = "Attendez le chargement de votre code.";
         return;
       }
+      const originalLabel = button.dataset.copyValue === "link" ? "Copier le lien" : "Copier le code";
+      clearTimeout(copyTimers.get(button));
+      button.disabled = true;
+      button.textContent = originalLabel;
+      delete button.dataset.copied;
       try {
-        await navigator.clipboard.writeText(value);
-        if (status) status.textContent = "Copié dans le presse-papiers.";
+        await copyText(value);
+        button.textContent = "Copié !";
+        button.dataset.copied = "true";
+        if (status) {
+          status.dataset.state = "success";
+          status.textContent = button.dataset.copyValue === "link"
+            ? "Lien d’invitation copié !" : "Code d’invitation copié !";
+        }
+        copyTimers.set(button, setTimeout(() => {
+          button.textContent = originalLabel;
+          delete button.dataset.copied;
+        }, 3000));
       } catch {
-        if (status) status.textContent = `Copie impossible. Sélectionnez et copiez : ${value}`;
+        if (status) {
+          status.dataset.state = "error";
+          status.textContent = `Copie impossible. Sélectionnez et copiez : ${value}`;
+        }
+      } finally {
+        button.disabled = false;
       }
     });
   });

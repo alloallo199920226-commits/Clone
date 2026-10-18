@@ -129,6 +129,10 @@ html, body { margin: 0; min-width: 320px; }
 .team-bottom-nav a[aria-current="page"] { color: #ffd84d; }
 .team-nav-symbol { font: 21px Arial, sans-serif; line-height: 1; }
 .team-status { min-height: 17px; margin: 8px 3px; color: #8b222b; font-size: 12px; }
+.team-invite .team-status:empty { display: none; }
+.team-invite .team-status { font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
+.team-status[data-state="success"] { color: #155b35; font-weight: 700; }
+.team-copy[data-copied="true"] { background: #155b35; }
 .team-detail-page { padding: 0; }
 .team-detail-page .page-header { height: 55px; background: #f1f1f1; }
 .team-detail-page .page-header h1 { font-size: 15px; }

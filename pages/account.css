@@ -91,6 +91,29 @@ body.account-page {
   letter-spacing: .01em;
 }
 
+.hero-phone-row { display: flex; align-items: center; gap: 5px; margin-top: 4px; }
+.hero-phone-row .hero-phone { margin: 0; user-select: text; -webkit-user-select: text; }
+.hero-phone-copy {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  margin: -6px 0;
+  padding: 10px;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  background: transparent;
+  cursor: pointer;
+}
+.hero-phone-copy svg { width: 22px; height: 22px; }
+.hero-phone-copy:active { background: #ffffff26; }
+.hero-phone-copy:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.hero-phone-copy:disabled { opacity: .5; cursor: default; }
+.hero-copy-status { margin: 4px 0 0; max-width: 290px; font-size: 13px; line-height: 1.35; color: #fff; }
+.hero-copy-status:empty { display: none; }
+
 .hero-balance {
   margin: 0 0 1px;
 }
