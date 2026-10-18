@@ -251,6 +251,13 @@ async function main() {
     })()`);
     assert.equal(registration.status, 201, JSON.stringify(registration.body));
     userId = registration.body.user.id;
+    if (process.argv.includes("--vip-purchases")) {
+      await require("./vip-purchases-browser.cjs")({
+        call, evaluate, navigate, waitFor, screenshot, owner: registration.body.user,
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--sonarapay")) {
       await require("./sonarapay-browser.cjs")({ call, evaluate, navigate, waitFor, screenshot, phone });
       assert.deepEqual(errors, []);
@@ -505,10 +512,10 @@ async function main() {
       assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
       await evaluate("document.querySelector('[data-purpose=\"buy-btn\"]').click()");
       await clickText("Confirmer");
-      await waitFor("document.body.innerText.includes('Aucun montant n’a été débité ou crédité.')");
-      assert.deepEqual(paymentResponses, [503]);
+      await waitFor("document.querySelector('.purchase-error').textContent.includes('Solde insuffisant')");
+      assert.deepEqual(paymentResponses, []);
       await navigate("/recharger");
-      assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice]').length"), 6);
+      assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice]').length"), 7);
       await noOverflow();
       await screenshot("shineray-recharge-reference");
       assert.equal(await evaluate("document.querySelector('[data-history-link]').getAttribute('href')"), "/historique-recharges");
@@ -518,7 +525,7 @@ async function main() {
       assert.equal(await evaluate("document.querySelector('[data-channel-choice=\"1\"]').getAttribute('aria-pressed')"), "true");
       await clickText("Rechargez maintenant");
       await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-amount]')?.textContent==='FCFA 8,000'");
-      assert.deepEqual(paymentResponses, [503]);
+      assert.deepEqual(paymentResponses, []);
       assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).channel"), 1);
       await navigate("/recharger");
       await evaluate("window.scrollTo(0,document.body.scrollHeight)");
@@ -547,8 +554,8 @@ async function main() {
       await evaluate("document.querySelector('#amount').value='2200';document.querySelector('#amount').dispatchEvent(new Event('input',{bubbles:true}))");
       await clickText("Retirer de l'argent maintenant");
       await waitFor("document.body.innerText.includes('Aucun montant n’a été débité ou crédité.')");
-      assert.deepEqual(paymentResponses, [503, 503, 503]);
-      assert.equal(paymentRequests[2].wallet_id, walletResponse.body.wallet.id);
+      assert.deepEqual(paymentResponses, [503]);
+      assert.equal(paymentRequests[0].wallet_id, walletResponse.body.wallet.id);
       await navigate("/service-client");
       await imagesLoaded();
       await noOverflow();
@@ -572,7 +579,7 @@ async function main() {
       assert.deepEqual(errors, []);
       const currentUser = await evaluate("fetch('/api/me').then(r=>r.json())");
       assert.equal(currentUser.balance_fcfa, 2300, "Reference actions must not change the welcome bonus");
-      console.log("PASS: reference home, purchase dialog cancel/real provider failure, recharge presets/failure, withdrawal real balance/fee preview, support photos, no overflow at472/390, no fake funds.");
+      console.log("PASS: reference home, purchase dialog cancel/insufficient balance, recharge presets, withdrawal real balance/fee preview, support photos, no overflow at472/390, no fake funds.");
       console.log("Screenshots: /tmp/shineray-{home,purchase,recharge,withdraw,support}-reference.png");
       return;
     }

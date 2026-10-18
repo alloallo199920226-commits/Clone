@@ -20,7 +20,8 @@
 - `/connexion` : connexion par numéro de téléphone et mot de passe
 - `/inscription` : création d’un compte avec numéro de téléphone et mot de passe
 - `/financement` : registre des opérations réelles du compte
-- `/recharger` et `/retrait` : paiements indisponibles tant qu’aucun prestataire n’est connecté
+- `/recharger` : dépôt automatique au Bénin, suivi par confirmation serveur
+- `/retrait` : retraits non activés
 - `/historique-recharges` et `/historique-retraits` : historiques réels, avec état vide lorsqu’il n’y a aucune opération
 - `/gestion-compte-bancaire` et `/ajouter-compte-retrait` : portefeuilles persistants avec nom du titulaire
 - `/mon-equipe` : membres invités par niveau, avec numéros masqués
@@ -33,19 +34,24 @@ données d’activité sont isolées par compte.
 
 ## Limites
 
-Les comptes, parrainages et portefeuilles sont persistants. Les paiements automatiques
-ne sont pas encore opérationnels.
+Les comptes, parrainages et portefeuilles sont persistants. Les dépôts automatiques
+sont limités au Bénin.
 L’authentification fonctionne sans e-mail ni SMS, conformément au parcours demandé.
 Les numéros ne sont donc pas vérifiés ; aucun mécanisme de récupération du mot de
 passe oublié n’est disponible. Les pages préviennent l’utilisateur de cette limite.
 Les soldes et historiques utilisent uniquement le registre des transactions réelles.
 Les anciennes simulations sont conservées dans leur table séparée, sans être affichées.
-Aucun prestataire de paiement n’est configuré : les achats et retraits restent
-indisponibles, et le parcours de recharge utilisateur reste une maquette.
+L’utilisateur a autorisé les achats VIP réels sur le solde interne : un achat
+enregistre un débit et un produit acquis, sans nouvel encaissement Mobile Money.
+Les prix des six produits existants sont vérifiés côté serveur ; les configurations
+administratives de même code prennent priorité. Les doubles confirmations d’une
+même demande ne doivent jamais provoquer de second débit.
+Les retraits et les versements automatiques de revenus ne sont pas activés.
 Le propriétaire connecté à la console dédiée peut toutefois approuver un dépôt
 réellement reçu depuis `/administration-depots`. Aucun compte client n’est promu
 automatiquement et le lien seul ne suffit jamais à autoriser cette opération.
-Les tarifs et rendements des produits des captures restent des références non activées.
+Les revenus affichés restent indicatifs et non garantis ; l’autorisation des achats
+n’autorise pas leur versement automatique.
 
 ## Administration importée
 

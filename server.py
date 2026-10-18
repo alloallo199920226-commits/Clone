@@ -387,6 +387,31 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(503, {"error": "Impossible de charger vos produits pour le moment."})
             return
 
+        if route == "/api/products/catalog" and self.command == "GET":
+            import vip_purchases
+            try:
+                self._json(200, vip_purchases.available())
+            except auth_backend.AuthError as exc:
+                self._json(exc.status, {"error": exc.message})
+            except Exception:
+                self._json(503, {"error": "Catalogue indisponible pour le moment."})
+            return
+
+        if route == "/api/products/purchase" and self.command == "POST":
+            import vip_purchases
+            body = self._read_json()
+            if body is None:
+                return
+            try:
+                self._json(200, vip_purchases.purchase(user["id"], body))
+            except auth_backend.AuthError as exc:
+                self._json(exc.status, {"error": exc.message})
+            except ValueError as exc:
+                self._json(400, {"error": str(exc)})
+            except Exception:
+                self._json(503, {"error": "Réponse d’achat indisponible. Vérifiez vos produits ou réessayez la même demande, sans créer un nouvel achat."})
+            return
+
         if route in {"/api/demo-activity", "/api/payments"} and self.command == "POST":
             self._json(503, {"error": "Paiements indisponibles : aucun prestataire de paiement n’est connecté. Aucun montant n’a été débité ou crédité."})
             return
