@@ -21,6 +21,15 @@ Deposit recipient details will come from the administrator. Screenshot recipient
 
 **How to apply:** reproduce the deposit screens and their navigation without requesting or inventing merchant details for the maquette. Keep recipient information explicitly unconfigured until supplied through administration.
 
+Once the administrator has configured active payment channels, customers expect
+those channels and recipient details to appear for their account's country.
+
+**Why:** the user reported that a configured Bénin payment method was missing from
+the customer page; fixed demonstration operators are not a substitute for saved configuration.
+
+**How to apply:** use the administrator's active channels as the source of truth.
+Displaying merchant instructions does not confirm payment or authorize automatic credits.
+
 The deposit countdown represents the validity of the current entry session, not a bank or operator payment deadline.
 
 **Why:** the user requested a working timer while payment-provider and recipient configuration remain separate work.

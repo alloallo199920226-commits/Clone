@@ -20,7 +20,21 @@ async function main() {
   let socket;
   let userId;
   const childUserIds = [];
+  let paymentFixtureIds = [];
   try {
+    if (process.argv.includes("--deposit-flow") || process.argv.includes("--deposit-i18n")) {
+      paymentFixtureIds = JSON.parse(execFileSync("python3", ["-c", [
+        "import json, auth_backend",
+        "from psycopg.types.json import Jsonb",
+        "ids=[]",
+        "with auth_backend.connect() as conn, conn.cursor() as cur:",
+        " for name in ['MTN Mobile Money','MOOV Money']:",
+        "  value={'country':'Togo','countryCode':'+228','operatorName':name,'receiverNumber':'90123456','receiverName':'Test merchant','isActive':True,'sortOrder':0}",
+        "  cur.execute(\"INSERT INTO shineray_admin_resources(kind,value) VALUES('channel',%s) RETURNING id\",(Jsonb(value),))",
+        "  ids.append(cur.fetchone()['id'])",
+        "print(json.dumps(ids))",
+      ].join("\n")], {encoding:"utf8"}));
+    }
     if (process.argv.includes("--imported-admin")) {
       // Isolated test server only: never read or replace the real admin secret.
       fixtureServer = spawn("python3", ["-u", "-c", [
@@ -222,8 +236,11 @@ async function main() {
       console.log("Screenshots: /tmp/shineray-country-spinner.png /tmp/shineray-country-dots.png /tmp/shineray-country-ready.png");
       return;
     }
-    const phone = "9" + String(randomInt(1000000, 9999999));
-    const payload = { country_code: "+228", phone, password: "reference-browser-test-password" };
+    const phone = process.argv.includes("--deposit-channels")
+      ? "01" + String(randomInt(10000000, 99999999))
+      : "9" + String(randomInt(1000000, 9999999));
+    const payload = { country_code: process.argv.includes("--deposit-channels") ? "+229" : "+228",
+      phone, password: "reference-browser-test-password" };
     const registration = await evaluate(`(async () => {
       const response = await fetch('/api/auth/register', {
         method:'POST', headers:{'Content-Type':'application/json'},
@@ -233,6 +250,11 @@ async function main() {
     })()`);
     assert.equal(registration.status, 201, JSON.stringify(registration.body));
     userId = registration.body.user.id;
+    if (process.argv.includes("--deposit-channels")) {
+      await require("./deposit-channels-browser.cjs")({ evaluate, navigate, waitFor, screenshot });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--form-controls")) {
       await require("./form-controls-browser.cjs")({ call, evaluate, navigate, publicOnly: false });
       assert.deepEqual(errors, []);
@@ -270,7 +292,7 @@ async function main() {
       return;
     }
     if (process.argv.includes("--deposit-i18n")) {
-      await require("./deposit-i18n-browser.cjs")({ call, evaluate, waitFor, navigate, screenshot });
+      await require("./deposit-i18n-browser.cjs")({ call, evaluate, waitFor, navigate, screenshot, moovId: paymentFixtureIds[1] });
       assert.deepEqual(errors, []);
       return;
     }
@@ -285,7 +307,7 @@ async function main() {
       assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).channel"), 1);
       assert.equal(await evaluate("document.documentElement.scrollWidth>innerWidth"), false);
       await screenshot("shineray-deposit-operator");
-      await evaluate("document.querySelector('[data-operator=\"moov\"]').click();document.querySelector('#deposit-phone').value='123';document.querySelector('#deposit-operator-form').requestSubmit()");
+      await evaluate(`document.querySelector('[data-operator="${paymentFixtureIds[1]}"]').click();document.querySelector('#deposit-phone').value='123';document.querySelector('#deposit-operator-form').requestSubmit()`);
       assert(await evaluate("document.querySelector('[data-deposit-status]').textContent.includes('8 chiffres')"));
       await evaluate("document.querySelector('#deposit-phone').value='91234567';document.querySelector('#deposit-operator-form').requestSubmit()");
       await waitFor("location.pathname==='/confirmation-depot' && document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false' && !document.documentElement.classList.contains('site-navigation-pending')");
@@ -293,7 +315,7 @@ async function main() {
       assert.equal(await evaluate("document.querySelector('[data-deposit-phone]').textContent"), "+228 91234567");
       assert.equal(await evaluate("document.querySelector('[data-deposit-amount]').textContent"), "FCFA 8,000");
       assert.equal(await evaluate("document.querySelector('[data-deposit-reference]').textContent"), "—");
-      assert.equal(await evaluate("document.querySelector('[data-copy=\"merchant_account\"]').disabled"), true);
+      assert.equal(await evaluate("document.querySelector('[data-copy=\"merchant_account\"]').disabled"), false);
       assert.equal(await evaluate("document.querySelector('[data-deposit-dial]').getAttribute('href')"), null);
       await evaluate("document.querySelector('[data-deposit-result]').click()");
       assert(await evaluate("document.querySelector('[data-deposit-status]').textContent.includes('Aucun paiement')"));
@@ -302,12 +324,12 @@ async function main() {
       await waitFor("document.querySelector('[data-deposit-phone]')?.textContent==='+228 91234567'");
       await evaluate("document.querySelector('[data-deposit-modify]').click()");
       await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('#deposit-phone')?.value==='91234567'");
-      assert.equal(await evaluate("document.querySelector('[data-operator=\"moov\"]').getAttribute('aria-pressed')"), "true");
+      assert.equal(await evaluate(`document.querySelector('[data-operator="${paymentFixtureIds[1]}"]').getAttribute('aria-pressed')`), "true");
       await call("Emulation.setDeviceMetricsOverride", { width: 390, height: 744, deviceScaleFactor: 1, mobile: true });
       await waitFor("!document.documentElement.classList.contains('site-navigation-pending')");
       assert.equal(await evaluate("document.documentElement.scrollWidth>innerWidth"), false);
       await screenshot("shineray-deposit-operator-small");
-      await evaluate("document.querySelector('[data-operator=\"mtn\"]').click();document.querySelector('#deposit-operator-form').requestSubmit()");
+      await evaluate(`document.querySelector('[data-operator="${paymentFixtureIds[0]}"]').click();document.querySelector('#deposit-operator-form').requestSubmit()`);
       await waitFor("location.pathname==='/confirmation-depot' && document.querySelector('[data-selected-operator]')?.textContent==='MTN Mobile Money' && !document.documentElement.classList.contains('site-navigation-pending')");
       assert.equal(await evaluate("document.documentElement.scrollWidth>innerWidth"), false);
       await screenshot("shineray-deposit-confirmation-small");
@@ -611,6 +633,11 @@ async function main() {
       ].join("\n"), JSON.stringify([...childUserIds.reverse(), userId]), adminFixture], { stdio: "inherit" });
     }
     await new Promise(resolve => setTimeout(resolve, 200));
+    if (paymentFixtureIds.length) {
+      execFileSync("python3", ["-c",
+        "import auth_backend,json,sys\nwith auth_backend.connect() as conn, conn.cursor() as cur:\n cur.execute('DELETE FROM shineray_admin_resources WHERE id=ANY(%s)',(json.loads(sys.argv[1]),))",
+        JSON.stringify(paymentFixtureIds)]);
+    }
     fs.rmSync(profile, { recursive: true, force: true });
   }
 }

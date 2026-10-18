@@ -267,6 +267,32 @@ class ImportedAdminTests(unittest.TestCase):
         self.assertEqual(self.request("POST", apath + "/withdraw", {})[0], 200)
         self.assertEqual(self.request("DELETE", apath, {})[0], 200)
 
+    def test_customer_payment_channels_use_admin_configuration_and_account_country(self):
+        self.login()
+        benin = self.create("payment-channels", {"country": "Bénin", "countryCode": "+229",
+            "operatorName": "MTN Benin test", "receiverNumber": "0190123456",
+            "receiverName": "Test merchant", "isActive": True}, "channel")
+        togo = self.create("payment-channels", {"country": "Togo", "countryCode": "+228",
+            "operatorName": "Togo test", "receiverNumber": "90123456", "isActive": True}, "channel")
+        token, user, _ = auth_backend.register("+229", "01" + "".join(
+            str(secrets.randbelow(10)) for _ in range(8)), self.password)
+        self.users.append(user["id"])
+        cookie = "shineray_session=" + token
+        self.assertEqual(self.request("GET", "/api/payment-channels/me", cookie="")[0], 401)
+        status, data, _ = self.request("GET", "/api/payment-channels/me", cookie=cookie)
+        self.assertEqual(status, 200)
+        self.assertEqual((data["countryCode"], data["phoneLength"]), ("+229", 10))
+        ids = [item["id"] for item in data["channels"]]
+        self.assertIn(benin["id"], ids)
+        self.assertNotIn(togo["id"], ids)
+        selected = next(item for item in data["channels"] if item["id"] == benin["id"])
+        self.assertEqual(selected["receiverName"], "Test merchant")
+        self.assertEqual(selected["receiverNumber"], "0190123456")
+        self.request("PATCH", f"/api/admin/payment-channels/{benin['id']}", {"isActive": False})
+        data = self.request("GET", "/api/payment-channels/me", cookie=cookie)[1]
+        self.assertNotIn(benin["id"], [item["id"] for item in data["channels"]])
+        self.assertEqual(auth_backend.account_summary(user["id"])["balance_fcfa"], 2300)
+
     def test_original_history_escaped_query_filters_and_pagination(self):
         self.login()
         reference = "history-fixture-" + secrets.token_hex(8)

@@ -296,6 +296,32 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(503, {"error": "Impossible de charger le compte."})
             return
 
+        if route == "/api/payment-channels/me":
+            if self.command != "GET":
+                self._json(405, {"error": "Méthode non autorisée."})
+                return
+            try:
+                prefix = next((code for code in auth_backend.PHONE_LENGTHS
+                               if user["phone"].startswith(code)), None)
+                with auth_backend.connect() as connection, connection.cursor() as cursor:
+                    cursor.execute(
+                        """SELECT id,value FROM shineray_admin_resources
+                           WHERE kind='channel' AND value->>'countryCode'=%s
+                           AND value->'isActive'='true'::jsonb
+                           ORDER BY COALESCE((value->>'sortOrder')::int,0),id""", (prefix,))
+                    channels = [{
+                        "id": row["id"],
+                        **{key: row["value"].get(key, "") for key in
+                           ("operatorName", "receiverNumber", "receiverName", "ussdTemplate",
+                            "logoColor", "logoText", "logoUrl")},
+                    } for row in cursor.fetchall()]
+                self._json(200, {"countryCode": prefix,
+                                 "phoneLength": auth_backend.PHONE_LENGTHS.get(prefix),
+                                 "channels": channels})
+            except Exception:
+                self._json(503, {"error": "Impossible de charger les moyens de paiement."})
+            return
+
         if route == "/api/team" and self.command == "GET":
             try:
                 self._json(200, auth_backend.get_team(user["id"]))

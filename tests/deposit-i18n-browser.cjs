@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 
-module.exports = async ({ call, evaluate, waitFor, navigate, screenshot }) => {
+module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, moovId }) => {
   const ready = "document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false' && !document.documentElement.classList.contains('site-navigation-pending')";
   const remaining = () => evaluate(`(() => {
     const [m,s]=document.querySelector('.deposit-timer').textContent.split(':').map(Number);
@@ -27,10 +27,10 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot }) => {
   await toggle();
   await screenshot("shineray-deposit-english-operator");
   const start = await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).created_at");
-  await evaluate("document.querySelector('[data-operator=\"moov\"]').click();document.querySelector('#deposit-phone').value='91234567';document.querySelector('#deposit-operator-form').requestSubmit()");
+  await evaluate(`document.querySelector('[data-operator="${moovId}"]').click();document.querySelector('#deposit-phone').value='91234567';document.querySelector('#deposit-operator-form').requestSubmit()`);
   await waitFor(`location.pathname==='/confirmation-depot' && ${ready}`);
   assert.equal(await evaluate("document.documentElement.lang"), "en");
-  assert.equal(await evaluate("document.querySelector('[data-merchant-name]').textContent"), "To be configured by the administrator");
+  assert.equal(await evaluate("document.querySelector('[data-merchant-name]').textContent"), "Test merchant");
   assert.equal(await evaluate("document.querySelector('[data-ussd-heading]').textContent"), "How to transfer to MOOV Money via USSD:");
   assert.equal(await evaluate("document.querySelector('[data-deposit-result]').textContent"), "Get the result");
   assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).created_at"), start);

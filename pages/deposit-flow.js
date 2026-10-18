@@ -5,7 +5,8 @@
   const missing = document.querySelector("[data-deposit-missing]");
   const status = document.querySelector("[data-deposit-status]");
   const form = document.querySelector("#deposit-operator-form");
-  const operators = { mtn: "MTN Mobile Money", moov: "MOOV Money" };
+  const operators = {};
+  const copyValues = {};
   const { t, set } = window.depositI18n;
   const notify = (key, params) => set(status, key, params);
   const money = value => `FCFA ${new Intl.NumberFormat("en-US").format(value)}`;
@@ -73,8 +74,15 @@
       showMissing();
       return;
     }
-    const prefix = String(account.phone || "").match(/^\+(228|225)/)?.[0];
+    const channelResponse = await fetch("/api/payment-channels/me", { credentials: "include", cache: "no-store" });
+    if (!channelResponse.ok) throw new Error("accountError");
+    const configuration = await channelResponse.json();
+    if (expired()) return;
+    const prefix = configuration.countryCode;
     if (!prefix) throw new Error("countryError");
+    const length = configuration.phoneLength;
+    const channels = configuration.channels;
+    channels.forEach(channel => { operators[String(channel.id)] = channel.operatorName; });
     if (draft.country_code && draft.country_code !== prefix) {
       delete draft.phone;
       delete draft.operator;
@@ -83,16 +91,51 @@
     draft.country_code = prefix;
     if (!save()) return;
     document.querySelectorAll("[data-deposit-prefix]").forEach(node => { node.textContent = prefix; });
+    if (!channels.length) {
+      if (confirmation) showMissing("channelUnavailable");
+      else notify("noChannels");
+      return;
+    }
+    const displayValue = (selector, value) => {
+      const node = document.querySelector(selector);
+      if (!node || !value) return;
+      node.removeAttribute("data-i18n");
+      node.textContent = value;
+    };
+    document.querySelector(".deposit-notice strong")?.setAttribute("hidden", "");
+    const notice = document.querySelector("[data-notice-body]");
+    if (notice) set(notice, "manualDetails");
     if (confirmation) {
-      const length = prefix === "+225" ? 10 : 8;
-      if (!operators[draft.operator] || !new RegExp(`^\\d{${length}}$`).test(draft.phone || "")) {
+      const channel = channels.find(item => String(item.id) === String(draft.operator));
+      if (!channel) { showMissing("channelUnavailable"); return; }
+      if (!new RegExp(`^\\d{${length}}$`).test(draft.phone || "")) {
         showMissing();
         return;
+      }
+      displayValue("[data-merchant-name]", channel.receiverName);
+      displayValue("[data-merchant-account]", channel.receiverNumber);
+      copyValues.merchant_name = channel.receiverName;
+      copyValues.merchant_account = channel.receiverNumber;
+      const ussd = String(channel.ussdTemplate || "")
+        .replaceAll("{amount}", String(draft.amount_fcfa))
+        .replaceAll("{number}", channel.receiverNumber)
+        .replaceAll("{receiverNumber}", channel.receiverNumber)
+        .replaceAll("{phone}", draft.phone);
+      if (/^[*#\d+]{3,100}$/.test(ussd)) {
+        displayValue("[data-ussd-code]", ussd);
+        copyValues.ussd = ussd;
+        const dial = document.querySelector("[data-deposit-dial]");
+        dial.href = `tel:${encodeURIComponent(ussd)}`;
+        dial.removeAttribute("aria-disabled");
+      }
+      for (const name of ["merchant_name", "merchant_account", "ussd"]) {
+        const button = document.querySelector(`[data-copy="${name}"]`);
+        if (button) button.disabled = !copyValues[name];
       }
       document.querySelector("[data-selected-operator]").textContent = operators[draft.operator];
       set(document.querySelector("[data-ussd-heading]"), "ussdHeading", { operator: operators[draft.operator] });
       document.querySelector("[data-deposit-phone]").textContent = `${prefix} ${draft.phone}`;
-      set(document.querySelector("[data-deposit-validation]"), "pending");
+      set(document.querySelector("[data-deposit-validation]"), "manualDetails");
       document.querySelector('[data-copy="amount"]').disabled = false;
       document.querySelector("[data-deposit-result]").disabled = false;
       document.querySelector("[data-deposit-result]").addEventListener("click", () => {
@@ -103,13 +146,29 @@
     const input = document.querySelector("#deposit-phone");
     input.value = draft.phone || "";
     input.maxLength = 24;
+    const options = document.querySelector(".deposit-operator-options");
+    const logos = document.querySelector(".deposit-operator-logos");
+    channels.forEach(channel => {
+      const id = String(channel.id);
+      const logo = document.createElement("span");
+      logo.className = "operator-logo";
+      logo.textContent = channel.logoText || channel.operatorName;
+      if (/^#[0-9a-f]{6}$/i.test(channel.logoColor)) logo.style.backgroundColor = channel.logoColor;
+      logos.append(logo);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "deposit-operator";
+      button.dataset.operator = id;
+      button.textContent = channel.operatorName;
+      options.append(button);
+    });
     const choose = operator => {
       draft.operator = operator;
       document.querySelectorAll("[data-operator]").forEach(button => {
         button.setAttribute("aria-pressed", String(button.dataset.operator === operator));
       });
     };
-    choose(operators[draft.operator] ? draft.operator : "mtn");
+    choose(operators[draft.operator] ? String(draft.operator) : String(channels[0].id));
     document.querySelectorAll("[data-operator]").forEach(button => {
       button.addEventListener("click", () => choose(button.dataset.operator));
     });
@@ -118,7 +177,6 @@
       event.preventDefault();
       if (expired()) return;
       let phone = input.value.replace(/\D/g, "");
-      const length = prefix === "+225" ? 10 : 8;
       if (phone.startsWith(prefix.slice(1)) && phone.length === length + 3) phone = phone.slice(3);
       if (!new RegExp(`^\\d{${length}}$`).test(phone)) {
         notify("phoneError", { length, prefix });
@@ -133,16 +191,19 @@
   }).finally(() => { content.setAttribute("aria-busy", "false"); });
 
   document.querySelectorAll("[data-copy]").forEach(button => {
-    if (button.dataset.copy !== "amount") { button.disabled = true; return; }
+    if (button.dataset.copy !== "amount") button.disabled = true;
     button.addEventListener("click", async () => {
       if (expired()) return;
       try {
-        await navigator.clipboard.writeText(String(draft.amount_fcfa));
+        const value = button.dataset.copy === "amount" ? String(draft.amount_fcfa) : copyValues[button.dataset.copy];
+        if (!value) return;
+        await navigator.clipboard.writeText(value);
         if (!expired()) notify("copied");
       } catch { if (!expired()) notify("copyError"); }
     });
   });
   document.querySelector("[data-deposit-dial]")?.addEventListener("click", event => {
+    if (copyValues.ussd && !expired()) return;
     event.preventDefault();
     if (!expired()) notify("dialError");
   });
