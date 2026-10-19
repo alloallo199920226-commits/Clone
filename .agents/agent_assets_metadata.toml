@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "-zEqYCC-vBKu1lGnkujtE"
+uri = "file://generated-artifacts/paiement-manuel-iveco.zip"
+type = "unspecified"
+title = "Code IVECO — Paiement manuel"
+description = "ZIP des deux écrans de paiement manuel avec HTML, CSS, JavaScript, images et notice d’intégration. Sans appels au paiement automatique ni secrets."
+logical_id = "ca1972f4-7394-4d42-b2c2-b36619f6ec84"
+content_hash = "sha256:e11734f37e818eb402e2fb7f378321651209dca28e3455e672adc87c1626efd4"
+size = 339774
+mtime_ms = 1792390772306
+storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:2b24cd28-b44f-4cff-bacf-135c732fa24d/ca1972f4-7394-4d42-b2c2-b36619f6ec84/dd42b529-6858-4aea-a968-c191d33f1b80"
+storage_version_token = "1792390780093166"
+content_type = "application/octet-stream"
