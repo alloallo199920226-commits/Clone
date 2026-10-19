@@ -252,6 +252,11 @@
     const choose = operator => {
       draft.operator = operator;
       const automatic = isAutomatic(channels.find(channel => String(channel.id) === operator));
+      const otpArea = document.querySelector("[data-orange-otp]");
+      const otpInput = document.querySelector("#deposit-orange-otp");
+      otpArea.hidden = !automatic || operator !== "orange_bf";
+      otpInput.disabled = otpArea.hidden;
+      otpInput.value = "";
       if (notice) set(notice, automatic ? "sonaraConsent" : "manualDetails");
       set(submit.querySelector("[data-submit-label]"), automatic ? "sonaraStart" : "submit");
       document.querySelectorAll("[data-operator]").forEach(button => {
@@ -263,7 +268,7 @@
       button.addEventListener("click", () => choose(button.dataset.operator));
     });
     submit.disabled = false;
-    const trackPayment = async (recoverOnly) => {
+    const trackPayment = async (recoverOnly, otp) => {
       if (!draft.request_id) draft.request_id = crypto.randomUUID();
       draft.request_uncertain = true;
       if (!save()) return;
@@ -271,7 +276,7 @@
       notify("sonaraCreating");
       try {
         const payment = await (recoverOnly
-          ? window.sonaraPay.recover(draft) : window.sonaraPay.create(draft));
+          ? window.sonaraPay.recover(draft) : window.sonaraPay.create(draft, otp));
         draft.payment_id = payment.id;
         delete draft.request_uncertain;
         save();
@@ -306,7 +311,15 @@
       }
       draft.phone = phone;
       if (automatic) {
-        await trackPayment(false);
+        const otpInput = document.querySelector("#deposit-orange-otp");
+        const otp = draft.operator === "orange_bf" ? otpInput.value.trim() : "";
+        otpInput.value = "";
+        if (otp && !/^\d{4,12}$/.test(otp)) {
+          notify("sonaraOtpInvalid");
+          otpInput.focus();
+          return;
+        }
+        await trackPayment(false, otp || undefined);
         return;
       }
       if (save()) go("/confirmation-depot");

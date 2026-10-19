@@ -50,6 +50,17 @@ serveur ; faire également transférer au compte manuel pourrait provoquer un do
 **How to apply:** distinguer clairement le suivi du paiement automatique des instructions
 de transfert manuel, même si les deux parcours partagent l’habillage IVECO.
 
+Pour Orange Money Burkina Faso, rendre la saisie du code temporaire accessible
+dès le choix de l’opérateur, sans obliger à en fournir un avant de recevoir les
+instructions de l’opérateur.
+
+**Why:** l’utilisateur ne retrouvait plus l’espace OTP lorsqu’il était uniquement
+affiché après la réponse du prestataire.
+
+**How to apply:** distinguer ce code du PIN, ne jamais le conserver dans les
+brouillons, journaux ou réponses, et ne pas réinitier une demande déjà en cours
+au prétexte de transmettre un code.
+
 Le point d’entrée SonaraPay peut refuser le client Python par défaut avec une
 réponse HTML 403, indépendamment de la validité d’une clé.
 

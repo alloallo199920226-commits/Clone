@@ -20,6 +20,7 @@
     sonaraUnavailable: ["Paiement indisponible. Conservez votre demande et réessayez son suivi.", "Payment unavailable. Keep your request and try tracking it again."],
     sonaraOtp: ["Votre opérateur demande un code temporaire. Obtenez ce code auprès de lui, puis saisissez-le ici. Ce n’est pas votre PIN Mobile Money.", "Your operator requires a temporary code. Obtain it from your operator and enter it here. This is not your Mobile Money PIN."],
     sonaraOtpInvalid: ["Le code temporaire doit contenir de 4 à 12 chiffres.", "The temporary code must contain 4 to 12 digits."],
+    orangeOtpHelp: ["Si vous avez déjà obtenu votre code temporaire Orange Money, saisissez-le ici. Sinon, lancez le paiement pour obtenir les instructions.", "If you already obtained your Orange Money temporary code, enter it here. Otherwise, start payment to get the instructions."],
     sonaraOtpLabel: ["Code temporaire de l’opérateur (pas votre PIN)", "Temporary operator code (not your PIN)"],
     sonaraOtpSubmit: ["Envoyer le code temporaire", "Send temporary code"],
     sonaraReference: ["Référence de suivi", "Tracking reference"],

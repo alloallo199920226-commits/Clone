@@ -351,6 +351,37 @@ class PaymentTests(unittest.TestCase):
             with self.subTest(changes=changes), self.assertRaises((ValueError, auth_backend.AuthError)):
                 payments.prepare(self.user, {**self.body(), **changes})
 
+    def test_orange_initial_otp_api_is_validated_and_not_persisted(self):
+        self.user, self.token = self.member("+226")
+        server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        def post(body):
+            conn = http.client.HTTPConnection(*server.server_address)
+            host = f"{server.server_address[0]}:{server.server_address[1]}"
+            conn.request("POST", "/api/sonarapay/payments", json.dumps(body), {
+                "Cookie": "shineray_session=" + self.token,
+                "Content-Type": "application/json", "Origin": "http://" + host,
+            })
+            response = conn.getresponse()
+            result = response.status, json.loads(response.read())
+            conn.close()
+            return result
+        try:
+            body = {**self.body(), "operatorId": "orange_bf", "otp": "123456"}
+            status, result = post({**body, "otp": "abc"})
+            self.assertEqual(status, 400)
+            self.create.assert_not_called()
+            status, result = post(body)
+            self.assertEqual(status, 200)
+            self.assertEqual(self.create.call_args.args[1], "123456")
+            self.assertNotIn("123456", json.dumps(result))
+            self.assertEqual(self.balance(), 2300)
+            self.assertEqual(post(body)[0], 409)
+            self.assertEqual(self.create.call_count, 1)
+        finally:
+            server.shutdown()
+            server.server_close()
+
     def test_otp_is_not_persisted_or_exposed(self):
         order = payments.prepare(self.user, self.body())
         self.create.side_effect = lambda order, otp=None: {"requiresOtp": True, "ussdCode": "*123#"}

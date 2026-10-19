@@ -19,6 +19,14 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   if (prefix === "+226") {
     assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-operator]')].map(node=>node.dataset.operator)"),
       ["orange_bf", "moov_bf", "telecel_bf"]);
+    assert.equal(await evaluate("document.querySelector('[data-orange-otp]').hidden"), false);
+    await evaluate(`document.querySelector('#deposit-orange-otp').value='123456';
+      document.querySelector('[data-operator="moov_bf"]').click()`);
+    assert.equal(await evaluate("document.querySelector('[data-orange-otp]').hidden"), true);
+    assert.equal(await evaluate("document.querySelector('#deposit-orange-otp').value"), "");
+    await evaluate(`document.querySelector('[data-operator="orange_bf"]').click()`);
+    assert.equal(await evaluate("document.querySelector('[data-orange-otp]').hidden"), false);
+    await screenshot("orange-bf-otp-selection");
   }
   assert.match(await evaluate("document.querySelector('[data-notice-body]').textContent"), /réelle/);
   await screenshot(prefix === "+226" ? "sonarapay-burkina-operators" : prefix === "+228" ? "sonarapay-togo-operators" : "sonarapay-operators");
@@ -150,5 +158,23 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await waitFor("location.pathname === '/accueil'");
   assert(Date.now() - failureSeenAt >= 9700, "Failure redirect must wait 10 seconds");
   assert.equal(await balance(), 2800);
-  console.log("PASS: automatic success/failure detection, visible failure alert, both 10-second home redirects, no pending redirect, real account/isolated provider, exactly-once credit, OTP clearing, 4 widths. NO live provider calls.");
+  if (prefix === "+226") {
+    await evaluate(`(async () => {
+      await fetch('/api/test/sonarapay', {method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({status:'otp'})});
+      sessionStorage.setItem('shineray-deposit-draft', JSON.stringify({
+        amount_fcfa:500,channel:1,created_at:Date.now()
+      }));
+    })()`);
+    await navigate("/choisir-operateur");
+    await waitFor("document.querySelectorAll('[data-operator]').length === 3");
+    await evaluate(`document.querySelector('#deposit-phone').value=${JSON.stringify(phone)};
+      document.querySelector('#deposit-orange-otp').value='123456';
+      document.querySelector('#deposit-operator-form').requestSubmit()`);
+    await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'pending'");
+    assert(!await evaluate("sessionStorage.getItem('shineray-deposit-draft').includes('123456')"));
+    assert.equal(await evaluate("document.querySelector('#sonara-otp').value"), "");
+    assert.equal(await balance(), 2800);
+  }
+  console.log("PASS: automatic success/failure detection, visible failure alert, both 10-second home redirects, no pending redirect, real account/isolated provider, exactly-once credit, initial and follow-up OTP clearing, 4 widths. NO live provider calls.");
 };

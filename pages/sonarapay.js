@@ -28,11 +28,12 @@
       if (!payment) throw Object.assign(new Error(t("sonaraConnectionLost")), { uncertain: true });
       return payment;
     },
-    async create(draft) {
+    async create(draft, otp) {
       try {
         return (await api("", {
           amount: draft.amount_fcfa, operatorId: draft.operator,
           phone: draft.phone, requestId: draft.request_id,
+          ...(otp ? { otp } : {}),
         })).payment;
       } catch (error) {
         if (!error.uncertain) throw error;

@@ -233,7 +233,16 @@ def handle(handler, user, route):
             body = handler._read_json()
             if body is None:
                 return True
-            result = {"payment": public(advance(prepare(user, body), initiate=True))}
+            otp = body.pop("otp", None)
+            if otp is not None and (
+                body.get("operatorId") != "orange_bf" or not isinstance(otp, str)
+                or not re.fullmatch(r"\d{4,12}", otp)
+            ):
+                raise ValueError("Code temporaire invalide.")
+            order = prepare(user, body)
+            if otp and order["initiated_at"] and order["status"] != "otp_required":
+                raise auth_backend.AuthError(409, "Cette demande est déjà en cours. Consultez son suivi sans relancer le paiement.")
+            result = {"payment": public(advance(order, initiate=True, otp=otp))}
         elif route.startswith(base + "/") and handler.command in {"GET", "POST"}:
             suffix = route[len(base) + 1:].split("/")
             order = load(user["id"], suffix[0])
