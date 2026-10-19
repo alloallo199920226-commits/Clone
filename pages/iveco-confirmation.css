@@ -1,3 +1,22 @@
+body.deposit-page--confirmation .deposit-result.manual-deposit-busy::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  margin-right: 8px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  animation: manual-deposit-spin .8s linear infinite;
+}
+body.deposit-page--confirmation .deposit-result.manual-deposit-busy:disabled { opacity: .85; }
+@keyframes manual-deposit-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  body.deposit-page--confirmation .deposit-result.manual-deposit-busy::before { animation-duration: 2s; }
+}
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap");
 
 [hidden] { display: none !important; }

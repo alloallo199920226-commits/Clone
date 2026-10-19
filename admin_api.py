@@ -143,14 +143,23 @@ def transaction_rows(cur, query):
               "limit": limit + 1, "offset": offset}
     # Pending payments are not manufactured from balances or simulated activity.
     source = """WITH history AS (
-        SELECT t.*,u.phone,
+        SELECT t.id::text,t.user_id,t.kind,t.amount_fcfa,t.provider_reference,t.created_at,t.details,u.phone,
             CASE WHEN t.kind='recharge' THEN 'deposit' ELSE 'withdrawal' END type,
-            EXISTS(SELECT 1 FROM shineray_admin_operations ao WHERE ao.user_id=t.user_id AND ao.operation_type='admin_credit') assisted
+            EXISTS(SELECT 1 FROM shineray_admin_operations ao WHERE ao.user_id=t.user_id AND ao.operation_type='admin_credit') assisted,
+            'approved' AS status
         FROM shineray_transactions t JOIN shineray_users u ON u.id=t.user_id
-        WHERE t.kind IN ('recharge','withdrawal'))
+        WHERE t.kind IN ('recharge','withdrawal')
+        UNION ALL
+        SELECT 'manual-'||m.id,m.user_id,'recharge',m.amount_fcfa,'MAN-'||m.request_id::text,m.created_at,
+            jsonb_build_object('provider','manual','channel',m.channel_snapshot->>'operatorName',
+              'payer_number',m.payer_phone,'destination',m.channel_snapshot->>'receiverNumber',
+              'receiver_name',m.channel_snapshot->>'receiverName'),
+            u.phone,'deposit',false,m.status
+        FROM shineray_manual_deposits m JOIN shineray_users u ON u.id=m.user_id
+        WHERE m.status IN ('pending','rejected'))
         SELECT * FROM history WHERE
           (%(kind)s='all' OR type=%(kind)s)
-          AND %(status)s IN ('all','approved')
+          AND (%(status)s='all' OR status=%(status)s)
           AND (%(assistance)s='all' OR (%(assistance)s='admin' AND assisted) OR (%(assistance)s='normal' AND NOT assisted))
           AND (phone ILIKE %(pattern)s OR provider_reference ILIKE %(pattern)s OR id::text=%(search)s)"""
     cur.execute(f"SELECT count(*) total FROM ({source}) matched", params)
@@ -166,7 +175,7 @@ def transaction_rows(cur, query):
                 (country for prefix, country in {"+225": "CI", "+228": "TG", "+229": "BJ",
                                                  "+226": "BF", "+227": "NE", "+237": "CM"}.items()
                  if row["phone"].startswith(prefix)), ""),
-            "amount": abs(row["amount_fcfa"]), "status": "completed", "type": row["type"],
+            "amount": abs(row["amount_fcfa"]), "status": "completed" if row["status"] == "approved" else row["status"], "type": row["type"],
             "reference": db.payment_display_text(row["provider_reference"]), "orderNumber": db.payment_display_text(row["provider_reference"]),
             "createdAt": row["created_at"].isoformat(), "initiatedAt": row["created_at"].isoformat(),
             "paymentProvider": "automatic" if details.get("provider") == "sonarapay" else details.get("provider", details.get("approval_method", "manual")),
@@ -209,7 +218,9 @@ def overview(cur, summary):
     stats = cur.fetchone()
     cur.execute("SELECT count(*)::int count FROM shineray_admin_vip_grants WHERE status='active' AND expires_at>now()")
     active = cur.fetchone()["count"]
-    stats.update(investments=active, active_vips=active, pendingDeposits=0, pendingWithdrawals=0,
+    cur.execute("SELECT count(*) AS total FROM shineray_manual_deposits WHERE status='pending'")
+    pending_deposits = cur.fetchone()["total"]
+    stats.update(investments=active, active_vips=active, pendingDeposits=pending_deposits, pendingWithdrawals=0,
                  rejectedDepositCount=0, rejectedWithdrawalCount=0)
     txs = [] if summary else transaction_rows(cur, {"limit": "100"})["transactions"]
     cur.execute("""SELECT 'purchase-'||t.id AS id,t.user_id AS "userId",t.details->>'product_name' AS "productName",
@@ -535,6 +546,15 @@ def handle(handler, user, route):
         # Normalize its wire format here instead of rewriting the original JS.
         raw_query = urlsplit(handler.path).query.replace("&amp;", "&")
         query = {key: values[0] for key, values in parse_qs(raw_query).items()}
+        manual_match = re.fullmatch(r"/api/admin/deposits/manual-([1-9]\d*)", route)
+        if manual_match:
+            if handler.command != "PATCH":
+                fail(405, "Méthode non autorisée.")
+            fields(body, {"status"})
+            import manual_deposits
+            result = manual_deposits.review(handler, int(manual_match[1]), body.get("status"))
+            handler._json(200, result)
+            return
         if route == "/api/admin/deposits":
             if handler.command != "POST":
                 fail(405, "Méthode non autorisée.")

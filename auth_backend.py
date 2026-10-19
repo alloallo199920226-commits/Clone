@@ -229,18 +229,24 @@ def get_activity(user_id: int, kind: str | None = None) -> list[dict]:
         raise ValueError("Filtre d’historique invalide.")
     with connect() as connection, connection.cursor() as cursor:
         cursor.execute(
-            """SELECT id, kind, label, abs(amount_fcfa) AS amount_fcfa,
-                      created_at, provider_reference, details
+            """SELECT id::text, kind, label, abs(amount_fcfa) AS amount_fcfa,
+                      created_at, provider_reference, details, 'succeeded' AS status
                FROM shineray_transactions
                WHERE user_id = %s AND (%s::text IS NULL OR kind = %s)
+               UNION ALL
+               SELECT 'manual-'||id,'recharge','Dépôt manuel',amount_fcfa,created_at,
+                      'MAN-'||request_id::text,jsonb_build_object('channel',channel_snapshot->>'operatorName'),
+                      CASE WHEN status='rejected' THEN 'failed' ELSE 'pending' END
+               FROM shineray_manual_deposits
+               WHERE user_id=%s AND (%s::text IS NULL OR %s='recharge') AND status IN ('pending','rejected')
                ORDER BY created_at DESC, id DESC LIMIT 101""",
-            (user_id, kind, kind),
+            (user_id, kind, kind, user_id, kind, kind),
         )
         rows = cursor.fetchall()
     return [
         {"id": row["id"], "kind": row["kind"], "label": row["label"],
          "amount_fcfa": row["amount_fcfa"], "created_at": row["created_at"].isoformat(),
-         "reference": payment_display_text(row["provider_reference"]), "status": "succeeded",
+         "reference": payment_display_text(row["provider_reference"]), "status": row["status"],
          "channel": payment_display_text(row["details"].get("channel")) if isinstance(row["details"].get("channel"), str) else None,
          "net_amount_fcfa": _receipt_number(row["details"], "net_amount_fcfa")}
         for row in rows

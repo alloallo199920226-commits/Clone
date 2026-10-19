@@ -9,6 +9,16 @@ Keep pending deposit/withdrawal requests separate from the settled financial led
 
 **How to apply:** a future manual-payment flow needs separate request storage and an explicit verification/approval step before a settled entry is recorded.
 
+For manual payments, clicking the result button must immediately declare the deposit to
+the administration, show a small spinner, then return home after ten seconds.
+The acknowledgement describes a recorded request, not verified receipt of money.
+
+**Why:** the user requested immediate administration recording and a ten-second return;
+elapsed time or a customer click cannot prove that the merchant received a transfer.
+
+**How to apply:** preserve idempotency across retries, never announce success on a failed
+save, and keep administrative approval separate from the customer acknowledgement.
+
 Dans « Mon équipe », le montant à droite de chaque filleul représente ses dépôts validés cumulés, pas ses achats VIP. Les montants en haut représentent les commissions du parrain par niveau.
 
 **Why:** l’utilisateur attend de voir « le montant déposé par les investisseurs » dans cette colonne ; un achat VIP et un dépôt ne sont pas interchangeables.

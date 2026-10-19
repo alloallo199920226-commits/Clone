@@ -9,9 +9,12 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
       receiverName: "Marchand test", receiverNumber: "0700000000", ussdTemplate: "*123*{amount}#" },
   ];
   const pattern = "*/api/payment-channels/me";
-  await call("Fetch.enable", { patterns: [{ urlPattern: pattern, requestStage: "Request" }] });
+  await call("Fetch.enable", { patterns: [
+    { urlPattern: pattern, requestStage: "Request" },
+    { urlPattern: "*/api/manual-deposits", requestStage: "Request" },
+  ] });
   async function configure() {
-    await waitFor("document.querySelector('[data-deposit-content]').getAttribute('aria-busy') === 'true'");
+    await waitFor("document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy') === 'true'");
     for (let i = 0; i < 100 && !paused.has("/api/payment-channels/me"); i++)
       await new Promise(resolve => setTimeout(resolve, 50));
     const requestId = paused.get("/api/payment-channels/me");
@@ -34,7 +37,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
   assert(await evaluate("document.querySelector('[data-submit-label]').textContent.includes('paiement')"));
   await evaluate(`document.querySelector('[data-operator="98765"]').click()`);
   assert.equal(await evaluate("document.querySelector('[data-submit-label]').textContent"), "Soumettre");
-  assert(await evaluate("document.querySelector('[data-notice-body]').textContent.includes('administration')"));
+  assert.equal(await evaluate("document.querySelector('.deposit-notice')"), null);
   await evaluate(`document.querySelector('#deposit-phone').value='0700000000';
     document.querySelector('#deposit-operator-form').requestSubmit()`);
   await waitFor("location.pathname === '/confirmation-depot'");
@@ -42,6 +45,41 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
   assert.equal(await evaluate("document.querySelector('[data-merchant-name]').textContent"), "Marchand test");
   assert.equal(await evaluate("document.querySelector('[data-ussd-code]').textContent"), "*123*500#");
   await screenshot("wave-manual-ci");
+  await evaluate(`window.manualTestRequests=[];
+    const originalFetch=window.fetch;
+    window.fetch=(url,options)=>{
+      if(url==='/api/manual-deposits') window.manualTestRequests.push(JSON.parse(options.body));
+      return originalFetch(url,options);
+    };
+    document.querySelector('[data-deposit-result]').click();
+    document.querySelector('[data-deposit-result]').click();`);
+  async function respond(code, payload) {
+    for (let i = 0; i < 100 && !paused.has("/api/manual-deposits"); i++)
+      await new Promise(resolve => setTimeout(resolve, 50));
+    const requestId = paused.get("/api/manual-deposits");
+    assert(requestId, "Manual deposit submission must reach the server");
+    paused.delete("/api/manual-deposits");
+    await call("Fetch.fulfillRequest", { requestId, responseCode: code,
+      responseHeaders: [{ name: "Content-Type", value: "application/json" }],
+      body: Buffer.from(JSON.stringify(payload)).toString("base64") });
+  }
+  await respond(503, { error: "Enregistrement non confirmé. Réessayez sans refaire le transfert." });
+  await waitFor("!document.querySelector('[data-deposit-result]').disabled");
+  assert.equal(await evaluate("location.pathname"), "/confirmation-depot");
+  await evaluate("document.querySelector('[data-deposit-result]').click()");
+  await respond(201, { deposit: { reference: "MAN-browser-fixture", status: "pending" } });
+  await waitFor("document.querySelector('[data-deposit-status]').textContent.includes('10 s')");
+  assert.equal(await evaluate("window.manualTestRequests.length"), 2, "Double click must not resubmit");
+  assert.equal(await evaluate("window.manualTestRequests[0].request_id"),
+    await evaluate("window.manualTestRequests[1].request_id"), "Retry must retain its idempotency key");
+  assert(await evaluate("document.querySelector('[data-deposit-validation]').textContent.includes('attente')"));
+  assert.equal(await evaluate("document.querySelector('[data-deposit-result]').getAttribute('aria-busy')"), "true");
+  assert.equal(await evaluate("getComputedStyle(document.querySelector('[data-deposit-result]'),'::before').animationName"), "manual-deposit-spin");
+  assert.equal(await evaluate("getComputedStyle(document.querySelector('[data-deposit-result]'),'::before').content"), '""');
+  await screenshot("manual-deposit-recorded");
+  await new Promise(resolve => setTimeout(resolve, 10500));
+  await waitFor("location.pathname === '/accueil'");
+  assert.equal(await evaluate("sessionStorage.getItem('shineray-deposit-draft')"), null);
   await call("Fetch.disable");
-  console.log("PASS: mixed CI selection, automatic labels, Wave manual instructions and USSD; no provider request.");
+  console.log("PASS: mixed CI, Wave manual instructions, POST declaration, double-click protection, safe retry, spinner and 10s home redirect; no provider request.");
 };

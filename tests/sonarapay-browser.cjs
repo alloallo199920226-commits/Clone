@@ -28,7 +28,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
     assert.equal(await evaluate("document.querySelector('[data-orange-otp]').hidden"), false);
     await screenshot("orange-bf-otp-selection");
   }
-  assert.match(await evaluate("document.querySelector('[data-notice-body]').textContent"), /réelle/);
+  assert.equal(await evaluate("document.querySelector('.deposit-notice')"), null);
   await screenshot(prefix === "+226" ? "sonarapay-burkina-operators" : prefix === "+228" ? "sonarapay-togo-operators" : "sonarapay-operators");
   // The operator has accepted the request, but Safari loses its response.
   // While GET recovery is also offline, do not offer another payment submission.

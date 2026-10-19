@@ -215,8 +215,61 @@
       set(document.querySelector("[data-deposit-validation]"), "manualDetails");
       document.querySelector('[data-copy="amount"]').disabled = false;
       document.querySelector("[data-deposit-result]").disabled = false;
-      document.querySelector("[data-deposit-result]").addEventListener("click", () => {
-        if (!expired()) notify("noPayment");
+      const resultButton = document.querySelector("[data-deposit-result]");
+      let recording = false;
+      resultButton.addEventListener("click", async () => {
+        if (recording || expired()) return;
+        if (!draft.manual_request_id) draft.manual_request_id = crypto.randomUUID();
+        if (!save()) return;
+        recording = true;
+        resultButton.disabled = true;
+        resultButton.classList.add("manual-deposit-busy");
+        resultButton.setAttribute("aria-busy", "true");
+        set(resultButton, "manualSending");
+        notify("manualSending");
+        try {
+          const response = await fetch("/api/manual-deposits", {
+            method: "POST", credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ request_id: draft.manual_request_id,
+              channel_id: Number(channel.id), amount_fcfa: draft.amount_fcfa, phone: draft.phone }),
+          });
+          const payload = await response.json();
+          if (!response.ok) throw new Error(payload.error || t("manualError"));
+          if (!payload.deposit?.reference) throw new Error(t("manualError"));
+          clearInterval(timer);
+          document.removeEventListener("visibilitychange", tick);
+          document.removeEventListener("deposit-language-change", tick);
+          window.removeEventListener("pageshow", tick);
+          displayValue("[data-deposit-reference]", payload.deposit.reference);
+          set(document.querySelector("[data-deposit-validation]"), "manualRecorded");
+          set(notice, "manualRecorded");
+          set(resultButton, "manualRecordedShort");
+          let seconds = 10;
+          notify("manualRedirect", { seconds });
+          const redirectTimer = setInterval(() => {
+            seconds -= 1;
+            notify("manualRedirect", { seconds });
+            if (seconds <= 0) {
+              clearInterval(redirectTimer);
+              // Remove only this completed draft, never a newer request from another page.
+              try {
+                const current = JSON.parse(sessionStorage.getItem(key));
+                if (current?.manual_request_id === draft.manual_request_id) sessionStorage.removeItem(key);
+              } catch {}
+              location.replace("/accueil");
+            }
+          }, 1000);
+        } catch (error) {
+          status.removeAttribute("data-i18n");
+          status.textContent = error.message === "Failed to fetch" || error instanceof TypeError
+            ? t("manualError") : error.message;
+          resultButton.classList.remove("manual-deposit-busy");
+          resultButton.removeAttribute("aria-busy");
+          set(resultButton, "result");
+          resultButton.disabled = false;
+          recording = false;
+        }
       });
       return;
     }
@@ -290,7 +343,7 @@
         status.textContent = error.message || t("sonaraUnavailable");
         if (draft.request_uncertain) {
           set(submit, "sonaraRecover");
-          set(document.querySelector("[data-notice-body]"), "sonaraRecoverNotice");
+          status.textContent += ` ${t("sonaraRecoverNotice")}`;
         }
       } finally { submit.disabled = false; }
     };

@@ -5,13 +5,15 @@ provider adapter must authenticate and verify its event before calling it.
 """
 import json
 import re
+from contextlib import nullcontext
 
 import auth_backend
 from financial_policy import MIN_DEPOSIT_FCFA, REFERRAL_PERCENTAGES
 
 
 def settle_approved_deposit(user_id, amount_fcfa, provider_reference, *,
-                            approval_method, approved_by=None, console_handler=None, receipt_details=None):
+                            approval_method, approved_by=None, console_handler=None, receipt_details=None,
+                            connection=None):
     if type(user_id) is not int or type(amount_fcfa) is not int:
         raise ValueError("Compte ou montant invalide.")
     if not MIN_DEPOSIT_FCFA <= amount_fcfa <= auth_backend.MAX_ACTIVITY_AMOUNT:
@@ -25,11 +27,11 @@ def settle_approved_deposit(user_id, amount_fcfa, provider_reference, *,
         raise ValueError("Mode d’approbation invalide.")
     if approval_method == "automatic" and (approved_by is not None or console_handler is not None):
         raise ValueError("Une validation automatique doit provenir du prestataire vérifié.")
-    if receipt_details is not None and (approval_method != "automatic" or not isinstance(receipt_details, dict)
+    if receipt_details is not None and (not isinstance(receipt_details, dict)
                                        or set(receipt_details) - {"provider", "channel", "payer_number"}):
         raise ValueError("Détails de reçu invalides.")
 
-    with auth_backend.connect() as connection, connection.cursor() as cursor:
+    with (nullcontext(connection) if connection is not None else auth_backend.connect()) as connection, connection.cursor() as cursor:
         if approval_method == "manual":
             if console_handler is not None and approved_by is None:
                 import admin_api
