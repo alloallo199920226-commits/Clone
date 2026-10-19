@@ -21,15 +21,19 @@ Après une réponse réseau perdue lors du lancement, retrouver la demande exist
 
 **How to apply:** conserver l’identifiant de demande avant transmission ; en cas de résultat incertain, proposer le suivi et non un nouveau paiement, y compris après rechargement. Ne jamais créditer sur la seule déclaration d’un débit.
 
-Les paiements automatiques concernent le Bénin, le Burkina Faso et le Togo.
+Les paiements automatiques concernent le Bénin, le Burkina Faso, le Togo,
+la Côte d’Ivoire hors Wave et le Cameroun.
 
-**Why:** après un passage temporaire en manuel, l’utilisateur a demandé
-« Remet le burkina sur automatique ».
+**Why:** après avoir réactivé le Burkina Faso, l’utilisateur a demandé de mettre
+la Côte d’Ivoire en automatique en laissant Wave manuel, et tous les opérateurs
+camerounais en automatique.
 
 **How to apply:** proposer Orange Money, Moov Money et Telecel Cash au Burkina Faso,
-avec les validations et codes temporaires demandés par l’opérateur. Préserver le
-suivi des anciennes demandes, les paiements au Bénin et au Togo et les autres pays ;
-toute extension exige une nouvelle demande.
+avec les validations et codes temporaires demandés par l’opérateur. En Côte
+d’Ivoire, proposer Orange/MTN/Moov en automatique et conserver les coordonnées Wave
+actives de l’administration en manuel. Au Cameroun, utiliser MTN et Orange,
+avec XAF dans les demandes et les contrôles de confirmation. Préserver le suivi
+des anciennes demandes et les autres pays ; toute extension exige une nouvelle demande.
 
 Pour les dépôts au Bénin, proposer uniquement MTN et Moov, sans Celtiis.
 

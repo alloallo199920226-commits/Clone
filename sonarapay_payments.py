@@ -17,7 +17,7 @@ STATES = {"pending", "processing", "settling", "otp_required", "failed"}
 def public(order):
     return {
         "id": str(order["id"]), "requestId": str(order["request_id"]), "amount_fcfa": order["amount_fcfa"],
-        "currency": "XOF", "countryCode": provider.country_prefix(order["payer_phone"]), "operator": provider.OPERATORS[order["operator_id"]],
+        "currency": provider.currency(order["payer_phone"]), "countryCode": provider.country_prefix(order["payer_phone"]), "operator": provider.OPERATORS[order["operator_id"]],
         "phone": order["payer_phone"], "status": order["status"],
         "reference": order["provider_reference"], "credited": order["credited_at"] is not None,
         "ussdCode": order["ussd_code"], "errorCode": order["last_error"],
@@ -52,7 +52,7 @@ def recent(user_id):
 def prepare(user, body):
     prefix = provider.country_prefix(user["phone"])
     if not provider.deposit_operators(prefix):
-        raise auth_backend.AuthError(403, "Le paiement automatique est disponible au Bénin et au Togo uniquement.")
+        raise auth_backend.AuthError(403, "Le paiement automatique n’est pas disponible pour le pays de votre compte.")
     if not provider.configured():
         raise auth_backend.AuthError(503, "Le paiement automatique n’est pas configuré.")
     if set(body) - {"amount", "operatorId", "phone", "requestId"}:
@@ -142,7 +142,7 @@ def verified(order, result):
         return False
     if "reference" in tx and tx["reference"] != order["provider_reference"]:
         return False
-    if not _amount_matches(tx.get("amount"), order["amount_fcfa"]) or tx.get("currency") != "XOF":
+    if not _amount_matches(tx.get("amount"), order["amount_fcfa"]) or tx.get("currency") != provider.currency(order["payer_phone"]):
         return False
     expected = {"description": "IVECO:" + str(order["id"]),
                 "countryCode": provider.COUNTRY_CODES.get(provider.country_prefix(order["payer_phone"])),

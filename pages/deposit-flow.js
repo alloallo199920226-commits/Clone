@@ -152,7 +152,7 @@
     if (!prefix) throw new Error("countryError");
     const length = configuration.phoneLength;
     const channels = configuration.channels;
-    const automatic = configuration.provider === "sonarapay";
+    const isAutomatic = channel => (channel?.provider || configuration.provider) === "sonarapay";
     channels.forEach(channel => { operators[String(channel.id)] = channel.operatorName; });
     if (draft.country_code && draft.country_code !== prefix) {
       delete draft.phone;
@@ -177,13 +177,10 @@
     document.querySelector(".deposit-notice strong")?.setAttribute("hidden", "");
     const notice = document.querySelector("[data-notice-body]");
     if (notice) set(notice, "manualDetails");
-    if (automatic && !confirmation) {
-      if (notice) set(notice, "sonaraConsent");
-      set(submit.querySelector("[data-submit-label]"), "sonaraStart");
-    }
     if (confirmation) {
       const channel = channels.find(item => String(item.id) === String(draft.operator));
       if (!channel) { showMissing("channelUnavailable"); return; }
+      if (isAutomatic(channel)) { showMissing("channelUnavailable"); return; }
       const confirmationLogo = document.querySelector("[data-confirmation-logo]");
       if (confirmationLogo) populateLogo(confirmationLogo, channel, operatorBrand(channel));
       if (!new RegExp(`^\\d{${length}}$`).test(draft.phone || "")) {
@@ -254,6 +251,9 @@
     });
     const choose = operator => {
       draft.operator = operator;
+      const automatic = isAutomatic(channels.find(channel => String(channel.id) === operator));
+      if (notice) set(notice, automatic ? "sonaraConsent" : "manualDetails");
+      set(submit.querySelector("[data-submit-label]"), automatic ? "sonaraStart" : "submit");
       document.querySelectorAll("[data-operator]").forEach(button => {
         button.setAttribute("aria-pressed", String(button.dataset.operator === operator));
       });
@@ -291,6 +291,7 @@
     };
     form.addEventListener("submit", async event => {
       event.preventDefault();
+      const automatic = isAutomatic(channels.find(channel => String(channel.id) === String(draft.operator)));
       if (automatic && draft.request_uncertain) {
         await trackPayment(true);
         return;
@@ -310,7 +311,7 @@
       }
       if (save()) go("/confirmation-depot");
     });
-    if (automatic && draft.request_uncertain) await trackPayment(true);
+    if (draft.request_uncertain && isAutomatic(channels.find(channel => String(channel.id) === String(draft.operator)))) await trackPayment(true);
   }).catch(error => {
     if (!expired()) notify(["signIn", "accountError", "countryError"].includes(error.message) ? error.message : "accountError");
   }).finally(() => { content.setAttribute("aria-busy", "false"); });

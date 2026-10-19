@@ -313,10 +313,14 @@ class Handler(BaseHTTPRequestHandler):
             try:
                 prefix = next((code for code in auth_backend.PHONE_LENGTHS
                                if user["phone"].startswith(code)), None)
-                if sonarapay_client.deposit_operators(prefix) and sonarapay_client.configured():
+                automatic_channels = [
+                    {**channel, "provider": "sonarapay"}
+                    for channel in sonarapay_client.deposit_operators(prefix).values()
+                ] if sonarapay_client.configured() else []
+                if automatic_channels and prefix != "+225":
                     self._json(200, {"countryCode": prefix, "phoneLength": auth_backend.PHONE_LENGTHS[prefix],
                                      "provider": "sonarapay",
-                                     "channels": list(sonarapay_client.deposit_operators(prefix).values())})
+                                     "channels": automatic_channels})
                     return
                 with auth_backend.connect() as connection, connection.cursor() as cursor:
                     cursor.execute(
@@ -332,7 +336,11 @@ class Handler(BaseHTTPRequestHandler):
                     } for row in cursor.fetchall()]
                 self._json(200, {"countryCode": prefix,
                                  "phoneLength": auth_backend.PHONE_LENGTHS.get(prefix),
-                                 "channels": channels})
+                                 "provider": "mixed" if automatic_channels else "manual",
+                                 "channels": automatic_channels + [
+                                     {**channel, "provider": "manual"} for channel in channels
+                                     if not automatic_channels or "wave" in channel["operatorName"].casefold()
+                                 ]})
             except Exception:
                 self._json(503, {"error": "Impossible de charger les moyens de paiement."})
             return

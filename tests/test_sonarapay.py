@@ -20,6 +20,21 @@ from server import Handler
 
 
 class VerificationTests(unittest.TestCase):
+    def test_ci_cm_payload_currency_and_operator_catalog(self):
+        for phone, operator, currency, country in [
+                ("+2250700000000", "mtn_ci", "XOF", "CI"),
+                ("+237690000000", "orange_cm", "XAF", "CM")]:
+            order = {"id": uuid.uuid4(), "payer_phone": phone,
+                     "operator_id": operator, "amount_fcfa": 500}
+            with patch.object(client, "request") as request:
+                client.create(order)
+                payload = request.call_args.args[2]
+                self.assertEqual(payload["currency"], currency)
+                self.assertEqual(payload["countryCode"], country)
+        self.assertEqual(set(client.deposit_operators("+225")), {"orange_ci", "mtn_ci", "moov_ci"})
+        self.assertEqual(set(client.deposit_operators("+237")), {"mtn_cm", "orange_cm"})
+        self.assertNotIn("wave_ci", client.DEPOSIT_OPERATORS)
+
     def test_receipts_hide_provider_brand_without_changing_reference(self):
         self.assertEqual(auth_backend.payment_display_text("SonaraPay · MTN"), "MTN")
         self.assertEqual(auth_backend.payment_display_text("sonarapay:PAY-123"), "PAY-123")
@@ -123,7 +138,8 @@ class PaymentTests(unittest.TestCase):
         self.user, self.token = self.member()
 
     def member(self, prefix="+229", referral=""):
-        local = ("01" + f"{secrets.randbelow(100_000_000):08d}") if prefix == "+229" else f"{secrets.randbelow(100_000_000):08d}"
+        length = auth_backend.PHONE_LENGTHS[prefix]
+        local = ("01" + f"{secrets.randbelow(100_000_000):08d}") if prefix == "+229" else str(secrets.randbelow(10 ** length)).zfill(length)
         token, user, _days = auth_backend.register(prefix, local, "isolated-test-password", referral)
         self.ids.append(user["id"])
         return auth_backend.account_summary(user["id"]), token
@@ -142,7 +158,7 @@ class PaymentTests(unittest.TestCase):
     def fake_create(self, order, otp=None):
         ref = "test-" + str(order["id"])
         self.references[ref] = {"reference": ref, "transaction": {
-            "status": "pending", "amount": order["amount_fcfa"], "currency": "XOF",
+            "status": "pending", "amount": order["amount_fcfa"], "currency": client.currency(order["payer_phone"]),
             "description": "IVECO:" + str(order["id"]),
             "countryCode": client.COUNTRY_CODES[client.country_prefix(order["payer_phone"])],
             "operatorId": order["operator_id"], "customerPhone": order["payer_phone"]}}
@@ -166,6 +182,32 @@ class PaymentTests(unittest.TestCase):
         self.assertEqual(self.balance(), 2300)
         self.assertEqual(self.create.call_count, 1)
         self.assertEqual(self.check.call_count, 1)
+
+    def test_ci_cm_operators_and_currency_are_scoped_and_settle_once(self):
+        for prefix, operators in [("+225", ("orange_ci", "mtn_ci", "moov_ci")),
+                                  ("+237", ("mtn_cm", "orange_cm"))]:
+            for operator in operators:
+                with self.subTest(operator=operator):
+                    self.user, self.token = self.member(prefix)
+                    body = {**self.body(), "operatorId": operator}
+                    with self.assertRaises(ValueError):
+                        payments.prepare(self.user, {**body, "operatorId": "wave_ci"})
+                    with self.assertRaises(ValueError):
+                        payments.prepare(self.user, {**body, "operatorId": "mtn_bj"})
+                    order = payments.advance(payments.prepare(self.user, body), initiate=True)
+                    proof = self.references[order["provider_reference"]]
+                    proof["transaction"]["status"] = "successful"
+                    currency = "XAF" if prefix == "+237" else "XOF"
+                    self.assertEqual(payments.public(order)["currency"], currency)
+                    proof["transaction"]["currency"] = "XOF" if currency == "XAF" else "XAF"
+                    self.assertFalse(payments.verified(order, proof))
+                    proof["transaction"]["currency"] = currency
+                    self.assertTrue(payments.verified(order, proof))
+                    order = payments.advance(self.allow_check(order))
+                    self.assertTrue(order["credited_at"])
+                    self.assertEqual(self.balance(), 2800)
+                    payments.advance(order)
+                    self.assertEqual(self.balance(), 2800)
 
     def test_togo_operators_are_country_scoped_and_settle_once(self):
         for operator in ("tmoney_tg", "moov_tg"):
@@ -356,6 +398,33 @@ class PaymentTests(unittest.TestCase):
             self.assertEqual(result["phoneLength"], 8)
             self.assertEqual({row["id"] for row in result["channels"]},
                              {"tmoney_tg", "moov_tg"})
+            ci, ci_token = self.member("+225")
+            cm, cm_token = self.member("+237")
+            status, result = get("/api/payment-channels/me", cm_token)
+            self.assertEqual(status, 200)
+            self.assertEqual(result["phoneLength"], 9)
+            self.assertEqual({row["id"] for row in result["channels"]}, {"mtn_cm", "orange_cm"})
+            resource_id = None
+            try:
+                with auth_backend.connect() as conn, conn.cursor() as cur:
+                    cur.execute("""INSERT INTO shineray_admin_resources(kind,value)
+                                   VALUES ('channel',%s::jsonb) RETURNING id""",
+                                (json.dumps({"countryCode": "+225", "operatorName": "Wave test",
+                                             "isActive": True, "receiverNumber": "0700000000",
+                                             "receiverName": "Marchand test", "ussdTemplate": "*123#"}),))
+                    resource_id = cur.fetchone()["id"]
+                status, result = get("/api/payment-channels/me", ci_token)
+                self.assertEqual(status, 200)
+                self.assertEqual(result["provider"], "mixed")
+                automatic = {row["id"] for row in result["channels"] if row["provider"] == "sonarapay"}
+                self.assertEqual(automatic, {"orange_ci", "mtn_ci", "moov_ci"})
+                wave = next(row for row in result["channels"] if row["id"] == resource_id)
+                self.assertEqual(wave["provider"], "manual")
+                self.assertEqual(wave["receiverNumber"], "0700000000")
+            finally:
+                if resource_id:
+                    with auth_backend.connect() as conn, conn.cursor() as cur:
+                        cur.execute("DELETE FROM shineray_admin_resources WHERE id=%s", (resource_id,))
         finally:
             server.shutdown()
             server.server_close()

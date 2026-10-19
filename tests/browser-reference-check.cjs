@@ -521,6 +521,12 @@ async function main() {
       });
       return;
     }
+    if (process.argv.includes("--payment-mixed")) {
+      await require("./payment-mixed-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, paused,
+      });
+      return;
+    }
     if (process.argv.includes("--payment-back")) {
       await evaluate(`sessionStorage.setItem("shineray-deposit-draft", JSON.stringify({
         amount_fcfa: 40000, channel: 1, created_at: Date.now()

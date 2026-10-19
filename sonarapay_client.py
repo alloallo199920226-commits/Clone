@@ -16,12 +16,22 @@ OPERATORS = {
     "telecel_bf": {"id": "telecel_bf", "operatorName": "Telecel Cash", "logoText": "Telecel", "logoColor": "#ef4444"},
     "tmoney_tg": {"id": "tmoney_tg", "operatorName": "T-Money (Togocom)", "logoText": "T-Money", "logoColor": "#facc15"},
     "moov_tg": {"id": "moov_tg", "operatorName": "Moov Money Togo (Flooz)", "logoText": "MOOV", "logoColor": "#3b82f6"},
+    "orange_ci": {"id": "orange_ci", "operatorName": "Orange Money", "logoText": "Orange", "logoColor": "#f97316"},
+    "mtn_ci": {"id": "mtn_ci", "operatorName": "MTN", "logoText": "MTN", "logoColor": "#ffdd00"},
+    "moov_ci": {"id": "moov_ci", "operatorName": "Moov Money", "logoText": "MOOV", "logoColor": "#3b82f6"},
+    "mtn_cm": {"id": "mtn_cm", "operatorName": "MTN Mobile Money", "logoText": "MTN", "logoColor": "#ffdd00"},
+    "orange_cm": {"id": "orange_cm", "operatorName": "Orange Money", "logoText": "Orange", "logoColor": "#f97316"},
 }
 # Keep the full catalog for existing orders, but allow only these for new deposits.
-COUNTRY_CODES = {"+229": "BJ", "+226": "BF", "+228": "TG"}
+COUNTRY_CODES = {"+229": "BJ", "+226": "BF", "+228": "TG", "+225": "CI", "+237": "CM"}
 DEPOSIT_OPERATORS = {key: OPERATORS[key] for key in
                      ("mtn_bj", "moov_bj", "orange_bf", "moov_bf", "telecel_bf",
-                      "tmoney_tg", "moov_tg")}
+                      "tmoney_tg", "moov_tg", "orange_ci", "mtn_ci", "moov_ci",
+                      "mtn_cm", "orange_cm")}
+
+
+def currency(phone):
+    return "XAF" if country_prefix(phone) == "+237" else "XOF"
 
 
 def country_prefix(phone):
@@ -101,7 +111,7 @@ def create(order, otp=None):
     if not country or order["operator_id"] not in OPERATORS or not order["operator_id"].endswith("_" + country.lower()):
         raise ProviderError("invalid_country")
     payload = {
-        "amount": order["amount_fcfa"], "currency": "XOF", "countryCode": country,
+        "amount": order["amount_fcfa"], "currency": currency(order["payer_phone"]), "countryCode": country,
         "operatorId": order["operator_id"], "customerPhone": order["payer_phone"],
         "description": "IVECO:" + str(order["id"]),
     }

@@ -190,11 +190,13 @@ CREATE TABLE IF NOT EXISTS shineray_sonarapay_orders (
     user_id BIGINT NOT NULL REFERENCES shineray_users(id),
     request_id UUID NOT NULL,
     amount_fcfa BIGINT NOT NULL CHECK (amount_fcfa BETWEEN 500 AND 500000000),
-    operator_id TEXT NOT NULL CHECK (operator_id IN ('mtn_bj','moov_bj','celtiis_bj','orange_bf','moov_bf','telecel_bf','tmoney_tg','moov_tg')),
+    operator_id TEXT NOT NULL CHECK (operator_id IN ('mtn_bj','moov_bj','celtiis_bj','orange_bf','moov_bf','telecel_bf','tmoney_tg','moov_tg','orange_ci','mtn_ci','moov_ci','mtn_cm','orange_cm')),
     payer_phone TEXT NOT NULL CHECK (
       (operator_id IN ('mtn_bj','moov_bj','celtiis_bj') AND payer_phone ~ '^\+22901[0-9]{8}$')
       OR (operator_id IN ('orange_bf','moov_bf','telecel_bf') AND payer_phone ~ '^\+226[0-9]{8}$')
       OR (operator_id IN ('tmoney_tg','moov_tg') AND payer_phone ~ '^\+228[0-9]{8}$')
+      OR (operator_id IN ('orange_ci','mtn_ci','moov_ci') AND payer_phone ~ '^\+225[0-9]{10}$')
+      OR (operator_id IN ('mtn_cm','orange_cm') AND payer_phone ~ '^\+237[0-9]{9}$')
     ),
     key_fingerprint CHAR(64) NOT NULL,
     provider_reference VARCHAR(120) UNIQUE,
