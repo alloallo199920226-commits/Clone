@@ -521,6 +521,29 @@ async function main() {
       });
       return;
     }
+    if (process.argv.includes("--rules-banner")) {
+      await navigate("/regles");
+      await waitFor("document.querySelector('.rules-pack-banner')?.complete && document.querySelector('.rules-pack-banner').naturalWidth > 0");
+      for (const width of [320, 390, 1360]) {
+        await call("Emulation.setDeviceMetricsOverride", {
+          width, height: 844, deviceScaleFactor: 1, mobile: width < 500,
+        });
+        assert(await evaluate(`(() => {
+          const image = document.querySelector(".rules-pack-banner");
+          const rect = image.getBoundingClientRect();
+          const text = document.querySelector(".rules-content .reference-copy").getBoundingClientRect();
+          return rect.bottom < text.top && rect.width > 0 &&
+            Math.abs(rect.width / rect.height - image.naturalWidth / image.naturalHeight) < .01 &&
+            document.documentElement.scrollWidth <= innerWidth;
+        })()`));
+      }
+      await call("Emulation.setDeviceMetricsOverride", {
+        width: 390, height: 844, deviceScaleFactor: 1, mobile: true,
+      });
+      await screenshot("rules-pack-banner");
+      console.log("PASS: supplied image loads above rules, uncropped at mobile and desktop widths.");
+      return;
+    }
     if (process.argv.includes("--payment-mixed")) {
       await require("./payment-mixed-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, paused,
