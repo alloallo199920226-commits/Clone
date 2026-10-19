@@ -35,3 +35,13 @@ flow after being blocked by customer-account authorization.
 **How to apply:** require the dedicated console password and a valid console session on
 every administration operation. The private URL alone never grants access. Do not create
 or promote a customer to represent the owner; retain auditing of the independent principal.
+
+Les retraits des utilisateurs ayant reçu un crédit administrateur **ou un octroi de VIP**
+doivent figurer dans « Crédit admin », jamais dans les retraits normaux.
+Un VIP acheté par le client ne constitue pas un octroi administratif.
+
+**Why:** l’utilisateur demande explicitement de ne pas mélanger ces deux catégories.
+
+**How to apply:** classer selon l’historique des aides reçues, pas uniquement le solde
+actuel ou les VIP encore actifs. Fournir les deux motifs à l’interface existante.
+Cette règle de classement n’autorise pas à activer les demandes ou les paiements de retrait.

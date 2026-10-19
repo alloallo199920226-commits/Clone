@@ -128,6 +128,60 @@ class ImportedAdminTests(unittest.TestCase):
         self.resources.append(result["id"])
         return result
 
+    def test_withdrawal_sections_separate_admin_credit_and_granted_vip(self):
+        """Synthetic settled fixtures verify routing without enabling real withdrawals."""
+        self.login()
+        members = {name: self.member()[0] for name in
+                   ("normal", "credit", "vip", "both", "revoked_vip", "purchased_vip")}
+        marker = "withdraw-classification-" + self.fixture_key
+        with auth_backend.connect() as conn, conn.cursor() as cur:
+            cur.execute("INSERT INTO shineray_admin_resources(kind,value) VALUES ('product','{}') RETURNING id")
+            product = cur.fetchone()["id"]
+            self.resources.append(product)
+            for name, member in members.items():
+                uid = member["id"]
+                if name in ("credit", "both"):
+                    admin_api.money_operation(cur, None, uid, "credit",
+                                              {"amount": 5000, "requestId": marker + name})
+                if name in ("vip", "both", "revoked_vip"):
+                    cur.execute("""INSERT INTO shineray_admin_vip_grants
+                        (request_id,user_id,admin_id,product_id,product_snapshot,status,expires_at)
+                        VALUES (%s,%s,NULL,%s,'{"name":"VIP test"}',%s,now()+interval '30 days')""",
+                                (marker + name, uid, product,
+                                 "revoked" if name == "revoked_vip" else "active"))
+                if name == "purchased_vip":
+                    cur.execute("""INSERT INTO shineray_transactions
+                        (user_id,kind,label,amount_fcfa,provider_reference)
+                        VALUES (%s,'purchase','Test achat',-100,%s)""", (uid, marker + "-purchase"))
+                cur.execute("""INSERT INTO shineray_transactions
+                    (user_id,kind,label,amount_fcfa,provider_reference)
+                    VALUES (%s,'withdrawal','Test classement uniquement',-100,%s)""", (uid, marker + name))
+        def history(assistance, extra=""):
+            status, body, _ = self.request("GET", "/api/admin/transaction-history?"
+                f"type=withdrawal&assistance={assistance}&search={marker}{extra}")
+            self.assertEqual(status, 200, body)
+            return body
+        admin = history("admin")
+        normal = history("normal")
+        expected_admin = {members[name]["id"] for name in ("credit", "vip", "both", "revoked_vip")}
+        expected_normal = {members[name]["id"] for name in ("normal", "purchased_vip")}
+        self.assertEqual({row["userId"] for row in admin["transactions"]}, expected_admin)
+        self.assertEqual({row["userId"] for row in normal["transactions"]}, expected_normal)
+        self.assertTrue(all(row["adminAssisted"] for row in admin["transactions"]))
+        self.assertTrue(all(not row["adminAssisted"] for row in normal["transactions"]))
+        flags = {row["userId"]: (row["hasAdminCredit"], row["hasAdminVipGrant"])
+                 for row in history("all")["transactions"]}
+        self.assertEqual(flags[members["credit"]["id"]], (True, False))
+        self.assertEqual(flags[members["vip"]["id"]], (False, True))
+        self.assertEqual(flags[members["both"]["id"]], (True, True))
+        page = history("admin", "&limit=1")
+        self.assertEqual(page["total"], 4)
+        self.assertEqual(len(page["transactions"]), 1)
+        self.assertEqual(page["nextCursor"], "1")
+        # A classification change must not manufacture pending requests.
+        self.assertEqual(history("admin", "&status=pending")["total"], 0)
+        self.assertEqual(history("normal", "&status=pending")["total"], 0)
+
     def test_assets_are_identical_and_private_sources_are_unreachable(self):
         with ZipFile(admin_assets.ARCHIVE) as archive:
             for route, member in {

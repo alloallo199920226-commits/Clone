@@ -156,11 +156,21 @@ def transaction_rows(cur, query):
               'receiver_name',m.channel_snapshot->>'receiverName'),
             u.phone,'deposit',false,m.status
         FROM shineray_manual_deposits m JOIN shineray_users u ON u.id=m.user_id
-        WHERE m.status IN ('pending','rejected'))
-        SELECT * FROM history WHERE
+        WHERE m.status IN ('pending','rejected')),
+        classified AS (
+          SELECT history.*,
+            EXISTS(SELECT 1 FROM shineray_admin_operations ao
+                   WHERE ao.user_id=history.user_id AND ao.operation_type='admin_credit') AS has_admin_credit,
+            EXISTS(SELECT 1 FROM shineray_admin_vip_grants g
+                   WHERE g.user_id=history.user_id) AS has_admin_vip_grant
+          FROM history),
+        marked AS (
+          SELECT *, (assisted OR (type='withdrawal' AND has_admin_vip_grant)) AS admin_assisted
+          FROM classified)
+        SELECT * FROM marked WHERE
           (%(kind)s='all' OR type=%(kind)s)
           AND (%(status)s='all' OR status=%(status)s)
-          AND (%(assistance)s='all' OR (%(assistance)s='admin' AND assisted) OR (%(assistance)s='normal' AND NOT assisted))
+          AND (%(assistance)s='all' OR (%(assistance)s='admin' AND admin_assisted) OR (%(assistance)s='normal' AND NOT admin_assisted))
           AND (phone ILIKE %(pattern)s OR provider_reference ILIKE %(pattern)s OR id::text=%(search)s)"""
     cur.execute(f"SELECT count(*) total FROM ({source}) matched", params)
     total = cur.fetchone()["total"]
@@ -183,7 +193,9 @@ def transaction_rows(cur, query):
             "payerNumber": details.get("payer_number") or row["phone"],
             "destination": details.get("destination"), "receiverName": details.get("receiver_name"),
             "netAmount": details.get("net_amount_fcfa"), "fee": details.get("fee_fcfa"),
-            "adminAssisted": row["assisted"], "referralCount": 0,
+            "adminAssisted": row["admin_assisted"],
+            "hasAdminCredit": row["has_admin_credit"], "hasAdminVipGrant": row["has_admin_vip_grant"],
+            "referralCount": 0,
         })
     return {"transactions": result, "total": total,
             "nextCursor": str(offset + limit) if len(rows) > limit else None}
