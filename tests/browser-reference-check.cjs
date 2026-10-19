@@ -521,6 +521,32 @@ async function main() {
       });
       return;
     }
+    if (process.argv.includes("--payment-back")) {
+      await evaluate(`sessionStorage.setItem("shineray-deposit-draft", JSON.stringify({
+        amount_fcfa: 40000, channel: 1, created_at: Date.now()
+      }))`);
+      await navigate("/choisir-operateur");
+      await waitFor("document.querySelector('.iveco-payment-back')");
+      for (const width of [320, 390]) {
+        await call("Emulation.setDeviceMetricsOverride", {
+          width, height: 844, deviceScaleFactor: 1, mobile: true,
+        });
+        assert(await evaluate(`(() => {
+          const back = document.querySelector(".iveco-payment-back");
+          const rect = back.getBoundingClientRect();
+          const brand = document.querySelector(".iveco-scene-brand").getBoundingClientRect();
+          return back.getAttribute("href") === "/recharger" &&
+            rect.height >= 44 && rect.bottom <= brand.top &&
+            document.documentElement.scrollWidth <= innerWidth;
+        })()`));
+      }
+      await screenshot("payment-back-arrow");
+      await evaluate("document.querySelector('.iveco-payment-back').click()");
+      await waitFor("location.pathname === '/recharger'");
+      assert(await evaluate(`JSON.parse(sessionStorage.getItem("shineray-deposit-draft")).amount_fcfa === 40000`));
+      console.log("PASS: visible mobile back arrow, no logo overlap or overflow, returns to recharge and preserves draft.");
+      return;
+    }
     if (process.argv.includes("--history-copy")) {
       await require("./history-copy-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, paused, base,
