@@ -200,8 +200,12 @@ def transaction_rows(cur, query):
             "createdAt": row["created_at"].isoformat(), "initiatedAt": row["created_at"].isoformat(),
             "paymentProvider": "automatic" if details.get("provider") == "sonarapay" else details.get("provider", details.get("approval_method", "manual")),
             "operatorName": db.payment_display_text(details.get("channel")) or "Non renseigné",
-            "payerNumber": details.get("payer_number") or row["phone"],
+            # The imported console prioritizes payerNumber over destination.
+            # For withdrawals it must be the frozen payout wallet, never the login phone.
+            "payerNumber": (details.get("destination") if row["type"] == "withdrawal"
+                            else details.get("payer_number") or row["phone"]),
             "destination": details.get("destination"), "receiverName": details.get("receiver_name"),
+            "walletHolderName": details.get("receiver_name") if row["type"] == "withdrawal" else None,
             "netAmount": details.get("net_amount_fcfa"), "fee": details.get("fee_fcfa"),
             "adminAssisted": row["admin_assisted"],
             "hasAdminCredit": row["has_admin_credit"], "hasAdminVipGrant": row["has_admin_vip_grant"],

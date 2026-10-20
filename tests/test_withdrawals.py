@@ -106,6 +106,34 @@ class WithdrawalTests(unittest.TestCase):
         self.assertEqual(admin["transactions"][0]["destination"], self.user["phone"])
         self.assertEqual(db.get_activity(self.uid, "withdrawal")[0]["status"], "pending")
 
+    def test_admin_receives_frozen_wallet_not_registration_phone(self):
+        self.grant()
+        destination = "+22854648354"
+        with db.connect() as conn, conn.cursor() as cur:
+            cur.execute("""UPDATE shineray_wallets SET phone=%s,holder_name='Omar'
+                WHERE id=%s""", (destination, self.wallet))
+        row = withdrawals.submit(self.uid, self.body)
+        # A later edit must not change the recipient of an already submitted withdrawal.
+        with db.connect() as conn, conn.cursor() as cur:
+            cur.execute("""UPDATE shineray_wallets SET phone='+22899999999',
+                holder_name='Changed' WHERE id=%s""", (self.wallet,))
+        def assert_recipient(status):
+            with db.connect() as conn, conn.cursor() as cur:
+                response = admin_api.transaction_rows(cur, {
+                    "type": "withdrawal", "status": status,
+                    "assistance": "admin", "search": row["reference"]})
+            self.assertEqual(response["total"], 1)
+            item = response["transactions"][0]
+            self.assertEqual(item["registrationNumber"], self.user["phone"])
+            self.assertEqual(item["payerNumber"], destination)
+            self.assertEqual(item["destination"], destination)
+            self.assertEqual(item["walletHolderName"], "Omar")
+            self.assertEqual(item["operatorName"], "TOGOCEL")
+        assert_recipient("pending")
+        with patch("admin_api.require_admin", return_value=None):
+            withdrawals.review(self.handler, int(row["id"].split("-")[1]), "approved")
+        assert_recipient("approved")
+
     def test_reservation_concurrent_retry_and_review_exactly_once(self):
         self.grant()
         with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
