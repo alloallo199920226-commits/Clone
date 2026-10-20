@@ -14,3 +14,17 @@ mtime_ms = 1792390772306
 storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:2b24cd28-b44f-4cff-bacf-135c732fa24d/ca1972f4-7394-4d42-b2c2-b36619f6ec84/dd42b529-6858-4aea-a968-c191d33f1b80"
 storage_version_token = "1792390780093166"
 content_type = "application/octet-stream"
+
+[[outputs]]
+id = "jcxntXeOBcdysQTIOSbf0"
+uri = "file://generated-artifacts/administration-iveco-complete.zip"
+type = "unspecified"
+title = "Administration IVECO — frontend et backend"
+description = "Archive ZIP du code actuel : interface d’administration, backend Python et dépendances partagées, schéma PostgreSQL et guide d’installation. Sans secrets ni données utilisateurs. Environ 13,5 Mo."
+logical_id = "a7f5ec33-d14f-4ebc-aade-d1a91d6c2019"
+content_hash = "sha256:721b8c93adf829779fe8db1e53ea0edd7c80e1bd3cc96dae1c009a6c664dfc62"
+size = 13454515
+mtime_ms = 1792485611329
+storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:2b24cd28-b44f-4cff-bacf-135c732fa24d/a7f5ec33-d14f-4ebc-aade-d1a91d6c2019/0ccb25e7-ef5f-4e68-927e-89c402e3a365"
+storage_version_token = "1792485635271756"
+content_type = "application/octet-stream"
