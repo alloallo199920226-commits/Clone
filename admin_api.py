@@ -41,7 +41,7 @@ USER_FIELDS = """u.id,u.phone,u.referral_code AS "referralCode",
 CONFIG = {
     "depositMin": MIN_DEPOSIT_FCFA, "withdrawalMin": 2300,
     # Manual withdrawals use the advertised fee; no check-in policy is enabled.
-    "withdrawalFeePercent": 20, "dashboxDeposit": 500,
+    "withdrawalFeePercent": 20, "dashboxDeposit": MIN_DEPOSIT_FCFA,
     "dashboxWithdraw": 2300, "signupBonus": WELCOME_BONUS_FCFA,
     "checkinBonus": None, "maxWithdrawals": None,
 }
@@ -544,7 +544,7 @@ def dispatch(cur, user, route, method, body, query):
     if route == "/api/admin/popup-config":
         if method == "GET":
             return 200, {"config": CONFIG}
-        fail(409, "Les règles actuelles sont conservées : bonus 2 300 FCFA, dépôt minimum 500 FCFA et commissions 40 % / 2 % / 1 %. Les autres services financiers ne sont pas activés ; aucun paramètre n’a été modifié.")
+        fail(409, "Les règles actuelles sont conservées : bonus 2 300 FCFA, dépôt minimum 3 500 FCFA et commissions 40 % / 2 % / 1 %. Les autres services financiers ne sont pas activés ; aucun paramètre n’a été modifié.")
     if route == "/api/admin/payment-provider-controls":
         if method == "GET":
             return 200, {"saspayEnabled": False, "sonarapayAutomaticEnabled": False, "sonarapayConfigured": False}

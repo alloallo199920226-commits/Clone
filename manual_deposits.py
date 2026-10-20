@@ -5,6 +5,7 @@ import uuid
 
 import auth_backend as db
 import sonarapay_client
+from financial_policy import MIN_DEPOSIT_FCFA
 
 
 def submit(user, body):
@@ -15,8 +16,8 @@ def submit(user, body):
     except (ValueError, TypeError, AttributeError):
         raise ValueError("Référence de demande invalide.")
     amount = body["amount_fcfa"]
-    if type(amount) is not int or not 500 <= amount <= db.MAX_ACTIVITY_AMOUNT:
-        raise ValueError("Montant de dépôt invalide.")
+    if type(amount) is not int or not MIN_DEPOSIT_FCFA <= amount <= db.MAX_ACTIVITY_AMOUNT:
+        raise ValueError(f"Le dépôt minimum est de {MIN_DEPOSIT_FCFA} FCFA.")
     channel_id = body["channel_id"]
     if type(channel_id) is not int or channel_id < 1:
         raise ValueError("Moyen de paiement invalide.")

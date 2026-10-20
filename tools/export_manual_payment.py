@@ -109,7 +109,7 @@ La configuration automatique est explicitement refusée par cet export pour
 Avant de naviguer vers /choisir-operateur, enregistrer :
 ```js
 sessionStorage.setItem("shineray-deposit-draft", JSON.stringify({
-  amount_fcfa: 500,
+  amount_fcfa: 3500,
   channel: 1,
   created_at: Date.now()
 }));
@@ -118,7 +118,7 @@ location.href = "/choisir-operateur";
 La clé technique historique est conservée pour compatibilité. `channel` doit
 valoir 1 ou 2 dans ce parcours hérité ; l'opérateur sera ensuite sélectionné
 parmi les canaux renvoyés par le serveur. Le montant doit être entier, minimum
-500 FCFA côté interface. Le serveur reste responsable des règles financières.
+3 500 FCFA côté interface. Le serveur reste responsable des règles financières.
 La durée du brouillon est de 20 minutes. L'identifiant du compte, l'indicatif,
 l'opérateur et le téléphone sont complétés par le script.
 
