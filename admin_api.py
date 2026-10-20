@@ -39,10 +39,10 @@ USER_FIELDS = """u.id,u.phone,u.referral_code AS "referralCode",
     u.withdrawals_disabled AS "withdrawalsDisabled",
     CASE WHEN u.phone LIKE '+225%%' THEN 'CI' ELSE 'TG' END AS country"""
 CONFIG = {
-    "depositMin": MIN_DEPOSIT_FCFA, "withdrawalMin": 2200,
-    # No fee or check-in policy is activated by importing an administration.
-    "withdrawalFeePercent": None, "dashboxDeposit": 500,
-    "dashboxWithdraw": 2200, "signupBonus": WELCOME_BONUS_FCFA,
+    "depositMin": MIN_DEPOSIT_FCFA, "withdrawalMin": 2300,
+    # Manual withdrawals use the advertised fee; no check-in policy is enabled.
+    "withdrawalFeePercent": 20, "dashboxDeposit": 500,
+    "dashboxWithdraw": 2300, "signupBonus": WELCOME_BONUS_FCFA,
     "checkinBonus": None, "maxWithdrawals": None,
 }
 
@@ -119,7 +119,9 @@ def user_rows(cur, search="", offset=0, limit=50):
     cur.execute(f"SELECT count(*) total FROM shineray_users u WHERE {where}", params)
     total = cur.fetchone()["total"]
     cur.execute(f"""SELECT {USER_FIELDS},
-        COALESCE((SELECT sum(t.amount_fcfa) FROM shineray_transactions t WHERE t.user_id=u.id),0)::bigint balance
+        COALESCE((SELECT sum(t.amount_fcfa) FROM shineray_transactions t WHERE t.user_id=u.id),0)::bigint
+          - COALESCE((SELECT sum(w.amount_fcfa) FROM shineray_withdrawal_requests w
+                      WHERE w.user_id=u.id AND w.status='pending'),0)::bigint balance
         FROM shineray_users u WHERE {where} ORDER BY u.created_at DESC,u.id DESC LIMIT %s OFFSET %s""",
                 (*params, limit + 1, offset))
     rows = cur.fetchall()
@@ -156,7 +158,15 @@ def transaction_rows(cur, query):
               'receiver_name',m.channel_snapshot->>'receiverName'),
             u.phone,'deposit',false,m.status
         FROM shineray_manual_deposits m JOIN shineray_users u ON u.id=m.user_id
-        WHERE m.status IN ('pending','rejected')),
+        WHERE m.status IN ('pending','rejected')
+        UNION ALL
+        SELECT 'withdraw-'||w.id,w.user_id,'withdrawal',w.amount_fcfa,'RET-'||w.request_id::text,w.created_at,
+            w.wallet_snapshot || jsonb_build_object('provider','manual','net_amount_fcfa',w.net_amount_fcfa,'fee_fcfa',w.fee_fcfa),
+            u.phone,'withdrawal',
+            EXISTS(SELECT 1 FROM shineray_admin_operations ao WHERE ao.user_id=w.user_id AND ao.operation_type='admin_credit'),
+            w.status
+        FROM shineray_withdrawal_requests w JOIN shineray_users u ON u.id=w.user_id
+        WHERE w.status IN ('pending','rejected')),
         classified AS (
           SELECT history.*,
             EXISTS(SELECT 1 FROM shineray_admin_operations ao
@@ -232,8 +242,12 @@ def overview(cur, summary):
     active = cur.fetchone()["count"]
     cur.execute("SELECT count(*) AS total FROM shineray_manual_deposits WHERE status='pending'")
     pending_deposits = cur.fetchone()["total"]
-    stats.update(investments=active, active_vips=active, pendingDeposits=pending_deposits, pendingWithdrawals=0,
-                 rejectedDepositCount=0, rejectedWithdrawalCount=0)
+    cur.execute("""SELECT count(*) FILTER (WHERE status='pending')::int pending,
+        count(*) FILTER (WHERE status='rejected')::int rejected FROM shineray_withdrawal_requests""")
+    withdrawal_counts = cur.fetchone()
+    pending_withdrawals = withdrawal_counts["pending"]
+    stats.update(investments=active, active_vips=active, pendingDeposits=pending_deposits, pendingWithdrawals=pending_withdrawals,
+                 rejectedDepositCount=0, rejectedWithdrawalCount=withdrawal_counts["rejected"])
     txs = [] if summary else transaction_rows(cur, {"limit": "100"})["transactions"]
     cur.execute("""SELECT 'purchase-'||t.id AS id,t.user_id AS "userId",t.details->>'product_name' AS "productName",
         abs(t.amount_fcfa) amount,t.created_at AS "createdAt",u.phone AS "userPhone",
@@ -252,7 +266,7 @@ def overview(cur, summary):
             "withdrawals": [t for t in txs if t["type"] == "withdrawal"],
             "products": resources(cur, "product"), "orders": serialize(orders),
             "community": {"isOpen": False, "closureMessage": "Service non activé."},
-            "withdrawOpenOverride": False, "withdrawClosedOverride": True}
+            "withdrawOpenOverride": False, "withdrawClosedOverride": False}
 
 
 def user_detail(cur, uid):
@@ -269,6 +283,11 @@ def user_detail(cur, uid):
         COALESCE(-sum(amount_fcfa) FILTER(WHERE details->>'admin_type'='admin_debit'),0)::bigint AS "totalAdminDebits"
         FROM shineray_transactions WHERE user_id=%s""", (uid,))
     wallet = cur.fetchone()
+    from withdrawals import available_balance
+    wallet["balance"] = available_balance(cur, uid)
+    cur.execute("""SELECT COALESCE(sum(amount_fcfa),0)::bigint reserved
+        FROM shineray_withdrawal_requests WHERE user_id=%s AND status='pending'""", (uid,))
+    wallet["reservedAmount"] = cur.fetchone()["reserved"]
     cur.execute("""SELECT id,COALESCE(details->>'admin_type',kind) type,abs(amount_fcfa) amount,
         'completed' status,created_at AS "createdAt" FROM shineray_transactions
         WHERE user_id=%s ORDER BY created_at DESC,id DESC LIMIT 100""", (uid,))
@@ -332,8 +351,8 @@ def money_operation(cur, actor, uid, action, body):
     cur.execute("SELECT id FROM shineray_users WHERE id=%s FOR NO KEY UPDATE", (uid,))
     if not cur.fetchone():
         fail(404, "Utilisateur introuvable.")
-    cur.execute("SELECT COALESCE(sum(amount_fcfa),0)::bigint balance FROM shineray_transactions WHERE user_id=%s", (uid,))
-    balance = cur.fetchone()["balance"]
+    from withdrawals import available_balance
+    balance = available_balance(cur, uid)
     if action == "debit" and balance < amount:
         fail(409, "Solde insuffisant pour ce débit.")
     signed = amount if action == "credit" else -amount
@@ -558,6 +577,14 @@ def handle(handler, user, route):
         # Normalize its wire format here instead of rewriting the original JS.
         raw_query = urlsplit(handler.path).query.replace("&amp;", "&")
         query = {key: values[0] for key, values in parse_qs(raw_query).items()}
+        withdrawal_match = re.fullmatch(r"/api/admin/withdrawals/withdraw-([1-9]\d*)", route)
+        if withdrawal_match:
+            if handler.command != "PATCH":
+                fail(405, "Méthode non autorisée.")
+            fields(body, {"status"})
+            import withdrawals
+            handler._json(200, withdrawals.review(handler, int(withdrawal_match[1]), body.get("status")))
+            return
         manual_match = re.fullmatch(r"/api/admin/deposits/manual-([1-9]\d*)", route)
         if manual_match:
             if handler.command != "PATCH":

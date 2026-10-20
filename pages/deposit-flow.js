@@ -203,6 +203,15 @@
         const dial = document.querySelector("[data-deposit-dial]");
         dial.href = `tel:${encodeURIComponent(ussd)}`;
         dial.removeAttribute("aria-disabled");
+      } else {
+        const card = document.querySelector(".deposit-ussd-card");
+        card.querySelectorAll(".signature-code-wrap,.deposit-ussd-actions,.deposit-ussd-instructions:not([data-manual-transfer])").forEach(node => {
+          node.hidden = true;
+          node.style.display = "none";
+        });
+        const instructions = card.querySelector("[data-manual-transfer]");
+        instructions.hidden = false;
+        set(instructions, "manualTransferInstructions");
       }
       for (const name of ["merchant_name", "merchant_account", "ussd"]) {
         document.querySelectorAll(`[data-copy="${name}"]`).forEach(button => {
@@ -211,6 +220,7 @@
       }
       document.querySelector("[data-selected-operator]").textContent = operators[draft.operator];
       set(document.querySelector("[data-ussd-heading]"), "ussdHeading", { operator: operators[draft.operator] });
+      if (!copyValues.ussd) set(document.querySelector("[data-ussd-heading]"), "manualTransferHeading");
       document.querySelector("[data-deposit-phone]").textContent = `${prefix} ${draft.phone}`;
       set(document.querySelector("[data-deposit-validation]"), "manualDetails");
       document.querySelector('[data-copy="amount"]').disabled = false;

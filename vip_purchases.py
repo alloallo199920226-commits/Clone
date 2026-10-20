@@ -4,6 +4,7 @@ import uuid
 from psycopg.types.json import Jsonb
 
 import auth_backend as db
+from withdrawals import available_balance
 
 # Prices of the existing six customer products; administrative settings override them.
 DEFAULT_PRODUCTS = {
@@ -73,9 +74,7 @@ def purchase(user_id, body):
             price = product["price"]
             if body["expectedPrice"] != price:
                 raise db.AuthError(409, "Le prix a changé. Rechargez la page avant de confirmer l’achat.")
-            cursor.execute("SELECT COALESCE(sum(amount_fcfa),0)::bigint balance FROM shineray_transactions WHERE user_id=%s",
-                           (user_id,))
-            if cursor.fetchone()["balance"] < price:
+            if available_balance(cursor, user_id) < price:
                 raise db.AuthError(409, "Solde insuffisant pour acheter ce produit VIP.")
             details = {
                 "product_code": code, "product_name": product["name"], "vip": int(code[3:]),
@@ -89,7 +88,5 @@ def purchase(user_id, body):
                 VALUES (%s,'purchase',%s,%s,%s,%s) RETURNING id""",
                            (user_id, code, -price, reference, Jsonb(details)))
             transaction_id = cursor.fetchone()["id"]
-        cursor.execute("SELECT COALESCE(sum(amount_fcfa),0)::bigint balance FROM shineray_transactions WHERE user_id=%s",
-                       (user_id,))
         return {"ok": True, "purchaseId": transaction_id, "amount_fcfa": price,
-                "balance_fcfa": cursor.fetchone()["balance"], "automaticIncomeEnabled": False}
+                "balance_fcfa": available_balance(cursor, user_id), "automaticIncomeEnabled": False}

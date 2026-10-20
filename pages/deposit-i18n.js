@@ -1,6 +1,8 @@
 /* Local translations: no external service or network dependency. */
 (() => {
   const messages = {
+    manualTransferHeading: ["Comment effectuer le paiement", "How to make the payment"],
+    manualTransferInstructions: ["Veuillez copier le numéro de réception, puis ouvrir votre répertoire téléphonique ou votre application Mobile Money pour effectuer le paiement sur ce numéro. Revenez ensuite cliquer sur « Obtenir le résultat ». Votre demande sera enregistrée et votre compte crédité après vérification du transfert par l’administration. Délai indicatif : moins de 5 minutes après vérification, non garanti.", "Copy the recipient number, then open your phone contacts or Mobile Money application to pay that number. Return here and select “Get the result”. Your request will be recorded and your account credited after the administrator verifies the transfer. Indicative time: less than 5 minutes after verification, not guaranteed."],
     sonaraTitle: ["Suivi du paiement", "Payment status"],
     sonaraPanel: ["Suivi du paiement", "Payment status"],
     sonaraConsent: ["Ce bouton déclenche une demande de paiement réelle. Validez-la auprès de votre opérateur, jamais avec votre PIN sur ce site.", "This button starts a real payment request. Approve it with your operator; never enter your PIN on this site."],

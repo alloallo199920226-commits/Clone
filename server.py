@@ -346,6 +346,24 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(503, {"error": "Impossible de charger les moyens de paiement."})
             return
 
+        if route == "/api/withdrawals":
+            if self.command != "POST":
+                self._json(405, {"error": "Méthode non autorisée."})
+                return
+            body = self._read_json()
+            if body is None:
+                return
+            import withdrawals
+            try:
+                self._json(201, {"withdrawal": withdrawals.submit(user["id"], body)})
+            except auth_backend.AuthError as exc:
+                self._json(exc.status, {"error": exc.message})
+            except ValueError as exc:
+                self._json(400, {"error": str(exc)})
+            except Exception:
+                self._json(503, {"error": "Enregistrement non confirmé. Réessayez la même demande ou vérifiez votre historique."})
+            return
+
         if route == "/api/manual-deposits":
             if self.command != "POST":
                 self._json(405, {"error": "Méthode non autorisée."})

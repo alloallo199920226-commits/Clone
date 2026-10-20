@@ -7,23 +7,23 @@
     <div class="finance-section-label"><span>Compte de retrait</span></div>
     <button type="button" class="wallet-select" data-wallet-select><span data-wallet-label>Sélectionnez le compte portefeuille de retrait</span><span class="chevron" aria-hidden="true">›</span></button>
     <div class="wallet-options" data-wallet-options hidden></div><p class="payment-status" data-wallet-status role="status" aria-live="polite"></p>
-    <div class="finance-section-label amount-title"><span>Montant du retrait</span><small>Impôt: 22%</small></div>
-    <label class="input-wrap"><span>FCFA</span><input id="amount" type="number" min="2200" step="1" inputmode="numeric" placeholder="Veuillez choisir le montant du retrait" aria-label="Montant du retrait"></label>
+    <div class="finance-section-label amount-title"><span>Montant du retrait</span><small>Frais : 20 %</small></div>
+    <label class="input-wrap"><span>FCFA</span><input id="amount" type="number" min="2300" step="1" inputmode="numeric" placeholder="Veuillez choisir le montant du retrait" aria-label="Montant du retrait"></label>
     <p class="received-amount" data-amount-received>Montant reçu: FCFA 0.00</p>
-    <p class="minimum-note">( Minimum FCFA 2,200 )</p>
+    <p class="minimum-note">Minimum : 2 300 FCFA · De 10 h à 18 h, heure du Maroc · VIP actif requis.</p>
     <button class="payment-submit withdraw-submit" type="button" data-payment-action data-payment-kind="withdrawal">Retirer de l'argent maintenant</button>
     <p class="payment-status" data-payment-status role="status" aria-live="polite"></p>
     <section class="instructions"><h2>Instructions de retrait</h2><ol>
-      <li>1. Le montant minimum de retrait est de 2200 FCFA.</li>
-      <li>2. Il n'y a pas de limite de temps pour les retraits ; vous pouvez effectuer plusieurs retraits.</li>
-      <li>3. 22 % des frais de retrait serviront à couvrir les pertes liées à ce produit.</li>
-      <li>4. Les retraits sont généralement traités sous 2 heures, mais ce délai peut être exceptionnellement prolongé à 24 heures.</li>
+      <li>1. Vous devez posséder au moins un VIP actif, acheté ou octroyé par l’administration.</li>
+      <li>2. Le minimum de retrait est de 2 300 FCFA. Les demandes sont ouvertes chaque jour de 10 h à 18 h, heure du Maroc (fermeture à 18 h).</li>
+      <li>3. Les frais sont de 20 %, arrondis au FCFA inférieur. Le montant net est indiqué avant confirmation.</li>
+      <li>4. La demande est transmise à l’administration pour versement manuel. Son enregistrement ne signifie pas que le versement a déjà été effectué.</li>
       <li>5. Veuillez saisir correctement les informations de votre compte de retrait ; toute information incorrecte entraînera l'échec du retrait.</li>
-      <li>6. Afin de protéger les droits et intérêts de la plateforme et de ses membres, vous devez investir avant de pouvoir effectuer un retrait.</li>
+      <li>6. Le montant demandé doit être disponible sur votre solde. Il est réservé pendant le traitement et libéré si la demande est refusée.</li>
     </ol></section>
-    <p class="payment-disclosure">Conditions de référence non activées : le seuil de 2 200 FCFA et le calcul indicatif de 22 % ne constituent pas une politique appliquée. Retraits et frais ne sont pas disponibles. Aucun revenu n'est garanti.</p>
+    <p class="payment-disclosure">Retrait minimum : 2 300 FCFA. Frais : 20 %. Horaires : de 10 h à 18 h, heure du Maroc. Un VIP actif et un solde disponible suffisant sont nécessaires. Consultez l’historique pour suivre votre demande.</p>
     <p class="payment-disclosure"><a href="/historique-retraits">Historique des retraits</a></p>
   </div>
 </main>
-<dialog class="finance-dialog" id="reference-info"><h2>Conditions de référence</h2><p>Le montant minimum et les frais de 22 % reproduisent les conditions figurant sur le document de référence. Elles ne sont pas activées ni garanties et ne sont pas appliquées par le serveur. Le retrait est actuellement indisponible faute de prestataire ; aucun mouvement ne sera effectué.</p><button type="button" data-info-close>Compris</button></dialog>
+<dialog class="finance-dialog" id="reference-info"><h2>Conditions de retrait</h2><p>Un VIP actif est requis. Minimum : 2 300 FCFA. Frais : 20 %. Demandes de 10 h à 18 h, heure du Maroc, fermeture à 18 h. Le montant demandé est réservé jusqu’au traitement manuel par l’administration, sans débit définitif avant validation du versement.</p><button type="button" data-info-close>Compris</button></dialog>
 </body></html>

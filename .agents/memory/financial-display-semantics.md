@@ -3,7 +3,24 @@ name: Financial display semantics
 description: Preserve the difference between settled funds, pending requests, purchases, and actual earnings.
 ---
 
-Keep pending deposit/withdrawal requests separate from the settled financial ledger. A pending request must not change the balance or appear as a verified payment.
+Keep pending deposit/withdrawal requests separate from the settled financial ledger.
+A pending request must not change the settled balance or appear as a verified payment;
+a withdrawal reservation does reduce the spendable balance.
+
+Les demandes de retrait manuel nécessitent au moins un VIP actif, acheté ou octroyé.
+Minimum : 2 300 FCFA ; frais : 20 % ; horaires : 10 h à 18 h, heure du Maroc.
+Le solde disponible exclut les réservations en
+attente, sans les représenter comme des versements déjà effectués.
+
+**Why:** l’utilisateur a précisé le minimum, les frais et les horaires après avoir
+demandé la condition de VIP actif.
+
+**How to apply:** utiliser le fuseau Africa/Casablanca, pas un décalage UTC fixe.
+Accepter les nouvelles demandes à partir de 10 h et les fermer à 18 h.
+Conserver les frais des demandes déjà enregistrées ; sérialiser les dépenses
+et réserver les demandes en attente. L’approbation administrative signifie que le
+versement manuel a été effectué ; le refus libère la réservation. Le VIP doit être
+actif au dépôt de la demande, pas simplement présent dans l’historique.
 
 **Why:** the supplied history references include pending deposits, but the balance is calculated from the ledger. Treating a pending request as a ledger entry would misrepresent funds received.
 

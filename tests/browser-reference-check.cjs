@@ -35,7 +35,7 @@ async function main() {
         "print(json.dumps(ids))",
       ].join("\n")], {encoding:"utf8"}));
     }
-    if (process.argv.includes("--imported-admin") || process.argv.includes("--sonarapay") || process.argv.includes("--deposit-channels")) {
+    if (process.argv.includes("--imported-admin") || process.argv.includes("--sonarapay") || process.argv.includes("--deposit-channels") || process.argv.includes("--withdrawal")) {
       // Isolated test server only: never read or replace the real admin secret.
       fixtureServer = spawn("python3", process.argv.includes("--sonarapay") ? ["-u", "tests/sonarapay_fixture.py"] : ["-u", "-c", [
         "import os",
@@ -43,6 +43,7 @@ async function main() {
         "os.environ['SONARAPAY_KEY']=''", // Legacy manual-flow checks must never call a live provider.
         "from server import Handler, ThreadingHTTPServer",
         "import admin_api",
+        ...(process.argv.includes("--withdrawal") ? ["import withdrawals", "withdrawals.withdrawal_window_open=lambda:True"] : []),
         "original_audit=admin_api.audit",
         `admin_api.audit=lambda cur,actor,event,details=None:original_audit(cur,actor,event,{**(details or {}),'test_fixture':${JSON.stringify(adminFixture)}})`,
         "server=ThreadingHTTPServer(('127.0.0.1',0),Handler)",
@@ -542,6 +543,12 @@ async function main() {
       });
       await screenshot("rules-pack-banner");
       console.log("PASS: supplied image loads above rules, uncropped at mobile and desktop widths.");
+      return;
+    }
+    if (process.argv.includes("--withdrawal")) {
+      await require("./withdrawal-browser.cjs")({
+        userId, evaluate, navigate, waitFor, screenshot,
+      });
       return;
     }
     if (process.argv.includes("--payment-mixed")) {

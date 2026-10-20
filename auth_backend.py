@@ -212,7 +212,11 @@ def account_summary(user_id: int) -> dict:
         cursor.execute(
             """SELECT u.id, u.phone, u.referral_code, u.is_admin,
                       COALESCE((SELECT SUM(t.amount_fcfa) FROM shineray_transactions t
-                                WHERE t.user_id = u.id), 0)::bigint AS balance_fcfa
+                                WHERE t.user_id = u.id), 0)::bigint
+                      - COALESCE((SELECT SUM(w.amount_fcfa) FROM shineray_withdrawal_requests w
+                                  WHERE w.user_id=u.id AND w.status='pending'),0)::bigint AS balance_fcfa,
+                      COALESCE((SELECT SUM(w.amount_fcfa) FROM shineray_withdrawal_requests w
+                                WHERE w.user_id=u.id AND w.status='pending'),0)::bigint AS reserved_fcfa
                FROM shineray_users u WHERE u.id = %s""",
             (user_id,),
         )
@@ -239,8 +243,15 @@ def get_activity(user_id: int, kind: str | None = None) -> list[dict]:
                       CASE WHEN status='rejected' THEN 'failed' ELSE 'pending' END
                FROM shineray_manual_deposits
                WHERE user_id=%s AND (%s::text IS NULL OR %s='recharge') AND status IN ('pending','rejected')
+               UNION ALL
+               SELECT 'withdraw-'||id,'withdrawal','Retrait manuel',amount_fcfa,created_at,
+                      'RET-'||request_id::text,
+                      wallet_snapshot || jsonb_build_object('net_amount_fcfa',net_amount_fcfa,'fee_fcfa',fee_fcfa),
+                      CASE WHEN status='rejected' THEN 'failed' ELSE 'pending' END
+               FROM shineray_withdrawal_requests
+               WHERE user_id=%s AND (%s::text IS NULL OR %s='withdrawal') AND status IN ('pending','rejected')
                ORDER BY created_at DESC, id DESC LIMIT 101""",
-            (user_id, kind, kind, user_id, kind, kind),
+            (user_id, kind, kind, user_id, kind, kind, user_id, kind, kind),
         )
         rows = cursor.fetchall()
     return [
