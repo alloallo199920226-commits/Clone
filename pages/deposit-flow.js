@@ -205,6 +205,7 @@
         dial.removeAttribute("aria-disabled");
       } else {
         const card = document.querySelector(".deposit-ussd-card");
+        card.classList.add("manual-transfer-highlight");
         card.querySelectorAll(".signature-code-wrap,.deposit-ussd-actions,.deposit-ussd-instructions:not([data-manual-transfer])").forEach(node => {
           node.hidden = true;
           node.style.display = "none";

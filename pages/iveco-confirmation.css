@@ -1291,3 +1291,28 @@ body.deposit-page--confirmation [data-deposit-clock] {
 @media (prefers-reduced-motion: reduce) {
   .sonara-success-mark svg { animation: none; }
 }
+
+body.deposit-page--confirmation .deposit-ussd-card.manual-transfer-highlight {
+  min-height: 0;
+  border: 1px solid rgba(224, 184, 62, .72);
+  border-left: 5px solid #e0b83e;
+  background: linear-gradient(135deg, rgba(91, 69, 24, .62), rgba(33, 30, 23, .98) 76%);
+}
+
+body.deposit-page--confirmation .manual-transfer-highlight .deposit-ussd-heading {
+  color: #f0d36f;
+}
+
+body.deposit-page--confirmation .manual-transfer-highlight .deposit-ussd-heading::before {
+  background: #e0b83e;
+}
+
+body.deposit-page--confirmation .manual-transfer-highlight [data-manual-transfer] {
+  max-width: 100%;
+  margin: 0 0 2px;
+  color: #fff6dc;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}

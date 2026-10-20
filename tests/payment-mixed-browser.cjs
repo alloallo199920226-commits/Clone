@@ -53,6 +53,20 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
   assert(await evaluate("document.querySelector('[data-manual-transfer]').innerText.includes('copier le numéro de réception')"));
   assert.equal(await evaluate("document.querySelector('[data-manual-transfer]').innerText"),
     "Veuillez copier le numéro de réception, aller dans votre répertoire téléphonique ou dans votre application Mobile Money, effectuer le paiement dessus, puis revenez cliquer sur « Obtenir le résultat ». Votre compte est crédité en moins de 5 mn.");
+  for (const width of [900, 390]) {
+    await call("Emulation.setDeviceMetricsOverride", {
+      width, height: 844, deviceScaleFactor: 1, mobile: width === 390,
+    });
+    assert(await evaluate(`(() => {
+      const paragraph = document.querySelector('[data-manual-transfer]');
+      const text = getComputedStyle(paragraph);
+      const card = getComputedStyle(paragraph.closest('.deposit-ussd-card'));
+      return parseFloat(text.fontSize) >= 16 && parseInt(text.fontWeight, 10) >= 600
+        && parseFloat(text.lineHeight) >= 24 && parseFloat(card.borderLeftWidth) >= 4
+        && document.documentElement.scrollWidth <= innerWidth + 1;
+    })()`), "Manual instructions must stand out and fit both desktop and mobile.");
+  }
+  await evaluate("document.querySelector('[data-manual-transfer]').closest('.deposit-ussd-card').scrollIntoView({block:'center'})");
   await screenshot("manual-transfer-without-ussd");
   await evaluate(`window.manualTestRequests=[];
     const originalFetch=window.fetch;
