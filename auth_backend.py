@@ -411,16 +411,21 @@ def get_wallets(user_id: int) -> list[dict]:
 
 
 def add_wallet(user_id: int, provider: str, phone: str, holder_name: str | None = None) -> dict:
-    if provider != "TOGOCEL":
-        raise ValueError("Sélectionnez TOGOCEL.")
+    if not isinstance(provider, str) or provider not in {"TOGOCEL", "MOOV", "MTN", "ORANGE", "AIRTEL", "WAVE"}:
+        raise ValueError("Sélectionnez un type de portefeuille valide.")
     if not isinstance(holder_name, str) or any(ord(char) < 32 for char in holder_name):
         raise ValueError("Saisissez le nom du titulaire du compte.")
     holder_name = " ".join(holder_name.split())
     if not holder_name or len(holder_name) > 120:
         raise ValueError("Le nom du titulaire doit contenir entre 1 et 120 caractères.")
-    normalized = normalize_phone("+228", phone)
     try:
         with connect() as connection, connection.cursor() as cursor:
+            cursor.execute("SELECT phone FROM shineray_users WHERE id=%s", (user_id,))
+            user = cursor.fetchone()
+            if not user:
+                raise ValueError("Compte utilisateur introuvable.")
+            prefix = next((code for code in PHONE_LENGTHS if user["phone"].startswith(code)), None)
+            normalized = normalize_phone(prefix, phone)
             cursor.execute(
                 """INSERT INTO shineray_wallets (user_id, provider, phone, holder_name)
                    VALUES (%s, %s, %s, %s) RETURNING id, provider, phone, holder_name""",

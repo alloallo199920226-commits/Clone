@@ -545,6 +545,12 @@ async function main() {
       console.log("PASS: supplied image loads above rules, uncropped at mobile and desktop widths.");
       return;
     }
+    if (process.argv.includes("--wallet-operators")) {
+      await require("./wallet-operators-browser.cjs")({
+        userId, evaluate, navigate, waitFor, screenshot,
+      });
+      return;
+    }
     if (process.argv.includes("--withdrawal")) {
       await require("./withdrawal-browser.cjs")({
         userId, evaluate, navigate, waitFor, screenshot,
