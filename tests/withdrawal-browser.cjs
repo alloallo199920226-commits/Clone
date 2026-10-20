@@ -30,7 +30,9 @@ module.exports = async ({ userId, evaluate, navigate, waitFor, screenshot }) => 
       document.querySelector('#amount').dispatchEvent(new Event('input'));
       document.querySelector('[data-payment-action]').click();
       document.querySelector('[data-payment-action]').click()`);
-    await waitFor("document.querySelector('[data-payment-status]').textContent.includes('Demande de retrait enregistrée')");
+    await waitFor("document.querySelector('[data-payment-action]').textContent === 'Demande enregistrée'");
+    assert.equal(await evaluate("document.querySelector('[data-payment-status]').textContent"), "");
+    assert.equal(await evaluate("document.querySelector('[data-payment-status] a')"), null);
     assert(await evaluate("document.querySelector('[data-amount-received]').textContent.replace(/\\s/g,'').includes('1840')"));
     assert.equal(await evaluate("document.querySelector('[data-payment-action]').disabled"), true);
     assert.equal(Number(db(`with db.connect() as c,c.cursor() as cur:

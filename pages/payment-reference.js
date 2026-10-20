@@ -84,11 +84,7 @@
       sessionStorage.removeItem(storageKey);
       withdrawalRecorded = true;
       action.textContent = "Demande enregistrée";
-      status.textContent = "Demande de retrait enregistrée. Le montant est réservé en attendant le versement manuel par l’administration.";
-      const link = document.createElement("a");
-      link.href = "/historique-retraits";
-      link.textContent = " Voir l’historique des retraits";
-      status.append(link);
+      status.textContent = "";
       if (Number.isSafeInteger(result.withdrawal.balance_fcfa)) {
         document.querySelector("[data-account-balance]").textContent = `FCFA ${format(result.withdrawal.balance_fcfa)}`;
       }
