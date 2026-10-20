@@ -537,6 +537,32 @@ async function main() {
       });
       return;
     }
+    if (process.argv.includes("--team-avatar")) {
+      const script = await call("Page.addScriptToEvaluateOnNewDocument", { source: `
+        const originalFetch = window.fetch.bind(window);
+        window.fetch = (url, options) => String(url) === '/api/team'
+          ? Promise.resolve(new Response(JSON.stringify({
+              levels:[1,0,0],total:1,revenue_fcfa:0,
+              level_revenue_fcfa:[0,0,0],referral_percentages:[40,2,1],
+              members:[{level:1,phone_masked:'32****282',created_at:'2026-10-20T06:59:13Z',deposits_fcfa:0}]
+            }),{headers:{'Content-Type':'application/json'}}))
+          : originalFetch(url, options);
+      ` });
+      try {
+        await call("Emulation.setDeviceMetricsOverride", { width:390,height:844,deviceScaleFactor:1,mobile:true });
+        await navigate("/mon-equipe");
+        await waitFor("document.querySelector('.team-member-avatar')?.naturalWidth > 0");
+        assert.equal(await evaluate("document.querySelector('.team-member-avatar').getAttribute('src')"), "/pages/assets/iveco-auth-logo.png");
+        assert.equal(await evaluate("document.querySelector('.team-member-avatar').alt"), "IVECO");
+        assert(await evaluate("document.querySelector('[data-team-members]').innerText.includes('32****282')"));
+        assert.equal(await evaluate("document.documentElement.scrollWidth > innerWidth"), false);
+        await screenshot("team-iveco-avatar");
+        console.log("PASS: IVECO member logo loaded, phone/amount preserved, no mobile overflow.");
+      } finally {
+        await call("Page.removeScriptToEvaluateOnNewDocument", { identifier:script.identifier });
+      }
+      return;
+    }
     if (process.argv.includes("--account-copy")) {
       await require("./account-copy-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, base,

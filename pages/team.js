@@ -148,8 +148,8 @@
         row.dataset.memberLevel = String(level);
         const avatar = document.createElement("img");
         avatar.className = "team-member-avatar";
-        avatar.src = "/pages/assets/team-avatar.svg";
-        avatar.alt = "";
+        avatar.src = "/pages/assets/iveco-auth-logo.png";
+        avatar.alt = "IVECO";
         const details = document.createElement("div");
         details.className = "team-member-details";
         const phone = document.createElement("strong");
