@@ -43,6 +43,9 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/favicon.ico": ("pages/assets/iveco-favicon.ico", "image/x-icon"),
+    "/apple-touch-icon.png": ("pages/assets/iveco-apple-touch-icon.png", "image/png"),
+    "/apple-touch-icon-precomposed.png": ("pages/assets/iveco-apple-touch-icon.png", "image/png"),
     "/pages/iveco-brand.js": ("pages/iveco-brand.js", "text/javascript; charset=utf-8"),
     "/pages/form-controls.css": ("pages/form-controls.css", "text/css; charset=utf-8"),
     "/pages/admin-deposits.js": ("pages/admin-deposits.js", "text/javascript; charset=utf-8"),

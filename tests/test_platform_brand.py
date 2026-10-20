@@ -6,7 +6,7 @@ import unittest
 from zipfile import ZipFile
 
 import admin_assets
-from platform_brand import BRAND_SCRIPT, with_iveco_brand
+from platform_brand import BRAND_SCRIPT, FAVICON_LINKS, with_iveco_brand
 from server import MORE_PAGES, PAGES
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,7 +51,14 @@ class PlatformBrandTests(unittest.TestCase):
         self.assertEqual(branded.count(BRAND_SCRIPT), 1)
         self.assertEqual(with_iveco_brand(branded, "text/html"), branded)
         self.assertIn(b'data-id="shineray_users"', branded)
-        self.assertEqual(branded.replace(BRAND_SCRIPT, b""), original)
+        self.assertEqual(branded.replace(BRAND_SCRIPT, b"").replace(FAVICON_LINKS, b""), original)
+
+    def test_favicon_on_all_html_even_with_existing_brand_script(self):
+        original = b"<html><head>" + BRAND_SCRIPT + b"</head><body></body></html>"
+        branded = with_iveco_brand(original, "text/html")
+        self.assertEqual(branded.count(FAVICON_LINKS), 1)
+        self.assertEqual(branded.count(BRAND_SCRIPT), 1)
+        self.assertEqual(with_iveco_brand(branded, "text/html"), branded)
 
     def test_non_html_bytes_remain_unchanged(self):
         for content_type in ["text/javascript", "application/json", "image/png", "text/css"]:
