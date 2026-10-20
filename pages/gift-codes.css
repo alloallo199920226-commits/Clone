@@ -1,0 +1,13 @@
+.gift-code-card { margin-top:12px; }
+.gift-code-toggle { display:flex; align-items:center; gap:14px; width:100%; min-height:60px; padding:16px 20px; border:0; background:transparent; color:#242424; font:inherit; text-align:left; cursor:pointer; }
+.gift-code-chevron { margin-left:auto; }
+.gift-code-toggle[aria-expanded="true"] .gift-code-chevron { transform:rotate(180deg); }
+.gift-code-form { padding:0 20px 18px; }
+.gift-code-form[hidden] { display:none; }
+.gift-code-form label { display:block; font-size:14px; margin-bottom:9px; }
+.gift-code-form input { display:block; box-sizing:border-box; width:100%; min-height:48px; border:1px solid #bbb; border-radius:8px; background:white; color:#161616; padding:12px; font-size:16px; text-transform:uppercase; }
+.gift-code-form button { display:block; width:100%; min-height:48px; margin-top:12px; border:0; border-radius:8px; background:linear-gradient(110deg,#e50020,#940015); color:white; font-size:16px; font-weight:600; cursor:pointer; }
+.gift-code-form button:disabled { opacity:.65; cursor:wait; }
+.gift-code-status { margin:10px 0 0; font-size:14px; line-height:1.5; color:#8f1025; overflow-wrap:anywhere; }
+.gift-code-status[data-success="true"] { color:#176733; }
+.gift-code-toggle:focus-visible,.gift-code-form input:focus-visible,.gift-code-form button:focus-visible { outline:3px solid #a20018; outline-offset:3px; }

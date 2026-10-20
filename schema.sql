@@ -271,3 +271,13 @@ CREATE TABLE IF NOT EXISTS shineray_product_income (
 );
 CREATE INDEX IF NOT EXISTS shineray_product_income_due_idx
     ON shineray_product_income(next_due_at,user_id) WHERE next_due_at IS NOT NULL;
+
+-- One redemption per account; the resource lock enforces the global use limit.
+CREATE TABLE IF NOT EXISTS shineray_gift_redemptions (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    gift_id BIGINT NOT NULL REFERENCES shineray_admin_resources(id) ON DELETE RESTRICT,
+    user_id BIGINT NOT NULL REFERENCES shineray_users(id) ON DELETE CASCADE,
+    amount_fcfa BIGINT NOT NULL CHECK (amount_fcfa BETWEEN 1 AND 100000000),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE(gift_id,user_id)
+);

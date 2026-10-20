@@ -254,6 +254,13 @@ async function main() {
     })()`);
     assert.equal(registration.status, 201, JSON.stringify(registration.body));
     userId = registration.body.user.id;
+    if (process.argv.includes("--gift-codes")) {
+      await require("./gift-codes-browser.cjs")({
+        call, evaluate, navigate, waitFor, screenshot, owner: registration.body.user,
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--vip-purchases")) {
       await require("./vip-purchases-browser.cjs")({
         call, evaluate, navigate, waitFor, screenshot, owner: registration.body.user,

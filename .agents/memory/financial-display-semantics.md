@@ -81,3 +81,13 @@ The deposit countdown represents the validity of the current entry session, not 
 **Why:** the user requested a working timer while payment-provider and recipient configuration remain separate work.
 
 **How to apply:** elapsed time may expire the entry flow, but must never approve, reject, debit or credit a financial transaction. If a provider is integrated later, its verified transaction status remains authoritative.
+
+Les codes cadeaux sont des autorisations de bonus que le propriétaire génère
+depuis l’administration. L’utilisateur demande un ajout réel au solde, pas un
+effet visuel ni une simulation de paiement. Le montant vient de l’administration.
+
+**Why:** l’utilisateur a répété sa demande de saisie de codes cadeaux pour gagner
+des bonus directement sur le solde.
+
+**How to apply:** préserver cette provenance administrative ; ne pas traiter un
+bonus cadeau comme un dépôt Mobile Money ou comme un premier dépôt de parrainage.

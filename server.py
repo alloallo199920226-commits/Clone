@@ -47,6 +47,8 @@ STATIC_FILES = {
     "/apple-touch-icon.png": ("pages/assets/iveco-apple-touch-icon.png", "image/png"),
     "/apple-touch-icon-precomposed.png": ("pages/assets/iveco-apple-touch-icon.png", "image/png"),
     "/pages/iveco-brand.js": ("pages/iveco-brand.js", "text/javascript; charset=utf-8"),
+    "/pages/gift-codes.js": ("pages/gift-codes.js", "text/javascript; charset=utf-8"),
+    "/pages/gift-codes.css": ("pages/gift-codes.css", "text/css; charset=utf-8"),
     "/pages/form-controls.css": ("pages/form-controls.css", "text/css; charset=utf-8"),
     "/pages/admin-deposits.js": ("pages/admin-deposits.js", "text/javascript; charset=utf-8"),
     "/pages/deposit-flow.css": ("pages/deposit-flow.css", "text/css; charset=utf-8"),
@@ -309,6 +311,22 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(200, auth_backend.account_summary(user["id"]))
             except Exception:
                 self._json(503, {"error": "Impossible de charger le compte."})
+            return
+
+        if route == "/api/gift-codes/redeem":
+            if self.command != "POST":
+                self._json(405, {"error": "Méthode non autorisée."})
+                return
+            body = self._read_json()
+            if body is None:
+                return
+            try:
+                import gift_codes
+                self._json(200, gift_codes.redeem(user["id"], body))
+            except auth_backend.AuthError as exc:
+                self._json(exc.status, {"error": exc.message})
+            except Exception:
+                self._json(503, {"error": "Impossible de valider le code pour le moment. Vous pouvez réessayer sans double crédit."})
             return
 
         if route == "/api/payment-channels/me":
