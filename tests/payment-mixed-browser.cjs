@@ -51,7 +51,8 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
   assert.equal(await evaluate("getComputedStyle(document.querySelector('.signature-code-wrap')).display"), "none");
   assert.equal(await evaluate("getComputedStyle(document.querySelector('.deposit-ussd-actions')).display"), "none");
   assert(await evaluate("document.querySelector('[data-manual-transfer]').innerText.includes('copier le numéro de réception')"));
-  assert(await evaluate("document.querySelector('[data-manual-transfer]').innerText.includes('5 minutes')"));
+  assert.equal(await evaluate("document.querySelector('[data-manual-transfer]').innerText"),
+    "Veuillez copier le numéro de réception, aller dans votre répertoire téléphonique ou dans votre application Mobile Money, effectuer le paiement dessus, puis revenez cliquer sur « Obtenir le résultat ». Votre compte est crédité en moins de 5 mn.");
   await screenshot("manual-transfer-without-ussd");
   await evaluate(`window.manualTestRequests=[];
     const originalFetch=window.fetch;

@@ -23,6 +23,18 @@ Ground delegated edits in the existing route map, and verify them through the ac
 
 Use real photos of attractive modern vehicles, not screenshots as image backgrounds. Keep phone numbers and balances account-specific, never copied from a reference image.
 
+Pour l’encadré de transfert manuel sans USSD, reprendre uniquement l’instruction
+demandée par l’utilisateur : copier le numéro de réception, payer via le répertoire
+ou Mobile Money, revenir cliquer sur « Obtenir le résultat », puis la mention
+« Votre compte est crédité en moins de 5 mn ». Ne pas rallonger cet encadré avec
+des explications sur la vérification administrative ou un délai indicatif.
+
+**Why:** l’utilisateur a reproché les précisions ajoutées et demandé exactement
+son instruction, sans ajouts.
+
+**How to apply:** cette consigne concerne la copie de cet encadré ; ne pas changer
+la validation réelle du dépôt ni simuler une réussite de paiement.
+
 **Why:** the user explicitly requested vehicle photos rather than screenshots and real platform data. Some imported remote images that appeared vehicle-related actually contained entire UI captures or unrelated vehicle models.
 
 **How to apply:** inspect the rendered asset itself and compare the vehicle to the reference, rather than trusting a filename or VIP label. Match layout without presenting reference financial figures as real funds or activated returns.
