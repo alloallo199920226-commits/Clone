@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#e50920">
+  <title>Missions d’invitation — IVECO</title>
+  <link rel="stylesheet" href="/pages/missions.css">
+  <script src="/pages/missions.js" defer></script>
+</head>
+<body data-mission-kind="invitation">
+  <main class="missions-app">
+    <header class="missions-header">
+      <a class="brand-mark" href="/equipe" aria-label="Retour à l’équipe"><img src="/pages/assets/iveco-auth-logo.png" alt="IVECO"></a>
+      <a class="back-link" href="/equipe"><span aria-hidden="true">←</span> Équipe</a>
+    </header>
+    <section class="missions-intro" aria-labelledby="page-title">
+      <p class="eyebrow">IVECO · RÉCOMPENSES</p>
+      <h1 id="page-title">Missions<br><span>d’invitation</span></h1>
+      <p class="intro-copy">Un filleul direct compte après son premier achat VIP. Réclamez chaque récompense une seule fois.</p>
+    </section>
+    <nav class="mission-tabs" aria-label="Types de mission">
+      <a class="mission-tab is-active" href="/missions" aria-current="page">Invitations</a>
+      <a class="mission-tab" href="/missions-vip">Achats VIP</a>
+    </nav>
+    <section class="reward-summary" aria-label="Total des récompenses réclamées">
+      <div><span class="summary-label">Récompenses réclamées</span><strong data-claimed-total>—</strong></div>
+      <span class="summary-unit">FCFA</span>
+    </section>
+    <section class="mission-section" aria-labelledby="milestones-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">VOTRE PARCOURS</p><h2 id="milestones-title">Les paliers</h2></div>
+        <span class="section-mark" aria-hidden="true">01</span>
+      </div>
+      <div class="mission-list" data-mission-list aria-live="polite" aria-busy="true">
+        <div class="mission-skeleton" aria-hidden="true"></div>
+        <div class="mission-skeleton" aria-hidden="true"></div>
+        <div class="mission-skeleton" aria-hidden="true"></div>
+      </div>
+      <div class="mission-error" data-mission-error role="alert" hidden>
+        <p data-error-copy>Impossible de charger les missions.</p>
+        <button type="button" class="retry-button" data-retry>Réessayer</button>
+      </div>
+      <p class="mission-feedback" data-feedback role="status" aria-live="polite"></p>
+    </section>
+    <footer class="missions-footer"><span>IVECO</span><span>Les récompenses sont attribuées une seule fois par palier.</span></footer>
+  </main>
+</body>
+</html>

@@ -319,6 +319,10 @@ async function main() {
       assert.deepEqual(errors, []);
       return;
     }
+    if (process.argv.includes("--missions")) {
+      await require("./missions-browser.cjs")({ userId, call, evaluate, navigate, waitFor, screenshot });
+      return;
+    }
     if (process.argv.includes("--recharge-amounts")) {
       await navigate("/recharger");
       const expected = [3500,7000,12000,20000,40000,75000,100000,150000,250000];

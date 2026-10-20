@@ -27,6 +27,8 @@ PAGES = {
     "/inscription": "inscription",
 }
 MORE_PAGES = {
+    "/missions": "missions.html",
+    "/missions-vip": "missions-vip.html",
     "/administration-depots": "administration-depots.html",
     "/choisir-operateur": "choisir-operateur.html",
     "/confirmation-depot": "confirmation-depot.html",
@@ -43,6 +45,8 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/pages/missions.js": ("pages/missions.js", "text/javascript; charset=utf-8"),
+    "/pages/missions.css": ("pages/missions.css", "text/css; charset=utf-8"),
     "/favicon.ico": ("pages/assets/iveco-favicon.ico", "image/x-icon"),
     "/apple-touch-icon.png": ("pages/assets/iveco-apple-touch-icon.png", "image/png"),
     "/apple-touch-icon-precomposed.png": ("pages/assets/iveco-apple-touch-icon.png", "image/png"),
@@ -311,6 +315,25 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(200, auth_backend.account_summary(user["id"]))
             except Exception:
                 self._json(503, {"error": "Impossible de charger le compte."})
+            return
+
+        if route in {"/api/missions", "/api/missions/claim"}:
+            expected = "GET" if route == "/api/missions" else "POST"
+            if self.command != expected:
+                self._json(405, {"error": "Méthode non autorisée."})
+                return
+            body = self._read_json() if expected == "POST" else None
+            if expected == "POST" and body is None:
+                return
+            try:
+                import missions
+                result = (missions.summary(user["id"]) if expected == "GET"
+                          else missions.claim(user["id"], body))
+                self._json(200, result)
+            except auth_backend.AuthError as exc:
+                self._json(exc.status, {"error": exc.message})
+            except Exception:
+                self._json(503, {"error": "Missions indisponibles. Réessayez la même mission sans risque de double crédit."})
             return
 
         if route == "/api/gift-codes/redeem":

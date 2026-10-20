@@ -57,6 +57,21 @@ html, body { margin: 0; min-width: 320px; }
   cursor: pointer;
 }
 .team-view-link { border-radius: 3px; min-width: 132px; }
+.team-header-actions { display: grid; justify-items: end; gap: 6px; }
+.team-missions-link {
+  display: inline-flex;
+  min-height: 25px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d20c22;
+  border-radius: 14px;
+  padding: 0 13px;
+  background: #fff;
+  color: #c90c20;
+  font: 12px Arial, Helvetica, sans-serif;
+  text-decoration: none;
+}
+.team-missions-link:focus-visible { outline: 2px solid #161616; outline-offset: 2px; }
 .team-invite {
   min-height: 155px;
   margin: 0 0 21px;

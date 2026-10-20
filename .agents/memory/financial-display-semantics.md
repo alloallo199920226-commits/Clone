@@ -91,3 +91,14 @@ des bonus directement sur le solde.
 
 **How to apply:** préserver cette provenance administrative ; ne pas traiter un
 bonus cadeau comme un dépôt Mobile Money ou comme un premier dépôt de parrainage.
+
+Pour les missions, un « investisseur » invité est un filleul direct ayant effectué
+son premier achat VIP. Une inscription, un dépôt seul ou un VIP offert par
+l’administration ne constituent pas cet achat. Chaque récompense est un bonus réel,
+à réclamer une seule fois après l’objectif atteint, pas un versement automatique.
+
+**Why:** l’utilisateur a explicitement choisi « Après son premier achat VIP » et
+« Oui, avec un bouton Réclamer une fois l’objectif atteint ».
+
+**How to apply:** compter les filleuls distincts et les achats réels ; garder les
+récompenses de missions séparées des commissions sur les premiers dépôts.
