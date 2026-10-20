@@ -9,8 +9,10 @@ from withdrawals import available_balance
 # Prices of the existing six customer products; administrative settings override them.
 DEFAULT_PRODUCTS = {
     f"VIP{level}": {"code": f"VIP{level}", "name": f"VIP{level}", "price": price,
-                   "durationDays": 180, "active": True}
-    for level, price in enumerate((4000, 8000, 15000, 40000, 80000, 120000), 1)
+                   "durationDays": 180, "dailyIncome": daily,
+                   "totalIncome": daily * 180, "active": True}
+    for level, (price, daily) in enumerate(
+        ((4000, 1000), (8000, 2000), (15000, 3150), (40000, 8800), (80000, 18400), (120000, 28800)), 1)
 }
 
 
@@ -33,12 +35,17 @@ def catalog(cursor, lock=False):
         products[code].update(price=value["price"], durationDays=value["durationDays"],
                               name=value.get("name") or code, active=value.get("active") is True,
                               product_id=row["id"])
+        if (type(value.get("dailyIncome")) is not int or not 1 <= value["dailyIncome"] <= db.MAX_ACTIVITY_AMOUNT
+                or type(value.get("totalIncome")) is not int
+                or not value["dailyIncome"] <= value["totalIncome"] <= value["dailyIncome"] * value["durationDays"]):
+            raise db.AuthError(503, "Revenus du produit non configurés ou incohérents dans l’administration.")
+        products[code].update(dailyIncome=value["dailyIncome"], totalIncome=value["totalIncome"])
     return products
 
 
 def available():
     with db.connect() as conn, conn.cursor() as cursor:
-        return {"products": list(catalog(cursor).values()), "automaticIncomeEnabled": False}
+        return {"products": list(catalog(cursor).values()), "automaticIncomeEnabled": True}
 
 
 def purchase(user_id, body):
@@ -79,14 +86,18 @@ def purchase(user_id, body):
             details = {
                 "product_code": code, "product_name": product["name"], "vip": int(code[3:]),
                 "quantity": 1, "income_fcfa": 0, "validity_days": product["durationDays"],
-                "automatic_income_enabled": False, "request_id": request_id,
+                "daily_income_fcfa": product["dailyIncome"], "total_income_fcfa": product["totalIncome"],
+                "automatic_income_enabled": True, "request_id": request_id,
             }
             if "product_id" in product:
                 details["product_id"] = product["product_id"]
             cursor.execute("""INSERT INTO shineray_transactions
                 (user_id,kind,label,amount_fcfa,provider_reference,details)
-                VALUES (%s,'purchase',%s,%s,%s,%s) RETURNING id""",
+                VALUES (%s,'purchase',%s,%s,%s,%s) RETURNING *""",
                            (user_id, code, -price, reference, Jsonb(details)))
-            transaction_id = cursor.fetchone()["id"]
+            purchase_row = cursor.fetchone()
+            transaction_id = purchase_row["id"]
+            import product_income
+            product_income.enroll(cursor, purchase_row, product, product_income.activation(cursor))
         return {"ok": True, "purchaseId": transaction_id, "amount_fcfa": price,
-                "balance_fcfa": available_balance(cursor, user_id), "automaticIncomeEnabled": False}
+                "balance_fcfa": available_balance(cursor, user_id), "automaticIncomeEnabled": True}

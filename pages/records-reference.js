@@ -135,6 +135,15 @@
         field("Revenu total", formatMoney(product.total_income_fcfa)),
         field("Période de validité", Number.isSafeInteger(product.validity_days) ? `${product.validity_days} jours` : "—"),
         field("Heure d'achat", displayDate(product.created_at)));
+      if (product.source !== "admin_grant") {
+        copy.append(field("Revenus déjà versés", formatMoney(product.income_fcfa)));
+        if (product.automatic_income_enabled) {
+          copy.append(field("Prochain versement", product.next_income_at
+            ? displayDate(product.next_income_at) : "Cycle terminé"));
+        } else {
+          copy.append(field("Versements automatiques", "Configuration en attente"));
+        }
+      }
       article.append(image, copy);
       productRoot.append(article);
     });

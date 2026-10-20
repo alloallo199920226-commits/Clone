@@ -277,6 +277,9 @@ def get_products(user_id: int) -> dict:
                ORDER BY created_at DESC, id DESC LIMIT 100""", (user_id,),
         )
         rows = cursor.fetchall()
+        cursor.execute("""SELECT purchase_id,next_due_at,starts_at,expires_at
+            FROM shineray_product_income WHERE user_id=%s""", (user_id,))
+        income_schedules = {row["purchase_id"]: row for row in cursor.fetchall()}
         cursor.execute(
             """SELECT COALESCE(SUM(quantity), 0)::bigint AS quantity,
                       CASE WHEN COUNT(*) = COUNT(income)
@@ -314,6 +317,11 @@ def get_products(user_id: int) -> dict:
             "total_income_fcfa": _receipt_number(details, "total_income_fcfa"),
             "validity_days": _receipt_number(details, "validity_days", 1, 365_000),
             "income_fcfa": _receipt_number(details, "income_fcfa"),
+            "automatic_income_enabled": row["id"] in income_schedules,
+            "next_income_at": (income_schedules[row["id"]]["next_due_at"].isoformat()
+                               if row["id"] in income_schedules and income_schedules[row["id"]]["next_due_at"] else None),
+            "income_expires_at": (income_schedules[row["id"]]["expires_at"].isoformat()
+                                  if row["id"] in income_schedules else None),
         })
     for grant in grants[:100]:
         product = grant["product_snapshot"]

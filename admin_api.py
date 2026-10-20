@@ -394,9 +394,11 @@ def validated_resource(kind, body, prior=None):
         value = {**prior, **body}
         value.update(name=text(value.get("name"), 160),
                      price=integer(value.get("price")),
-                     dailyIncome=integer(value.get("dailyIncome")),
-                     totalIncome=integer(value.get("totalIncome")),
+                     dailyIncome=integer(value.get("dailyIncome"), 1, 500000000),
+                     totalIncome=integer(value.get("totalIncome"), 1, 1825000000000),
                      durationDays=integer(value.get("durationDays"), 1, 3650))
+        if not value["dailyIncome"] <= value["totalIncome"] <= value["dailyIncome"] * value["durationDays"]:
+            raise ValueError("Le revenu total doit être compris entre un revenu quotidien et le revenu quotidien multiplié par la durée.")
         value.setdefault("code", "VIP" + secrets.token_hex(4).upper())
         if not re.fullmatch(r"[A-Z0-9_-]{2,32}", value["code"]):
             raise ValueError("Code produit invalide.")

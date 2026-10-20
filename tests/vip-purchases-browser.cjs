@@ -44,7 +44,33 @@ with auth_backend.connect() as conn,conn.cursor() as cur:
   assert(await evaluate("document.querySelector('[data-products-list]').textContent.includes('VIP1')"));
   assert.equal(await evaluate("fetch('/api/activity?kind=purchase').then(r=>r.json()).then(r=>r.activities.length)"), 1);
   assert.equal(await evaluate("fetch('/api/products').then(r=>r.json()).then(r=>r.income_fcfa)"), 0);
+  assert(await evaluate("document.querySelector('[data-products-list]').textContent.includes('Prochain versement')"));
+  assert(await evaluate("fetch('/api/products').then(r=>r.json()).then(r=>r.products[0].automatic_income_enabled && r.products[0].next_income_at !== null)"));
   assert(await evaluate("document.documentElement.scrollWidth<=innerWidth"));
   await screenshot("vip-purchased");
-  console.log("PASS: insufficient balance, real ledger debit, interrupted response, safe retry after reload, one owned VIP and one history entry, no automatic income.");
+  // Only this disposable development account is moved to a matured cycle.
+  // No real clock, policy activation, production record, or payment provider changes.
+  execFileSync("python3", ["-c", `
+import sys,auth_backend,product_income
+uid=int(sys.argv[1])
+with auth_backend.connect() as conn,conn.cursor() as cur:
+ cur.execute("""UPDATE shineray_product_income SET
+ starts_at=now()-interval '24 hours',next_due_at=now()-interval '1 second'
+ WHERE user_id=%s""",(uid,))
+product_income.settle_user(uid)
+product_income.settle_user(uid)
+`, String(owner.id)], { cwd:process.cwd() });
+  await navigate("/projet");
+  await waitFor("document.querySelector('[data-purchase-total]')?.textContent.includes('1,000')");
+  assert.equal(await balance(), 3300);
+  assert(await evaluate("document.querySelector('[data-products-list]').textContent.includes('Revenus déjà versés : FCFA 1,000')"));
+  const settled = await evaluate("fetch('/api/activity').then(r=>r.json()).then(r=>r.activities.filter(a=>a.kind==='income'))");
+  assert.equal(settled.length, 1);
+  assert.equal(settled[0].amount_fcfa, 1000);
+  await screenshot("vip-income-credited");
+  await navigate("/financement");
+  await waitFor("document.body.textContent.includes('Revenu quotidien du produit')");
+  assert(await evaluate("document.documentElement.scrollWidth<=innerWidth"));
+  await screenshot("vip-income-ledger");
+  console.log("PASS: purchase/retry exactly once, no premature income, scheduled 24h cycle, one matured credit, actual balance +1000, receipt and financial history.");
 };

@@ -538,5 +538,7 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     sonarapay_payments.start_reconciliation()
+    import product_income
+    product_income.start()
     print("IVECO listening on 0.0.0.0:5000", flush=True)
     ThreadingHTTPServer(("0.0.0.0", 5000), Handler).serve_forever()

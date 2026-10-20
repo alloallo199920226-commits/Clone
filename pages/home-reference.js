@@ -84,11 +84,21 @@
     buyButtons.forEach(button => {
       const card = button.closest(".product-card");
       const product = result.products.find(value => value.code === card.dataset.vip);
-      const available = product?.active === true && Number.isSafeInteger(product.price);
+      const available = product?.active === true && Number.isSafeInteger(product.price)
+        && Number.isSafeInteger(product.dailyIncome) && product.dailyIncome > 0
+        && Number.isSafeInteger(product.totalIncome) && product.totalIncome >= product.dailyIncome
+        && Number.isSafeInteger(product.durationDays) && product.durationDays > 0;
       card.dataset.available = String(available);
       button.disabled = !available;
       if (product) {
         card.dataset.price = String(product.price);
+        card.dataset.daily = String(product.dailyIncome);
+        card.dataset.total = String(product.totalIncome);
+        card.dataset.days = String(product.durationDays);
+        // Product cards and the purchase dialog must use the same server-side terms.
+        const amounts = card.querySelectorAll(".metrics strong");
+        if (amounts[0]) amounts[0].textContent = `FCFA ${format(product.dailyIncome)}`;
+        if (amounts[1]) amounts[1].textContent = `FCFA ${format(product.totalIncome)}`;
         card.querySelector(".product-footer b").textContent = `FCFA ${format(product.price)}`;
       }
       if (!available) button.textContent = "INDISPONIBLE";

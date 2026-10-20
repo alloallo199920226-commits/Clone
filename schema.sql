@@ -97,7 +97,7 @@ ALTER TABLE shineray_transactions ADD COLUMN IF NOT EXISTS details JSONB
 
 ALTER TABLE shineray_transactions DROP CONSTRAINT IF EXISTS shineray_transactions_kind_check;
 ALTER TABLE shineray_transactions ADD CONSTRAINT shineray_transactions_kind_check
-    CHECK (kind IN ('recharge','withdrawal','purchase','commission','bonus'));
+    CHECK (kind IN ('recharge','withdrawal','purchase','commission','bonus','income'));
 
 -- No account is promoted automatically. Administrator access must be explicit.
 ALTER TABLE shineray_users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN NOT NULL DEFAULT FALSE;
@@ -251,3 +251,23 @@ CREATE INDEX IF NOT EXISTS shineray_sonarapay_member_idx
     ON shineray_sonarapay_orders(user_id,created_at DESC);
 CREATE INDEX IF NOT EXISTS shineray_sonarapay_pending_idx
     ON shineray_sonarapay_orders(checked_at) WHERE credited_at IS NULL AND status<>'failed';
+
+-- Data initialization happens once in the income service, never by resetting this timestamp.
+CREATE TABLE IF NOT EXISTS shineray_income_policy (
+    id SMALLINT PRIMARY KEY CHECK (id = 1),
+    activated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS shineray_product_income (
+    purchase_id BIGINT PRIMARY KEY REFERENCES shineray_transactions(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES shineray_users(id) ON DELETE CASCADE,
+    starts_at TIMESTAMPTZ NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL,
+    daily_fcfa BIGINT NOT NULL CHECK (daily_fcfa BETWEEN 1 AND 500000000),
+    total_fcfa BIGINT NOT NULL CHECK (total_fcfa BETWEEN 1 AND 1825000000000),
+    earned_fcfa BIGINT NOT NULL DEFAULT 0 CHECK (earned_fcfa >= 0),
+    paid_periods INTEGER NOT NULL DEFAULT 0 CHECK (paid_periods BETWEEN 0 AND 3650),
+    next_due_at TIMESTAMPTZ,
+    CHECK (earned_fcfa <= total_fcfa)
+);
+CREATE INDEX IF NOT EXISTS shineray_product_income_due_idx
+    ON shineray_product_income(next_due_at,user_id) WHERE next_due_at IS NOT NULL;

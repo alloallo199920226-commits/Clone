@@ -52,12 +52,12 @@ enregistre un débit et un produit acquis, sans nouvel encaissement Mobile Money
 Les prix des six produits existants sont vérifiés côté serveur ; les configurations
 administratives de même code prennent priorité. Les doubles confirmations d’une
 même demande ne doivent jamais provoquer de second débit.
-Les retraits et les versements automatiques de revenus ne sont pas activés.
+Le service `product_income.py` gère désormais les crédits internes des produits
+achetés. Il ne lance aucun transfert Mobile Money.
 Le propriétaire connecté à la console dédiée peut toutefois approuver un dépôt
 réellement reçu depuis `/administration-depots`. Aucun compte client n’est promu
 automatiquement et le lien seul ne suffit jamais à autoriser cette opération.
-Les revenus affichés restent indicatifs et non garantis ; l’autorisation des achats
-n’autorise pas leur versement automatique.
+La page des produits distingue le revenu prévu du revenu effectivement crédité.
 
 ## Administration importée
 

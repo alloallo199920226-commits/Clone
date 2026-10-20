@@ -67,12 +67,14 @@ class VipPurchasesTests(unittest.TestCase):
         self.credit()
         result = vip.purchase(self.user["id"], self.body())
         self.assertEqual(result["balance_fcfa"], 2300)
-        self.assertFalse(result["automaticIncomeEnabled"])
+        self.assertTrue(result["automaticIncomeEnabled"])
         owned = db.get_products(self.user["id"])
         self.assertEqual(owned["quantity"], 1)
         self.assertEqual(owned["income_fcfa"], 0)
         self.assertEqual(owned["products"][0]["amount_fcfa"], 4000)
-        self.assertIsNone(owned["products"][0]["daily_income_fcfa"])
+        self.assertEqual(owned["products"][0]["daily_income_fcfa"], 1000)
+        self.assertTrue(owned["products"][0]["automatic_income_enabled"])
+        self.assertIsNotNone(owned["products"][0]["next_income_at"])
         self.assertEqual(len(db.get_activity(self.user["id"], "purchase")), 1)
 
     def test_insufficient_tampered_and_inactive_never_debit(self):
@@ -135,12 +137,25 @@ class VipPurchasesTests(unittest.TestCase):
 
 
 class CatalogTests(unittest.TestCase):
+    def test_invalid_admin_income_is_not_replaced_with_an_advertised_default(self):
+        from unittest.mock import Mock
+        for changes in [{"dailyIncome": None}, {"dailyIncome": 0}, {"dailyIncome": True},
+                        {"totalIncome": 200001}, {"totalIncome": 0}]:
+            cursor = Mock()
+            cursor.fetchall.return_value = [{"id": 123, "value": {
+                "code": "VIP1", "name": "VIP1", "price": 4000, "durationDays": 200,
+                "dailyIncome": 1000, "totalIncome": 200000, "active": True, **changes}}]
+            with self.subTest(changes=changes), self.assertRaises(db.AuthError):
+                vip.catalog(cursor)
+
     def test_saved_admin_settings_override_defaults(self):
         from unittest.mock import Mock
         cursor = Mock()
         cursor.fetchall.return_value = [{"id": 123, "value": {
-            "code": "VIP1", "name": "VIP1", "price": 4100, "durationDays": 200, "active": False}}]
+            "code": "VIP1", "name": "VIP1", "price": 4100, "durationDays": 200, "active": False,
+            "dailyIncome": 900, "totalIncome": 180000}}]
         actual = vip.catalog(cursor)
         self.assertEqual(actual["VIP1"]["price"], 4100)
         self.assertFalse(actual["VIP1"]["active"])
+        self.assertEqual(actual["VIP1"]["dailyIncome"], 900)
         self.assertEqual(actual["VIP2"]["price"], 8000)
