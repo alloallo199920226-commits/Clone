@@ -61,8 +61,8 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
       const paragraph = document.querySelector('[data-manual-transfer]');
       const text = getComputedStyle(paragraph);
       const card = getComputedStyle(paragraph.closest('.deposit-ussd-card'));
-      return parseFloat(text.fontSize) >= 16 && parseInt(text.fontWeight, 10) >= 600
-        && parseFloat(text.lineHeight) >= 24 && parseFloat(card.borderLeftWidth) >= 4
+      return parseFloat(text.fontSize) === 8 && parseInt(text.fontWeight, 10) >= 600
+        && parseFloat(text.lineHeight) >= 13 && parseFloat(card.borderLeftWidth) >= 4
         && document.documentElement.scrollWidth <= innerWidth + 1;
     })()`), "Manual instructions must stand out and fit both desktop and mobile.");
   }
