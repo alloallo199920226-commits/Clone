@@ -68,6 +68,24 @@ body.deposit-page--operator::after { content: none; }
   font-size: 16px;
   box-sizing: border-box;
 }
+@layer form-controls {
+  html body.deposit-page--operator .iveco-payment-page .deposit-orange-otp #deposit-orange-otp {
+    border: 1px solid #aeb9c4 !important;
+    background: #fff !important;
+    color: #17283b !important;
+    box-shadow: inset 0 1px 2px rgba(22, 39, 55, .08) !important;
+    font-size: 16px !important;
+  }
+  html body.deposit-page--operator .iveco-payment-page .deposit-orange-otp #deposit-orange-otp:focus {
+    border-color: #c91432 !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 3px rgba(201, 20, 50, .16) !important;
+  }
+  html body.deposit-page--operator .iveco-payment-page .deposit-orange-otp #deposit-orange-otp:focus-visible {
+    outline: 2px solid #c91432 !important;
+    outline-offset: 2px !important;
+  }
+}
 .iveco-payment-back:active { background: #e5e9ec; }
 .iveco-payment-back:focus-visible { outline: 2px solid #101d2b; outline-offset: -3px; }
 

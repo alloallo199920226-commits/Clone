@@ -322,6 +322,8 @@
       otpArea.hidden = !automatic || operator !== "orange_bf";
       otpInput.disabled = otpArea.hidden;
       otpInput.value = "";
+      set(otpArea.querySelector("[data-i18n='orangeOtpHelp']"), "orangeOtpHelp",
+        { ussd: `*144*4*6*${draft.amount_fcfa}#` });
       if (notice) set(notice, automatic ? "sonaraConsent" : "manualDetails");
       set(submit.querySelector("[data-submit-label]"), automatic ? "sonaraStart" : "submit");
       document.querySelectorAll("[data-operator]").forEach(button => {

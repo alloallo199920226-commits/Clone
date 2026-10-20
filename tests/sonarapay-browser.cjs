@@ -20,13 +20,29 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
     assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-operator]')].map(node=>node.dataset.operator)"),
       ["orange_bf", "moov_bf", "telecel_bf"]);
     assert.equal(await evaluate("document.querySelector('[data-orange-otp]').hidden"), false);
+    assert(await evaluate("document.querySelector('[data-i18n=\"orangeOtpHelp\"]').textContent.includes('*144*4*6*500#')"));
+    assert(await evaluate("parseFloat(getComputedStyle(document.querySelector('#deposit-orange-otp')).borderTopWidth)>=1"));
+    assert(await evaluate("document.documentElement.scrollWidth<=innerWidth"));
     await evaluate(`document.querySelector('#deposit-orange-otp').value='123456';
       document.querySelector('[data-operator="moov_bf"]').click()`);
     assert.equal(await evaluate("document.querySelector('[data-orange-otp]').hidden"), true);
     assert.equal(await evaluate("document.querySelector('#deposit-orange-otp').value"), "");
     await evaluate(`document.querySelector('[data-operator="orange_bf"]').click()`);
     assert.equal(await evaluate("document.querySelector('[data-orange-otp]').hidden"), false);
+    for (const amount of [3500, 75000, 500]) {
+      await evaluate(`sessionStorage.setItem('shineray-deposit-draft',JSON.stringify({
+        amount_fcfa:${amount},channel:1,created_at:Date.now()
+      }))`);
+      await navigate("/choisir-operateur");
+      await waitFor("document.querySelector('[data-orange-otp]')?.hidden === false");
+      assert(await evaluate(`document.querySelector('[data-i18n="orangeOtpHelp"]').textContent.includes('*144*4*6*${amount}#')`));
+    }
+    await evaluate("document.querySelector('#deposit-orange-otp').scrollIntoView({block:'center'})");
     await screenshot("orange-bf-otp-selection");
+    if (process.argv.includes("--otp-display")) {
+      console.log("PASS: Orange BF dynamic USSD for3500/75000/500, visible OTP border, operator toggle clearing; no payment submitted.");
+      return;
+    }
   }
   assert.equal(await evaluate("document.querySelector('.deposit-notice')"), null);
   await screenshot(prefix === "+226" ? "sonarapay-burkina-operators" : prefix === "+228" ? "sonarapay-togo-operators" : "sonarapay-operators");

@@ -33,6 +33,24 @@ body.deposit-page--confirmation .sonara-panel {
 .sonara-panel a { color: #ffdc4b; }
 .sonara-panel .sonara-safety { font-size: 13px; color: #d9dce0; }
 .sonara-panel input { display: block; width: 100%; min-height: 48px; margin: 12px 0; padding: 12px; border-radius: 8px; background: #fff; color: #15191f; font-size: 16px; box-sizing: border-box; }
+@layer form-controls {
+  html body.deposit-page--confirmation .sonara-panel #sonara-otp {
+    border: 1px solid #8996a5 !important;
+    background: #fff !important;
+    color: #15191f !important;
+    box-shadow: inset 0 1px 2px rgba(12, 20, 30, .14) !important;
+    font-size: 16px !important;
+  }
+  html body.deposit-page--confirmation .sonara-panel #sonara-otp:focus {
+    border-color: #e0b83e !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 3px rgba(224, 184, 62, .24) !important;
+  }
+  html body.deposit-page--confirmation .sonara-panel #sonara-otp:focus-visible {
+    outline: 2px solid #e0b83e !important;
+    outline-offset: 2px !important;
+  }
+}
 .sonara-panel .deposit-result { margin-top: 12px; }
 .sonara-panel[data-payment-status="successful"] [data-sonara-status] { color: #86efac; }
 /* IVECO signature confirmation only; operator selection styles are untouched. */
