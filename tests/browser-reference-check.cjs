@@ -319,13 +319,35 @@ async function main() {
       assert.deepEqual(errors, []);
       return;
     }
+    if (process.argv.includes("--recharge-amounts")) {
+      await navigate("/recharger");
+      const expected = [3500,7000,12000,20000,40000,75000,100000,150000,250000];
+      assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-amount-choice]')].map(b=>Number(b.dataset.amountChoice))"), expected);
+      for (const amount of expected) {
+        await evaluate(`document.querySelector('[data-amount-choice="${amount}"]').click()`);
+        assert.equal(await evaluate("Number(document.querySelector('#amount').value)"), amount);
+      }
+      for (const width of [390, 472, 900]) {
+        await call("Emulation.setDeviceMetricsOverride", {width,height:844,deviceScaleFactor:1,mobile:width<500});
+        assert(await evaluate("document.documentElement.scrollWidth<=innerWidth"));
+        assert(await evaluate("parseFloat(getComputedStyle(document.querySelector('.recharge-amount')).borderTopWidth)>=1"));
+      }
+      await call("Emulation.setDeviceMetricsOverride", {width:390,height:844,deviceScaleFactor:1,mobile:true});
+      await evaluate("document.querySelector('#amount').value='5432';document.querySelector('#amount').dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('#amount').focus()");
+      await screenshot("recharge-custom-amount");
+      await evaluate("document.querySelector('[data-payment-action]').click()");
+      await waitFor("location.pathname==='/choisir-operateur'");
+      assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).amount_fcfa"), 5432);
+      console.log("PASS: all nine recharge presets, clear input border, no overflow at390/472/900, custom amount carried to payment; no payment submitted.");
+      return;
+    }
     if (process.argv.includes("--deposit-flow")) {
       await navigate("/recharger");
       await evaluate("document.querySelector('[data-payment-action]').click()");
       assert(await evaluate("document.querySelector('[data-payment-status]').textContent.includes('minimum')"));
-      await evaluate("document.querySelector('[data-amount-choice=\"8000\"]').click();document.querySelector('[data-channel-choice=\"1\"]').click();document.querySelector('[data-payment-action]').click()");
+      await evaluate("document.querySelector('[data-amount-choice=\"12000\"]').click();document.querySelector('[data-channel-choice=\"1\"]').click();document.querySelector('[data-payment-action]').click()");
       await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false' && !document.documentElement.classList.contains('site-navigation-pending')");
-      assert.equal(await evaluate("document.querySelector('[data-deposit-amount]').textContent"), "FCFA 8,000");
+      assert.equal(await evaluate("document.querySelector('[data-deposit-amount]').textContent"), "FCFA 12,000");
       assert.equal(await evaluate("document.querySelector('[data-deposit-prefix]').textContent"), "+228");
       assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).channel"), 1);
       assert.equal(await evaluate("document.documentElement.scrollWidth>innerWidth"), false);
@@ -336,7 +358,7 @@ async function main() {
       await waitFor("location.pathname==='/confirmation-depot' && document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false' && !document.documentElement.classList.contains('site-navigation-pending')");
       assert.equal(await evaluate("document.querySelector('[data-selected-operator]').textContent"), "MOOV Money");
       assert.equal(await evaluate("document.querySelector('[data-deposit-phone]').textContent"), "+228 91234567");
-      assert.equal(await evaluate("document.querySelector('[data-deposit-amount]').textContent"), "FCFA 8,000");
+      assert.equal(await evaluate("document.querySelector('[data-deposit-amount]').textContent"), "FCFA 12,000");
       assert.equal(await evaluate("document.querySelector('[data-deposit-reference]').textContent"), "—");
       assert.equal(await evaluate("document.querySelector('[data-copy=\"merchant_account\"]').disabled"), false);
       assert.equal(await evaluate("document.querySelector('[data-deposit-dial]').getAttribute('href')"), null);
@@ -788,16 +810,16 @@ async function main() {
       await waitFor("document.querySelector('.purchase-error').textContent.includes('Solde insuffisant')");
       assert.deepEqual(paymentResponses, []);
       await navigate("/recharger");
-      assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice]').length"), 7);
+      assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice]').length"), 9);
       await noOverflow();
       await screenshot("shineray-recharge-reference");
       assert.equal(await evaluate("document.querySelector('[data-history-link]').getAttribute('href')"), "/historique-recharges");
-      await evaluate("document.querySelector('[data-amount-choice=\"8000\"]').click()");
-      assert.equal(await evaluate("document.querySelector('#amount').value"), "8000");
+      await evaluate("document.querySelector('[data-amount-choice=\"12000\"]').click()");
+      assert.equal(await evaluate("document.querySelector('#amount').value"), "12000");
       await evaluate("document.querySelector('[data-channel-choice=\"1\"]').click()");
       assert.equal(await evaluate("document.querySelector('[data-channel-choice=\"1\"]').getAttribute('aria-pressed')"), "true");
       await clickText("Rechargez maintenant");
-      await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-amount]')?.textContent==='FCFA 8,000'");
+      await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-amount]')?.textContent==='FCFA 12,000'");
       assert.deepEqual(paymentResponses, []);
       assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).channel"), 1);
       await navigate("/recharger");

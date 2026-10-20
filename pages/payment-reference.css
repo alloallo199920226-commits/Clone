@@ -16,6 +16,13 @@ body{margin:0;min-height:100dvh;background:#fff;color:#111;font:14px Arial,sans-
 .input-wrap span{font-size:14px;white-space:nowrap}
 .input-wrap input{width:100%;border:0;outline:0;background:transparent;font:14px Arial,sans-serif;color:#222}
 .input-wrap input::placeholder{color:#b7b7b7}
+.recharge-amount{background:#fafafa}
+.recharge-amount input{min-width:0;color:#222}
+.recharge-amount input::placeholder{color:#666;opacity:1}
+@layer form-controls {
+html body .finance-page .input-wrap.recharge-amount{border:1px solid #888 !important}
+html body .finance-page .input-wrap.recharge-amount:focus-within{border:1px solid #555 !important;box-shadow:0 0 0 2px #5554 !important}
+}
 .channel-heading{margin:29px 10px 12px;font-size:16px;font-weight:700}
 .channel-choice{width:100%;height:47px;border:1px solid #d3d3d3;border-radius:5px;background:linear-gradient(90deg,#f4f4f4,#d2d2d2);font:13px Arial,sans-serif;color:#111;cursor:pointer;box-shadow:0 1px 3px #0002}
 .channel-choice+.channel-choice{margin-top:7px;background:#fff;border-color:#f0f0f0}
