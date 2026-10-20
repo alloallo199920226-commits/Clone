@@ -1,6 +1,7 @@
 /* Local translations: no external service or network dependency. */
 (() => {
   const messages = {
+    displayNumber: ["N° d’affichage", "Display number"],
     manualTransferHeading: ["Comment effectuer le paiement", "How to make the payment"],
     manualTransferInstructions: ["Veuillez copier le numéro de réception, puis ouvrir votre répertoire téléphonique ou votre application Mobile Money pour effectuer le paiement sur ce numéro. Revenez ensuite cliquer sur « Obtenir le résultat ». Votre demande sera enregistrée et votre compte crédité après vérification du transfert par l’administration. Délai indicatif : moins de 5 minutes après vérification, non garanti.", "Copy the recipient number, then open your phone contacts or Mobile Money application to pay that number. Return here and select “Get the result”. Your request will be recorded and your account credited after the administrator verifies the transfer. Indicative time: less than 5 minutes after verification, not guaranteed."],
     sonaraTitle: ["Suivi du paiement", "Payment status"],
@@ -12,13 +13,13 @@
     sonaraRecover: ["Vérifier mon paiement", "Check my payment"],
     sonaraRecoverNotice: ["Ce bouton vérifie uniquement votre demande existante, sans lancer de nouveau paiement. Si vous avez été débité, ne payez pas une seconde fois.", "This button only checks your existing request; it does not start another payment. If you were charged, do not pay again."],
     sonaraPending: ["Paiement en attente. Validez la demande auprès de votre opérateur. Le solde sera crédité uniquement après confirmation du paiement.", "Payment pending. Approve the request with your operator. Your balance will only be credited after payment confirmation."],
-    sonaraUnknown: ["Vérification différée. Conservez cette référence et reprenez le suivi, sans lancer un autre paiement.", "Verification delayed. Keep this reference and resume tracking; do not start another payment."],
+    sonaraUnknown: ["Vérification différée. Reprenez le suivi depuis votre historique, sans lancer un autre paiement.", "Verification delayed. Resume tracking from your history; do not start another payment."],
     sonaraSuccessful: ["Paiement confirmé. Votre compte a été crédité.", "Payment confirmed. Your account has been credited."],
     sonaraFailed: ["Paiement refusé. Aucun crédit n’a été ajouté pour cette demande.", "Payment declined. No credit was added for this request."],
     sonaraFailedTitle: ["Échec du paiement", "Payment failed"],
     sonaraRedirect: ["Retour automatique à l’accueil dans {seconds} s.", "Returning to the home page in {seconds} s."],
-    sonaraReview: ["La confirmation reçue ne correspond pas à votre demande. Contactez l’assistance avec cette référence, sans payer à nouveau.", "The confirmation does not match your request. Contact support with this reference; do not pay again."],
-    sonaraCredentials: ["Le suivi du paiement est temporairement indisponible. Contactez l’assistance avec votre référence ; ne relancez pas un autre paiement.", "Payment tracking is temporarily unavailable. Contact support with your reference; do not start another payment."],
+    sonaraReview: ["La confirmation reçue ne correspond pas à votre demande. Contactez l’assistance en indiquant la date et le montant du dépôt, sans payer à nouveau.", "The confirmation does not match your request. Contact support with the deposit date and amount; do not pay again."],
+    sonaraCredentials: ["Le suivi du paiement est temporairement indisponible. Contactez l’assistance en indiquant la date et le montant du dépôt ; ne relancez pas un autre paiement.", "Payment tracking is temporarily unavailable. Contact support with the deposit date and amount; do not start another payment."],
     sonaraUnavailable: ["Paiement indisponible. Conservez votre demande et réessayez son suivi.", "Payment unavailable. Keep your request and try tracking it again."],
     sonaraOtp: ["Votre opérateur demande un code temporaire. Obtenez ce code auprès de lui, puis saisissez-le ici. Ce n’est pas votre PIN Mobile Money.", "Your operator requires a temporary code. Obtain it from your operator and enter it here. This is not your Mobile Money PIN."],
     sonaraOtpInvalid: ["Le code temporaire doit contenir de 4 à 12 chiffres.", "The temporary code must contain 4 to 12 digits."],

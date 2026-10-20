@@ -51,11 +51,10 @@
       const retry = panel.querySelector("[data-sonara-retry]");
       const success = panel.querySelector("[data-sonara-success]");
       const nonsuccess = panel.querySelector("[data-sonara-nonsuccess]");
-      const copyFeedback = panel.querySelector("[data-sonara-copy-feedback]");
       const clock = document.querySelector("[data-deposit-clock]");
       const redirectNotice = panel.querySelector("[data-sonara-redirect]");
       const resultTitle = panel.querySelector("[data-sonara-result-title]");
-      let payment, busy = false, pollTimer, clockTimer, copyTimer, lastState;
+      let payment, busy = false, pollTimer, clockTimer, lastState;
       let redirectTimer, redirectTick, redirectDeadline;
       const updateRedirect = () => {
         if (!redirectDeadline) return;
@@ -94,7 +93,6 @@
       const paint = () => {
         if (!payment) return;
         const credited = payment.credited === true;
-        const reference = String(payment.reference || payment.id || "");
         const validAmount = Number.isSafeInteger(payment.amount_fcfa) && payment.amount_fcfa >= 0;
         const amount = validAmount ? `FCFA ${new Intl.NumberFormat("en-US").format(payment.amount_fcfa)}` : "—";
         const currentState = stateKey();
@@ -105,7 +103,8 @@
           lastState = currentState;
         }
         panel.dataset.paymentStatus = credited ? "successful" : String(payment.status || "pending");
-        panel.querySelectorAll("[data-sonara-reference]").forEach(node => { node.textContent = reference || "—"; });
+        panel.querySelector("[data-payment-display-number]").textContent =
+          window.paymentDisplayNumber(payment.reference || payment.id);
         panel.querySelectorAll("[data-sonara-amount]").forEach(node => { node.textContent = amount; });
         const operator = payment.operator || {};
         document.querySelector("[data-selected-operator]").textContent = operator.operatorName || "—";
@@ -119,7 +118,6 @@
         panel.querySelector("[data-sonara-ussd]").textContent = payment.ussdCode || "";
         retry.hidden = credited || payment.status === "failed" || !!payment.reference
           || !payment.errorCode || payment.status === "otp_required";
-        panel.querySelectorAll("[data-sonara-copy]").forEach(button => { button.disabled = !reference; });
         if (credited || payment.status === "failed") {
           clearInterval(pollTimer);
           check.hidden = true;
@@ -142,9 +140,6 @@
           busy = false;
           panel.setAttribute("aria-busy", "false");
           panel.querySelectorAll("button").forEach(button => { if (!button.hidden) button.disabled = false; });
-          panel.querySelectorAll("[data-sonara-copy]").forEach(button => {
-            button.disabled = !String(payment?.reference || payment?.id || "");
-          });
         }
       };
       updateClock();
@@ -152,26 +147,6 @@
       set(message, "sonaraPending");
       check.addEventListener("click", () => refresh());
       retry.addEventListener("click", () => refresh("/retry", {}));
-      panel.querySelectorAll("[data-sonara-copy]").forEach(button => {
-        button.addEventListener("click", async () => {
-          if (!payment) return;
-          const value = String(payment.reference || payment.id || "");
-          if (!value) return;
-          try {
-            await navigator.clipboard.writeText(value);
-            set(copyFeedback, "copied");
-            button.textContent = t("copied");
-            button.classList.add("is-copied");
-            button.disabled = true;
-            clearTimeout(copyTimer);
-            copyTimer = setTimeout(() => {
-              button.textContent = t("copy");
-              button.classList.remove("is-copied");
-              button.disabled = false;
-            }, 1800);
-          } catch { set(copyFeedback, "copyError"); }
-        });
-      });
       otpForm.addEventListener("submit", event => {
         event.preventDefault();
         const otp = input.value.trim();
@@ -185,7 +160,6 @@
       window.addEventListener("pagehide", () => {
         clearInterval(pollTimer);
         clearInterval(clockTimer);
-        clearTimeout(copyTimer);
         clearInterval(redirectTick);
         clearTimeout(redirectTimer);
         document.removeEventListener("visibilitychange", updateRedirect);

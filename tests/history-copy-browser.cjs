@@ -7,9 +7,6 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused,
     failed: "PAY-eab09c83-0399-4a56-a94f-5f0cdb18b27f",
     legacy: "DEP-123",
   };
-  await call("Browser.grantPermissions", {
-    origin: base, permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"],
-  });
   paused.clear();
   await call("Fetch.enable", { patterns: [
     { urlPattern: "*/api/activity?kind=recharge", requestStage: "Request" },
@@ -44,8 +41,11 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused,
   assert.equal(await evaluate("document.querySelectorAll('.reference-activity-card').length"), 5);
   for (const [id, reference] of Object.entries(references)) {
     const selector = `[data-activity-id="${id}"]`;
-    const expected = reference.length > 18 ? reference.slice(0, 8) + "…" + reference.slice(-4) : reference;
-    assert.equal(await evaluate(`document.querySelector('${selector} .reference-short').textContent`), expected);
+    assert.equal(await evaluate(`document.querySelector('${selector}').textContent.includes(${JSON.stringify(reference)})`), false);
+    assert.equal(await evaluate(`document.querySelector('${selector} .reference-short')`), null);
+    assert.match(await evaluate(`document.querySelector('${selector} .payment-display-number').textContent`), /^\d{11}$/);
+    assert.equal(await evaluate(`document.querySelector('${selector} .payment-display-number').textContent`),
+      await evaluate(`window.paymentDisplayNumber(${JSON.stringify(reference)})`));
     if (["pending", "failed"].includes(id)) {
       assert.equal(await evaluate(`document.querySelector('${selector} a').getAttribute('href')`),
         "/confirmation-depot?payment=" + id);
@@ -53,29 +53,14 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused,
     assert.equal(await evaluate(`document.querySelector('${selector} .reference-status').dataset.status`),
       ["pending", "failed"].includes(id) ? id : "succeeded");
   }
-  assert.equal(await evaluate("document.querySelector('[data-activity-id=\"missing\"] .reference-short').textContent"), "—");
+  assert.equal(await evaluate("document.body.innerText.includes('Réf. commande')"), false);
+  assert.equal(await evaluate("document.querySelector('.reference-copy-button')"), null);
   assert.equal(await evaluate("document.querySelector('[data-activity-id=\"missing\"] button')"), null);
   for (const width of [320, 390, 1360]) {
     await call("Emulation.setDeviceMetricsOverride", { width, height: 844, deviceScaleFactor: 1, mobile: width < 500 });
     assert.equal(await evaluate("document.documentElement.scrollWidth > innerWidth"), false);
   }
   await call("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
-  await call("Page.bringToFront");
-  const point = await evaluate(`(() => {
-    const r = document.querySelector('[data-activity-id="settled"] button').getBoundingClientRect();
-    return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
-  })()`);
-  for (const type of ["mousePressed", "mouseReleased"]) {
-    await call("Input.dispatchMouseEvent", { type, ...point, button: "left", clickCount: 1 });
-  }
-  await waitFor("document.querySelector('[data-activity-id=\"settled\"] [role=\"status\"]').dataset.state==='success'");
-  assert.equal(await evaluate("navigator.clipboard.readText()"), references.settled);
-  await screenshot("history-short-reference");
-  await evaluate(`Object.defineProperty(navigator, 'clipboard', { configurable: true,
-    value: { writeText: async () => { throw new Error('Denied'); } } });
-    document.execCommand = () => false;
-    document.querySelector('[data-activity-id="settled"] button').click();`);
-  await waitFor("document.querySelector('[data-activity-id=\"settled\"] [role=\"status\"]').dataset.state==='error'");
-  assert.equal(await evaluate("document.querySelectorAll('textarea').length"), 0);
-  console.log("PASS: short/legacy/missing references, full clipboard value, explicit failure, payment links/statuses unchanged, layouts at 320/390/1360px.");
+  await screenshot("history-without-references");
+  console.log("PASS: numeric display aliases, real references/copy controls absent; amounts and tracking unchanged; layouts at 320/390/1360px.");
 };

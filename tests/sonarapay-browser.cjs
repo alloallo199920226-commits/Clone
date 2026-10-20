@@ -83,13 +83,10 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), false);
   assert.equal(await evaluate("document.querySelector('[data-sonara-success] h1').textContent"), "Paiement effectué avec succès");
   assert.match(await evaluate("document.querySelector('[data-deposit-clock]').textContent"), /^\d{2}:\d{2}$/);
-  const origin = await evaluate("location.origin");
-  await call("Browser.grantPermissions", { origin, permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"] });
-  const actualReference = await evaluate("document.querySelector('[data-sonara-reference]').textContent");
-  await call("Page.bringToFront");
-  await call("Runtime.evaluate", { expression: "document.querySelector('[data-sonara-copy]').click()", userGesture: true });
-  await waitFor("document.querySelector('[data-sonara-copy]').classList.contains('is-copied')");
-  assert.equal(await evaluate("navigator.clipboard.readText()"), actualReference);
+  assert.equal(await evaluate("document.querySelector('[data-sonara-reference]')"), null);
+  assert.equal(await evaluate("document.querySelector('[data-sonara-copy]')"), null);
+  assert.match(await evaluate("document.querySelector('[data-payment-display-number]').textContent"), /^\d{11}$/);
+  assert.equal(await evaluate("document.querySelector('[data-sonara-panel]').textContent.includes('PAY-')"), false);
   await evaluate("document.querySelector('[data-deposit-language]').click()");
   assert.equal(await evaluate("document.querySelector('[data-sonara-success] h1').textContent"), "Payment completed successfully");
   await noProviderBrand();

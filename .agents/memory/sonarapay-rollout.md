@@ -5,7 +5,8 @@ description: User-defined country scope for the initial SonaraPay integration.
 
 Ne pas afficher la mention SonaraPay dans les interfaces de la plateforme.
 
-**Why:** l’utilisateur a demandé « N'affiche la mention de sonarapay nul part ».
+**Why:** l’utilisateur a demandé « N'affiche la mention de sonarapay nul part »,
+puis a réaffirmé qu’elle ne devait apparaître nulle part sur le frontend.
 
 **How to apply:** employer des libellés neutres dans les messages, traductions et reçus, y compris les historiques existants ; conserver les identifiants techniques internes pour le suivi des paiements.
 

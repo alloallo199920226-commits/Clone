@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/pages/deposit-flow.css">
   <link rel="stylesheet" href="/pages/iveco-confirmation.css">
   <script src="/pages/deposit-i18n.js" defer></script>
+  <script src="/pages/payment-display-number.js" defer></script>
   <script src="/pages/sonarapay.js" defer></script>
   <script src="/pages/deposit-flow.js" defer></script>
 </head>
@@ -53,6 +54,7 @@
 
         <div class="deposit-body">
           <section class="sonara-panel" data-sonara-panel hidden aria-label="Suivi du paiement">
+            <p class="deposit-reference"><span data-i18n="displayNumber">N° d’affichage</span><strong data-payment-display-number>—</strong></p>
             <div class="sonara-success" data-sonara-success hidden>
               <div class="sonara-success-summary" role="status" aria-live="polite" aria-atomic="true">
                 <span class="sonara-success-mark" aria-hidden="true">
@@ -62,16 +64,6 @@
                 <strong class="sonara-success-amount" data-sonara-amount>—</strong>
                 <p data-i18n="successLineOne">Votre paiement a été traité avec succès.</p>
                 <p data-i18n="successLineTwo">Votre compte a été crédité.</p>
-              </div>
-              <div class="sonara-transaction">
-                <span class="sonara-transaction-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" focusable="false"><path d="M7 3.5h7l4 4V21H7z"/><path d="M14 3.5V8h4M10 12h5M10 15h5"/></svg>
-                </span>
-                <div class="sonara-transaction-copy">
-                  <span class="sonara-label" data-i18n="transactionReference">Référence de transaction</span>
-                  <strong data-sonara-reference>—</strong>
-                </div>
-                <button class="sonara-copy" type="button" data-sonara-copy="reference" data-i18n="copy">Copier</button>
               </div>
               <div class="sonara-confirmed-status">
                 <span class="sonara-confirmed-mark" aria-hidden="true">
@@ -97,7 +89,6 @@
               <h2 data-sonara-result-title data-i18n="sonaraTitle">Suivi du paiement</h2>
               <p class="sonara-status-message" data-sonara-status role="status" aria-live="polite"></p>
               <p class="sonara-amount-line"><span data-i18n="amountLabel">Montant</span><strong data-sonara-amount>—</strong></p>
-              <p class="sonara-reference-line"><span data-i18n="sonaraReference">Référence de suivi</span><strong data-sonara-reference>—</strong></p>
               <p class="sonara-safety" data-i18n="sonaraSafety">Validez uniquement auprès de votre opérateur. Ne saisissez jamais votre code PIN Mobile Money sur ce site.</p>
               <form hidden>
                 <p data-sonara-ussd></p>
@@ -109,7 +100,6 @@
               <button class="deposit-result" type="button" data-sonara-retry hidden data-i18n="sonaraRetry">Reprendre la même demande</button>
               <p><a href="/historique-recharges" data-i18n="sonaraHistory">Voir mes dépôts</a></p>
             </div>
-            <p class="sonara-copy-feedback" data-sonara-copy-feedback role="status" aria-live="polite" aria-atomic="true"></p>
             <p class="sonara-redirect-notice" data-sonara-redirect hidden role="status" aria-live="polite" aria-atomic="true"></p>
           </section>
 
@@ -143,13 +133,13 @@
               <a class="deposit-action deposit-action--primary" data-deposit-dial aria-disabled="true">Composer le code</a>
               <button class="deposit-action" type="button" data-copy="ussd" disabled>Copier le code</button>
             </div>
-            <div class="deposit-reference"><span>Référence</span><strong data-deposit-reference>—</strong></div>
             <p class="deposit-ussd-note">Aucun code PIN ne vous sera demandé sur cette page. Ne le communiquez à personne.</p>
           </section>
 
           <section class="deposit-validation" aria-label="Validation du dépôt">
             <h2 class="deposit-validation-title">Validation du dépôt</h2>
             <p class="deposit-validation-status" data-deposit-validation role="status" aria-live="polite">En attente de configuration</p>
+            <p class="deposit-reference" data-manual-display-row hidden><span data-i18n="displayNumber">N° d’affichage</span><strong data-manual-display-number>—</strong></p>
             <button class="deposit-result" type="button" data-deposit-result disabled>Obtenir le résultat</button>
             <p class="deposit-result-message" data-deposit-status role="status" aria-live="polite"></p>
           </section>

@@ -248,10 +248,11 @@
           if (!response.ok) throw new Error(payload.error || t("manualError"));
           if (!payload.deposit?.reference) throw new Error(t("manualError"));
           clearInterval(timer);
+          displayValue("[data-manual-display-number]", window.paymentDisplayNumber(payload.deposit.reference));
+          document.querySelector("[data-manual-display-row]").hidden = false;
           document.removeEventListener("visibilitychange", tick);
           document.removeEventListener("deposit-language-change", tick);
           window.removeEventListener("pageshow", tick);
-          displayValue("[data-deposit-reference]", payload.deposit.reference);
           set(document.querySelector("[data-deposit-validation]"), "manualRecorded");
           set(notice, "manualRecorded");
           set(resultButton, "manualRecordedShort");

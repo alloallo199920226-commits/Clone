@@ -4,7 +4,8 @@
   const legacyBrand = /\b(?:SHINERAY|SWM|Sprite|AERONOVA)\b/gi;
   const excluded = "script,style,noscript,textarea,input,code,pre,[contenteditable]";
   const attributes = ["title", "alt", "aria-label", "placeholder"];
-  const replace = value => value.replace(legacyBrand, "IVECO");
+  const replace = value => value.replace(legacyBrand, "IVECO")
+    .replace(/\bsonara[\s-]*pay\b/gi, "service de paiement");
 
   function text(node) {
     if (!node.parentElement || node.parentElement.closest(excluded)) return;

@@ -77,6 +77,8 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
   await evaluate("document.querySelector('[data-deposit-result]').click()");
   await respond(201, { deposit: { reference: "MAN-browser-fixture", status: "pending" } });
   await waitFor("document.querySelector('[data-deposit-status]').textContent.includes('10 s')");
+  assert.match(await evaluate("document.querySelector('[data-manual-display-number]').textContent"), /^\d{11}$/);
+  assert.equal(await evaluate("document.querySelector('[data-manual-display-row]').hidden"), false);
   assert.equal(await evaluate("window.manualTestRequests.length"), 2, "Double click must not resubmit");
   assert.equal(await evaluate("window.manualTestRequests[0].request_id"),
     await evaluate("window.manualTestRequests[1].request_id"), "Retry must retain its idempotency key");

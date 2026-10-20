@@ -394,7 +394,7 @@ async function main() {
     }
     if (process.argv.includes("--iveco-branding")) {
       const branded = async () => {
-        await waitFor("! /\\b(?:SHINERAY|SWM|Sprite|AERONOVA)\\b/i.test(document.title + ' ' + document.body.innerText)");
+        await waitFor("! /\\b(?:SHINERAY|SWM|Sprite|AERONOVA|sonara[\\s-]*pay)\\b/i.test(document.title + ' ' + document.body.innerText)");
         assert(await evaluate("Boolean(document.querySelector('script[src^=\"/pages/iveco-brand.js\"]'))"));
       };
       for (const route of ["/accueil", "/notifications", "/compte", "/projet", "/equipe",
@@ -423,6 +423,27 @@ async function main() {
       assert.equal(await evaluate("sessionStorage.getItem('iveco-brand-test')"), "SHINERAY-original");
       await evaluate("document.querySelector('#brand-test-fixture p').firstChild.data='SHINERAY';document.querySelector('#brand-test-fixture img').alt='SWM';");
       await waitFor("document.querySelector('#brand-test-fixture p').textContent === 'IVECO' && document.querySelector('#brand-test-fixture img').alt === 'IVECO'");
+      await evaluate(`(() => {
+        const error=document.createElement('p');
+        error.id='provider-brand-test';
+        error.textContent='SonaraPay : erreur SONARAPAY / Sonara Pay / sonara-pay.';
+        error.setAttribute('aria-label','Assistance SonaraPay');
+        error.title='Paiement SONARAPAY';
+        document.body.append(error);
+        const link=document.createElement('a');
+        link.id='provider-technical-test';
+        link.href='/api/sonarapay/payments';
+        link.textContent='SonaraPay';
+        document.body.append(link);
+        sessionStorage.setItem('provider-brand-fixture','sonarapay-original');
+      })()`);
+      await waitFor("document.querySelector('#provider-brand-test').textContent === 'service de paiement : erreur service de paiement / service de paiement / service de paiement.'");
+      assert.equal(await evaluate("document.querySelector('#provider-brand-test').getAttribute('aria-label')"), "Assistance service de paiement");
+      assert.equal(await evaluate("document.querySelector('#provider-brand-test').title"), "Paiement service de paiement");
+      assert.equal(await evaluate("document.querySelector('#provider-technical-test').getAttribute('href')"), "/api/sonarapay/payments");
+      assert.equal(await evaluate("sessionStorage.getItem('provider-brand-fixture')"), "sonarapay-original");
+      await evaluate("document.querySelector('#provider-brand-test').firstChild.data='Réponse SonaraPay indisponible';document.querySelector('#provider-brand-test').title='SonaraPay';");
+      await waitFor("document.querySelector('#provider-brand-test').textContent==='Réponse service de paiement indisponible' && document.querySelector('#provider-brand-test').title==='service de paiement'");
       await navigate("/omarshark-junior-panam");
       await branded();
       await waitFor("document.querySelector('.admin-login-brand img[alt=\"IVECO\"]')?.naturalWidth > 0");

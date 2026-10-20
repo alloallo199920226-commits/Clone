@@ -3,6 +3,19 @@ name: Financial display semantics
 description: Preserve the difference between settled funds, pending requests, purchases, and actual earnings.
 ---
 
+Masquer les références de paiement dans les historiques et confirmations clients,
+sans créer de fausses références ni supprimer les identifiants réels côté serveur
+ou dans l’administration. Afficher uniquement un numéro numérique de présentation,
+nommé « N° d’affichage », calculé côté frontend et non envoyé au backend.
+
+**Why:** l’utilisateur a demandé de cacher les références visibles ; leur suppression
+visuelle ne rend pas un paiement intraçable et ne doit pas être présentée comme telle.
+
+**How to apply:** conserver les liens de suivi, les rapprochements, l’idempotence et
+les preuves de paiement ; ne pas réintroduire les références ou boutons de copie
+sur ces écrans clients. Le numéro d’affichage n’est pas une référence officielle,
+une preuve de paiement ou une mesure empêchant la traçabilité.
+
 Keep pending deposit/withdrawal requests separate from the settled financial ledger.
 A pending request must not change the settled balance or appear as a verified payment;
 a withdrawal reservation does reduce the spendable balance.

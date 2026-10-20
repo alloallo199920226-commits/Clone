@@ -56,6 +56,7 @@ STATIC_FILES = {
     "/pages/navigation-loading.js": ("pages/navigation-loading.js", "text/javascript; charset=utf-8"),
     "/pages/records-reference.css": ("pages/records-reference.css", "text/css; charset=utf-8"),
     "/pages/records-reference.js": ("pages/records-reference.js", "text/javascript; charset=utf-8"),
+    "/pages/payment-display-number.js": ("pages/payment-display-number.js", "text/javascript; charset=utf-8"),
     "/pages/auth-progress.js": ("pages/auth-progress.js", "text/javascript; charset=utf-8"),
     "/pages/member-reference.css": ("pages/member-reference.css", "text/css; charset=utf-8"),
     "/pages/iveco-about.css": ("pages/iveco-about.css", "text/css; charset=utf-8"),
