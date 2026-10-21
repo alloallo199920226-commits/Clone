@@ -139,8 +139,9 @@
 .service-page .reference-hours { min-height: 82px; margin: 0; background: linear-gradient(90deg, #e50920, #000); }
 .service-page .reference-hours strong { font-size: 22px; }
 .service-page .reference-contact-list { gap: 11px; margin: 16px 0 0; padding: 50px 24px 39px; background: linear-gradient(90deg, #e50920, #000); }
-.service-page .reference-contact { min-height: 61px; padding: 0 24px 0 33px; }
-.service-page .contact-main { gap: 34px; }
+.service-page .reference-contact { min-height: 61px; padding: 0 24px 0 33px; text-decoration: none; }
+.service-page .contact-main { gap: 16px; }
+.service-page .contact-main > span:last-child { overflow-wrap: anywhere; }
 .service-page .reference-telegram { width: 39px; height: 39px; flex-basis: 39px; }
 
 .service-banner {

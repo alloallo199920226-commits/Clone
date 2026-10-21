@@ -254,6 +254,11 @@ async function main() {
     })()`);
     assert.equal(registration.status, 201, JSON.stringify(registration.body));
     userId = registration.body.user.id;
+    if (process.argv.includes("--support-links")) {
+      await require("./support-links-browser.cjs")({call, evaluate, navigate, waitFor, screenshot});
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--gift-codes")) {
       await require("./gift-codes-browser.cjs")({
         call, evaluate, navigate, waitFor, screenshot, owner: registration.body.user,
@@ -859,9 +864,7 @@ async function main() {
       await imagesLoaded();
       await noOverflow();
       await screenshot("shineray-support-reference");
-      await evaluate("document.querySelector('[data-contact]').click()");
-      assert(await evaluate("Boolean(document.querySelector('dialog[open]'))"));
-      assert(await evaluate("document.querySelector('dialog[open]').innerText.includes('configur')"));
+      assert.equal(await evaluate("document.querySelector('[data-contact]').href"), "https://t.me/Ivecoservice");
       await call("Emulation.setDeviceMetricsOverride", {
         width: 390, height: 744, deviceScaleFactor: 1, mobile: true,
       });

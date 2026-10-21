@@ -22,25 +22,25 @@
       <span>Horaires du service client</span>
     </div>
     <div class="reference-contact-list" aria-label="Contacts de service client">
-        <button class="reference-contact" type="button" data-contact="Telegram">
+        <a class="reference-contact" href="https://t.me/Ivecoservice" target="_blank" rel="noopener noreferrer" data-contact="Telegram">
         <span class="contact-main">
           <span class="reference-telegram" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false"><path d="M20.7 4.1 17.8 19c-.2 1-.8 1.2-1.6.7l-4.5-3.3-2.2 2.1c-.2.2-.4.4-.8.4l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L6.4 13.1 2 11.7c-1-.3-1-1 .2-1.5L19.4 3.5c.8-.3 1.5.2 1.3.6Z"/></svg>
           </span>
-          <span>Telegram</span>
+          <span>Telegram · @Ivecoservice</span>
         </span>
           <span class="contact-chevron" aria-hidden="true">›</span>
-        </button>
-        <button class="reference-contact" type="button" data-contact="Chaîne Telegram">
+        </a>
+        <a class="reference-contact" href="https://whatsapp.com/channel/0029Vb908sVDZ4LVfxtZJA1r" target="_blank" rel="noopener noreferrer" data-contact="Chaîne WhatsApp">
         <span class="contact-main">
           <span class="reference-telegram" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false"><path d="M20.7 4.1 17.8 19c-.2 1-.8 1.2-1.6.7l-4.5-3.3-2.2 2.1c-.2.2-.4.4-.8.4l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L6.4 13.1 2 11.7c-1-.3-1-1 .2-1.5L19.4 3.5c.8-.3 1.5.2 1.3.6Z"/></svg>
+            <svg viewBox="0 0 24 24" focusable="false"><path d="M12 2a10 10 0 0 0-8.7 15L2 22l5.2-1.3A10 10 0 1 0 12 2Zm0 2a8 8 0 1 1-4.2 14.8l-.4-.2-2.6.7.7-2.6-.3-.4A8 8 0 0 1 12 4Zm-3 3c-.4 0-1 .6-1 1.5 0 2.4 3.7 6.5 6.5 6.5.9 0 1.5-.6 1.5-1l-2-1.2-.9.8a8 8 0 0 1-2.7-2.7l.8-.9L10 7H9Z"/></svg>
           </span>
-          <span>Chaîne Telegram</span>
+          <span>Chaîne WhatsApp</span>
         </span>
           <span class="contact-chevron" aria-hidden="true">›</span>
-        </button>
-        <button class="reference-contact" type="button" data-contact="Groupe Telegram">
+        </a>
+        <a class="reference-contact" href="https://t.me/+jYx8aX3eSwozNmQ0" target="_blank" rel="noopener noreferrer" data-contact="Groupe Telegram">
         <span class="contact-main">
           <span class="reference-telegram" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false"><path d="M20.7 4.1 17.8 19c-.2 1-.8 1.2-1.6.7l-4.5-3.3-2.2 2.1c-.2.2-.4.4-.8.4l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L6.4 13.1 2 11.7c-1-.3-1-1 .2-1.5L19.4 3.5c.8-.3 1.5.2 1.3.6Z"/></svg>
@@ -48,17 +48,8 @@
           <span>Groupe Telegram</span>
         </span>
           <span class="contact-chevron" aria-hidden="true">›</span>
-        </button>
+        </a>
     </div>
   </main>
-  <dialog class="service-unavailable" id="service-unavailable"><h2>Contact indisponible</h2><p>Les liens de contact <span data-contact-name></span> ne sont pas configurés pour le moment.</p><button type="button" data-close-contact>Fermer</button></dialog>
-  <script>
-    const contactDialog = document.querySelector("#service-unavailable");
-    document.querySelectorAll("[data-contact]").forEach((button) => button.addEventListener("click", () => {
-      document.querySelector("[data-contact-name]").textContent = button.dataset.contact;
-      contactDialog.showModal();
-    }));
-    document.querySelector("[data-close-contact]").addEventListener("click", () => contactDialog.close());
-  </script>
 </body>
 </html>
