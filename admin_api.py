@@ -223,6 +223,9 @@ def pagination(value):
 
 
 def resources(cur, kind):
+    if kind == "product":
+        from product_catalog_admin import ensure_registered
+        ensure_registered(cur)
     cur.execute("SELECT * FROM shineray_admin_resources WHERE kind=%s ORDER BY id DESC", (kind,))
     return [resource(row) for row in cur.fetchall()]
 
@@ -460,6 +463,11 @@ def validated_resource(kind, body, prior=None):
 
 def resource_api(cur, actor, segment, ident, action, method, body):
     kind, list_key = RESOURCE_ROUTES[segment]
+    if kind == "product":
+        import product_catalog_admin
+        product_catalog_admin.ensure_registered(cur)
+        if method != "GET":
+            cur.execute("SELECT pg_advisory_xact_lock(%s)", (product_catalog_admin.LOCK_ID,))
     if ident is None:
         if method == "GET":
             items = resources(cur, kind)
@@ -469,6 +477,8 @@ def resource_api(cur, actor, segment, ident, action, method, body):
         if method != "POST":
             fail(405, "Méthode non autorisée.")
         value = validated_resource(kind, body)
+        if kind == "product":
+            product_catalog_admin.validate_code(cur, value)
         cur.execute("""INSERT INTO shineray_admin_resources(kind,value) VALUES (%s,%s) RETURNING *""", (kind, Jsonb(value)))
         row = resource(cur.fetchone())
         audit(cur, actor, "create_" + kind, {"id": row["id"]})
@@ -503,6 +513,8 @@ def resource_api(cur, actor, segment, ident, action, method, body):
         if kind == "announcement" and value["status"] != "draft":
             fail(409, "Retirez l’annonce avant de modifier son brouillon.")
         value = validated_resource(kind, body, value)
+        if kind == "product":
+            product_catalog_admin.validate_code(cur, value, ident, row["value"])
         cur.execute("UPDATE shineray_admin_resources SET value=%s,updated_at=now() WHERE id=%s", (Jsonb(value), ident))
     else:
         fail(405, "Méthode non autorisée.")

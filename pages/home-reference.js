@@ -18,7 +18,7 @@
   document.querySelectorAll('[data-purpose="buy-btn"]').forEach((button) => {
     button.addEventListener("click", () => {
       selectedCard = button.closest(".product-card");
-      title.textContent = selectedCard.dataset.vip;
+      title.textContent = selectedCard.dataset.name || selectedCard.dataset.vip;
       image.src = selectedCard.dataset.image;
       image.alt = `Camion IVECO — offre ${selectedCard.dataset.vip}`;
       dialog.querySelector("[data-detail-price]").textContent = `Prix:FCFA ${format(selectedCard.dataset.price)}`;
@@ -91,6 +91,8 @@
       card.dataset.available = String(available);
       button.disabled = !available;
       if (product) {
+        card.dataset.name = product.name;
+        card.querySelector("h2").textContent = product.name;
         card.dataset.price = String(product.price);
         card.dataset.daily = String(product.dailyIncome);
         card.dataset.total = String(product.totalIncome);

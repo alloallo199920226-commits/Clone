@@ -42,6 +42,35 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
   await screenshot("shineray-original-admin-desktop");
   await evaluate("document.querySelector('[data-tab=products]').click()");
   await waitFor("Boolean(document.querySelector('[data-form=product]'))");
+  const storefrontProducts = (await api("/api/admin/products")).body.products;
+  for (const code of ["VIP1","VIP2","VIP3","VIP4","VIP5","VIP6"]) {
+    assert(storefrontProducts.some(p=>p.code===code), `${code} must be editable in admin`);
+  }
+  const vip1 = storefrontProducts.find(p=>p.code==="VIP1");
+  const oldTerms = Object.fromEntries(["name","price","dailyIncome","totalIncome","durationDays"].map(k=>[k,vip1[k]]));
+  try {
+    await evaluate(`document.querySelector('[data-product-edit="${vip1.id}"]').click()`);
+    await waitFor(`document.querySelector('[data-form=product]').elements.name.value===${JSON.stringify(vip1.name)}`);
+    await evaluate(`(()=>{const f=document.querySelector('[data-form=product]');
+      f.elements.name.value='VIP1 test catalogue';f.elements.price.value='4100';
+      f.elements.dailyIncome.value='1100';f.elements.totalIncome.value='198000';
+      f.elements.durationDays.value='180';f.requestSubmit()})()`);
+    await waitFor("document.querySelector('.admin-list').textContent.includes('VIP1 test catalogue')");
+    await navigate("/accueil");
+    await waitFor("document.querySelector('[data-vip=VIP1]').dataset.price==='4100'");
+    assert.equal(await evaluate("document.querySelector('[data-vip=VIP1] h2').textContent"), "VIP1 test catalogue");
+    assert.equal(await evaluate("document.querySelector('[data-vip=VIP1]').dataset.daily"), "1100");
+    assert.equal(await evaluate("document.querySelector('[data-vip=VIP1]').dataset.total"), "198000");
+    await evaluate("document.querySelector('[data-notification-close]').click()");
+    await screenshot("iveco-admin-catalog-home-updated");
+  } finally {
+    assert.equal((await api(`/api/admin/products/${vip1.id}`, "PATCH", oldTerms)).status, 200);
+  }
+  await navigate("/omarshark-junior-panam");
+  await waitFor("document.querySelector('[data-tab=products]')");
+  await evaluate("document.querySelector('[data-tab=products]').click()");
+  await waitFor("document.querySelectorAll('[data-product-edit]').length>=6");
+  await screenshot("iveco-admin-existing-vip-products");
   const name = "Browser fixture " + owner.id;
   await evaluate(`(()=>{const f=document.querySelector('[data-form=product]');
     f.elements.name.value=${JSON.stringify(name)};f.elements.price.value='4000';

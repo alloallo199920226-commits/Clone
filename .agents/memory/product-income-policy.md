@@ -37,3 +37,16 @@ annoncées pendant la mise en œuvre.
 
 **How to apply:** ne pas étendre automatiquement le service aux octrois VIP ou aux
 paiements externes sans demande explicite.
+
+Les produits existants de l’accueil doivent être modifiables depuis
+l’administration, sans écraser les paramètres déjà enregistrés. Une fois ce
+catalogue pris en charge par l’administration, un produit supprimé ne doit pas
+réapparaître avec des valeurs par défaut.
+
+**Why:** l’utilisateur a signalé que les offres visibles n’étaient pas proposées
+à la modification dans l’administration. Le retour automatique des valeurs par
+défaut annulerait une suppression volontaire.
+
+**How to apply:** conserver les offres existantes lors de leur enregistrement
+initial, puis considérer le catalogue administré comme la source de vérité pour
+les nouveaux achats. Les contrats des achats précédents restent figés.

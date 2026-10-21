@@ -17,14 +17,15 @@ DEFAULT_PRODUCTS = {
 
 
 def catalog(cursor, lock=False):
-    products = {code: dict(value) for code, value in DEFAULT_PRODUCTS.items()}
+    from product_catalog_admin import initialized
+    products = {} if initialized(cursor) else {code: dict(value) for code, value in DEFAULT_PRODUCTS.items()}
     cursor.execute("SELECT id,value FROM shineray_admin_resources WHERE kind='product' ORDER BY id"
                    + (" FOR SHARE" if lock else ""))
     seen = set()
     for row in cursor.fetchall():
         value = row["value"]
         code = value.get("code")
-        if code not in products:
+        if code not in DEFAULT_PRODUCTS:
             continue
         if code in seen:
             raise db.AuthError(503, "Plusieurs produits utilisent le même code VIP. Contactez l’administration.")
@@ -32,7 +33,7 @@ def catalog(cursor, lock=False):
         if (type(value.get("price")) is not int or not 1 <= value["price"] <= db.MAX_ACTIVITY_AMOUNT
                 or type(value.get("durationDays")) is not int or not 1 <= value["durationDays"] <= 3650):
             raise db.AuthError(503, "Configuration du produit invalide.")
-        products[code].update(price=value["price"], durationDays=value["durationDays"],
+        products.setdefault(code, {"code": code}).update(price=value["price"], durationDays=value["durationDays"],
                               name=value.get("name") or code, active=value.get("active") is True,
                               product_id=row["id"])
         if (type(value.get("dailyIncome")) is not int or not 1 <= value["dailyIncome"] <= db.MAX_ACTIVITY_AMOUNT
@@ -75,8 +76,8 @@ def purchase(user_id, body):
                 raise db.AuthError(409, "Cet identifiant correspond à un autre achat.")
             transaction_id, price = prior["id"], -prior["amount_fcfa"]
         else:
-            product = catalog(cursor, lock=True)[code]
-            if not product["active"]:
+            product = catalog(cursor, lock=True).get(code)
+            if not product or not product["active"]:
                 raise db.AuthError(409, "Ce produit n’est plus disponible.")
             price = product["price"]
             if body["expectedPrice"] != price:

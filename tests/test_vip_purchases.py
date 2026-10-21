@@ -151,6 +151,7 @@ class CatalogTests(unittest.TestCase):
     def test_saved_admin_settings_override_defaults(self):
         from unittest.mock import Mock
         cursor = Mock()
+        cursor.fetchone.return_value = None  # Catalog has not yet been registered.
         cursor.fetchall.return_value = [{"id": 123, "value": {
             "code": "VIP1", "name": "VIP1", "price": 4100, "durationDays": 200, "active": False,
             "dailyIncome": 900, "totalIncome": 180000}}]
