@@ -99,7 +99,7 @@
     window.sonaraPay.mount(draft.payment_id, populateLogo, operatorBrand);
     return;
   }
-  if (!draft || !Number.isSafeInteger(draft.amount_fcfa) || draft.amount_fcfa < 3500 ||
+  if (!draft || !Number.isSafeInteger(draft.amount_fcfa) || draft.amount_fcfa < 500 ||
       ![1, 2].includes(draft.channel) || !Number.isFinite(draft.created_at) ||
       Date.now() - draft.created_at < 0) {
     showMissing();
