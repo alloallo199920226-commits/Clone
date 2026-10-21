@@ -72,3 +72,16 @@ l’application. Un refus de passerelle avait été présenté à tort comme une
 **How to apply:** identifier honnêtement le client HTTP de l’application ; distinguer
 les refus HTML de la passerelle des erreurs JSON d’authentification du prestataire.
 Vérifier uniquement par GET lors du diagnostic, sans créer un paiement réel.
+
+Un message « informations de dépôt non disponibles » peut signaler un choix
+de recharge perdu, et non des opérateurs désactivés. Certains parcours de
+réouverture ou changements de contexte navigateur perdent le stockage de session.
+
+**Why:** l’utilisateur a signalé ce message au Burkina après le passage à 500 FCFA ;
+les opérateurs des cinq pays automatiques étaient bien disponibles aux tests.
+
+**How to apply:** vérifier séparément le choix montant/canal et la configuration
+des opérateurs. La récupération d’un choix peut transporter uniquement montant
+et canal non sensibles ; elle ne récupère jamais un OTP, un téléphone, un statut
+« payé » ni un crédit. Les contrôles serveur et l’appartenance des paiements
+restent obligatoires.

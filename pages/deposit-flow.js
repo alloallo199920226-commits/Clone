@@ -95,6 +95,20 @@
     set(missing.querySelector("p"), reason);
   }
   try { draft = JSON.parse(sessionStorage.getItem(key)); } catch { draft = null; }
+  // A reopened page or a new embedded-browser context may lose sessionStorage.
+  // Recover only the selected amount/channel, never a phone, OTP or paid status.
+  if (form && (!draft || !Number.isSafeInteger(draft.amount_fcfa) ||
+      draft.amount_fcfa < 500 || ![1, 2].includes(draft.channel) ||
+      !Number.isFinite(draft.created_at))) {
+    const selection = new URL(location.href).searchParams;
+    const amount = selection.get("amount") || "";
+    const channel = selection.get("channel") || "";
+    if (/^\d{3,9}$/.test(amount) && Number(amount) >= 500 &&
+        Number(amount) <= 500000000 && /^[12]$/.test(channel)) {
+      draft = { amount_fcfa: Number(amount), channel: Number(channel), created_at: Date.now() };
+      if (!save()) return;
+    }
+  }
   if (!form && draft?.payment_id) {
     window.sonaraPay.mount(draft.payment_id, populateLogo, operatorBrand);
     return;

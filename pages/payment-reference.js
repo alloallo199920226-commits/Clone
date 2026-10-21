@@ -53,7 +53,9 @@
         return;
       }
       const next = document.createElement("a");
-      next.href = "/choisir-operateur";
+      // Amount/channel are not credentials. Carry them across browser/tab contexts
+      // that do not retain sessionStorage; the server still validates every payment.
+      next.href = `/choisir-operateur?amount=${amount}&channel=${body.channel}`;
       next.hidden = true;
       document.body.append(next);
       next.click();

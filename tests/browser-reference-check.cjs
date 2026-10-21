@@ -361,6 +361,12 @@ async function main() {
       console.log("PASS: all nine recharge presets, clear input border, no overflow at390/472/900, 499 rejected, 500 accepted/restored and custom amount carried to payment; no payment submitted.");
       return;
     }
+    if (process.argv.includes("--automatic-countries")) {
+      await require("./automatic-countries-browser.cjs")({
+        evaluate, navigate, waitFor, screenshot, trackUser: id => childUserIds.push(id),
+      });
+      return;
+    }
     if (process.argv.includes("--deposit-flow")) {
       await navigate("/recharger");
       await evaluate("document.querySelector('[data-payment-action]').click()");
