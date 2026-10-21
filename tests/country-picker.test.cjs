@@ -3,6 +3,15 @@ const assert = require("node:assert/strict");
 const vm = require("node:vm");
 const fs = require("node:fs");
 
+test("auth pages omit decorative arrows and initial notices without removing error feedback", () => {
+  for (const page of ["connexion", "inscription"]) {
+    const html = fs.readFileSync(`${page}/code.html`, "utf8");
+    assert.doesNotMatch(html, /class="chevron"/);
+    assert.match(html, /class="demo-notice" role="status" aria-live="polite"><\/p>/);
+    assert.match(html, /class="field country-trigger"/);
+  }
+});
+
 function setup() {
   const document = { body: { style: { overflow: "auto" } }, listeners: {},
     addEventListener(name, handler) { this.listeners[name] = handler; } };
