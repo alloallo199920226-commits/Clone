@@ -61,6 +61,15 @@ Purchase cost is not earned income. Withdrawal net amounts and product earnings 
 
 **How to apply:** display unknown financial facts as “—”. Report per-level commissions only when settled commissions can actually be attributed to members at those levels; do not distribute an unallocated total using advertised rates.
 
+Le catalogue client doit afficher uniquement les tarifs récupérés depuis l’administration,
+sans anciens montants de secours pendant le chargement ou en cas d’échec.
+
+**Why:** l’utilisateur a confirmé cette règle après avoir constaté que certains clients
+voyaient encore les anciens tarifs alors que les modifications étaient enregistrées.
+
+**How to apply:** laisser les montants inconnus à « — » et empêcher les achats tant que
+les conditions actuelles du produit ne sont pas disponibles.
+
 Deposit recipient details will come from the administrator. Screenshot recipient information is not configuration.
 
 **Why:** the user clarified: “les information viendras de ladmin toi tu doit juste reproduire la maquette”.

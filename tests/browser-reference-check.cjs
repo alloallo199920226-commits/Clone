@@ -542,6 +542,11 @@ async function main() {
       console.log("PASS: 13 distinct IVECO photos, six loaded VIP images, matching purchase-dialog image, account/products/withdrawal/About/support routes, no overflow. No purchase or payment submitted.");
       return;
     }
+    if (process.argv.includes("--catalog-loading")) {
+      await require("./catalog-loading-browser.cjs")({ call, evaluate, waitFor, navigate, screenshot, paused });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--home-branding")) {
       for (const width of [320, 390, 472]) {
         await call("Emulation.setDeviceMetricsOverride", { width, height: 844, deviceScaleFactor: 1, mobile: true });

@@ -17,6 +17,7 @@
   const format = (value) => new Intl.NumberFormat("fr-FR").format(Number(value));
   document.querySelectorAll('[data-purpose="buy-btn"]').forEach((button) => {
     button.addEventListener("click", () => {
+      if (!catalogReady || button.disabled) return;
       selectedCard = button.closest(".product-card");
       title.textContent = selectedCard.dataset.name || selectedCard.dataset.vip;
       image.src = selectedCard.dataset.image;
@@ -76,21 +77,46 @@
     }
   });
   const buyButtons = document.querySelectorAll('[data-purpose="buy-btn"]');
-  buyButtons.forEach(button => { button.disabled = true; });
-  fetch("/api/products/catalog", { credentials: "include", cache: "no-store" }).then(async response => {
+  const catalogStatus = document.querySelector(".catalog-status");
+  let loadVersion = 0;
+  const clearCatalog = () => {
+    catalogReady = false;
+    confirmButton.disabled = true;
+    buyButtons.forEach(button => {
+      button.disabled = true;
+      button.textContent = "ACHETER";
+      const card = button.closest(".product-card");
+      card.dataset.available = "false";
+      ["price", "daily", "total", "days"].forEach(key => { delete card.dataset[key]; });
+      card.querySelectorAll(".metrics strong").forEach(amount => { amount.textContent = "—"; });
+      card.querySelector(".product-footer b").textContent = "—";
+    });
+  };
+  const loadCatalog = async () => {
+    const version = ++loadVersion;
+    clearCatalog();
+    if (dialog.open) dialog.close();
+    catalogStatus.textContent = "Chargement du catalogue…";
+    try {
+    const response = await fetch("/api/products/catalog", {
+      credentials: "include", cache: "no-store", signal: AbortSignal.timeout(15000),
+    });
+    if (version !== loadVersion) return;
     if (response.status === 401) { location.replace("/connexion"); return; }
     const result = await response.json();
+    if (version !== loadVersion) return;
     if (!response.ok || !Array.isArray(result.products)) throw new Error("Catalogue indisponible.");
     buyButtons.forEach(button => {
       const card = button.closest(".product-card");
       const product = result.products.find(value => value.code === card.dataset.vip);
-      const available = product?.active === true && Number.isSafeInteger(product.price)
+      const valid = product && Number.isSafeInteger(product.price) && product.price > 0
         && Number.isSafeInteger(product.dailyIncome) && product.dailyIncome > 0
         && Number.isSafeInteger(product.totalIncome) && product.totalIncome >= product.dailyIncome
         && Number.isSafeInteger(product.durationDays) && product.durationDays > 0;
-      card.dataset.available = String(available);
+      const available = valid && product.active === true;
+      card.dataset.available = String(Boolean(available));
       button.disabled = !available;
-      if (product) {
+      if (valid) {
         card.dataset.name = product.name;
         card.querySelector("h2").textContent = product.name;
         card.dataset.price = String(product.price);
@@ -106,7 +132,18 @@
       if (!available) button.textContent = "INDISPONIBLE";
     });
     catalogReady = true;
-  }).catch(() => {
-    document.querySelector(".catalog-footnote").textContent = "Catalogue indisponible. Rechargez la page avant tout achat.";
+    catalogStatus.textContent = "";
+    } catch {
+      if (version !== loadVersion) return;
+      clearCatalog();
+      catalogStatus.textContent = "Catalogue indisponible. Rechargez la page pour consulter les tarifs.";
+    }
+  };
+  loadCatalog();
+  window.addEventListener("pageshow", event => {
+    if (event.persisted) loadCatalog();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") loadCatalog();
   });
 })();
