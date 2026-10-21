@@ -20,6 +20,7 @@ from psycopg.types.json import Jsonb
 import auth_backend as db
 import admin_console_auth
 from financial_policy import MIN_DEPOSIT_FCFA, WELCOME_BONUS_FCFA
+from withdrawal_controls import flags as withdrawal_control_flags
 
 COOKIE = "shineray_admin"
 RESOURCE_ROUTES = {
@@ -270,7 +271,7 @@ def overview(cur, summary):
             "withdrawals": [t for t in txs if t["type"] == "withdrawal"],
             "products": resources(cur, "product"), "orders": serialize(orders),
             "community": {"isOpen": False, "closureMessage": "Service non activé."},
-            "withdrawOpenOverride": False, "withdrawClosedOverride": False}
+            **withdrawal_control_flags(cur)}
 
 
 def user_detail(cur, uid):
@@ -550,7 +551,12 @@ def dispatch(cur, user, route, method, body, query):
             return 200, {"saspayEnabled": False, "sonarapayAutomaticEnabled": False, "sonarapayConfigured": False}
         fail(503, "Aucun prestataire de paiement n’est connecté. L’activation est impossible ; aucun paiement automatique n’a été autorisé.")
     if route == "/api/admin/withdraw-override":
-        fail(503, "Les retraits ne sont pas activés. Aucun horaire ou paiement n’a été modifié.")
+        import withdrawal_controls
+        if method == "GET":
+            return 200, withdrawal_controls.flags(cur)
+        if method == "PATCH":
+            return 200, withdrawal_controls.update(cur, actor, body)
+        fail(405, "Méthode non autorisée.")
     if route == "/api/admin/cameroon-totals" and method == "GET":
         # Existing phone-constrained accounts are exclusively Togo/Côte d'Ivoire.
         return 200, {"country": "Cameroun", "currency": "XAF", "totalDeposits": 0, "totalWithdrawals": 0}

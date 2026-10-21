@@ -20,6 +20,24 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
   assert.equal((await api("/api/admin/overview")).status, 401);
   await evaluate("document.querySelector('#admin-password').value='isolated-browser-console-password';document.querySelector('#admin-login').requestSubmit()");
   await waitFor("document.querySelector('#dashboard-view')?.hidden===false && document.querySelector('#admin-content').textContent.includes('État de la plateforme')");
+  const previousMode = (await api("/api/admin/withdraw-override")).body.mode;
+  try {
+    await evaluate("window.confirm=()=>true");
+    for (const mode of ["open", "closed", "scheduled"]) {
+      await evaluate(`document.querySelector('[data-withdraw-mode="${mode}"]').click()`);
+      await waitFor(`document.querySelector('[data-withdraw-mode="${mode}"]')?.disabled===true`);
+      const state = (await api("/api/admin/overview")).body;
+      assert.equal(state.withdrawOpenOverride, mode === "open");
+      assert.equal(state.withdrawClosedOverride, mode === "closed");
+      assert(!await evaluate("document.querySelector('#admin-notice').textContent.includes('pas activés')"));
+    }
+    await waitFor("document.querySelector('#admin-content').textContent.includes('10 h à 18 h, heure du Maroc')");
+    await navigate("/omarshark-junior-panam");
+    await waitFor("document.querySelector('[data-withdraw-mode=scheduled]')?.disabled===true");
+    await screenshot("iveco-admin-withdrawal-controls");
+  } finally {
+    assert.equal((await api("/api/admin/withdraw-override", "PATCH", {mode: previousMode})).status, 200);
+  }
   await call("Emulation.setDeviceMetricsOverride", { width: 1360, height: 900, deviceScaleFactor: 1, mobile: false });
   await screenshot("shineray-original-admin-desktop");
   await evaluate("document.querySelector('[data-tab=products]').click()");
@@ -52,7 +70,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
   await evaluate("document.querySelector('.admin-user-panel .admin-panel-close')?.click()");
   await evaluate("document.querySelector('[data-tab=settings]').click()");
   await waitFor("document.querySelector('[name=signupBonus]')?.value==='2300'");
-  assert.equal(await evaluate("document.querySelector('[name=depositMin]').value"), "500");
+  assert.equal(await evaluate("document.querySelector('[name=depositMin]').value"), "3500");
   assert.equal(await evaluate("document.documentElement.scrollWidth<=innerWidth"), true, "Settings must fit the mobile viewport");
   assert.equal(await evaluate("document.querySelector('.admin-runtime-nav').getBoundingClientRect().width<=innerWidth"), true);
   await evaluate("document.querySelector('[data-tab=support]').scrollIntoView({block:'nearest',inline:'center'})");
@@ -72,7 +90,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
   await waitFor(`document.querySelector('[data-resource=announcements]')?.textContent.includes(${JSON.stringify(name)})`);
   const receipt = "browser-imported-admin-" + owner.id;
   assert.equal((await api("/api/admin/deposits", "POST",
-    {phone: owner.phone, amount_fcfa: 500, provider_reference: receipt, receipt_verified: true})).status, 201);
+    {phone: owner.phone, amount_fcfa: 3500, provider_reference: receipt, receipt_verified: true})).status, 201);
   await evaluate("document.querySelector('[data-tab=history]').click()");
   await waitFor("Boolean(document.querySelector('[data-history-search]'))");
   await evaluate(`(()=>{const s=document.querySelector('[data-history-search]');s.value=${JSON.stringify(receipt)};s.dispatchEvent(new Event('input',{bubbles:true}))})()`);

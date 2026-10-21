@@ -18,6 +18,7 @@ import admin_api
 import auth_backend as db
 import vip_purchases
 import withdrawals
+import withdrawal_controls
 from server import Handler
 
 
@@ -199,12 +200,16 @@ class WithdrawalTests(unittest.TestCase):
         try:
             self.assertEqual(request("POST", "/api/withdrawals", self.body)[0], 401)
             cookie = "shineray_session="+self.token
+            self.assertEqual(request("PATCH", "/api/admin/withdraw-override", {"mode": "open"}, cookie)[0], 401)
             status, payload = request("POST", "/api/withdrawals", self.body, cookie)
             self.assertEqual(status, 201, payload)
             route = "/api/admin/withdrawals/"+payload["withdrawal"]["id"]
             self.assertEqual(request("PATCH", route, {"status": "completed"})[0], 401)
             with patch("admin_api.require_admin", return_value=None):
                 self.assertEqual(request("PATCH", route, {"status": "completed"})[0], 200)
+                with patch("withdrawal_controls.update", return_value={"ok": True, "mode": "open"}) as update:
+                    self.assertEqual(request("PATCH", "/api/admin/withdraw-override", {"mode": "open"})[0], 200)
+                    self.assertEqual(update.call_args.args[1:], (None, {"mode": "open"}))
         finally:
             httpd.shutdown()
             httpd.server_close()
@@ -220,3 +225,55 @@ class WithdrawalTests(unittest.TestCase):
         row = withdrawals.submit(self.uid, self.body)
         self.window_mock.return_value = False
         self.assertEqual(withdrawals.submit(self.uid, self.body)["id"], row["id"])
+
+    def test_manual_override_keeps_vip_balance_and_individual_restrictions(self):
+        with patch("withdrawal_controls.current_mode", return_value="open"):
+            self.window_mock.return_value = False
+            with self.assertRaisesRegex(db.AuthError, "VIP actif"):
+                withdrawals.submit(self.uid, self.body)
+            self.grant()
+            with db.connect() as conn, conn.cursor() as cur:
+                cur.execute("UPDATE shineray_users SET withdrawals_disabled=TRUE WHERE id=%s", (self.uid,))
+            with self.assertRaisesRegex(db.AuthError, "désactivés"):
+                withdrawals.submit(self.uid, self.body)
+            with db.connect() as conn, conn.cursor() as cur:
+                cur.execute("UPDATE shineray_users SET withdrawals_disabled=FALSE WHERE id=%s", (self.uid,))
+            row = withdrawals.submit(self.uid, self.body)
+            self.assertEqual(row["status"], "pending")
+            with self.assertRaisesRegex(db.AuthError, "insuffisant"):
+                withdrawals.submit(self.uid, {**self.body, "request_id": str(uuid.uuid4())})
+        with patch("withdrawal_controls.current_mode", return_value="closed"):
+            self.window_mock.return_value = True
+            self.assertEqual(withdrawals.submit(self.uid, self.body)["id"], row["id"])
+            with self.assertRaisesRegex(db.AuthError, "fermées"):
+                withdrawals.submit(self.uid, {**self.body, "request_id": str(uuid.uuid4())})
+
+    def test_persistent_schedule_control_transaction(self):
+        # Roll back every global setting change: never affect other dev users.
+        with db.connect() as conn:
+            try:
+                with conn.cursor() as cur:
+                    for mode in ("open", "closed", "scheduled"):
+                        status, result = admin_api.dispatch(
+                            cur, None, "/api/admin/withdraw-override", "PATCH", {"mode": mode}, {})
+                        self.assertEqual(status, 200)
+                        self.assertEqual(result["mode"], mode)
+                        self.assertEqual(result["withdrawOpenOverride"], mode == "open")
+                        self.assertEqual(result["withdrawClosedOverride"], mode == "closed")
+                        self.assertEqual(withdrawal_controls.current_mode(cur), mode)
+                        flags = admin_api.dispatch(cur, None, "/api/admin/withdraw-override", "GET", {}, {})[1]
+                        self.assertEqual(flags["mode"], mode)
+                        self.window_mock.return_value = False
+                        if mode == "open":
+                            withdrawal_controls.enforce(cur)
+                        else:
+                            with self.assertRaises(db.AuthError):
+                                withdrawal_controls.enforce(cur)
+                        self.window_mock.return_value = True
+                        if mode == "scheduled":
+                            withdrawal_controls.enforce(cur)
+                    for body in ({"mode": "invalid"}, {"mode": []}, {"mode": "open", "force": True}):
+                        with self.assertRaises(ValueError):
+                            withdrawal_controls.update(cur, None, body)
+            finally:
+                conn.rollback()

@@ -45,3 +45,17 @@ Un VIP acheté par le client ne constitue pas un octroi administratif.
 **How to apply:** classer selon l’historique des aides reçues, pas uniquement le solde
 actuel ou les VIP encore actifs. Fournir les deux motifs à l’interface existante.
 Cette règle de classement n’autorise pas à activer les demandes ou les paiements de retrait.
+
+Les commandes administratives « Ouvrir », « Fermer » et « Horaire normal »
+contrôlent les nouvelles demandes de retrait, pas les versements. L’ouverture
+manuelle ignore uniquement l’horaire ; elle conserve le VIP actif, le minimum,
+les frais, le solde disponible et les restrictions individuelles.
+L’horaire normal reste de 10 h à 18 h, heure du Maroc.
+
+**Why:** l’utilisateur a signalé que l’ouverture manuelle depuis la console était
+bloquée ; il veut utiliser cette commande sans changer la politique financière.
+
+**How to apply:** conserver l’état entre redémarrages et répliques, protéger chaque
+changement par la session administrateur et ne jamais approuver ou envoyer un
+retrait lors d’un changement d’horaire. Adapter les anciens libellés de la console
+sans modifier son JavaScript importé.

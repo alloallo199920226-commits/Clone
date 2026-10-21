@@ -5,7 +5,8 @@
   const excluded = "script,style,noscript,textarea,input,code,pre,[contenteditable]";
   const attributes = ["title", "alt", "aria-label", "placeholder"];
   const replace = value => value.replace(legacyBrand, "IVECO")
-    .replace(/\bsonara[\s-]*pay\b/gi, "service de paiement");
+    .replace(/\bsonara[\s-]*pay\b/gi, "service de paiement")
+    .replace(/10 h à 00 h \(minuit\), heure de l’Algérie/g, "10 h à 18 h, heure du Maroc");
 
   function text(node) {
     if (!node.parentElement || node.parentElement.closest(excluded)) return;

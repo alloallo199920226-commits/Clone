@@ -6,6 +6,7 @@ from zoneinfo import ZoneInfo
 from psycopg.types.json import Jsonb
 
 import auth_backend as db
+import withdrawal_controls
 
 MINIMUM_FCFA = 2300
 FEE_PERCENT = 20
@@ -52,7 +53,7 @@ def submit(user_id, body):
     if type(wallet_id) is not int or wallet_id < 1:
         raise ValueError("Compte de retrait invalide.")
     with db.connect() as conn, conn.cursor() as cur:
-        cur.execute("SELECT id,is_banned,is_blocked FROM shineray_users WHERE id=%s FOR NO KEY UPDATE", (user_id,))
+        cur.execute("SELECT id,is_banned,is_blocked,withdrawals_disabled FROM shineray_users WHERE id=%s FOR NO KEY UPDATE", (user_id,))
         user = cur.fetchone()
         if not user or user["is_banned"] or user["is_blocked"]:
             raise db.AuthError(403, "Compte indisponible.")
@@ -64,8 +65,9 @@ def submit(user_id, body):
             return {**public(prior), "balance_fcfa": available_balance(cur, user_id)}
         if amount < MINIMUM_FCFA:
             raise ValueError("Le montant minimum de retrait est de 2 300 FCFA.")
-        if not withdrawal_window_open():
-            raise db.AuthError(403, "Les demandes de retrait sont ouvertes de 10 h à 18 h, heure du Maroc.")
+        if user["withdrawals_disabled"]:
+            raise db.AuthError(403, "Les retraits sont désactivés pour votre compte.")
+        withdrawal_controls.enforce(cur)
         if not active_vip(cur, user_id):
             raise db.AuthError(403, "Vous devez avoir au moins un VIP actif pour effectuer un retrait.")
         cur.execute("SELECT * FROM shineray_wallets WHERE id=%s AND user_id=%s", (wallet_id, user_id))
