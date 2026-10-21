@@ -102,9 +102,9 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
   await waitFor(`document.querySelector('[data-history-list]')?.textContent.includes(${JSON.stringify(receipt)})`);
   assert.equal(await evaluate("document.documentElement.scrollWidth<=innerWidth"), true, "History must fit the mobile viewport");
   await screenshot("shineray-original-admin-history-mobile");
-  assert.equal((await api("/api/me")).body.balance_fcfa, 2900);
+  assert.equal((await api("/api/me")).body.balance_fcfa, 5900);
   await evaluate("document.querySelector('#logout').click()");
   await waitFor("document.querySelector('#login-view').hidden===false");
   assert.equal((await api("/api/admin/overview")).status, 401);
-  console.log("PASS: byte-identical imported JS; original login/desktop/mobile; dedicated password without promotion; product create/edit; user search and confirmed real credit; saved channel and draft; real settled receipt history; original policy; independent console logout.");
+  console.log("PASS: byte-identical imported JS; persistent withdrawal open/closed/scheduled controls and Morocco hours; original login/desktop/mobile; dedicated password without promotion; product create/edit; user search and confirmed real credit; saved channel and draft; real settled receipt history; current policy; independent console logout.");
 };
