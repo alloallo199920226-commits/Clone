@@ -178,7 +178,13 @@ def transaction_rows(cur, query):
         marked AS (
           SELECT *, (assisted OR (type='withdrawal' AND has_admin_vip_grant)) AS admin_assisted
           FROM classified)
-        SELECT * FROM marked WHERE
+        SELECT marked.*,
+          (SELECT count(*)::bigint FROM shineray_users invited
+           WHERE invited.referred_by=marked.user_id) AS referral_count,
+          (SELECT COALESCE(sum(earned.amount_fcfa),0)::bigint
+           FROM shineray_transactions earned
+           WHERE earned.user_id=marked.user_id AND earned.kind='commission') AS referral_commission_amount
+        FROM marked WHERE
           (%(kind)s='all' OR type=%(kind)s)
           AND (%(status)s='all' OR status=%(status)s)
           AND (%(assistance)s='all' OR (%(assistance)s='admin' AND admin_assisted) OR (%(assistance)s='normal' AND NOT admin_assisted))
@@ -210,7 +216,8 @@ def transaction_rows(cur, query):
             "netAmount": details.get("net_amount_fcfa"), "fee": details.get("fee_fcfa"),
             "adminAssisted": row["admin_assisted"],
             "hasAdminCredit": row["has_admin_credit"], "hasAdminVipGrant": row["has_admin_vip_grant"],
-            "referralCount": 0,
+            "referralCount": row["referral_count"],
+            "referralCommissionAmount": row["referral_commission_amount"],
         })
     return {"transactions": result, "total": total,
             "nextCursor": str(offset + limit) if len(rows) > limit else None}

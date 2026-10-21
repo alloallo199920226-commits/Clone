@@ -49,7 +49,7 @@ class VerificationTests(unittest.TestCase):
                 patch.object(auth_backend, "connect") as connect:
             with self.assertRaisesRegex(ValueError, "Opérateur invalide pour le pays"):
                 payments.prepare({"phone": "+2290100000000"}, {
-                    "amount": 500, "operatorId": "celtiis_bj",
+                    "amount": 3500, "operatorId": "celtiis_bj",
                     "phone": "0100000000", "requestId": str(uuid.uuid4()),
                 })
             connect.assert_not_called()

@@ -96,6 +96,16 @@ def with_form_controls(body, content_type):
 
 
 class Handler(BaseHTTPRequestHandler):
+    server_version = "IVECO"
+    sys_version = ""
+
+    def end_headers(self):
+        self.send_header("Content-Security-Policy", "base-uri 'self'; object-src 'none'")
+        self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        self.send_header("Strict-Transport-Security", "max-age=31536000")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        super().end_headers()
+
     def do_HEAD(self):
         self.respond(send_body=False)
 
@@ -248,6 +258,11 @@ class Handler(BaseHTTPRequestHandler):
                 return
             payload = self._read_json()
             if payload is None:
+                return
+            allowed = {"country_code", "phone", "password"}
+            allowed.add("referral_code" if route.endswith("/register") else "remember")
+            if set(payload) - allowed:
+                self._json(400, {"error": "Champs de requête inattendus."})
                 return
             try:
                 if route.endswith("/register"):

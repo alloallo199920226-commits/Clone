@@ -7,8 +7,6 @@ import hmac
 import os
 import re
 import secrets
-import threading
-import time
 from datetime import datetime, timezone
 
 import psycopg
@@ -29,8 +27,6 @@ MIN_ACTIVITY_AMOUNTS = {"recharge": MIN_DEPOSIT_FCFA, "withdrawal": 2_200, "purc
 MAX_ACTIVITY_AMOUNT = 500_000_000
 _DUMMY_SALT = b"\x00" * 16
 _DUMMY_HASH = hashlib.pbkdf2_hmac("sha256", b"not-a-real-password", _DUMMY_SALT, PASSWORD_ITERATIONS)
-_login_failures: dict[str, list[float]] = {}
-_login_lock = threading.Lock()
 
 
 class AuthError(Exception):
@@ -133,36 +129,13 @@ def register(country_code: str, phone: str, password: str, referral_code: str = 
     return token, {"id": user["id"], "phone": user["phone"]}, session_days
 
 
-def _rate_limit_key(phone: str) -> str:
-    return hashlib.sha256(phone.encode("utf-8")).hexdigest()
-
-
-def _record_login_failure(phone: str) -> bool:
-    now = time.monotonic()
-    key = _rate_limit_key(phone)
-    with _login_lock:
-        if len(_login_failures) > 5_000:
-            for old_key, values in list(_login_failures.items()):
-                recent = [instant for instant in values if now - instant < 900]
-                if recent:
-                    _login_failures[old_key] = recent
-                else:
-                    _login_failures.pop(old_key, None)
-        attempts = [instant for instant in _login_failures.get(key, []) if now - instant < 900]
-        attempts.append(now)
-        _login_failures[key] = attempts
-        return len(attempts) >= 8
-
-
-def _clear_login_failures(phone: str) -> None:
-    with _login_lock:
-        _login_failures.pop(_rate_limit_key(phone), None)
-
-
 def login(country_code: str, phone: str, password: str, remember: bool = False) -> tuple[str, dict, int]:
+    import customer_login_limits as limits
     normalized = normalize_phone(country_code, phone)
     password_input = _password_bytes(password)
+    denied = limited = False
     with connect() as connection, connection.cursor() as cursor:
+        ident, attempt, now = limits.begin(cursor, normalized)
         cursor.execute(
             "SELECT id, phone, password_salt, password_hash, is_banned, is_blocked FROM shineray_users WHERE phone = %s",
             (normalized,),
@@ -172,14 +145,17 @@ def login(country_code: str, phone: str, password: str, remember: bool = False) 
         expected = bytes(user["password_hash"]) if user else _DUMMY_HASH
         actual = hashlib.pbkdf2_hmac("sha256", password_input, salt, PASSWORD_ITERATIONS)
         if not user or not hmac.compare_digest(actual, expected):
-            limited = _record_login_failure(normalized)
-            if limited:
-                raise AuthError(429, "Trop de tentatives. Réessayez dans quelques minutes.")
-            raise AuthError(401, "Numéro ou mot de passe incorrect.")
-        _clear_login_failures(normalized)
-        if user["is_banned"] or user["is_blocked"]:
-            raise AuthError(403, "Ce compte est banni." if user["is_banned"] else "Ce compte est bloqué.")
-        token, session_days = _create_session(cursor, user["id"], remember)
+            denied = True
+            limited = limits.failed(cursor, ident, attempt, now)
+        else:
+            cursor.execute("DELETE FROM shineray_console_login_attempts WHERE client_hash=%s", (ident,))
+            if user["is_banned"] or user["is_blocked"]:
+                raise AuthError(403, "Ce compte est banni." if user["is_banned"] else "Ce compte est bloqué.")
+            token, session_days = _create_session(cursor, user["id"], remember)
+    # Failure counters must commit before returning the refused login.
+    if denied:
+        raise AuthError(429 if limited else 401, "Trop de tentatives. Réessayez dans quinze minutes."
+                        if limited else "Numéro ou mot de passe incorrect.")
     return token, {"id": user["id"], "phone": user["phone"]}, session_days
 
 

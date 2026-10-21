@@ -8,10 +8,12 @@ import os
 import secrets
 import threading
 import unittest
+import uuid
 from unittest.mock import patch
 from types import SimpleNamespace
 from http.server import ThreadingHTTPServer
 from zipfile import ZipFile
+from psycopg.types.json import Jsonb
 
 import auth_backend
 import admin_assets
@@ -77,6 +79,7 @@ class ImportedAdminTests(unittest.TestCase):
                                 SimpleNamespace(client_address=("127.0.0.1", 0)), self.admin_password.encode()),))
                 cur.execute("DELETE FROM shineray_first_deposits WHERE user_id=ANY(%s)", (self.users,))
                 cur.execute("DELETE FROM shineray_deposit_approvals WHERE user_id=ANY(%s)", (self.users,))
+                cur.execute("DELETE FROM shineray_withdrawal_requests WHERE user_id=ANY(%s)", (self.users,))
                 cur.execute("DELETE FROM shineray_transactions WHERE user_id=ANY(%s)", (self.users,))
                 cur.execute("DELETE FROM shineray_admin_resources WHERE id=ANY(%s)", (self.resources,))
                 for uid in reversed(self.users):
@@ -85,9 +88,9 @@ class ImportedAdminTests(unittest.TestCase):
             self.httpd.shutdown()
             self.httpd.server_close()
 
-    def member(self, admin=False):
+    def member(self, admin=False, referral_code=""):
         phone = "9" + "".join(str(secrets.randbelow(10)) for _ in range(7))
-        token, user, _ = auth_backend.register("+228", phone, self.password)
+        token, user, _ = auth_backend.register("+228", phone, self.password, referral_code)
         self.users.append(user["id"])
         if admin:
             with auth_backend.connect() as conn, conn.cursor() as cur:
@@ -182,6 +185,58 @@ class ImportedAdminTests(unittest.TestCase):
         self.assertEqual(history("admin", "&status=pending")["total"], 0)
         self.assertEqual(history("normal", "&status=pending")["total"], 0)
 
+    def test_pending_withdrawals_show_live_direct_invites_and_settled_commissions(self):
+        self.login()
+        owner = self.member_user
+
+        def invite_code(user):
+            with auth_backend.connect() as conn, conn.cursor() as cur:
+                cur.execute("SELECT referral_code FROM shineray_users WHERE id=%s", (user["id"],))
+                return cur.fetchone()["referral_code"]
+
+        child, _ = self.member(referral_code=invite_code(owner))
+        self.member(referral_code=invite_code(child))  # Not a direct invite of owner.
+        unrelated, _ = self.member()
+        with auth_backend.connect() as conn, conn.cursor() as cur:
+            admin_api.money_operation(cur, None, owner["id"], "credit",
+                {"amount": 5000, "requestId": self.fixture_key + "-credit"})
+            for user in (owner, child, unrelated):
+                # Pending-only fixtures; no payout, approval or external transfer.
+                cur.execute("""INSERT INTO shineray_withdrawal_requests
+                    (request_id,user_id,wallet_id,amount_fcfa,fee_fcfa,net_amount_fcfa,wallet_snapshot)
+                    VALUES (%s,%s,0,2300,460,1840,%s)""",
+                    (uuid.uuid4(), user["id"], Jsonb({"channel": "TOGOCEL",
+                        "destination": user["phone"], "receiver_name": "Isolated fixture"})))
+
+        def pending(user, assistance):
+            status, data, _ = self.request("GET",
+                "/api/admin/transaction-history?type=withdrawal&status=pending"
+                f"&assistance={assistance}&search={user['phone']}")
+            self.assertEqual(status, 200, data)
+            self.assertEqual(data["total"], 1)
+            return data["transactions"][0]
+
+        # Registration alone counts, even before any first deposit or VIP purchase.
+        self.assertEqual(pending(owner, "admin")["referralCount"], 1)
+        self.assertEqual(pending(owner, "admin")["referralCommissionAmount"], 0)
+        self.assertEqual(pending(child, "normal")["referralCount"], 1)
+        self.assertEqual(pending(unrelated, "normal")["referralCount"], 0)
+        status, team, _ = self.request("GET", "/api/team", cookie=self.member_cookie)
+        self.assertEqual(status, 200)
+        self.assertEqual(team["levels"][0], 1)
+
+        # Only a settled commission counts, never the welcome/admin bonus.
+        status, data, _ = self.request("POST", "/api/admin/deposits", {
+            "phone": child["phone"], "amount_fcfa": 3500,
+            "provider_reference": "referral-metrics-" + self.fixture_key,
+            "receipt_verified": True,
+        })
+        self.assertEqual(status, 201, data)
+        row = pending(owner, "admin")
+        self.assertEqual(row["referralCount"], 1)
+        self.assertEqual(row["referralCommissionAmount"], 1400)
+        self.assertEqual(pending(child, "normal")["referralCommissionAmount"], 0)
+
     def test_assets_are_identical_and_private_sources_are_unreachable(self):
         with ZipFile(admin_assets.ARCHIVE) as archive:
             for route, member in {
@@ -196,6 +251,8 @@ class ImportedAdminTests(unittest.TestCase):
                     self.assertIn(admin_assets.COMPAT_LINK, data)
                     data = data.replace(admin_assets.COMPAT_LINK, b"", 1)
                     data = data.replace(b'<link rel="stylesheet" href="/pages/form-controls.css?v=1">', b"", 1)
+                    from platform_brand import BRAND_SCRIPT, FAVICON_LINKS
+                    data = data.replace(BRAND_SCRIPT, b"", 1).replace(FAVICON_LINKS, b"", 1)
                 self.assertEqual(hashlib.sha256(data).digest(),
                                  hashlib.sha256(archive.read(admin_assets.PREFIX + member)).digest())
         self.assertEqual(self.request("GET", admin_assets.ADMIN_ROUTE + "/", raw=True)[0], 200)
@@ -321,7 +378,8 @@ class ImportedAdminTests(unittest.TestCase):
         self.assertEqual(self.request("POST", apath + "/withdraw", {})[0], 200)
         self.assertEqual(self.request("DELETE", apath, {})[0], 200)
 
-    def test_customer_payment_channels_use_admin_configuration_and_account_country(self):
+    @patch("sonarapay_client.configured", return_value=False)
+    def test_customer_payment_channels_use_admin_configuration_and_account_country(self, _configured):
         self.login()
         benin = self.create("payment-channels", {"country": "Bénin", "countryCode": "+229",
             "operatorName": "MTN Benin test", "receiverNumber": "0190123456",
@@ -352,7 +410,7 @@ class ImportedAdminTests(unittest.TestCase):
         reference = "history-fixture-" + secrets.token_hex(8)
         for suffix in ("-first", "-second"):
             status, body, _ = self.request("POST", "/api/admin/deposits", {
-                "phone": self.member_user["phone"], "amount_fcfa": 500,
+                "phone": self.member_user["phone"], "amount_fcfa": 3500,
                 "provider_reference": reference + suffix, "receipt_verified": True,
             })
             self.assertEqual(status, 201, body)
