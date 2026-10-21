@@ -8,7 +8,7 @@
   MTN ou Moov. Celtiis n’est plus proposé pour les nouveaux dépôts ; ses anciennes
   demandes restent consultables et suivies. Les autres pays conservent les canaux manuels administratifs.
 - Disponibilité réelle et autorisation de la clé restent contrôlées par SonaraPay.
-- Le minimum du site reste 500 FCFA. Les règles de bonus et de parrainage existantes
+- Le minimum du site est de 3 500 FCFA. Les règles de bonus et de parrainage existantes
   ne sont pas remplacées par celles d’un autre projet ou prestataire.
 
 ## Publication et base

@@ -18,10 +18,10 @@ module.exports = async ({ evaluate, navigate, waitFor, screenshot, trackUser }) 
     assert.equal(registration.status, 201);
     trackUser(registration.body.user.id);
     await navigate("/recharger");
-    await evaluate("sessionStorage.removeItem('shineray-deposit-draft');document.querySelector('#amount').value='500';document.querySelector('[data-payment-action]').click()");
+    await evaluate("sessionStorage.removeItem('shineray-deposit-draft');document.querySelector('#amount').value='3500';document.querySelector('[data-payment-action]').click()");
     await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false'");
     const href = await evaluate("location.href");
-    assert.equal(new URL(href).searchParams.get("amount"), "500");
+    assert.equal(new URL(href).searchParams.get("amount"), "3500");
     const configuration = await evaluate("fetch('/api/payment-channels/me').then(r=>r.json())");
     assert.equal(configuration.countryCode, item.prefix);
     assert.deepEqual(configuration.channels.filter(c => c.provider === "sonarapay").map(c => c.id), item.operators);
@@ -37,7 +37,7 @@ module.exports = async ({ evaluate, navigate, waitFor, screenshot, trackUser }) 
     if (item.prefix === "+226") {
       await evaluate("document.querySelector('[data-operator=orange_bf]').click()");
       assert.equal(await evaluate("document.querySelector('[data-orange-otp]').hidden"), false);
-      assert(await evaluate("document.querySelector('[data-orange-otp]').textContent.includes('*144*4*6*500#')"));
+      assert(await evaluate("document.querySelector('[data-orange-otp]').textContent.includes('*144*4*6*3500#')"));
     }
     await screenshot("automatic-" + item.name);
     // Reproduce a reopened tab/browser that has lost its selected recharge.
@@ -46,13 +46,13 @@ module.exports = async ({ evaluate, navigate, waitFor, screenshot, trackUser }) 
     await navigate(selectedUrl.pathname + selectedUrl.search);
     await waitFor("document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false'");
     assert.equal(await evaluate("document.querySelector('[data-deposit-missing]').hidden"), true, item.name);
-    assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).amount_fcfa"), 500);
+    assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).amount_fcfa"), 3500);
     assert.equal(await evaluate("document.querySelector('[data-deposit-prefix]').textContent"), item.prefix);
-    assert.equal(await evaluate("document.querySelector('[data-deposit-amount]').textContent"), "FCFA 500");
+    assert.equal(await evaluate("document.querySelector('[data-deposit-amount]').textContent.replace(/[\\s,]/g,'')"), "FCFA3500");
   }
   // Invalid URL amounts cannot become a draft.
   await evaluate("sessionStorage.removeItem('shineray-deposit-draft')");
-  await navigate("/choisir-operateur?amount=499&channel=2");
+  await navigate("/choisir-operateur?amount=3499&channel=2");
   assert.equal(await evaluate("document.querySelector('[data-deposit-missing]').hidden"), false);
-  console.log("PASS: BJ/BF/TG/CI/CM automatic operators and country prefixes, BF Orange OTP/USSD, CI Wave manual when configured, 500-FCFA selections recovered after lost sessionStorage, 499 rejected; no payment initiated.");
+  console.log("PASS: BJ/BF/TG/CI/CM automatic operators and country prefixes, BF Orange OTP/USSD, CI Wave manual when configured, 3500-FCFA selections recovered after lost sessionStorage, 3499 rejected; no payment initiated.");
 };

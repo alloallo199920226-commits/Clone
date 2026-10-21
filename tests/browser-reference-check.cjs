@@ -342,23 +342,25 @@ async function main() {
         assert(await evaluate("parseFloat(getComputedStyle(document.querySelector('.recharge-amount')).borderTopWidth)>=1"));
       }
       await call("Emulation.setDeviceMetricsOverride", {width:390,height:844,deviceScaleFactor:1,mobile:true});
-      await evaluate("document.querySelector('#amount').value='499';document.querySelector('[data-payment-action]').click()");
-      assert.equal(await evaluate("location.pathname"), "/recharger");
-      assert(await evaluate("document.querySelector('[data-payment-status]').textContent.includes('500')"));
-      await evaluate("document.querySelector('#amount').value='500';document.querySelector('[data-payment-action]').click()");
-      await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false' && document.querySelector('[data-deposit-amount]')?.textContent.includes('500')");
-      assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).amount_fcfa"), 500);
+      for (const amount of [500, 3499]) {
+        await evaluate(`document.querySelector('#amount').value='${amount}';document.querySelector('[data-payment-action]').click()`);
+        assert.equal(await evaluate("location.pathname"), "/recharger");
+        assert(await evaluate("document.querySelector('[data-payment-status]').textContent.replace(/\\s/g,'').includes('3500')"));
+      }
+      await evaluate("document.querySelector('#amount').value='3500';document.querySelector('[data-payment-action]').click()");
+      await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false' && document.querySelector('[data-deposit-amount]')?.textContent.replace(/[\\s,]/g,'').includes('3500')");
+      assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).amount_fcfa"), 3500);
       assert(await evaluate("document.querySelector('[data-deposit-missing]').hidden && !document.querySelector('[data-deposit-content]').hidden"));
-      await screenshot("recharge-500-operator");
+      await screenshot("recharge-3500-operator");
       await navigate("/recharger");
-      assert.equal(await evaluate("document.querySelector('#amount').value"), "500");
-      await screenshot("recharge-500-accepted");
+      assert.equal(await evaluate("document.querySelector('#amount').value"), "3500");
+      await screenshot("recharge-3500-accepted");
       await evaluate("document.querySelector('#amount').value='5432';document.querySelector('#amount').dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('#amount').focus()");
       await screenshot("recharge-custom-amount");
       await evaluate("document.querySelector('[data-payment-action]').click()");
       await waitFor("location.pathname==='/choisir-operateur'");
       assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).amount_fcfa"), 5432);
-      console.log("PASS: all nine recharge presets, clear input border, no overflow at390/472/900, 499 rejected, 500 accepted/restored and custom amount carried to payment; no payment submitted.");
+      console.log("PASS: all nine recharge presets, clear input border, no overflow at390/472/900, 500/3499 rejected, 3500 accepted/restored and custom amount carried to payment; no payment submitted.");
       return;
     }
     if (process.argv.includes("--automatic-countries")) {

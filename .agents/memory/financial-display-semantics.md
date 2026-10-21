@@ -3,16 +3,6 @@ name: Financial display semantics
 description: Preserve the difference between settled funds, pending requests, purchases, and actual earnings.
 ---
 
-Le dépôt minimum demandé par l’utilisateur est de 500 FCFA.
-
-**Why:** l’utilisateur a d’abord demandé le changement côté serveur, puis a signalé
-par capture le blocage persistant de 500 FCFA dans le formulaire de recharge.
-
-**How to apply:** appliquer ce seuil aux validations serveur des dépôts manuels,
-automatiques, à leur règlement et à la saisie/restauration du montant dans le
-parcours de recharge. Conserver les neuf montants proposés des packs ; ne pas
-modifier les bonus ou les retraits.
-
 Masquer les références de paiement dans les historiques et confirmations clients,
 sans créer de fausses références ni supprimer les identifiants réels côté serveur
 ou dans l’administration. Afficher uniquement un numéro numérique de présentation,

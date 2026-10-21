@@ -6,7 +6,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await call("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   await navigate("/recharger");
   await evaluate(`sessionStorage.setItem('shineray-deposit-draft', JSON.stringify({
-    amount_fcfa:500,channel:1,created_at:Date.now()
+    amount_fcfa:3500,channel:1,created_at:Date.now()
   }))`);
   await navigate("/choisir-operateur");
   await waitFor(`document.querySelectorAll('[data-operator]').length === ${operatorCount}`);
@@ -20,7 +20,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
     assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-operator]')].map(node=>node.dataset.operator)"),
       ["orange_bf", "moov_bf", "telecel_bf"]);
     assert.equal(await evaluate("document.querySelector('[data-orange-otp]').hidden"), false);
-    assert(await evaluate("document.querySelector('[data-i18n=\"orangeOtpHelp\"]').textContent.includes('*144*4*6*500#')"));
+    assert(await evaluate("document.querySelector('[data-i18n=\"orangeOtpHelp\"]').textContent.includes('*144*4*6*3500#')"));
     assert(await evaluate("parseFloat(getComputedStyle(document.querySelector('#deposit-orange-otp')).borderTopWidth)>=1"));
     assert(await evaluate("document.documentElement.scrollWidth<=innerWidth"));
     await evaluate(`document.querySelector('#deposit-orange-otp').value='123456';
@@ -29,7 +29,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
     assert.equal(await evaluate("document.querySelector('#deposit-orange-otp').value"), "");
     await evaluate(`document.querySelector('[data-operator="orange_bf"]').click()`);
     assert.equal(await evaluate("document.querySelector('[data-orange-otp]').hidden"), false);
-    for (const amount of [3500, 75000, 500]) {
+    for (const amount of [3500, 75000, 7000]) {
       await evaluate(`sessionStorage.setItem('shineray-deposit-draft',JSON.stringify({
         amount_fcfa:${amount},channel:1,created_at:Date.now()
       }))`);
@@ -40,7 +40,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
     await evaluate("document.querySelector('#deposit-orange-otp').scrollIntoView({block:'center'})");
     await screenshot("orange-bf-otp-selection");
     if (process.argv.includes("--otp-display")) {
-      console.log("PASS: Orange BF dynamic USSD for3500/75000/500, visible OTP border, operator toggle clearing; no payment submitted.");
+      console.log("PASS: Orange BF dynamic USSD for3500/75000/7000, visible OTP border, operator toggle clearing; no payment submitted.");
       return;
     }
   }
@@ -95,7 +95,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   assert.equal(await evaluate("document.querySelector('[data-sonara-redirect]').hidden"), false);
   assert.match(await evaluate("document.querySelector('[data-sonara-redirect]').textContent"), /accueil.*10 s/);
   await noProviderBrand();
-  assert.equal(await balance(), 2800);
+  assert.equal(await balance(), 5800);
   assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), false);
   assert.equal(await evaluate("document.querySelector('[data-sonara-success] h1').textContent"), "Paiement effectué avec succès");
   assert.match(await evaluate("document.querySelector('[data-deposit-clock]').textContent"), /^\d{2}:\d{2}$/);
@@ -123,10 +123,10 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await noProviderBrand();
   await navigate(paymentPath);
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'successful'");
-  assert.equal(await balance(), 2800);
+  assert.equal(await balance(), 5800);
   await evaluate("document.querySelector('[data-deposit-modify]').click()");
   await waitFor("location.pathname === '/choisir-operateur'");
-  assert.equal(await balance(), 2800);
+  assert.equal(await balance(), 5800);
   await navigate(paymentPath);
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'successful'");
   await evaluate("document.querySelector('.deposit-close').click()");
@@ -141,7 +141,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await evaluate(`fetch('/api/test/sonarapay', {method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({status:'otp'})})`);
   await evaluate(`sessionStorage.setItem('shineray-deposit-draft', JSON.stringify({
-    amount_fcfa:500,channel:1,created_at:Date.now()
+    amount_fcfa:3500,channel:1,created_at:Date.now()
   }))`);
   await navigate("/choisir-operateur");
   await waitFor(`document.querySelectorAll('[data-operator]').length === ${operatorCount}`);
@@ -156,7 +156,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'pending'");
   assert.equal(await evaluate("document.querySelector('#sonara-otp').value"), "");
   assert(!await evaluate("sessionStorage.getItem('shineray-deposit-draft').includes('123456')"));
-  assert.equal(await balance(), 2800);
+  assert.equal(await balance(), 5800);
   await evaluate(`fetch('/api/test/sonarapay', {method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({status:'failed'})})`);
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'failed'");
@@ -166,17 +166,17 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   assert.equal(await evaluate("document.querySelector('[data-sonara-status]').getAttribute('role')"), "alert");
   assert.equal(await evaluate("document.querySelector('[data-sonara-redirect]').hidden"), false);
   await noProviderBrand();
-  assert.equal(await balance(), 2800);
+  assert.equal(await balance(), 5800);
   await screenshot("sonarapay-failed");
   await waitFor("location.pathname === '/accueil'");
   assert(Date.now() - failureSeenAt >= 9700, "Failure redirect must wait 10 seconds");
-  assert.equal(await balance(), 2800);
+  assert.equal(await balance(), 5800);
   if (prefix === "+226") {
     await evaluate(`(async () => {
       await fetch('/api/test/sonarapay', {method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({status:'otp'})});
       sessionStorage.setItem('shineray-deposit-draft', JSON.stringify({
-        amount_fcfa:500,channel:1,created_at:Date.now()
+        amount_fcfa:3500,channel:1,created_at:Date.now()
       }));
     })()`);
     await navigate("/choisir-operateur");
@@ -187,7 +187,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
     await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'pending'");
     assert(!await evaluate("sessionStorage.getItem('shineray-deposit-draft').includes('123456')"));
     assert.equal(await evaluate("document.querySelector('#sonara-otp').value"), "");
-    assert.equal(await balance(), 2800);
+    assert.equal(await balance(), 5800);
   }
   console.log("PASS: automatic success/failure detection, visible failure alert, both 10-second home redirects, no pending redirect, real account/isolated provider, exactly-once credit, initial and follow-up OTP clearing, 4 widths. NO live provider calls.");
 };
