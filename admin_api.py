@@ -564,7 +564,7 @@ def dispatch(cur, user, route, method, body, query):
     if route == "/api/admin/popup-config":
         if method == "GET":
             return 200, {"config": CONFIG}
-        fail(409, "Les règles actuelles sont conservées : bonus 2 300 FCFA, dépôt minimum 3 500 FCFA et commissions 40 % / 2 % / 1 %. Les autres services financiers ne sont pas activés ; aucun paramètre n’a été modifié.")
+        fail(409, f"Les règles actuelles sont conservées : bonus 2 300 FCFA, dépôt minimum {MIN_DEPOSIT_FCFA} FCFA et commissions 40 % / 2 % / 1 %. Les autres services financiers ne sont pas activés ; aucun paramètre n’a été modifié.")
     if route == "/api/admin/payment-provider-controls":
         if method == "GET":
             return 200, {"saspayEnabled": False, "sonarapayAutomaticEnabled": False, "sonarapayConfigured": False}

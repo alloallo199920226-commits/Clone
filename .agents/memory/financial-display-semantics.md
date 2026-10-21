@@ -3,12 +3,13 @@ name: Financial display semantics
 description: Preserve the difference between settled funds, pending requests, purchases, and actual earnings.
 ---
 
-Le dépôt minimum demandé par l’utilisateur est de 3 500 FCFA.
+Le dépôt minimum demandé par l’utilisateur est de 500 FCFA côté serveur uniquement.
 
-**Why:** l’utilisateur a demandé « Met le dépôt minimum sur 3500f ».
+**Why:** l’utilisateur a demandé « Met le dépôt minimum sur 500f côte serveur uniquement d'abord ».
 
-**How to apply:** appliquer ce seuil aux dépôts manuels et automatiques ainsi
-qu’aux indications clients et administratives, sans modifier les bonus ni les retraits.
+**How to apply:** appliquer ce seuil aux validations serveur des dépôts manuels,
+automatiques et à leur règlement. Ne pas modifier l’interface ou ses textes
+dans cette demande, ni les bonus ou les retraits.
 
 Masquer les références de paiement dans les historiques et confirmations clients,
 sans créer de fausses références ni supprimer les identifiants réels côté serveur
