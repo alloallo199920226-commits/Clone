@@ -10,7 +10,7 @@ import uuid
 from datetime import datetime, timezone
 from http.server import ThreadingHTTPServer
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from psycopg.types.json import Jsonb
 
@@ -34,6 +34,31 @@ class WithdrawalWindowTests(unittest.TestCase):
         self.assertNotEqual(datetime(2026, 10, 20, tzinfo=withdrawals.MOROCCO).utcoffset(),
                             datetime(2026, 2, 25, tzinfo=withdrawals.MOROCCO).utcoffset())
 
+    def test_hard_cutoff_in_morocco_including_ramadan(self):
+        for month, day in ((10, 20), (2, 25)):
+            for hour, minute, second, closed in (
+                (17, 59, 59, False), (18, 0, 0, True), (23, 59, 59, True),
+            ):
+                local = datetime(2026, month, day, hour, minute, second,
+                                 tzinfo=withdrawals.MOROCCO)
+                self.assertEqual(withdrawals.withdrawal_cutoff_reached(
+                    local.astimezone(timezone.utc)), closed)
+
+    def test_manual_open_cannot_bypass_cutoff(self):
+        for mode in ("scheduled", "open"):
+            with patch("withdrawal_controls.current_mode", return_value=mode), \
+                 patch("withdrawals.withdrawal_cutoff_reached", return_value=True), \
+                 patch("withdrawals.withdrawal_window_open", return_value=True):
+                with self.assertRaisesRegex(db.AuthError, "18 h"):
+                    withdrawal_controls.enforce(MagicMock())
+                flags = withdrawal_controls.flags(MagicMock())
+                self.assertFalse(flags["withdrawOpenOverride"])
+                self.assertTrue(flags["withdrawClosedOverride"])
+        with patch("withdrawal_controls.current_mode", return_value="open"), \
+             patch("withdrawals.withdrawal_cutoff_reached", return_value=False), \
+             patch("withdrawals.withdrawal_window_open", return_value=False):
+            withdrawal_controls.enforce(MagicMock())
+
 
 @unittest.skipUnless(os.environ.get("RUN_ACCOUNT_INTEGRATION_TESTS") == "1", "Development DB opt-in")
 class WithdrawalTests(unittest.TestCase):
@@ -44,6 +69,9 @@ class WithdrawalTests(unittest.TestCase):
         self.window = patch("withdrawals.withdrawal_window_open", return_value=True)
         self.window_mock = self.window.start()
         self.addCleanup(self.window.stop)
+        self.cutoff = patch("withdrawals.withdrawal_cutoff_reached", return_value=False)
+        self.cutoff.start()
+        self.addCleanup(self.cutoff.stop)
         with db.connect() as conn, conn.cursor() as cur:
             cur.execute("""INSERT INTO shineray_transactions
                 (user_id,kind,label,amount_fcfa,provider_reference)

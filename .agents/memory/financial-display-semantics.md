@@ -30,6 +30,11 @@ demandé la condition de VIP actif.
 
 **How to apply:** utiliser le fuseau Africa/Casablanca, pas un décalage UTC fixe.
 Accepter les nouvelles demandes à partir de 10 h et les fermer à 18 h.
+La fermeture à 18 h est obligatoire même en mode d’ouverture manuelle.
+**Why:** l’utilisateur a demandé de garantir la fermeture à 18 h alors que
+l’ouverture manuelle persistante contournait l’horaire normal.
+**How to apply:** appliquer cette limite côté serveur à toute nouvelle demande,
+sans annuler les demandes déjà enregistrées ni empêcher leur traitement administratif.
 Conserver les frais des demandes déjà enregistrées ; sérialiser les dépenses
 et réserver les demandes en attente. L’approbation administrative signifie que le
 versement manuel a été effectué ; le refus libère la réservation. Le VIP doit être

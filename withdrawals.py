@@ -18,6 +18,12 @@ def withdrawal_window_open(now=None):
     return 10 <= local.hour < 18
 
 
+def withdrawal_cutoff_reached(now=None):
+    """The 18:00 Morocco cutoff also applies to manual opening."""
+    local = (now or datetime.now(MOROCCO)).astimezone(MOROCCO)
+    return local.hour >= 18
+
+
 def available_balance(cur, user_id):
     cur.execute("""SELECT
         COALESCE((SELECT sum(amount_fcfa) FROM shineray_transactions WHERE user_id=%s),0)
