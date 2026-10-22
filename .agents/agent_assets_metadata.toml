@@ -28,3 +28,17 @@ mtime_ms = 1792485611329
 storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:2b24cd28-b44f-4cff-bacf-135c732fa24d/a7f5ec33-d14f-4ebc-aade-d1a91d6c2019/0ccb25e7-ef5f-4e68-927e-89c402e3a365"
 storage_version_token = "1792485635271756"
 content_type = "application/octet-stream"
+
+[[outputs]]
+id = "2AQ15vMe4_datzc_MTx7p"
+uri = "file://generated-artifacts/flux-automatique-iveco.zip"
+type = "unspecified"
+title = "Code complet du flux de paiement automatique"
+description = "Frontend, backend, dépendances partagées, schéma PostgreSQL et guide d’installation. Sans clés, valeurs secrètes ni données utilisateurs."
+logical_id = "09efc8eb-bec8-4c5b-8896-eda06830756b"
+content_hash = "sha256:7d0d1b589e06153615cbd8c392f335a5df8c7a608031f26c1852ec646350f792"
+size = 8981130
+mtime_ms = 1792647918941
+storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:2b24cd28-b44f-4cff-bacf-135c732fa24d/09efc8eb-bec8-4c5b-8896-eda06830756b/d7bf17f0-5bc9-43d2-b98f-dbd890ba4b73"
+storage_version_token = "1792647926131449"
+content_type = "application/octet-stream"
