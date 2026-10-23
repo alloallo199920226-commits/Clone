@@ -46,21 +46,25 @@ Un VIP acheté par le client ne constitue pas un octroi administratif.
 actuel ou les VIP encore actifs. Fournir les deux motifs à l’interface existante.
 Cette règle de classement n’autorise pas à activer les demandes ou les paiements de retrait.
 
-L’onglet « Retraits · Activité du jour » regroupe les retraits encore en attente
-des utilisateurs ayant acheté un VIP ou reçu une commission de parrainage aujourd’hui,
-selon la date au Maroc. Les deux motifs peuvent être affichés sur une même demande.
+Les retraits encore en attente des acheteurs de VIP du jour doivent être affichés
+à part, dans « VIP achetés aujourd’hui ». Les commissions du jour ont leur propre
+onglet. La date est celle du Maroc.
 
-**Why:** l’utilisateur a demandé ces deux critères dans un même nouvel onglet.
+**Why:** après la vue regroupée, l’utilisateur a demandé d’afficher entièrement
+à part les retraits en attente des utilisateurs ayant acheté un VIP aujourd’hui.
 
 **How to apply:** inclure aussi les demandes plus anciennes toujours en attente ;
 ne pas compter les VIP offerts comme achats, ne pas dupliquer les demandes et
 conserver le classement existant entre retraits normaux et crédit admin ailleurs.
+Un utilisateur remplissant les deux critères peut figurer dans les deux onglets,
+sans dupliquer sa demande dans un même onglet ni autoriser un double traitement.
 
 Les commandes administratives « Ouvrir », « Fermer » et « Horaire normal »
 contrôlent les nouvelles demandes de retrait, pas les versements. L’ouverture
 manuelle ignore uniquement l’horaire ; elle conserve le VIP actif, le minimum,
 les frais, le solde disponible et les restrictions individuelles.
-L’horaire normal reste de 10 h à 18 h, heure du Maroc.
+L’horaire normal est de 09 h à 18 h, heure du Maroc. La fermeture à 18 h
+est impérative, y compris en mode d’ouverture manuelle.
 
 **Why:** l’utilisateur a signalé que l’ouverture manuelle depuis la console était
 bloquée ; il veut utiliser cette commande sans changer la politique financière.

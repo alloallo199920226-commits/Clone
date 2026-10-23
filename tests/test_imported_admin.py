@@ -166,6 +166,14 @@ class ImportedAdminTests(unittest.TestCase):
             self.assertTrue(both["purchasedVipToday"])
             self.assertTrue(both["referralCommissionToday"])
             self.assertTrue(all(row["status"] == "pending" for row in rows))
+            for activity, expected in (("vip", ("purchase", "both")),
+                                       ("commission", ("commission", "both"))):
+                filtered = admin_api.transaction_rows(cur,
+                    {"type":"withdrawal", "status":"pending", "activity":activity}, True)
+                matches = [row for row in filtered["transactions"] if row["userId"] in ids]
+                self.assertEqual({row["userId"] for row in matches},
+                                 {members[name]["id"] for name in expected})
+                self.assertEqual(len(matches), 2)
         route = "/api/admin/today-withdrawals"
         self.assertEqual(self.request("GET", route, cookie="")[0], 401)
         status, result, _ = self.request("GET", route + "?limit=1&type=deposit&status=rejected")
@@ -174,6 +182,12 @@ class ImportedAdminTests(unittest.TestCase):
         self.assertIsNotNone(result["nextCursor"])
         self.assertEqual(result["transactions"][0]["type"], "withdrawal")
         self.assertEqual(result["transactions"][0]["status"], "pending")
+        for activity, key in (("vip", "purchasedVipToday"), ("commission", "referralCommissionToday")):
+            status, filtered, _ = self.request("GET", route + "?activity=" + activity)
+            self.assertEqual(status, 200, filtered)
+            self.assertTrue(filtered["transactions"])
+            self.assertTrue(all(row[key] for row in filtered["transactions"]))
+        self.assertEqual(self.request("GET", route + "?activity=invalid")[0], 400)
 
     def test_withdrawal_sections_separate_admin_credit_and_granted_vip(self):
         """Synthetic settled fixtures verify routing without enabling real withdrawals."""

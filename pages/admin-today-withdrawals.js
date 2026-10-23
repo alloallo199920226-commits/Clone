@@ -4,10 +4,14 @@
   const original = document.querySelector("#admin-content");
   const dashboard = document.querySelector("#dashboard-view");
   if (!nav || !original || !window.createAdminTransactionHistory) return;
-  const button = document.createElement("button");
-  button.type = "button";
-  button.textContent = "Retraits · Activité du jour";
-  nav.querySelector('[data-tab="normalWithdrawals"]').after(button);
+  const buttons = ["vip", "commission"].map(activity => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.todayActivity = activity;
+    button.textContent = activity === "vip" ? "VIP achetés aujourd’hui" : "Commissions du jour";
+    return button;
+  });
+  nav.querySelector('[data-tab="normalWithdrawals"]').after(...buttons);
   const panel = document.createElement("section");
   panel.hidden = true;
   original.after(panel);
@@ -45,9 +49,12 @@
       </div></article>`
   });
   const mount = () => history.mount(
-    {type:"withdrawal", status:"pending"},
-    {title:"Retraits en attente · Activité du jour",
-      description:"Utilisateurs ayant acheté un VIP ou reçu une commission de parrainage aujourd’hui, heure du Maroc. Toutes leurs demandes encore en attente sont incluses, même plus anciennes. Les VIP offerts ne comptent pas comme achats.",
+    {type:"withdrawal", status:"pending", activity:selected},
+    {title:selected === "vip" ? "Retraits en attente · VIP achetés aujourd’hui" : "Retraits en attente · Commissions du jour",
+      description:(selected === "vip"
+        ? "Uniquement les utilisateurs ayant acheté un VIP aujourd’hui, heure du Maroc. Les VIP offerts et les commissions seules ne comptent pas."
+        : "Utilisateurs ayant reçu une commission de parrainage aujourd’hui, heure du Maroc.")
+        + " Toutes leurs demandes encore en attente sont incluses, même plus anciennes.",
       lockedFilters:["type","status"]});
   const leave = () => {
     if (selected && previousTab) {
@@ -58,13 +65,16 @@
     history.invalidate();
     panel.hidden = true;
     original.hidden = false;
-    button.classList.remove("active");
-    button.setAttribute("aria-current", "false");
+    buttons.forEach(button => {
+      button.classList.remove("active");
+      button.setAttribute("aria-current", "false");
+    });
   };
   nav.addEventListener("click", event => {
-    if (event.target.closest("button") !== button) { leave(); return; }
+    const button = event.target.closest("[data-today-activity]");
+    if (!button) { leave(); return; }
     if (!selected) previousTab = nav.querySelector("[data-tab].active");
-    selected = true;
+    selected = button.dataset.todayActivity;
     original.hidden = true;
     panel.hidden = false;
     nav.querySelectorAll("button").forEach(item => {

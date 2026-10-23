@@ -131,6 +131,9 @@ def user_rows(cur, search="", offset=0, limit=50):
 
 
 def transaction_rows(cur, query, today_activity=False):
+    activity = query.get("activity", "all") if today_activity else "all"
+    if activity not in {"all", "vip", "commission"}:
+        raise ValueError("Filtre d’activité invalide.")
     kind = query.get("type", "all")
     status = query.get("status", "all")
     assistance = query.get("assistance", "all")
@@ -204,8 +207,10 @@ def transaction_rows(cur, query, today_activity=False):
           AND (%(assistance)s='all' OR (%(assistance)s='admin' AND admin_assisted) OR (%(assistance)s='normal' AND NOT admin_assisted))
           AND (phone ILIKE %(pattern)s OR provider_reference ILIKE %(pattern)s OR id::text=%(search)s)"""
     if today_activity:
-        source += """ AND type='withdrawal' AND status='pending'
-                      AND (purchased_vip_today OR referral_commission_today)"""
+        activity_condition = {"all": "(purchased_vip_today OR referral_commission_today)",
+                              "vip": "purchased_vip_today",
+                              "commission": "referral_commission_today"}[activity]
+        source += " AND type='withdrawal' AND status='pending' AND " + activity_condition
     cur.execute(f"SELECT count(*) total FROM ({source}) matched", params)
     total = cur.fetchone()["total"]
     cur.execute(source + " ORDER BY created_at DESC,id DESC LIMIT %(limit)s OFFSET %(offset)s", params)
