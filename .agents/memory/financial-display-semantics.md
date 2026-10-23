@@ -21,7 +21,7 @@ A pending request must not change the settled balance or appear as a verified pa
 a withdrawal reservation does reduce the spendable balance.
 
 Les demandes de retrait manuel nécessitent au moins un VIP actif, acheté ou octroyé.
-Minimum : 2 300 FCFA ; frais : 20 % ; horaires : 10 h à 18 h, heure du Maroc.
+Minimum : 2 300 FCFA ; frais : 20 % ; horaires : 09 h à 18 h, heure du Maroc.
 Le solde disponible exclut les réservations en
 attente, sans les représenter comme des versements déjà effectués.
 
@@ -29,10 +29,10 @@ attente, sans les représenter comme des versements déjà effectués.
 demandé la condition de VIP actif.
 
 **How to apply:** utiliser le fuseau Africa/Casablanca, pas un décalage UTC fixe.
-Accepter les nouvelles demandes à partir de 10 h et les fermer à 18 h.
+Accepter les nouvelles demandes à partir de 09 h et les fermer à 18 h.
 La fermeture à 18 h est obligatoire même en mode d’ouverture manuelle.
-**Why:** l’utilisateur a demandé de garantir la fermeture à 18 h alors que
-l’ouverture manuelle persistante contournait l’horaire normal.
+**Why:** l’utilisateur a fixé l’ouverture à 09 h et demandé une fermeture
+automatique à 18 h sans aucune condition ; l’ouverture manuelle ne doit pas la contourner.
 **How to apply:** appliquer cette limite côté serveur à toute nouvelle demande,
 sans annuler les demandes déjà enregistrées ni empêcher leur traitement administratif.
 Conserver les frais des demandes déjà enregistrées ; sérialiser les dépenses

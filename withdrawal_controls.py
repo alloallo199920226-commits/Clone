@@ -44,4 +44,4 @@ def enforce(cur):
     if withdrawals.withdrawal_cutoff_reached():
         raise auth_backend.AuthError(403, "Les demandes de retrait sont fermées à partir de 18 h, heure du Maroc.")
     if mode == "scheduled" and not withdrawals.withdrawal_window_open():
-        raise auth_backend.AuthError(403, "Les demandes de retrait sont ouvertes de 10 h à 18 h, heure du Maroc.")
+        raise auth_backend.AuthError(403, "Les demandes de retrait sont ouvertes de 09 h à 18 h, heure du Maroc.")

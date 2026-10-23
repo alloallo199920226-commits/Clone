@@ -15,7 +15,7 @@ MOROCCO = ZoneInfo("Africa/Casablanca")
 
 def withdrawal_window_open(now=None):
     local = (now or datetime.now(MOROCCO)).astimezone(MOROCCO)
-    return 10 <= local.hour < 18
+    return 9 <= local.hour < 18
 
 
 def withdrawal_cutoff_reached(now=None):

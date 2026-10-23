@@ -26,7 +26,7 @@ class WithdrawalWindowTests(unittest.TestCase):
     def test_morocco_boundaries_and_ramadan_offset(self):
         for month, day in ((10, 20), (2, 25)):
             for hour, minute, second, expected in (
-                (9, 59, 59, False), (10, 0, 0, True),
+                (8, 59, 59, False), (9, 0, 0, True), (10, 0, 0, True),
                 (17, 59, 59, True), (18, 0, 0, False),
             ):
                 local = datetime(2026, month, day, hour, minute, second, tzinfo=withdrawals.MOROCCO)
