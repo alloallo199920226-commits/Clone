@@ -46,6 +46,16 @@ Un VIP acheté par le client ne constitue pas un octroi administratif.
 actuel ou les VIP encore actifs. Fournir les deux motifs à l’interface existante.
 Cette règle de classement n’autorise pas à activer les demandes ou les paiements de retrait.
 
+L’onglet « Retraits · Activité du jour » regroupe les retraits encore en attente
+des utilisateurs ayant acheté un VIP ou reçu une commission de parrainage aujourd’hui,
+selon la date au Maroc. Les deux motifs peuvent être affichés sur une même demande.
+
+**Why:** l’utilisateur a demandé ces deux critères dans un même nouvel onglet.
+
+**How to apply:** inclure aussi les demandes plus anciennes toujours en attente ;
+ne pas compter les VIP offerts comme achats, ne pas dupliquer les demandes et
+conserver le classement existant entre retraits normaux et crédit admin ailleurs.
+
 Les commandes administratives « Ouvrir », « Fermer » et « Horaire normal »
 contrôlent les nouvelles demandes de retrait, pas les versements. L’ouverture
 manuelle ignore uniquement l’horaire ; elle conserve le VIP actif, le minimum,

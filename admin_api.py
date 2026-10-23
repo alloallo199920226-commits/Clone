@@ -130,7 +130,7 @@ def user_rows(cur, search="", offset=0, limit=50):
             "nextCursor": str(offset + limit) if len(rows) > limit else None}
 
 
-def transaction_rows(cur, query):
+def transaction_rows(cur, query, today_activity=False):
     kind = query.get("type", "all")
     status = query.get("status", "all")
     assistance = query.get("assistance", "all")
@@ -177,18 +177,35 @@ def transaction_rows(cur, query):
           FROM history),
         marked AS (
           SELECT *, (assisted OR (type='withdrawal' AND has_admin_vip_grant)) AS admin_assisted
-          FROM classified)
-        SELECT marked.*,
+          FROM classified),
+        daily AS (
+          SELECT marked.*,
+            EXISTS(SELECT 1 FROM shineray_transactions activity
+              WHERE activity.user_id=marked.user_id AND activity.kind='purchase'
+              AND activity.details->>'vip' ~ '^([1-9]|1[0-2])$'
+              AND activity.created_at >= (date_trunc('day', now() AT TIME ZONE 'Africa/Casablanca') AT TIME ZONE 'Africa/Casablanca')
+              AND activity.created_at < ((date_trunc('day', now() AT TIME ZONE 'Africa/Casablanca') + interval '1 day') AT TIME ZONE 'Africa/Casablanca')
+            ) AS purchased_vip_today,
+            EXISTS(SELECT 1 FROM shineray_transactions activity
+              WHERE activity.user_id=marked.user_id AND activity.kind='commission' AND activity.amount_fcfa>0
+              AND activity.created_at >= (date_trunc('day', now() AT TIME ZONE 'Africa/Casablanca') AT TIME ZONE 'Africa/Casablanca')
+              AND activity.created_at < ((date_trunc('day', now() AT TIME ZONE 'Africa/Casablanca') + interval '1 day') AT TIME ZONE 'Africa/Casablanca')
+            ) AS referral_commission_today
+          FROM marked)
+        SELECT daily.*,
           (SELECT count(*)::bigint FROM shineray_users invited
-           WHERE invited.referred_by=marked.user_id) AS referral_count,
+           WHERE invited.referred_by=daily.user_id) AS referral_count,
           (SELECT COALESCE(sum(earned.amount_fcfa),0)::bigint
            FROM shineray_transactions earned
-           WHERE earned.user_id=marked.user_id AND earned.kind='commission') AS referral_commission_amount
-        FROM marked WHERE
+           WHERE earned.user_id=daily.user_id AND earned.kind='commission') AS referral_commission_amount
+        FROM daily WHERE
           (%(kind)s='all' OR type=%(kind)s)
           AND (%(status)s='all' OR status=%(status)s)
           AND (%(assistance)s='all' OR (%(assistance)s='admin' AND admin_assisted) OR (%(assistance)s='normal' AND NOT admin_assisted))
           AND (phone ILIKE %(pattern)s OR provider_reference ILIKE %(pattern)s OR id::text=%(search)s)"""
+    if today_activity:
+        source += """ AND type='withdrawal' AND status='pending'
+                      AND (purchased_vip_today OR referral_commission_today)"""
     cur.execute(f"SELECT count(*) total FROM ({source}) matched", params)
     total = cur.fetchone()["total"]
     cur.execute(source + " ORDER BY created_at DESC,id DESC LIMIT %(limit)s OFFSET %(offset)s", params)
@@ -218,6 +235,8 @@ def transaction_rows(cur, query):
             "hasAdminCredit": row["has_admin_credit"], "hasAdminVipGrant": row["has_admin_vip_grant"],
             "referralCount": row["referral_count"],
             "referralCommissionAmount": row["referral_commission_amount"],
+            "purchasedVipToday": row["purchased_vip_today"],
+            "referralCommissionToday": row["referral_commission_today"],
         })
     return {"transactions": result, "total": total,
             "nextCursor": str(offset + limit) if len(rows) > limit else None}
@@ -535,6 +554,10 @@ def dispatch(cur, user, route, method, body, query):
         return 200, overview(cur, query.get("summary") == "true")
     if route == "/api/admin/transaction-history" and method == "GET":
         return 200, transaction_rows(cur, query)
+    if route == "/api/admin/today-withdrawals" and method == "GET":
+        return 200, transaction_rows(cur, {**query, "type": "withdrawal",
+                                         "status": "pending", "assistance": "all"},
+                                     today_activity=True)
     if route == "/api/admin/users/search" and method == "GET":
         return 200, user_rows(cur, text(query.get("search", ""), 100, False), pagination(query.get("cursor", "0")))
     match = re.fullmatch(r"/api/admin/users/([1-9]\d{0,17})(?:/([a-z-]+))?", route)

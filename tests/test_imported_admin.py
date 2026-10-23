@@ -131,6 +131,50 @@ class ImportedAdminTests(unittest.TestCase):
         self.resources.append(result["id"])
         return result
 
+    def test_today_withdrawals_use_morocco_activity_and_do_not_duplicate(self):
+        self.login()
+        marker = "today-withdrawals-" + self.fixture_key
+        members = {name: self.member()[0] for name in
+                   ("purchase", "commission", "both", "yesterday", "tomorrow", "bonus")}
+        with auth_backend.connect() as conn, conn.cursor() as cur:
+            for name, member in members.items():
+                uid = member["id"]
+                kinds = ("purchase", "commission") if name == "both" else (
+                    "commission" if name == "commission" else "bonus" if name == "bonus" else "purchase",)
+                day = -1 if name == "yesterday" else 1 if name == "tomorrow" else 0
+                for kind in kinds:
+                    cur.execute("""INSERT INTO shineray_transactions
+                        (user_id,kind,label,amount_fcfa,provider_reference,details,created_at)
+                        VALUES (%s,%s,'Fixture activité',%s,%s,'{"vip":1}',
+                          ((now() AT TIME ZONE 'Africa/Casablanca')::date + %s)::timestamp
+                            AT TIME ZONE 'Africa/Casablanca')""",
+                        (uid, kind, -3500 if kind == "purchase" else 100,
+                         marker + name + kind, day))
+                for status in ("pending", "rejected"):
+                    cur.execute("""INSERT INTO shineray_withdrawal_requests
+                        (user_id,request_id,wallet_id,amount_fcfa,fee_fcfa,net_amount_fcfa,wallet_snapshot,status,created_at)
+                        VALUES (%s,%s,0,2300,460,1840,%s,%s,now()-interval '2 days')""",
+                        (uid, str(uuid.uuid4()), Jsonb({"destination":"fixture",
+                         "receiver_name":"Fixture", "channel":"WAVE"}), status))
+            ids = [member["id"] for member in members.values()]
+            result = admin_api.transaction_rows(cur, {"type":"withdrawal", "status":"pending"}, True)
+            rows = [row for row in result["transactions"] if row["userId"] in ids]
+            self.assertEqual({row["userId"] for row in rows},
+                             {members[name]["id"] for name in ("purchase", "commission", "both")})
+            self.assertEqual(len(rows), 3)
+            both = next(row for row in rows if row["userId"] == members["both"]["id"])
+            self.assertTrue(both["purchasedVipToday"])
+            self.assertTrue(both["referralCommissionToday"])
+            self.assertTrue(all(row["status"] == "pending" for row in rows))
+        route = "/api/admin/today-withdrawals"
+        self.assertEqual(self.request("GET", route, cookie="")[0], 401)
+        status, result, _ = self.request("GET", route + "?limit=1&type=deposit&status=rejected")
+        self.assertEqual(status, 200, result)
+        self.assertEqual(len(result["transactions"]), 1)
+        self.assertIsNotNone(result["nextCursor"])
+        self.assertEqual(result["transactions"][0]["type"], "withdrawal")
+        self.assertEqual(result["transactions"][0]["status"], "pending")
+
     def test_withdrawal_sections_separate_admin_credit_and_granted_vip(self):
         """Synthetic settled fixtures verify routing without enabling real withdrawals."""
         self.login()
@@ -250,6 +294,7 @@ class ImportedAdminTests(unittest.TestCase):
                 if route == admin_assets.ADMIN_ROUTE:
                     self.assertIn(admin_assets.COMPAT_LINK, data)
                     data = data.replace(admin_assets.COMPAT_LINK, b"", 1)
+                    data = data.replace(b'<script src="/admin-ui/today-withdrawals.js?v=1"></script>', b"", 1)
                     data = data.replace(b'<link rel="stylesheet" href="/pages/form-controls.css?v=1">', b"", 1)
                     from platform_brand import BRAND_SCRIPT, FAVICON_LINKS
                     data = data.replace(BRAND_SCRIPT, b"", 1).replace(FAVICON_LINKS, b"", 1)

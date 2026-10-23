@@ -30,6 +30,9 @@ COMPAT_LINK = b'<link rel="stylesheet" href="/admin-ui/import-compat.css?v=1">'
 
 @lru_cache(maxsize=100)
 def browser_asset(route):
+    if route == "/admin-ui/today-withdrawals.js":
+        script = Path(__file__).resolve().parent / "pages/admin-today-withdrawals.js"
+        return script.read_bytes(), "text/javascript; charset=utf-8"
     if route == "/admin-ui/import-compat.css":
         stylesheet = Path(__file__).resolve().parent / "pages/admin-import-compat.css"
         return stylesheet.read_bytes(), "text/css; charset=utf-8"
@@ -70,4 +73,5 @@ def browser_asset(route):
         if member == "administration/index.html":
             # Add a separate layout adapter, leaving every original asset intact.
             body = body.replace(b"</head>", COMPAT_LINK + b"</head>", 1)
+            body = body.replace(b"</body>", b'<script src="/admin-ui/today-withdrawals.js?v=1"></script></body>', 1)
         return body, content_type

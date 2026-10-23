@@ -35,7 +35,7 @@ async function main() {
         "print(json.dumps(ids))",
       ].join("\n")], {encoding:"utf8"}));
     }
-    if (process.argv.includes("--imported-admin") || process.argv.includes("--sonarapay") || process.argv.includes("--deposit-channels") || process.argv.includes("--withdrawal")) {
+    if (process.argv.includes("--today-withdrawals") || process.argv.includes("--imported-admin") || process.argv.includes("--sonarapay") || process.argv.includes("--deposit-channels") || process.argv.includes("--withdrawal")) {
       // Isolated test server only: never read or replace the real admin secret.
       fixtureServer = spawn("python3", process.argv.includes("--sonarapay") ? ["-u", "tests/sonarapay_fixture.py"] : ["-u", "-c", [
         "import os",
@@ -305,6 +305,10 @@ async function main() {
     assert.equal(modal.overflow, false);
     await evaluate("document.querySelector('[data-notification-close]').click()");
     assert.equal(await evaluate("Boolean(document.querySelector('dialog[open]'))"), false);
+    if (process.argv.includes("--today-withdrawals")) {
+      await require("./today-withdrawals-browser.cjs")({evaluate, waitFor, navigate, screenshot});
+      return;
+    }
     if (process.argv.includes("--imported-admin")) {
       await require("./imported-admin-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, owner: registration.body.user,
