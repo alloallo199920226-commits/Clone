@@ -5,6 +5,16 @@ description: User expectations for faithful screen reproduction and meaningful v
 
 Reproduce the user’s supplied screen composition and text closely rather than substituting a different interface.
 
+La référence NARKE demandée concerne l’écran de connexion, pas une modification
+des comptes, de l’administration ou des règles financières existantes.
+
+**Why:** le protocole fourni demande une reconstruction visuelle du formulaire
+NARKE tout en conservant les intégrations d’authentification et les données.
+
+**How to apply:** garder les vrais champs et la connexion serveur ; distinguer
+l’aperçu Design (sans authentification) du formulaire réel. Ne pas annoncer une
+égalité parfaite des pixels ni une validation Safari native à partir de Chromium.
+
 **Why:** the user repeatedly pointed out that the delivered notification and account screens did not match their references.
 
 **How to apply:** compare the actual opened notification and signed-in account view to the supplied images. A screenshot of the closed selector or sign-in page does not verify an interactive or authenticated screen. Describe exactly which states were checked; do not imply iPhone Safari or published-site verification from a development Chromium check.

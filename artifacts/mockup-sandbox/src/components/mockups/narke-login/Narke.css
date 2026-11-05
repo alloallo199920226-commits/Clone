@@ -1,0 +1,126 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap");
+
+.narke-hero-art::after {
+  position: absolute;
+  inset: -20%;
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(99, 239, 255, .09), transparent 65%);
+  animation: narke-marine-light 18s ease-in-out infinite alternate;
+}
+@keyframes narke-marine-light {
+  from { transform: translateX(-10%); opacity: .35; }
+  to { transform: translateX(10%); opacity: .75; }
+}
+.narke-preview {
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #001321;
+  color: #f7fcff;
+  font-family: "DM Sans", "Avenir Next", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.narke-page {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 472px);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 0 0 max(20px, env(safe-area-inset-bottom));
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(0, 19, 33, 0) 0%, #001321 100%) bottom / 100% 142px no-repeat,
+    url("/__mockup/images/narke-water-reference.png") center bottom / 100% 114px no-repeat,
+    radial-gradient(ellipse at 50% 57%, rgba(0, 164, 209, .14), transparent 50%),
+    #001321;
+}
+.narke-hero-art { width: 100%; aspect-ratio: 498 / 316; overflow: hidden; background: #031f35; }
+.narke-hero-image { display: block; width: 100%; height: 100%; object-fit: cover; }
+.narke-auth-card {
+  position: relative;
+  z-index: 1;
+  width: calc(100% - 32px);
+  min-height: 480px;
+  margin: -1px 16px 0;
+  padding: 17px 17px 27px;
+  overflow: hidden;
+  border: 1px solid rgba(137, 213, 242, .69);
+  border-bottom-color: transparent;
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(31, 83, 112, .73), rgba(3, 31, 53, .88) 49%, rgba(1, 30, 49, .94));
+  box-shadow: inset 0 1px 0 rgba(229, 249, 255, .18), inset 0 -16px 34px rgba(0, 205, 234, .05), 0 15px 40px rgba(0, 9, 20, .24);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.narke-auth-card::after { position: absolute; right: 0; bottom: 0; left: 12%; height: 30px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 32' preserveAspectRatio='none'%3E%3Cpath d='M0 23 C80 22 150 22 218 23 C268 23 294 29 326 30 C353 31 369 28 381 15 C389 6 394 3 400 2' fill='none' stroke='%2300dfff' stroke-width='2' stroke-linecap='round' opacity='.94'/%3E%3C/svg%3E") center / 100% 100% no-repeat; filter: drop-shadow(0 0 5px rgba(0, 223, 255, .85)); content: ""; pointer-events: none; }
+.narke-auth-card h1 { margin: 0; color: #f7fcff; font-family: "Manrope", "DM Sans", sans-serif; font-size: 21px; font-weight: 800; letter-spacing: -.55px; line-height: 1.35; text-align: center; }
+.narke-subtitle { margin: 2px 0 12px; color: #d0e3ed; font-size: 14px; line-height: 1.45; text-align: center; }
+.narke-auth-card form { display: grid; gap: 13px; }
+.narke-field {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 45px;
+  min-height: 45px;
+  align-items: center;
+  border: 1px solid rgba(174, 219, 240, .73);
+  border-radius: 14px;
+  padding: 0 14px;
+  background: linear-gradient(110deg, rgba(31, 75, 100, .76), rgba(7, 39, 62, .75));
+  color: #f7fcff;
+  box-shadow: inset 0 1px 5px rgba(203, 241, 255, .07), 0 3px 10px rgba(0, 10, 20, .12);
+  text-align: left;
+}
+.narke-field-icon { display: inline-flex; width: 28px; height: 28px; flex: 0 0 28px; align-items: center; justify-content: flex-start; color: #f0fbff; }
+.narke-field-icon svg, .narke-dropdown-icon, .narke-password-toggle svg, .narke-submit-arrow svg { width: 21px; height: 21px; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.narke-country-trigger { justify-content: flex-start; gap: 9px; cursor: pointer; }
+.narke-country-label { min-width: 0; flex: 1; overflow: hidden; color: #f4faff; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+.narke-dropdown-icon { width: 19px; height: 19px; flex: 0 0 19px; margin-left: auto; }
+.narke-phone-field { gap: 0; padding: 0 12px 0 14px; border: 0; }
+.narke-phone-field .narke-field-icon { width: 42px; flex-basis: 42px; border-right: 1px solid rgba(169, 210, 230, .48); }
+.narke-phone-field::before { position: absolute; z-index: 0; inset: 0; border: 1px solid rgba(174, 219, 240, .73); border-radius: inherit; content: ""; pointer-events: none; }
+.narke-phone-field:focus-within::before { border-color: #00dfff; box-shadow: inset 0 0 0 1px rgba(0, 223, 255, .36), 0 0 0 2px rgba(0, 223, 255, .16); }
+.narke-phone-prefix { display: inline-flex; height: 23px; flex: 0 0 auto; align-items: center; margin-right: 10px; padding-right: 10px; border-right: 1px solid rgba(169, 210, 230, .42); color: #f7fcff; font-size: 16px; }
+.narke-phone-input, .narke-password-field input { position: relative; z-index: 1; width: 100%; min-width: 0; height: 100%; border: 0; outline: 0; padding: 0; background: transparent; color: #f7fcff; font-size: 16px; font-weight: 400; }
+.narke-phone-input::placeholder, .narke-password-field input::placeholder { color: #d1e0e9; opacity: 1; }
+.narke-password-field { gap: 0; padding-right: 9px; }
+.narke-password-field::before { position: absolute; top: 8px; bottom: 8px; left: 57px; width: 1px; background: rgba(169, 210, 230, .42); content: ""; }
+.narke-password-field input { padding-left: 12px; }
+.narke-password-field:focus-within { border-color: #00dfff; box-shadow: inset 0 0 0 1px rgba(0, 223, 255, .36), 0 0 0 2px rgba(0, 223, 255, .16); }
+.narke-password-toggle { position: relative; z-index: 2; display: inline-flex; width: 33px; height: 36px; flex: 0 0 33px; align-items: center; justify-content: center; border: 0; padding: 0; background: transparent; color: #e8f8ff; cursor: pointer; }
+.narke-password-toggle svg { width: 20px; height: 20px; }
+.narke-password-toggle:focus-visible, .narke-country-trigger:focus-visible, .narke-primary-button:focus-visible, .narke-sheet-back:focus-visible, .narke-country-option:focus-visible { outline: 2px solid #63efff; outline-offset: 3px; }
+.narke-remember-row { display: flex; width: max-content; max-width: 100%; min-height: 20px; align-items: center; gap: 10px; margin: 9px 0 7px 6px; color: #edf7fb; font-size: 13px; line-height: 1.4; cursor: pointer; }
+.narke-remember-row input { width: 20px; height: 20px; flex: 0 0 20px; margin: 0; appearance: none; border: 1.5px solid rgba(229, 246, 255, .88); border-radius: 5px; background: rgba(1, 23, 39, .55); cursor: pointer; }
+.narke-remember-row input:checked { border-color: #00dfff; background: #00dfff; box-shadow: inset 0 0 0 4px #07344a; }
+.narke-remember-row input:focus-visible { outline: 2px solid #63efff; outline-offset: 3px; }
+.narke-primary-button { position: relative; display: flex; width: 100%; min-height: 56px; align-items: center; justify-content: center; border: 1px solid rgba(130, 248, 255, .72); border-radius: 999px; padding: 0 54px; background: linear-gradient(105deg, #00d7eb, #09e7f1 54%, #00cde8); color: #00263a; font-family: "Manrope", "DM Sans", sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -.35px; cursor: pointer; box-shadow: inset 0 1px 1px rgba(255, 255, 255, .5), 0 4px 17px rgba(0, 218, 240, .29); transition: filter .18s ease, transform .14s ease, box-shadow .18s ease; }
+.narke-primary-button:hover { filter: brightness(1.07); box-shadow: inset 0 1px 1px rgba(255, 255, 255, .6), 0 5px 20px rgba(0, 218, 240, .38); }
+.narke-primary-button:active { transform: scale(.985); }
+.narke-submit-arrow { position: absolute; top: 5px; right: 6px; display: flex; width: 44px; height: 44px; align-items: center; justify-content: center; border: 1px solid rgba(175, 245, 255, .38); border-radius: 50%; background: linear-gradient(145deg, #073c56, #00283f); color: #f5fdff; box-shadow: inset 0 1px 2px rgba(255, 255, 255, .14); }
+.narke-submit-arrow svg { width: 22px; height: 22px; stroke-width: 2; }
+.narke-form-divider { display: flex; align-items: center; justify-content: center; gap: 17px; height: 16px; margin: 0 0 14px; color: #f0f8fb; font-size: 14px; }
+.narke-form-divider span { height: 1px; flex: 1; background: linear-gradient(90deg, transparent, rgba(227, 245, 252, .9)); }
+.narke-form-divider span:last-child { background: linear-gradient(90deg, rgba(227, 245, 252, .9), transparent); }
+.narke-form-divider b { font-weight: 500; }
+.narke-switch-copy { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 14px; margin: 1px 0 0; color: #edf7fb; font-size: 14px; line-height: 1.5; text-align: center; }
+.narke-switch-copy a { color: #00dfff; font-weight: 700; text-decoration: underline; text-decoration-color: rgba(0, 223, 255, .65); text-underline-offset: 4px; }
+.narke-demo-notice { margin: 18px 0 0; color: #afc8d9; font-size: 12px; line-height: 1.5; text-align: center; }
+.narke-demo-notice:empty { display: none; }
+.narke-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.narke-country-overlay { position: fixed; z-index: 10; inset: 0; display: flex; align-items: flex-end; background: rgba(0, 10, 20, .78); }
+.narke-country-sheet { display: flex; width: min(100%, 472px); height: 50dvh; flex-direction: column; margin: 0 auto; overflow: hidden; border: 1px solid rgba(91, 205, 235, .58); border-radius: 22px 22px 0 0; background: linear-gradient(180deg, #082d47, #031b2d); box-shadow: 0 -8px 32px rgba(0, 12, 24, .45); }
+.narke-sheet-header { display: grid; height: 54px; flex: 0 0 54px; grid-template-columns: 44px 1fr 44px; align-items: center; padding: 0 8px; border-bottom: 1px solid rgba(130, 202, 226, .2); background: rgba(1, 19, 33, .52); }
+.narke-sheet-header h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 700; text-align: center; }
+.narke-sheet-back { border: 0; padding: 4px 8px; background: transparent; color: #f7fcff; font-size: 30px; cursor: pointer; }
+.narke-country-options { display: grid; gap: 11px; align-content: start; overflow-y: auto; padding: 24px 14px 18px; }
+.narke-country-option { display: flex; min-height: 50px; justify-content: space-between; align-items: center; border: 1px solid rgba(152, 213, 235, .24); border-radius: 12px; padding: 0 18px; background: rgba(21, 60, 82, .84); color: #f7fcff; font-size: 15px; cursor: pointer; }
+@media (max-width: 380px) {
+  .narke-auth-card { width: calc(100% - 28px); margin-right: 14px; margin-left: 14px; padding-right: 14px; padding-left: 14px; }
+  .narke-auth-card form { gap: 12px; }
+  .narke-auth-card h1 { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .narke-preview *, .narke-preview *::before, .narke-preview *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}

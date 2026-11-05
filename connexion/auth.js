@@ -1,6 +1,14 @@
 (() => {
   const { countryInput, trigger } = window.setupCountryPicker();
   const form = document.querySelector("[data-auth-form]");
+  const passwordToggle = document.querySelector("[data-password-toggle]");
+  const passwordInput = form.elements.password;
+  passwordToggle?.addEventListener("click", () => {
+    const visible = passwordInput.type === "password";
+    passwordInput.type = visible ? "text" : "password";
+    passwordToggle.setAttribute("aria-pressed", String(visible));
+    passwordToggle.setAttribute("aria-label", visible ? "Masquer le mot de passe" : "Afficher le mot de passe");
+  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();

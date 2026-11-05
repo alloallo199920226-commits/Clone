@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f4f4">
+  <title>Connexion — IVECO</title>
+  <link rel="stylesheet" href="/connexion/auth.css">
+</head>
+<body>
+  <main class="auth-page">
+    <div class="brand">
+      <img class="brand-image" src="/pages/assets/iveco-auth-logo.png" alt="IVECO — EST.1975 ITALY">
+    </div>
+
+    <section class="auth-card" aria-labelledby="page-title">
+      <h1 id="page-title" class="sr-only">Connectez-vous à votre compte</h1>
+      <form data-auth-form="login">
+        <label class="sr-only" for="login-country">Pays</label>
+        <button class="field country-trigger" id="login-country" type="button" aria-haspopup="dialog" aria-controls="country-dialog" aria-describedby="country-loading" aria-expanded="false">
+          <span data-country-label>Sélectionnez votre pays &gt;&gt;</span>
+        </button>
+        <input type="hidden" name="country" required>
+
+        <label class="sr-only" for="login-phone">Numéro de portable</label>
+        <div class="phone-field">
+          <span class="phone-prefix" data-phone-prefix aria-hidden="true"></span>
+          <input class="field phone-input" id="login-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Veuillez entrer votre numéro de portable" required>
+        </div>
+
+        <label class="sr-only" for="login-password">Mot de passe</label>
+        <input class="field" id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Veuillez entrer votre mot de passe" required>
+
+        <label class="remember-row"><input type="checkbox" name="remember"> <span>Rester connecté pendant 7 jours</span></label>
+
+        <button class="primary-button" type="submit">Connectez-vous maintenant</button>
+        <p class="switch-copy">Pas de compte ? <a href="/inscription">Créer un compte</a></p>
+      </form>
+      <p class="demo-notice" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <div class="country-overlay" data-country-overlay hidden>
+    <section class="country-sheet" id="country-dialog" role="dialog" aria-modal="true" aria-labelledby="country-title" tabindex="-1">
+      <header class="sheet-header">
+        <button type="button" class="sheet-back" data-country-close aria-label="Fermer">‹</button>
+        <h2 id="country-title">Sélectionnez votre pays</h2>
+        <span class="sheet-spacer"></span>
+      </header>
+      <div class="country-loading" data-country-loading role="status" aria-live="polite">
+        <span class="country-spinner" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        <span class="country-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="sr-only">Ouverture de la liste des pays…</span>
+      </div>
+      <div class="country-options" hidden>
+        <button type="button" class="country-option" data-country-code="+228" data-country-name="Togo"><span>+228</span><span>Togo</span></button>
+        <button type="button" class="country-option" data-country-code="+225" data-country-name="Côte d’Ivoire"><span>+225</span><span>Côte d’Ivoire</span></button>
+        <button type="button" class="country-option" data-country-code="+229" data-country-name="Bénin"><span>+229</span><span>Bénin</span></button>
+        <button type="button" class="country-option" data-country-code="+226" data-country-name="Burkina Faso"><span>+226</span><span>Burkina Faso</span></button>
+        <button type="button" class="country-option" data-country-code="+227" data-country-name="Niger"><span>+227</span><span>Niger</span></button>
+        <button type="button" class="country-option" data-country-code="+237" data-country-name="Cameroun"><span>+237</span><span>Cameroun</span></button>
+      </div>
+      <div class="country-error" data-country-error hidden role="alert">
+        <p data-country-message></p>
+        <button type="button" data-country-retry>Réessayer</button>
+      </div>
+    </section>
+  </div>
+  <script src="/pages/country-picker.js" defer></script>
+  <script src="/pages/auth-progress.js" defer></script>
+  <script src="/connexion/auth.js" defer></script>
+</body>
+</html>

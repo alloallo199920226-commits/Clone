@@ -3,38 +3,58 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f4f4f4">
-  <title>Connexion — IVECO</title>
+  <meta name="theme-color" content="#001321">
+  <title>Connexion — NARKE Industries</title>
   <link rel="stylesheet" href="/connexion/auth.css">
 </head>
 <body>
   <main class="auth-page">
-    <div class="brand">
-      <img class="brand-image" src="/pages/assets/iveco-auth-logo.png" alt="IVECO — EST.1975 ITALY">
+    <div class="hero-art">
+      <img class="hero-image" src="/pages/assets/narke-hero-reference.png" alt="NARKE Industries — fabricant de jet-ski électrique">
     </div>
 
     <section class="auth-card" aria-labelledby="page-title">
-      <h1 id="page-title" class="sr-only">Connectez-vous à votre compte</h1>
+      <h1 id="page-title">Connexion à votre compte</h1>
+      <p class="auth-subtitle">Accédez à l’univers Narke Industries</p>
       <form data-auth-form="login">
         <label class="sr-only" for="login-country">Pays</label>
         <button class="field country-trigger" id="login-country" type="button" aria-haspopup="dialog" aria-controls="country-dialog" aria-describedby="country-loading" aria-expanded="false">
-          <span data-country-label>Sélectionnez votre pays &gt;&gt;</span>
+          <span class="field-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.8"/><path d="M3.5 12h17M12 3.2c2.2 2.4 3.2 5.3 3.2 8.8s-1 6.4-3.2 8.8C9.8 18.4 8.8 15.5 8.8 12s1-6.4 3.2-8.8Z"/></svg>
+          </span>
+          <span class="field-value" data-country-label>Sélectionnez votre pays</span>
+          <svg class="dropdown-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
         </button>
         <input type="hidden" name="country" required>
 
-        <label class="sr-only" for="login-phone">Numéro de portable</label>
-        <div class="phone-field">
+        <label class="sr-only" for="login-phone">Numéro de téléphone</label>
+        <div class="field phone-field">
+          <span class="field-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M7.2 3.8 9.8 7l-1.7 2.5a15.3 15.3 0 0 0 6.4 6.4l2.5-1.7 3.2 2.6-.8 3.2c-.2.8-1 1.3-1.8 1.2C9.8 20 4 14.2 2.8 6.4c-.1-.8.4-1.6 1.2-1.8l3.2-.8Z"/></svg>
+          </span>
           <span class="phone-prefix" data-phone-prefix aria-hidden="true"></span>
-          <input class="field phone-input" id="login-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Veuillez entrer votre numéro de portable" required>
+          <input class="field phone-input" id="login-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Votre numéro de téléphone" required>
         </div>
 
         <label class="sr-only" for="login-password">Mot de passe</label>
-        <input class="field" id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Veuillez entrer votre mot de passe" required>
+        <div class="field password-field">
+          <span class="field-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="4.3" y="10" width="15.4" height="11" rx="1.8"/><path d="M7.7 10V7.4a4.3 4.3 0 0 1 8.6 0V10M12 14v3"/></svg>
+          </span>
+          <input class="field" id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Votre mot de passe" required>
+          <button class="password-toggle" type="button" data-password-toggle aria-pressed="false" aria-controls="login-password" aria-label="Afficher le mot de passe">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.8"/><path d="m4 4 16 16"/></svg>
+          </button>
+        </div>
 
         <label class="remember-row"><input type="checkbox" name="remember"> <span>Rester connecté pendant 7 jours</span></label>
 
-        <button class="primary-button" type="submit">Connectez-vous maintenant</button>
-        <p class="switch-copy">Pas de compte ? <a href="/inscription">Créer un compte</a></p>
+        <button class="primary-button" type="submit">
+          <span>Se connecter</span>
+          <span class="submit-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 12h14m-6-6 6 6-6 6"/></svg></span>
+        </button>
+        <div class="form-divider" aria-hidden="true"><span></span><b>ou</b><span></span></div>
+        <p class="switch-copy">Pas encore de compte ? <a href="/inscription">Créer un compte</a></p>
       </form>
       <p class="demo-notice" role="status" aria-live="polite"></p>
     </section>
