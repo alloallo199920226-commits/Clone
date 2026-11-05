@@ -100,9 +100,14 @@ body.notification-page .page-header {
 }
 
 .notification-telegram {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
   margin: 0 0 15px;
+}
+
+.notification-telegram a:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 
 .notification-telegram a {

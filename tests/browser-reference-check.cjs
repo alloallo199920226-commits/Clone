@@ -960,7 +960,7 @@ async function main() {
       await imagesLoaded();
       await noOverflow();
       await screenshot("shineray-support-reference");
-      assert.equal(await evaluate("document.querySelector('[data-contact]').href"), "https://t.me/Ivecoservice");
+      assert.equal(await evaluate("document.querySelector('[data-contact]').href"), "https://t.me/Narkeyatch");
       await call("Emulation.setDeviceMetricsOverride", {
         width: 390, height: 744, deviceScaleFactor: 1, mobile: true,
       });
