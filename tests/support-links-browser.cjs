@@ -14,7 +14,7 @@ module.exports = async ({call, evaluate, navigate, waitFor, screenshot}) => {
         text:a.textContent, href:a.href, target:a.target, rel:a.rel
       })), fits:document.documentElement.scrollWidth<=innerWidth && close.bottom<=innerHeight};
     })()`);
-    assert(popup.text.includes("3 500 FCFA"));
+    assert(popup.text.includes("300 FCFA"));
     assert(popup.text.includes("toutes les 24 heures après l’achat"));
     assert(popup.text.includes("10 h à 18 h, heure du Maroc"));
     assert(!popup.text.includes("références non activées"));

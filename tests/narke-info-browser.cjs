@@ -52,7 +52,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot }) => {
       assert.match(text,/24 heures/);
       assert.match(text,/18h00/);
       assert.match(text,/20\s*%/);
-      assert.match(text,/3[\u00a0 ]500/);
+      assert.match(text,/300 FCFA/);
       assert.match(text,/2[\u00a0 ]300/);
       assert.match(text,/premier dépôt/);
     }

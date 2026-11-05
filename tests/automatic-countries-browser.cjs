@@ -52,7 +52,7 @@ module.exports = async ({ evaluate, navigate, waitFor, screenshot, trackUser }) 
   }
   // Invalid URL amounts cannot become a draft.
   await evaluate("sessionStorage.removeItem('shineray-deposit-draft')");
-  await navigate("/choisir-operateur?amount=3499&channel=2");
+  await navigate("/choisir-operateur?amount=299&channel=2");
   assert.equal(await evaluate("document.querySelector('[data-deposit-missing]').hidden"), false);
-  console.log("PASS: BJ/BF/TG/CI/CM automatic operators and country prefixes, BF Orange OTP/USSD, CI Wave manual when configured, 3500-FCFA selections recovered after lost sessionStorage, 3499 rejected; no payment initiated.");
+  console.log("PASS: BJ/BF/TG/CI/CM automatic operators and country prefixes, BF Orange OTP/USSD, CI Wave manual when configured, 3500-FCFA selections recovered after lost sessionStorage, 299 rejected; no payment initiated.");
 };

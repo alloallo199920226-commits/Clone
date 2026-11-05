@@ -383,7 +383,7 @@ async function main() {
     }
     if (process.argv.includes("--recharge-amounts")) {
       await navigate("/recharger");
-      const expected = [3500,7000,12000,20000,40000,75000,100000,150000,250000];
+      const expected = [300,7000,12000,20000,40000,75000,100000,150000,250000];
       assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-amount-choice]')].map(b=>Number(b.dataset.amountChoice))"), expected);
       for (const amount of expected) {
         await evaluate(`document.querySelector('[data-amount-choice="${amount}"]').click()`);
@@ -395,10 +395,10 @@ async function main() {
         assert(await evaluate("parseFloat(getComputedStyle(document.querySelector('.recharge-amount')).borderTopWidth)>=1"));
       }
       await call("Emulation.setDeviceMetricsOverride", {width:390,height:844,deviceScaleFactor:1,mobile:true});
-      for (const amount of [500, 3499]) {
+      for (const amount of [0, 299]) {
         await evaluate(`document.querySelector('#amount').value='${amount}';document.querySelector('[data-payment-action]').click()`);
         assert.equal(await evaluate("location.pathname"), "/recharger");
-        assert(await evaluate("document.querySelector('[data-payment-status]').textContent.replace(/\\s/g,'').includes('3500')"));
+        assert(await evaluate("document.querySelector('[data-payment-status]').textContent.replace(/\\s/g,'').includes('300')"));
       }
       await evaluate("document.querySelector('#amount').value='3500';document.querySelector('[data-payment-action]').click()");
       await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false' && document.querySelector('[data-deposit-amount]')?.textContent.replace(/[\\s,]/g,'').includes('3500')");
@@ -413,7 +413,7 @@ async function main() {
       await evaluate("document.querySelector('[data-payment-action]').click()");
       await waitFor("location.pathname==='/choisir-operateur'");
       assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('shineray-deposit-draft')).amount_fcfa"), 5432);
-      console.log("PASS: all nine recharge presets, clear input border, no overflow at390/472/900, 500/3499 rejected, 3500 accepted/restored and custom amount carried to payment; no payment submitted.");
+      console.log("PASS: all nine recharge presets, clear input border, no overflow at390/472/900, 0/299 rejected, 3500 accepted/restored and custom amount carried to payment; no payment submitted.");
       return;
     }
     if (process.argv.includes("--automatic-countries")) {

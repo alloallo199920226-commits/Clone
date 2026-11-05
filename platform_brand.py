@@ -6,9 +6,9 @@ import re
 
 BRAND_SCRIPT = b'<script src="/pages/narke-brand.js?v=narke2" defer></script>'
 FAVICON_LINKS = (
-    b'<link rel="icon" type="image/x-icon" href="/favicon.ico?v=narke2">'
-    b'<link rel="icon" type="image/png" sizes="64x64" href="/pages/assets/narke-favicon.png?v=narke2">'
-    b'<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=narke2">'
+    b'<link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon.ico?v=narke3">'
+    b'<link rel="icon" type="image/png" sizes="64x64" href="/pages/assets/narke-favicon.png?v=narke3">'
+    b'<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=narke3">'
 )
 BRAND_META = (
     b'<meta name="theme-color" content="#00131e">'
@@ -16,7 +16,7 @@ BRAND_META = (
     b'<meta name="apple-mobile-web-app-title" content="NARKE">'
     b'<meta property="og:site_name" content="NARKE Industries">'
     b'<meta property="og:type" content="website">'
-    b'<link rel="manifest" href="/manifest.webmanifest?v=narke2">'
+    b'<link rel="manifest" href="/manifest.webmanifest?v=narke3">'
 )
 LEGACY_BRAND = re.compile(r"\b(?:IVECO|SHINERAY|SWM|Sprite|AERONOVA|Valhalla)\b", re.I)
 LOGOS = {

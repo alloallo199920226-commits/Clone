@@ -50,6 +50,7 @@ STATIC_FILES = {
     "/pages/missions.js": ("pages/missions.js", "text/javascript; charset=utf-8"),
     "/pages/missions.css": ("pages/missions.css", "text/css; charset=utf-8"),
     "/favicon.ico": ("pages/assets/narke-favicon.ico", "image/x-icon"),
+    "/favicon.png": ("pages/assets/narke-favicon.png", "image/png"),
     "/apple-touch-icon.png": ("pages/assets/narke-apple-touch-icon.png", "image/png"),
     "/apple-touch-icon-precomposed.png": ("pages/assets/narke-apple-touch-icon.png", "image/png"),
     "/manifest.webmanifest": ("pages/manifest.webmanifest", "application/manifest+json"),

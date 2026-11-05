@@ -116,7 +116,7 @@ massive de comptes est désactivée pour préserver les soldes et les historique
 
 - Bonus de bienvenue : 2 300 FCFA, crédité une seule fois à la création d’un nouveau compte.
   Pas de versement rétroactif aux comptes existants.
-- Dépôt minimum : 3 500 FCFA. Le seuil de retrait et les prix VIP ne sont pas modifiés.
+- Dépôt minimum : 300 FCFA. Le seuil de retrait et les prix VIP ne sont pas modifiés.
 - Parrainage : 40 % / 2 % / 1 % sur trois niveaux, uniquement sur le premier dépôt
   effectivement approuvé de chaque filleul. Les dépôts suivants ne sont pas commissionnés.
 - Les commissions sont calculées en FCFA entiers, arrondies à l’entier inférieur.

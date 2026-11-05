@@ -1,13 +1,30 @@
 const assert = require("node:assert/strict");
 
 module.exports = async ({call,evaluate,waitFor,navigate,screenshot}) => {
-  const amounts=[3500,7000,12000,20000,40000,75000,100000,150000,250000];
+  const amounts=[300,7000,12000,20000,40000,75000,100000,150000,250000];
   const setAmount=async amount=>evaluate(`(()=>{
     const input=document.querySelector('#amount'); input.value='${amount}';
     input.dispatchEvent(new Event('input',{bubbles:true}));
   })()`);
   await navigate("/recharger");
-  assert.equal(await evaluate("document.querySelector('#amount').min"),"3500");
+  assert.match(await evaluate("document.querySelector('link[rel=icon]').getAttribute('href')"),/v=narke3/);
+  const icons=await evaluate(`(async()=>{
+    const statuses=await Promise.all(['/favicon.ico','/favicon.png','/apple-touch-icon.png']
+      .map(async url=>(await fetch(url)).status));
+    const manifest=await(await fetch('/manifest.webmanifest')).json();
+    const img=new Image(); img.src='/favicon.png?v=narke3'; await img.decode();
+    const canvas=document.createElement('canvas'); canvas.width=img.naturalWidth; canvas.height=img.naturalHeight;
+    const context=canvas.getContext('2d'); context.drawImage(img,0,0);
+    const pixels=context.getImageData(0,0,canvas.width,canvas.height).data;
+    let white=0;
+    for(let i=0;i<pixels.length;i+=4) if(pixels[i]>200&&pixels[i+1]>200&&pixels[i+2]>200) white++;
+    return {statuses,width:img.naturalWidth,height:img.naturalHeight,white,manifest};
+  })()`);
+  assert.deepEqual(icons.statuses,[200,200,200]);
+  assert.equal(icons.width,64); assert.equal(icons.height,64);
+  assert(icons.white>40,"The NARKE favicon must include the readable white N, not just a thin cyan wave");
+  assert(icons.manifest.icons.every(icon=>icon.src.endsWith('?v=narke3')));
+  assert.equal(await evaluate("document.querySelector('#amount').min"),"300");
   assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-amount-choice]')].map(e=>Number(e.dataset.amountChoice))"),amounts);
   for (const amount of amounts) {
     await evaluate(`document.querySelector('[data-amount-choice="${amount}"]').click()`);
@@ -16,8 +33,8 @@ module.exports = async ({call,evaluate,waitFor,navigate,screenshot}) => {
   }
   await setAmount(3555);
   assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice][aria-pressed=true]').length"),0);
-  await setAmount(3500);
-  assert.equal(await evaluate("document.querySelector('[data-amount-choice=\"3500\"]').getAttribute('aria-pressed')"),"true");
+  await setAmount(300);
+  assert.equal(await evaluate("document.querySelector('[data-amount-choice=\"300\"]').getAttribute('aria-pressed')"),"true");
   for (const width of [320,390,393,430,472,768,1280]) {
     await call("Emulation.setDeviceMetricsOverride",{width,height:1000,deviceScaleFactor:1,mobile:width<700});
     await waitFor("[...document.images].every(i=>i.complete&&i.naturalWidth>0)");
@@ -44,12 +61,12 @@ module.exports = async ({call,evaluate,waitFor,navigate,screenshot}) => {
     if(width===472||width===1280) await screenshot(`narke-recharge-${width}`);
   }
   await call("Emulation.setDeviceMetricsOverride",{width:472,height:1000,deviceScaleFactor:1,mobile:true});
-  for (const amount of [500,3499,3500.5]) {
+  for (const amount of [0,299,300.5]) {
     await setAmount(amount);
     await evaluate("document.querySelector('[data-payment-action]').click()");
     assert.equal(await evaluate("location.pathname"),"/recharger");
     assert.equal(await evaluate("document.querySelector('#amount').getAttribute('aria-invalid')"),"true");
-    assert(await evaluate("document.querySelector('[data-payment-status]').textContent.replace(/\\s/g,'').includes('3500')"));
+    assert(await evaluate("document.querySelector('[data-payment-status]').textContent.replace(/\\s/g,'').includes('300')"));
   }
   await screenshot("narke-recharge-invalid");
   await evaluate("document.querySelector('[data-amount-choice=\"7000\"]').click()");
@@ -66,13 +83,14 @@ module.exports = async ({call,evaluate,waitFor,navigate,screenshot}) => {
   await navigate("/recharger");
   assert.equal(await evaluate("document.querySelector('#amount').value"),"3555");
   assert.equal(await evaluate("document.querySelector('[data-channel-choice=\"1\"]').getAttribute('aria-pressed')"),"true");
-  await evaluate("document.querySelector('[data-amount-choice=\"3500\"]').click()");
+  await evaluate("document.querySelector('[data-amount-choice=\"300\"]').click()");
   await evaluate("document.querySelector('[data-channel-choice=\"2\"]').click();document.querySelector('[data-payment-action]').click()");
   await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false'");
+  assert.equal(await evaluate("new URLSearchParams(location.search).get('amount')"),"300");
   assert.equal(await evaluate("new URLSearchParams(location.search).get('channel')"),"2");
   await navigate("/recharger");
-  assert.equal(await evaluate("document.querySelector('[data-amount-choice=\"3500\"]').getAttribute('aria-pressed')"),"true");
+  assert.equal(await evaluate("document.querySelector('[data-amount-choice=\"300\"]').getAttribute('aria-pressed')"),"true");
   await call("Emulation.setEmulatedMedia",{features:[{name:"prefers-reduced-motion",value:"reduce"}]});
   assert(await evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches"));
-  console.log("PASS: NARKE recharge at seven widths, all nine presets, custom input and restored selection, minimum3500 validation, both real channel routes and draft restoration; no payment submitted.");
+  console.log("PASS: NARKE recharge at seven widths, all nine presets, minimum300 validation, both real channel routes and draft restoration; no payment submitted.");
 };
