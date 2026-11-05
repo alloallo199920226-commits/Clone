@@ -640,6 +640,10 @@ async function main() {
       assert.deepEqual(errors, []);
       return;
     }
+    if (process.argv.includes("--narke-info")) {
+      await require("./narke-info-browser.cjs")({ call, evaluate, waitFor, navigate, screenshot });
+      return;
+    }
     if (process.argv.includes("--about-loading")) {
       await require("./about-loading-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot, paused, base,

@@ -84,6 +84,18 @@ sombre.
 les variantes de démonstration ne remplacent jamais les états réels confirmés
 par le serveur.
 
+Les étapes du paiement automatique doivent tenir à l’écran sans défilement,
+avec les vrais logos des moyens de paiement dès la sélection.
+
+**Why:** après intégration de la direction immersive, l’utilisateur a demandé
+explicitement des étapes non défilables et a refusé les moyens de paiement
+représentés seulement par du texte.
+
+**How to apply:** la compacité prime sur la hauteur décorative de la maquette ;
+conserver les actions accessibles sur petit écran, y compris pour le code
+temporaire et les messages de connexion interrompue, sans masquer un contrôle
+par un simple débordement coupé.
+
 Verify brand identity in downloaded logos, not just the search result name.
 
 **Why:** searches for Moov Africa returned unrelated Moov Inc. assets, and MTN results mixed older multicolor marks with the requested black/yellow mark.

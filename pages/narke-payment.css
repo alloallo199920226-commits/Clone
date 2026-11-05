@@ -181,3 +181,134 @@ body[data-payment-state="failed"] .narke-result-symbol { border-style: solid; bo
 @media (prefers-reduced-motion:reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }
+
+/* Payment is a single-screen task. Keep essential controls in the viewport;
+   the manual-transfer document retains its normal document layout. */
+body:is(.deposit-page--operator, .narke-automatic) { height: 100dvh; overflow: hidden; }
+body:is(.deposit-page--operator, .narke-automatic) .narke-payment-scene {
+  height: 100dvh; min-height: 0; display: flex; flex-direction: column;
+  padding-block: env(safe-area-inset-top) env(safe-area-inset-bottom);
+  background-position: center 40%; background-attachment: scroll;
+}
+body:is(.deposit-page--operator, .narke-automatic) .narke-payment-topbar { padding-block: 10px 6px; flex: none; }
+body:is(.deposit-page--operator, .narke-automatic) .narke-payment-experience {
+  flex: 1; min-height: 0; padding: 12px 0 14px; display: flex; flex-direction: column; gap: 12px;
+  max-width: 660px; justify-content: center;
+}
+body:is(.deposit-page--operator, .narke-automatic) .narke-payment-intro { padding: 0; flex: none; }
+body:is(.deposit-page--operator, .narke-automatic) .narke-payment-eyebrow { font-size: 9px; margin-bottom: 6px; }
+body:is(.deposit-page--operator, .narke-automatic) .narke-payment-story { font-size: clamp(24px,6vw,36px); max-width: none; line-height: 1.05; }
+body:is(.deposit-page--operator, .narke-automatic) .narke-payment-lede { font-size: 12px; line-height: 1.4; margin-top: 7px; max-width: none; }
+body:is(.deposit-page--operator, .narke-automatic) .narke-payment-footer { display: none; }
+body:is(.deposit-page--operator, .narke-automatic) .deposit-card { width: 100%; margin: 0; padding: 18px; animation: none; }
+.deposit-page--operator .deposit-brand { font-size: 22px; flex-basis: auto; }
+.deposit-page--operator .deposit-heading-tools { margin-left: auto; margin-right: 0; }
+.deposit-page--operator .deposit-card-header { gap: 6px; }
+.deposit-page--operator .deposit-amount-bar { margin: 12px 0; padding: 10px 0; }
+.deposit-page--operator .deposit-section-title { font-size: 12px; margin-bottom: 7px; }
+.deposit-page--operator .deposit-operator-options { grid-template-columns: repeat(auto-fit,minmax(70px,1fr)); gap: 7px; }
+.deposit-page--operator .deposit-operator {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px; min-height: 72px; padding: 7px 4px; font-size: 11px; line-height: 1.15;
+}
+.deposit-operator .operator-logo { display: grid; place-items: center; width: 58px; height: 34px; padding: 2px; border-radius: 4px; background: #fff !important; }
+.deposit-operator .operator-logo img { display: block; width: 54px; height: 30px; max-width: 100%; max-height: 100%; object-fit: contain; }
+.deposit-operator .deposit-check { position: absolute; top: 4px; right: 5px; font-size: 11px; }
+.deposit-page--operator .deposit-phone-label { font-size: 12px; margin-top: 12px; margin-bottom: 6px; }
+.deposit-page--operator .deposit-phone-wrap, .deposit-page--operator .deposit-phone-input { min-height: 44px; }
+.deposit-page--operator .deposit-form-warning { font-size: 10px; line-height: 1.3; margin-top: 5px; }
+.deposit-page--operator .deposit-orange-otp { margin-top: 10px; padding: 10px; }
+.deposit-page--operator .deposit-orange-otp label { font-size: 12px; line-height: 1.3; margin-bottom: 5px; }
+.deposit-page--operator .deposit-orange-otp p { font-size: 11px; line-height: 1.35; margin-bottom: 7px; }
+.deposit-page--operator #deposit-orange-otp { min-height: 42px; padding-block: 8px; }
+.deposit-page--operator .deposit-submit { min-height: 46px; margin-top: 12px; padding-block: 10px; font-size: 14px; }
+.deposit-page--operator .deposit-form-status { margin-top: 7px; font-size: 12px; line-height: 1.35; }
+.narke-automatic .narke-payment-intro { position: relative; padding-left: 48px !important; }
+.narke-automatic .narke-result-symbol { position: absolute; left: 0; top: 3px; width: 36px; height: 36px; margin: 0; font-size: 23px; }
+.narke-automatic .narke-payment-eyebrow { display: none; }
+.narke-automatic .deposit-reference { margin: 12px 0; padding-top: 10px; }
+.narke-automatic .sonara-nonsuccess h2, .narke-automatic .sonara-success h1 { font-size: 22px; }
+.narke-automatic .sonara-status-message { margin: 10px 0; font-size: 13px; line-height: 1.4; }
+.narke-automatic .sonara-amount-line { padding-block: 10px; margin: 10px 0; }
+.narke-automatic .sonara-amount-line strong, .narke-automatic .sonara-success-amount { font-size: 28px; }
+.narke-automatic .sonara-success-amount { margin-top: 14px; }
+.narke-automatic .sonara-success-summary > p { display: none; } /* Receipt below states the confirmed credit once. */
+.narke-automatic .sonara-confirmed-status { margin-top: 12px; padding: 10px; }
+.narke-automatic .sonara-safety { font-size: 11px; line-height: 1.35; margin: 10px 0; }
+.narke-automatic .sonara-nonsuccess form { padding: 10px; margin-top: 10px; }
+.narke-automatic .sonara-nonsuccess label { font-size: 12px; line-height: 1.3; }
+.narke-automatic #sonara-otp { min-height: 42px; padding-block: 8px; }
+.narke-automatic .deposit-result, .narke-automatic .sonara-history-button { min-height: 44px; margin-top: 10px; padding-block: 10px; font-size: 13px; }
+.narke-automatic .sonara-nonsuccess > p > a, .narke-automatic .narke-support-link { min-height: 38px; padding: 10px; font-size: 12px; }
+.narke-automatic .sonara-nonsuccess > p:has(> a) { margin: 10px 0; }
+.narke-automatic .narke-failure-notice { margin: 10px 0; padding: 10px; font-size: 11px; line-height: 1.4; }
+.narke-automatic .deposit-payer-card { margin-top: 12px; padding-top: 8px; }
+.narke-automatic .sonara-redirect-notice { margin: 10px 0 0; font-size: 11px; }
+@media (max-height:700px) {
+  body:is(.deposit-page--operator, .narke-automatic) .narke-payment-topbar { padding-block: 5px 0; }
+  body:is(.deposit-page--operator, .narke-automatic) .narke-payment-experience { padding-block: 6px; gap: 8px; }
+  body:is(.deposit-page--operator, .narke-automatic) .narke-payment-lede,
+  body:is(.deposit-page--operator, .narke-automatic) .narke-payment-eyebrow { display: none; }
+  body:is(.deposit-page--operator, .narke-automatic) .narke-payment-story { font-size: 23px; }
+  body:is(.deposit-page--operator, .narke-automatic) .deposit-card { padding: 12px; }
+  .deposit-page--operator .deposit-brand { font-size: 18px; }
+  .deposit-page--operator .deposit-amount-bar { margin: 7px 0; padding-block: 7px; }
+  .deposit-page--operator .deposit-operator { min-height: 63px; gap: 3px; }
+  .deposit-page--operator .deposit-phone-label { margin-top: 8px; }
+  .deposit-page--operator .deposit-orange-otp { margin-top: 7px; padding: 8px; }
+  .deposit-page--operator .deposit-submit { margin-top: 8px; }
+  .narke-automatic .narke-payment-intro { min-height: 40px; display: flex; align-items: center; }
+  .narke-automatic .deposit-payer-card { margin-top: 8px; padding-top: 4px; }
+  .narke-automatic .sonara-status-message { font-size: 12px; }
+  .narke-automatic .sonara-nonsuccess h2, .narke-automatic .sonara-success h1 { font-size: 20px; }
+  .narke-automatic .deposit-reference { margin-block: 8px; padding-top: 8px; }
+}
+@media (max-height:740px) {
+  .deposit-page--operator .narke-payment-intro { display: none; }
+  .deposit-page--operator .deposit-amount-bar { padding-block: 5px; margin-block: 5px; }
+  .deposit-page--operator .deposit-section-title { margin-bottom: 5px; line-height: 1.2; }
+  .deposit-page--operator .deposit-operator { min-height: 57px; padding-block: 4px; }
+  .deposit-page--operator .operator-logo { height: 28px; }
+  .deposit-page--operator .deposit-form-warning { display: none; }
+  .deposit-page--operator .deposit-phone-label { margin-top: 7px; margin-bottom: 5px; }
+  .deposit-page--operator .deposit-orange-otp label { font-size: 11px; }
+  .deposit-page--operator .deposit-orange-otp p { font-size: 10px; line-height: 1.25; margin-bottom: 5px; }
+  .deposit-page--operator .deposit-submit { font-size: 13px; min-height: 42px; padding-block: 8px; }
+  .deposit-page--operator .deposit-form-status { font-size: 11px; line-height: 1.3; margin-top: 5px; }
+  .narke-automatic .narke-payment-intro { display: none; }
+  .narke-automatic .deposit-confirmation-header { gap: 5px; }
+  .narke-automatic .deposit-reference { margin-block: 6px; padding-top: 6px; }
+  .narke-automatic .narke-receipt-label { display: none; }
+  .narke-automatic .sonara-nonsuccess h2 { font-size: 18px; }
+  .narke-automatic .sonara-status-message { font-size: 11px; line-height: 1.35; margin-block: 7px; }
+  .narke-automatic .sonara-amount-line { padding-block: 6px; margin-block: 6px; }
+  .narke-automatic .sonara-amount-line strong { font-size: 24px; }
+  .narke-automatic .sonara-safety { font-size: 10px; margin-block: 7px; }
+  .narke-automatic .deposit-payer-card { display: none; }
+  .narke-automatic .deposit-result, .narke-automatic .sonara-history-button { min-height: 38px; padding: 8px 12px; margin-top: 7px; font-size: 12px; }
+  .narke-automatic .sonara-nonsuccess > p > a, .narke-automatic .narke-support-link { min-height: 32px; padding: 8px 10px; font-size: 11px; }
+  .narke-automatic .sonara-nonsuccess > p:has(> a) { margin-block: 7px; }
+  .narke-automatic .sonara-nonsuccess form { padding: 8px; margin-top: 7px; }
+  .narke-automatic .sonara-nonsuccess label, .narke-automatic [data-sonara-ussd] { font-size: 11px; margin-bottom: 5px; }
+  .narke-automatic .sonara-panel[data-payment-status="otp_required"] .sonara-safety { display: none; }
+  .narke-automatic .narke-failure-notice { font-size: 10px; margin-block: 7px; padding: 8px; }
+}
+.narke-recovery .deposit-section-title, .narke-recovery .deposit-operator-set,
+.narke-recovery .deposit-phone-label, .narke-recovery .deposit-phone-wrap,
+.narke-recovery .deposit-form-warning, .narke-recovery .deposit-orange-otp { display: none !important; }
+/* OTP needs more room than a receipt; compact its supporting copy at every
+   phone height instead of waiting for a generic "small screen" breakpoint. */
+.narke-otp-state .narke-payment-intro { display: none; }
+.narke-otp-state .deposit-card { padding: 12px !important; }
+.narke-otp-state .deposit-reference { margin-block: 6px; padding-top: 6px; }
+.narke-otp-state .narke-receipt-label, .narke-otp-state .deposit-payer-card,
+.narke-otp-state .sonara-safety { display: none; }
+.narke-otp-state .sonara-nonsuccess h2 { font-size: 18px; }
+.narke-otp-state .sonara-status-message { font-size: 11px; line-height: 1.35; margin-block: 7px; }
+.narke-otp-state .sonara-amount-line { padding-block: 6px; margin-block: 6px; }
+.narke-otp-state .sonara-amount-line strong { font-size: 24px; }
+.narke-otp-state .sonara-nonsuccess form { padding: 8px; margin-top: 7px; }
+.narke-otp-state .sonara-nonsuccess label, .narke-otp-state [data-sonara-ussd] { font-size: 11px; margin-bottom: 5px; }
+.narke-otp-state .deposit-result { min-height: 38px; padding: 8px 12px; margin-top: 7px; font-size: 12px; }
+.narke-otp-state .sonara-nonsuccess > p > a, .narke-otp-state .narke-support-link { min-height: 32px; padding: 8px 10px; font-size: 11px; }
+.narke-otp-state .sonara-nonsuccess > p:has(> a) { margin-block: 7px; }

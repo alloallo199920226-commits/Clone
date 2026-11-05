@@ -8,9 +8,20 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
     assert(!await evaluate("/IVECO|Valhalla|MAQUETTE|DEMO-NA/.test(document.title+' '+document.body.innerText)"));
     assert(await evaluate("getComputedStyle(document.querySelector('.narke-payment-scene')).backgroundImage.includes('narke-recharge-hero.jpg')"));
     assert(await evaluate("[...document.images].every(image=>image.complete&&image.naturalWidth>0)"), "All visible payment assets must load");
-    for (const width of [320, 390, 472, 768, 1280]) {
-      await call("Emulation.setDeviceMetricsOverride", { width, height: 844, deviceScaleFactor: 1, mobile: true });
+    for (const [width,height] of [[320,568],[390,667],[390,844],[472,802],[768,844],[1280,900]]) {
+      await call("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: true });
       assert(await evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), `Premium payment overflow at ${width}`);
+      const geometry = await evaluate(`(() => {
+        const card=document.querySelector('.deposit-card').getBoundingClientRect();
+        const buttons=[...document.querySelectorAll('.deposit-card a,.deposit-card button,.deposit-card input')]
+          .filter(n=>n.getBoundingClientRect().height>0);
+        return {top:card.top,bottom:card.bottom,viewport:innerHeight,
+          controls:buttons.every(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight+1;}),
+          height:document.documentElement.scrollHeight,
+          parts:[...document.querySelectorAll('.deposit-card-header,.deposit-amount-bar,.deposit-section-title,.deposit-operator-options,.deposit-phone-label,.deposit-phone-wrap,.deposit-form-warning,.deposit-orange-otp,.deposit-submit')].map(n=>[n.className,Math.round(n.getBoundingClientRect().height)])};
+      })()`);
+      assert(geometry.controls && geometry.top>=0 && geometry.bottom<=height+1 && geometry.height<=height+1,
+        `Single-screen controls clipped at ${width}×${height}: ${JSON.stringify(geometry)}`);
       assert(await evaluate("[...document.querySelectorAll('input')].filter(node=>node.getBoundingClientRect().height>0).every(node=>parseFloat(getComputedStyle(node).fontSize)>=16)"), "No mobile input zoom");
     }
     await call("Emulation.setDeviceMetricsOverride", { width:390, height:844, deviceScaleFactor:1, mobile:true });
@@ -23,6 +34,8 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await navigate("/choisir-operateur");
   await waitFor(`document.querySelectorAll('[data-operator]').length === ${operatorCount}`);
   await noProviderBrand();
+  await waitFor("[...document.querySelectorAll('.deposit-operator img')].every(img=>img.complete&&img.naturalWidth>0)");
+  assert.equal(await evaluate("document.querySelectorAll('.deposit-operator img').length"),operatorCount);
   await premiumLayout();
   assert.equal(await evaluate("document.querySelector('[data-deposit-prefix]').textContent"), prefix);
   if (prefix === "+228") {
@@ -84,6 +97,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await waitFor("document.querySelector('[type=submit]').textContent.includes('Vérifier mon paiement')");
   assert.match(await evaluate("document.querySelector('[data-deposit-status]').textContent"), /Ne payez pas une seconde fois/);
   assert(!await evaluate("document.body.innerText.includes('Load failed')"));
+  await premiumLayout();
   await evaluate("document.querySelector('#deposit-operator-form').requestSubmit()");
   await waitFor("!document.querySelector('[type=submit]').disabled");
   assert.equal(await evaluate("window.paymentPosts"), 1, "Retry after a lost response must be GET-only");
@@ -174,6 +188,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await evaluate(`document.querySelector('#deposit-phone').value=${JSON.stringify(phone)};
     document.querySelector('#deposit-operator-form').requestSubmit()`);
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'otp_required'");
+  await premiumLayout();
   await noProviderBrand();
   await screenshot("sonarapay-otp");
   await evaluate(`fetch('/api/test/sonarapay', {method:'POST',headers:{'Content-Type':'application/json'},

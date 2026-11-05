@@ -21,6 +21,10 @@
     const name = `${channel.operatorName || ""} ${channel.logoText || ""}`.toLowerCase();
     if (name.includes("mtn")) return "mtn";
     if (name.includes("moov")) return "moov";
+    if (name.includes("orange")) return "orange";
+    if (name.includes("telecel")) return "telecel";
+    if (name.includes("tmoney") || name.includes("t-money") || name.includes("mixx")) return "mixx";
+    if (name.includes("wave")) return "wave";
     return "other";
   };
   function fallbackLogo(node, channel, brand) {
@@ -33,8 +37,12 @@
   function populateLogo(logo, channel, brand) {
     logo.dataset.brand = brand;
     const configured = String(channel.logoUrl || "").trim();
-    const source = configured || (brand === "mtn" ? "/pages/assets/mtn-logo.png"
-      : brand === "moov" ? "/pages/assets/moov-africa-logo.png" : "");
+    const brandAssets = {
+      mtn: "/pages/assets/mtn-logo.png", moov: "/pages/assets/moov-africa-logo.png",
+      orange: "/pages/assets/orange-logo.png", telecel: "/pages/assets/telecel-logo.png",
+      mixx: "/pages/assets/mixx-logo.png", wave: "/pages/assets/wave-logo.png",
+    };
+    const source = configured || brandAssets[brand] || "";
     if (!source) { fallbackLogo(logo, channel, brand); return; }
     try {
       const parsed = new URL(source, location.origin);
@@ -322,10 +330,10 @@
       check.className = "deposit-check";
       check.setAttribute("aria-hidden", "true");
       check.textContent = "✓";
-      button.append(name, check);
+      button.append(logo, name, check);
       const choice = document.createElement("div");
       choice.className = "deposit-operator-choice";
-      choice.append(logo, button);
+      choice.append(button);
       options.append(choice);
     });
     const choose = operator => {
@@ -373,6 +381,7 @@
           set(submit, "sonaraRecover");
           status.textContent += ` ${t("sonaraRecoverNotice")}`;
         }
+        document.body.classList.toggle("narke-recovery", Boolean(draft.request_uncertain));
       } finally { submit.disabled = false; }
     };
     form.addEventListener("submit", async event => {

@@ -42,6 +42,7 @@
       }
     },
     async mount(id, populateLogo, operatorBrand) {
+      document.body.classList.add("narke-automatic");
       const content = document.querySelector("[data-deposit-content]");
       const panel = document.querySelector("[data-sonara-panel]");
       const message = panel.querySelector("[data-sonara-status]");
@@ -106,6 +107,7 @@
         // Presentation only: only the server's credited flag can show success.
         const visualState = credited ? "successful" : payment.status === "failed" ? "failed" : "pending";
         document.body.dataset.paymentState = visualState;
+        document.body.classList.toggle("narke-otp-state", !credited && payment.status === "otp_required");
         const visualKey = credited ? "Success" : visualState === "failed" ? "Failure" : "Pending";
         set(document.querySelector("[data-narke-title]"), `narke${visualKey}Hero`);
         set(document.querySelector("[data-narke-lede]"), `narke${visualKey}Lede`);
