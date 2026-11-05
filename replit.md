@@ -128,7 +128,8 @@ Les tests de suppression doivent rester isolés des données clients réelles.
 
 - Bonus de bienvenue : 1 500 FCFA, crédité une seule fois à la création d’un nouveau compte.
   Pas de versement rétroactif aux comptes existants.
-- Dépôt minimum : 300 FCFA. Les prix VIP ne sont pas modifiés.
+- Dépôt minimum : 2 500 FCFA pour les nouvelles demandes. Les prix VIP ne sont pas modifiés.
+- Les contraintes SQL conservent leur plancher historique pour préserver les anciennes opérations ; le seuil courant des nouvelles demandes est imposé côté serveur. Les anciennes demandes persistées restent réglables après vérification de leur montant et référence réels.
 - Retrait minimum : 1 500 FCFA ; frais : 20 %, arrondis au FCFA inférieur.
   Nombre de demandes illimité, sous réserve du solde disponible et des réservations
   existantes. VIP actif requis ; horaires inchangés : 09 h à 18 h au Maroc.

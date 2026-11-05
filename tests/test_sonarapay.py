@@ -124,6 +124,11 @@ class VerificationTests(unittest.TestCase):
 @unittest.skipUnless(os.environ.get("RUN_ACCOUNT_INTEGRATION_TESTS") == "1", "Development DB opt-in")
 class PaymentTests(unittest.TestCase):
     def setUp(self):
+        # Fixed provider fixtures exercise legacy 500-FCFA orders independently
+        # of today's admission policy, covered by test_deposit_minimum.
+        admission = patch.object(payments, "MIN_DEPOSIT_FCFA", 500)
+        admission.start()
+        self.addCleanup(admission.stop)
         self.ids = []
         self.references = {}
         self.env = patch.dict(os.environ, {"SONARAPAY_KEY": "isolated-test-key-not-live"})
@@ -183,16 +188,33 @@ class PaymentTests(unittest.TestCase):
         self.assertEqual(self.create.call_count, 1)
         self.assertEqual(self.check.call_count, 1)
 
-    def test_minimum_300_persists_and_settles_exactly_once(self):
-        order = payments.prepare(self.user, {**self.body(), "amount": 300})
+    def test_minimum_2500_persists_and_settles_exactly_once(self):
+        with patch.object(payments, "MIN_DEPOSIT_FCFA", 2500):
+            order = payments.prepare(self.user, {**self.body(), "amount": 2500})
         result = payments.advance(order, initiate=True)
         reference = result["provider_reference"]
         self.references[reference]["transaction"]["status"] = "successful"
         result = payments.advance(self.allow_check(result))
         self.assertIsNotNone(result["credited_at"])
-        self.assertEqual(self.balance(), 1800)
+        self.assertEqual(self.balance(), 4000)
         payments.advance(self.allow_check(result))
-        self.assertEqual(self.balance(), 1800)
+        self.assertEqual(self.balance(), 4000)
+
+    def test_old_persisted_order_can_settle_after_minimum_increase(self):
+        with patch.object(payments, "MIN_DEPOSIT_FCFA", 300):
+            order = payments.prepare(self.user, {**self.body(), "amount": 500})
+        result = payments.advance(order, initiate=True)
+        self.references[result["provider_reference"]]["transaction"]["status"] = "successful"
+        result = payments.advance(self.allow_check(result))
+        self.assertIsNotNone(result["credited_at"])
+        self.assertEqual(self.balance(), 2000)
+
+    def test_unknown_legacy_order_cannot_bypass_minimum(self):
+        with self.assertRaisesRegex(ValueError, "introuvable"):
+            payments.settle_approved_deposit(
+                self.user["id"], 500, "sonarapay:invented-order",
+                approval_method="automatic", existing_order_id=uuid.uuid4())
+        self.assertEqual(self.balance(), 1500)
 
     def test_ci_cm_operators_and_currency_are_scoped_and_settle_once(self):
         for prefix, operators in [("+225", ("orange_ci", "mtn_ci", "moov_ci")),

@@ -80,6 +80,7 @@ def review(handler, request_id, status):
             deposit_settlement.settle_approved_deposit(
                 row["user_id"], row["amount_fcfa"], "MAN-" + str(row["request_id"]),
                 approval_method="manual", console_handler=handler, connection=conn,
+                existing_order_id=row["id"],
                 receipt_details={"provider": "manual", "channel": channel["operatorName"],
                                  "payer_number": row["payer_phone"]})
         cur.execute("UPDATE shineray_manual_deposits SET status=%s WHERE id=%s", (status, request_id))

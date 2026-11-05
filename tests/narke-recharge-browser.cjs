@@ -24,7 +24,7 @@ module.exports = async ({call,evaluate,waitFor,navigate,screenshot}) => {
   assert.equal(icons.width,64); assert.equal(icons.height,64);
   assert(icons.white>40,"The NARKE favicon must include the readable white N, not just a thin cyan wave");
   assert(icons.manifest.icons.every(icon=>icon.src.endsWith('?v=narke3')));
-  assert.equal(await evaluate("document.querySelector('#amount').min"),"300");
+  assert.equal(await evaluate("document.querySelector('#amount').min"),"2500");
   assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-amount-choice]')].map(e=>Number(e.dataset.amountChoice))"),amounts);
   for (const amount of amounts) {
     await evaluate(`document.querySelector('[data-amount-choice="${amount}"]').click()`);
@@ -33,8 +33,8 @@ module.exports = async ({call,evaluate,waitFor,navigate,screenshot}) => {
   }
   await setAmount(3555);
   assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice][aria-pressed=true]').length"),0);
-  await setAmount(300);
-  assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice][aria-pressed=true]').length"),0);
+  await setAmount(2500);
+  assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice][aria-pressed=true]').length"),1);
   for (const width of [320,390,393,430,472,768,1280]) {
     await call("Emulation.setDeviceMetricsOverride",{width,height:1000,deviceScaleFactor:1,mobile:width<700});
     await waitFor("[...document.images].every(i=>i.complete&&i.naturalWidth>0)");
@@ -61,12 +61,12 @@ module.exports = async ({call,evaluate,waitFor,navigate,screenshot}) => {
     if(width===472||width===1280) await screenshot(`narke-recharge-${width}`);
   }
   await call("Emulation.setDeviceMetricsOverride",{width:472,height:1000,deviceScaleFactor:1,mobile:true});
-  for (const amount of [0,299,300.5]) {
+  for (const amount of [0,300,2499,2500.5]) {
     await setAmount(amount);
     await evaluate("document.querySelector('[data-payment-action]').click()");
     assert.equal(await evaluate("location.pathname"),"/recharger");
     assert.equal(await evaluate("document.querySelector('#amount').getAttribute('aria-invalid')"),"true");
-    assert(await evaluate("document.querySelector('[data-payment-status]').textContent.replace(/\\s/g,'').includes('300')"));
+    assert(await evaluate("document.querySelector('[data-payment-status]').textContent.replace(/\\s/g,'').includes('2500')"));
   }
   await screenshot("narke-recharge-invalid");
   await evaluate("document.querySelector('[data-amount-choice=\"7000\"]').click()");
@@ -83,15 +83,15 @@ module.exports = async ({call,evaluate,waitFor,navigate,screenshot}) => {
   await navigate("/recharger");
   assert.equal(await evaluate("document.querySelector('#amount').value"),"3555");
   assert.equal(await evaluate("document.querySelector('[data-channel-choice=\"1\"]').getAttribute('aria-pressed')"),"true");
-  await setAmount(300);
+  await setAmount(2500);
   await evaluate("document.querySelector('[data-channel-choice=\"2\"]').click();document.querySelector('[data-payment-action]').click()");
   await waitFor("location.pathname==='/choisir-operateur' && document.querySelector('[data-deposit-content]')?.getAttribute('aria-busy')==='false'");
-  assert.equal(await evaluate("new URLSearchParams(location.search).get('amount')"),"300");
+  assert.equal(await evaluate("new URLSearchParams(location.search).get('amount')"),"2500");
   assert.equal(await evaluate("new URLSearchParams(location.search).get('channel')"),"2");
   await navigate("/recharger");
-  assert.equal(await evaluate("document.querySelector('#amount').value"),"300");
-  assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice][aria-pressed=true]').length"),0);
+  assert.equal(await evaluate("document.querySelector('#amount').value"),"2500");
+  assert.equal(await evaluate("document.querySelectorAll('[data-amount-choice][aria-pressed=true]').length"),1);
   await call("Emulation.setEmulatedMedia",{features:[{name:"prefers-reduced-motion",value:"reduce"}]});
   assert(await evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches"));
-  console.log("PASS: NARKE recharge at seven widths, all six requested presets, minimum300 validation, both real channel routes and draft restoration; no payment submitted.");
+  console.log("PASS: NARKE recharge at seven widths, all six presets, minimum2500 validation, both real channel routes and draft restoration; no payment submitted.");
 };

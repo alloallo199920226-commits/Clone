@@ -13,10 +13,13 @@ from financial_policy import MIN_DEPOSIT_FCFA, REFERRAL_PERCENTAGES
 
 def settle_approved_deposit(user_id, amount_fcfa, provider_reference, *,
                             approval_method, approved_by=None, console_handler=None, receipt_details=None,
-                            connection=None):
+                            connection=None, existing_order_id=None):
     if type(user_id) is not int or type(amount_fcfa) is not int:
         raise ValueError("Compte ou montant invalide.")
-    if not MIN_DEPOSIT_FCFA <= amount_fcfa <= auth_backend.MAX_ACTIVITY_AMOUNT:
+    # Old, persisted orders may still settle; this exception is never client input.
+    legacy_order = existing_order_id is not None
+    minimum = 300 if legacy_order else MIN_DEPOSIT_FCFA
+    if not minimum <= amount_fcfa <= auth_backend.MAX_ACTIVITY_AMOUNT:
         raise ValueError(f"Le dépôt minimum est de {MIN_DEPOSIT_FCFA} FCFA.")
     if not isinstance(provider_reference, str):
         raise ValueError("Référence de paiement invalide.")
@@ -41,6 +44,17 @@ def settle_approved_deposit(user_id, amount_fcfa, provider_reference, *,
                 actor = cursor.fetchone()
                 if not actor or not actor["is_admin"]:
                     raise auth_backend.AuthError(403, "Accès réservé à l’administration.")
+        if legacy_order and amount_fcfa < MIN_DEPOSIT_FCFA:
+            if approval_method == "automatic":
+                cursor.execute("""SELECT id FROM shineray_sonarapay_orders
+                    WHERE id=%s AND user_id=%s AND amount_fcfa=%s AND 'sonarapay:' || provider_reference=%s""",
+                    (existing_order_id, user_id, amount_fcfa, reference))
+            else:
+                cursor.execute("""SELECT id FROM shineray_manual_deposits
+                    WHERE id=%s AND user_id=%s AND amount_fcfa=%s AND 'MAN-' || request_id::text=%s""",
+                    (existing_order_id, user_id, amount_fcfa, reference))
+            if not cursor.fetchone():
+                raise ValueError("Ancienne demande de dépôt introuvable ou incohérente.")
         # Serialize ALL approved deposits for this member, including concurrent
         # callbacks with different references. NO KEY UPDATE allows FK inserts.
         cursor.execute("SELECT id, referred_by FROM shineray_users WHERE id = %s FOR NO KEY UPDATE", (user_id,))

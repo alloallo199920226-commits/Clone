@@ -199,6 +199,7 @@ def advance(order, *, initiate=False, otp=None):
                 settle_approved_deposit(order["user_id"], order["amount_fcfa"],
                                         "sonarapay:" + order["provider_reference"],
                                         approval_method="automatic",
+                                        existing_order_id=order["id"],
                                         receipt_details={"provider": "sonarapay",
                                                          "channel": provider.OPERATORS[order["operator_id"]]["operatorName"],
                                                          "payer_number": order["payer_phone"]})

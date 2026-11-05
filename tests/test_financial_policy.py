@@ -19,6 +19,11 @@ from server import Handler
 @unittest.skipUnless(os.environ.get("RUN_ACCOUNT_INTEGRATION_TESTS") == "1", "Development DB opt-in")
 class FinancialPolicyTests(unittest.TestCase):
     def setUp(self):
+        # Keep commission/concurrency arithmetic fixtures stable. The current
+        # production admission threshold is checked in test_deposit_minimum.
+        minimum = patch("deposit_settlement.MIN_DEPOSIT_FCFA", 500)
+        minimum.start()
+        self.addCleanup(minimum.stop)
         self.ids = []
         self.console_cookies = {}
         self.fixture_key = secrets.token_hex(12)

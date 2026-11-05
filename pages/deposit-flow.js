@@ -106,12 +106,12 @@
   // A reopened page or a new embedded-browser context may lose sessionStorage.
   // Recover only the selected amount/channel, never a phone, OTP or paid status.
   if (form && (!draft || !Number.isSafeInteger(draft.amount_fcfa) ||
-      draft.amount_fcfa < 300 || ![1, 2].includes(draft.channel) ||
+      draft.amount_fcfa < 2500 || ![1, 2].includes(draft.channel) ||
       !Number.isFinite(draft.created_at))) {
     const selection = new URL(location.href).searchParams;
     const amount = selection.get("amount") || "";
     const channel = selection.get("channel") || "";
-    if (/^\d{3,9}$/.test(amount) && Number(amount) >= 300 &&
+    if (/^\d{3,9}$/.test(amount) && Number(amount) >= 2500 &&
         Number(amount) <= 500000000 && /^[12]$/.test(channel)) {
       draft = { amount_fcfa: Number(amount), channel: Number(channel), created_at: Date.now() };
       if (!save()) return;
@@ -121,7 +121,7 @@
     window.sonaraPay.mount(draft.payment_id, populateLogo, operatorBrand);
     return;
   }
-  if (!draft || !Number.isSafeInteger(draft.amount_fcfa) || draft.amount_fcfa < 300 ||
+  if (!draft || !Number.isSafeInteger(draft.amount_fcfa) || draft.amount_fcfa < 2500 ||
       ![1, 2].includes(draft.channel) || !Number.isFinite(draft.created_at) ||
       Date.now() - draft.created_at < 0) {
     showMissing();
