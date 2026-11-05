@@ -4,6 +4,7 @@ module.exports = async ({call, evaluate, navigate, waitFor, screenshot}) => {
   const whatsapp = "https://chat.whatsapp.com/IZaOdJBtJr06Rj8z6jas9O?s=cl&p=a&mlu=4&ilr=4&iam=2";
   const group = "https://t.me/+uZ-9XZeYk35lOWU0";
   const support = "https://t.me/Narkeyatch";
+  const popupSupport = "https://whatsapp.com/channel/0029VbEIGFwCXC3P9ltlHF02";
   for (const width of [320, 390, 472]) {
     await call("Emulation.setDeviceMetricsOverride", {width, height:844, deviceScaleFactor:1, mobile:true});
     await navigate("/accueil");
@@ -21,9 +22,9 @@ module.exports = async ({call, evaluate, navigate, waitFor, screenshot}) => {
     assert(!popup.text.includes("références non activées"));
     assert(!popup.text.includes("à tout moment"));
     assert(!popup.text.includes("Chaîne Telegram"));
-    assert.deepEqual(popup.links.map(a=>a.href), [whatsapp, group, support]);
+    assert.deepEqual(popup.links.map(a=>a.href), [whatsapp, group, popupSupport]);
     assert.equal(popup.links[0].text, "Groupe WhatsApp");
-    assert(popup.text.includes("@Narkeyatch"));
+    assert.equal(popup.links[2].text, "Service client · WhatsApp");
     assert(popup.links.every(a=>a.target==="_blank" && a.rel.includes("noopener")));
     assert(popup.fits, "Popup fits screen");
     if (width === 390) await screenshot("iveco-notification-contacts");
@@ -42,5 +43,5 @@ module.exports = async ({call, evaluate, navigate, waitFor, screenshot}) => {
     assert(contacts.fits, "Contacts fit screen");
     if (width === 390) await screenshot("iveco-service-contacts");
   }
-  console.log("PASS: popup and service page show exact WhatsApp group, Telegram group and @Narkeyatch links; no overflow at320/390/472px. External destinations were not contacted.");
+  console.log("PASS: popup-only WhatsApp service link updated; service page retains @Narkeyatch; group links unchanged; no overflow at320/390/472px. External destinations were not contacted.");
 };
