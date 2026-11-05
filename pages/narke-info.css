@@ -225,6 +225,88 @@
   text-underline-offset: 3px;
 }
 
+.investment-section {
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  border: 1px solid rgba(0, 229, 242, .32);
+  border-radius: 15px;
+  margin: 8px -10px 18px;
+  padding: 24px 20px 22px;
+  background:
+    linear-gradient(112deg, rgba(0, 65, 83, .7), rgba(0, 28, 42, .92) 58%),
+    #002638;
+  box-shadow: inset 0 1px rgba(115, 239, 245, .08), 0 14px 34px rgba(0, 0, 0, .16);
+  scroll-margin-top: 18px;
+}
+.investment-section .info-section-copy > p:first-child { margin-bottom: 15px; }
+.investment-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  border: 1px solid rgba(115, 239, 245, .24);
+  border-radius: 10px;
+  background: rgba(0, 17, 27, .72);
+  scrollbar-color: #087c8c #00212f;
+  scrollbar-width: thin;
+}
+.investment-table-scroll:focus-visible {
+  outline: 2px solid var(--info-cyan);
+  outline-offset: 3px;
+}
+.investment-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  color: #e6f7fa;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+.investment-table caption {
+  padding: 13px 14px 12px;
+  color: var(--info-cyan);
+  font: 700 13px/1.35 "Manrope", sans-serif;
+  letter-spacing: .04em;
+  text-align: left;
+}
+.investment-table th,
+.investment-table td {
+  border-top: 1px solid rgba(111, 204, 216, .16);
+  padding: 12px 14px;
+  white-space: nowrap;
+}
+.investment-table thead th {
+  background: rgba(0, 116, 134, .19);
+  color: #a9eaf0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.investment-table tbody tr { transition: background-color .16s ease; }
+.investment-table tbody tr:hover { background: rgba(0, 229, 242, .075); }
+.investment-status {
+  min-height: 1.5em;
+  margin: 12px 0 0;
+  color: var(--info-muted);
+  font-size: 12px;
+}
+.investment-retry {
+  min-height: 38px;
+  border: 1px solid rgba(0, 229, 242, .65);
+  border-radius: 22px;
+  padding: 0 15px;
+  background: #00394e;
+  color: #e8fbfd;
+  font: 700 12px/1 "DM Sans", sans-serif;
+  cursor: pointer;
+  transition: background-color .18s ease, transform .18s ease;
+}
+.investment-retry:hover { transform: translateY(-1px); background: #005267; }
+.investment-retry:focus-visible {
+  outline: 2px solid var(--info-cyan);
+  outline-offset: 3px;
+}
+
 .info-photo {
   overflow: hidden;
   margin: 0 0 16px;
@@ -384,6 +466,15 @@
   .info-jumpbar { gap: 7px; margin: 13px 0 27px; }
   .info-jumpbar a { min-height: 34px; padding: 4px 11px; font-size: 11px; }
   .info-section { grid-template-columns: 1fr; gap: 12px; padding: 24px 0 25px; }
+  .investment-section {
+    gap: 11px;
+    margin: 6px 0 16px;
+    padding: 19px 12px 16px;
+  }
+  .investment-table { font-size: 12px; }
+  .investment-table th,
+  .investment-table td { padding: 11px 12px; }
+  .investment-table thead th { font-size: 9px; }
   .info-section h2 { max-width: 440px; font-size: 25px; }
   .info-number { margin-bottom: 8px; }
   .info-image-wide { grid-column: auto; }
