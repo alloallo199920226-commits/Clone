@@ -496,20 +496,21 @@
   }
 }
 
-/* NARKE profile: a warm, editorial brand portrait, deliberately distinct
-   from the dark, clause-led reference and rules pages above. */
+/* NARKE profile: the site's marine palette, with an editorial layout
+   distinct from the clause-led rules page. */
 .about-page {
-  --about-paper: #e9f0eb;
-  --about-paper-deep: #dce8e2;
-  --about-ink: #000;
-  --about-muted: #000;
-  --about-teal: #147c82;
-  --about-line: rgba(16, 69, 79, .2);
+  --about-paper: #00131e;
+  --about-paper-deep: #002333;
+  --about-ink: #f5fbff;
+  --about-muted: #e0edf4;
+  --about-teal: #00e8f5;
+  --about-line: rgba(0, 232, 245, .25);
   width: min(100%, 1080px);
   padding: 0 38px 58px;
   background:
-    radial-gradient(ellipse at 85% 38%, rgba(138, 192, 180, .2), transparent 32rem),
-    linear-gradient(155deg, #f0f4ee 0%, var(--about-paper) 52%, #e2ece7 100%);
+    radial-gradient(ellipse at 52% 16%, rgb(0 169 217 / 12%), transparent 34rem),
+    radial-gradient(ellipse at 6% 72%, rgb(0 232 245 / 7%), transparent 30rem),
+    var(--about-paper);
   color: var(--about-ink);
   box-shadow: 0 10px 70px rgba(0, 10, 19, .28);
 }
@@ -529,14 +530,14 @@
   align-content: center;
   margin-top: 30px;
   overflow: hidden;
-  border: 0;
-  border-radius: 2px;
-  background: #dfe8e3;
+  border: 1px solid var(--about-line);
+  border-radius: 16px;
+  background: var(--about-paper);
   box-shadow: 0 18px 42px rgba(16, 48, 57, .12);
 }
 .about-page .info-hero::after {
   background:
-    linear-gradient(90deg, #e9f0eb 0%, #e9f0eb 35%, rgba(233,240,235,.92) 47%, rgba(233,240,235,.13) 75%, transparent 100%),
+    linear-gradient(90deg, #00131e 0%, #00131e 35%, rgba(0,19,30,.96) 47%, rgba(0,19,30,.13) 75%, transparent 100%),
     linear-gradient(0deg, rgba(6, 25, 36, .1), transparent 40%);
 }
 .about-page .info-hero img {
@@ -722,16 +723,17 @@
 .about-page .info-bottom p { color: #506a72; font-size: 13px; }
 .about-page .info-cta {
   gap: 12px;
-  border: 1px solid #0d6870;
-  border-radius: 2px;
+  border: 1px solid var(--about-teal);
+  border-radius: 12px;
   padding-inline: 17px;
-  background: #125b65;
-  box-shadow: none;
-  color: #f2f6ef;
+  background: linear-gradient(135deg, #00e8f5, #00bcd4);
+  box-shadow: 0 0 22px rgb(0 232 245 / 18%);
+  color: #00131e;
+  font-weight: 700;
   font-size: 12px;
   transition: transform .2s ease;
 }
-.about-page .info-cta:hover { transform: translateY(-2px); background: #0f6871; }
+.about-page .info-cta:hover { transform: translateY(-2px); background: #73eff5; }
 .about-page .info-cta span { font-size: 15px; }
 .about-page .about-colophon {
   margin-top: 23px;
@@ -739,12 +741,8 @@
   font-size: 10px;
   line-height: 1.65;
 }
-/* Opaque black on the light profile surfaces; keep white text on photos
-   and on the dark support button for contrast. Rules remain unchanged. */
+/* Opaque, high-contrast copy on the dark profile. Rules remain unchanged. */
 .about-page .info-hero-copy > p:last-child,
-.about-page .info-hero-copy .info-eyebrow,
-.about-page .info-hero h1 em,
-.about-page .about-overline,
 .about-page .info-jumpbar a,
 .about-page .info-jumpbar a:hover,
 .about-page .info-section-copy,
@@ -754,7 +752,7 @@
 .about-page .about-flow article > span,
 .about-page .info-bottom p,
 .about-page .about-colophon {
-  color: #000;
+  color: #f5fbff;
   opacity: 1;
   text-shadow: none;
 }
@@ -777,7 +775,7 @@
     object-position: 46% center;
   }
   .about-page .info-hero::after {
-    background: linear-gradient(180deg, transparent 15%, rgba(233,240,235,.08) 33%, rgba(233,240,235,.84) 51%, #e9f0eb 65%);
+    background: linear-gradient(180deg, transparent 15%, rgba(0,19,30,.08) 33%, rgba(0,19,30,.94) 51%, #00131e 65%);
   }
   .about-page .info-hero-copy {
     width: 100%;

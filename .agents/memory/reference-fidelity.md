@@ -99,9 +99,11 @@ par un simple débordement coupé.
 Verify brand identity in downloaded logos, not just the search result name.
 
 La page « À propos de nous » doit avoir une identité visuelle distincte de celle
-des Règles, tout en restant dans l’univers marin NARKE.
+des Règles, mais garder le fond bleu nuit et cyan du site, avec des textes clairs
+opaques. Ne pas utiliser de fond blanc pour cette page.
 
-**Why:** l’utilisateur a demandé explicitement de différencier ces deux pages.
+**Why:** l’utilisateur a demandé de différencier ces pages, puis a explicitement
+rejeté le fond clair et demandé de reprendre l’arrière-plan du site.
 
 **How to apply:** ne pas réutiliser la présentation du règlement à l’identique
 pour la présentation de la plateforme ; conserver un contenu fidèle au catalogue

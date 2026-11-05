@@ -24,12 +24,14 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot }) => {
       assert.deepEqual(await evaluate(`Array.from(document.querySelectorAll(
         '.info-hero-copy p,.info-hero h1,.info-hero h1 em,.info-section h2,.info-section-copy p,.about-overline,.about-disclaimer,.info-bottom p,.about-colophon,.info-jumpbar a'
       )).filter(node=>{
-        if(getComputedStyle(node).color!=='rgb(0, 0, 0)') return true;
+        if(!['rgb(245, 251, 255)','rgb(0, 232, 245)'].includes(getComputedStyle(node).color)) return true;
         for(let parent=node;parent;parent=parent.parentElement) {
           if(Number(getComputedStyle(parent).opacity)<1) return true;
         }
         return false;
-      }).map(node=>node.className||node.tagName)`),[], "About text must be opaque pure black on light surfaces");
+      }).map(node=>node.className||node.tagName)`),[], "About text must be opaque white or cyan on the marine background");
+      assert.equal(await evaluate("getComputedStyle(document.querySelector('.about-page')).backgroundColor"),"rgb(0, 19, 30)",
+        "About must use the site's midnight marine background, not white");
     }
     for (const [width,height] of [[320,568],[390,844],[768,1024],[1280,900]]) {
       await call("Emulation.setDeviceMetricsOverride", { width,height,deviceScaleFactor:1,mobile:true });
