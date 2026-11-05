@@ -253,7 +253,7 @@ body.narke-recharge-page .section-icon {
 }
 body.narke-recharge-page .amount-options {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 7px 8px;
   margin: 0 0 9px;
 }
