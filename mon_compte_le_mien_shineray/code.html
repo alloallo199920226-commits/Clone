@@ -5,15 +5,17 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Espace Utilisateur - Le mien</title>
 <link rel="stylesheet" href="/pages/account.css"/>
+<link rel="stylesheet" href="/pages/narke-suite.css"/>
+<script src="/pages/narke-suite.js" defer></script>
 </head>
-<body class="account-page">
+<body class="account-page narke-suite-page narke-account-page">
 <!-- Mobile Container Wrapper -->
 <div class="account-shell">
 <!-- BEGIN: UserProfileBanner -->
 <!-- Top banner with photographic background of utility truck and account details -->
 <section class="account-hero" data-purpose="user-profile-header">
 <!-- Background Vehicle Image -->
-<img alt="Camion IVECO T-Way sur un chantier" class="hero-vehicle" src="/pages/assets/iveco-account.jpg"/>
+<img alt="Jet-ski NARKE sur l’eau" class="hero-vehicle" src="/pages/assets/narke-scene-account.webp"/>
 <!-- Dark gradient overlay for readability -->
 <div class="hero-shade"></div>
 <!-- User Account Information Layer -->
@@ -47,13 +49,14 @@
 <section class="wallet-actions" data-purpose="wallet-actions">
 <!-- Recharge Button -->
 <button aria-label="Recharger le compte" class="wallet-button" data-route="/recharger" type="button">
-          Recharger
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 9h18M7 15h3"></path></svg>Recharger
         </button>
 <!-- Retrait Button -->
 <button aria-label="Faire un retrait" class="wallet-button" data-route="/retrait" type="button">
-          Retrait
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h14m-5-5 5 5-5 5M4 5v14"></path></svg>Retrait
         </button>
 </section>
+<div class="narke-marine-divider" aria-label="NARKE MARINE"><span>NARKE</span><b>MARINE</b></div>
 <!-- END: ActionButtons -->
 <!-- BEGIN: FinancialManagementMenu -->
 <!-- Section with Financial options and transaction history -->
@@ -247,13 +250,13 @@
 <span class="text-[11px] mt-1 font-medium text-gray-400">Équipe</span>
 </a>
 <!-- Tab: Le mien (Active tab) -->
-<a class="bottom-tab active" href="/compte">
+<a class="bottom-tab active" href="/compte" aria-current="page">
 <div class="relative">
 <svg class="w-6 h-6 fill-brand-gold" viewbox="0 0 24 24">
 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
 </svg>
 </div>
-       <span class="bottom-label">Le mien</span>
+       <span class="bottom-label">Mon compte</span>
 </a>
 </div>
 </nav>
@@ -319,7 +322,9 @@
         link.textContent = 'Administration — approuver un dépôt';
         document.querySelector('[data-purpose="finance-menu-group"]').append(link);
       }
-      document.querySelector('[data-user-phone]').textContent = user.phone.replace(/^\+(\d{3})(.*)$/, '$1 $2');
+       const phoneDigits = user.phone.replace(/\D/g, '');
+        const country = phoneDigits.slice(0, 3);
+       document.querySelector('[data-user-phone]').textContent = `${country} •• •• •• ${phoneDigits.slice(-2)}`;
       phoneCopyButton.dataset.phone = user.phone;
       phoneCopyButton.disabled = false;
       document.querySelector('[data-demo-balance]').textContent =

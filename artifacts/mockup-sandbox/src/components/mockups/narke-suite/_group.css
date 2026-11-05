@@ -1,0 +1,294 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+.narke-preview {
+  --abyss: #00131e;
+  --deep: #002333;
+  --ocean: #00394b;
+  --cyan: #00e8f5;
+  --blue: #00a9d9;
+  --white: #f5fbff;
+  --muted: #c4dce6;
+  min-height: 100dvh;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  overflow: hidden;
+  background: radial-gradient(ellipse at 55% 0%, #00344b 0, transparent 35rem), var(--abyss);
+  color: var(--white);
+  font: 14px "DM Sans", sans-serif;
+}
+.narke-preview * { box-sizing: border-box; }
+.narke-preview button,.narke-preview a,.narke-preview input { font: inherit; }
+.narke-preview button:focus-visible,.narke-preview a:focus-visible,.narke-preview input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.np-shell { position: relative; width: min(100%, 480px); min-height: 100dvh; margin: auto; padding-bottom: 24px; background: linear-gradient(180deg, rgb(0 19 30 / 20%), #00131e 65%); }
+.np-header { position: relative; display: grid; height: 76px; grid-template-columns: 42px 1fr 42px; align-items: center; border-bottom: 1px solid #00e8f555; padding: 0 12px; background: linear-gradient(105deg,transparent 25%,#00e8f51a 25.5%,transparent 26%),linear-gradient(180deg,#00293c,#00131e); }
+.np-header img { width: 138px; max-height: 51px; justify-self: center; object-fit: contain; }
+.np-header button,.np-header a { display: grid; width: 38px; height: 38px; place-items: center; border: 0; background: transparent; color: var(--white); text-decoration: none; cursor: pointer; }
+.np-header svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+.np-menu { position: absolute; z-index: 9; top: 63px; left: 8px; display: grid; min-width: 190px; border: 1px solid #00e8f5a6; border-radius: 12px; padding: 8px; background: #002333; box-shadow: 0 10px 35px #0009; }
+.np-menu[hidden] { display: none; }
+.np-menu a { padding: 10px; color: var(--white); text-decoration: none; }
+.np-titlebar { display: flex; min-height: 55px; align-items: center; gap: 10px; border-bottom: 1px solid #00e8f533; padding: 0 17px; }
+.np-titlebar h1 { flex: 1; margin: 0; font: 700 17px "Manrope",sans-serif; }
+.np-back { color: var(--white); font-size: 27px; text-decoration: none; }
+.np-content { padding: 12px 11px 28px; }
+.np-card { border: 1px solid #00e8f599; border-radius: 13px; background: linear-gradient(135deg,#06384acc,#001b2bf5 68%,#00364b); box-shadow: inset 0 0 15px #00e8f51a,0 0 12px #00a9d919; }
+.np-sample { display: inline-flex; align-items: center; border: 1px solid #00e8f55c; border-radius: 30px; padding: 5px 9px; color: #d5f7fb; background: #003349b3; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.np-boat { background-image: url("/__mockup/images/narke-scene-withdraw.webp"); background-repeat: no-repeat; background-position: right center; background-size: auto 100%; }
+.np-field { display: grid; grid-template-columns: auto minmax(0,1fr); align-items: center; gap: 12px; min-height: 44px; border: 1px solid #75dbe28a; border-radius: 9px; padding: 0 14px; background: #003347c7; }
+.np-field input { width: 100%; min-width: 0; border: 0; outline: none; background: transparent; color: var(--white); }
+.np-field input::placeholder { color: #91aeb8; }
+.np-disabled { width: 100%; min-height: 42px; border: 1px solid #00e8f577; border-radius: 10px; background: linear-gradient(#13c4d1,#008ba4); color: var(--white); font-weight: 700; opacity: .62; }
+.np-muted { color: var(--muted); }
+.np-rule { height: 1px; background: #c4dce636; }
+.np-footer { margin: 18px 15px 0; border-top: 1px solid #00e8f533; padding: 12px 0; color: #b7d2dc; font-size: 11px; line-height: 1.5; }
+.np-bottom { position: sticky; bottom: 0; display: grid; grid-template-columns: repeat(4,1fr); border: 1px solid #00e8f566; border-radius: 15px 15px 0 0; padding: 9px 0 max(8px,env(safe-area-inset-bottom)); background: #001d2bf5; }
+.np-bottom a { display: grid; justify-items: center; gap: 3px; color: #bdd4dc; font-size: 10px; text-decoration: none; }
+.np-bottom svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.np-bottom a[aria-current="page"] { color: var(--cyan); }
+.np-hero { position: relative; min-height: 190px; overflow: hidden; padding: 23px 14px; background: url("/__mockup/images/narke-scene-account.webp") no-repeat right center/auto 100%; }
+.np-hero::after { position: absolute; inset: 0; background: linear-gradient(90deg,#00131ef5,#00131eab 43%,transparent); content: ""; }
+.np-hero > * { position: relative; z-index: 1; }
+.np-hero h2 { max-width: 210px; margin: 5px 0; font: 800 28px/1.03 "Manrope",sans-serif; }
+.np-hero h2 em { color: var(--cyan); font-style: normal; }
+.np-hero p { max-width: 240px; margin: 8px 0 0; color: #d9edf2; font-size: 11px; line-height: 1.4; }
+.np-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.np-pill { border: 1px solid #00e8f59c; border-radius: 30px; padding: 6px 10px; background: #00374b; color: var(--white); }
+.np-glyph { width: 21px; height: 21px; flex: 0 0 21px; fill: none; stroke: var(--cyan); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.np-balance { display: grid; min-height: 105px; align-content: center; gap: 3px; margin: 10px 0 14px; padding: 12px 15px; }
+.np-balance.np-boat { background-image: linear-gradient(90deg,#00394b,#00131e 46%,transparent),url("/__mockup/images/narke-scene-withdraw.webp"); background-position: center,right center; background-size: cover,68% 100%; background-repeat: no-repeat; }
+.np-balance strong { color: var(--cyan); font: 800 25px "Manrope",sans-serif; }
+.np-balance small { color: var(--muted); font-size: 9px; }
+.np-section-label { margin: 12px 1px 7px; color: var(--white); font-size: 14px; }
+.np-section-label h2 { margin: 0; font: 700 14px "DM Sans",sans-serif; }
+.np-wallet { display: flex; width: 100%; justify-content: space-between; color: var(--muted); opacity: .8; }
+.np-net { margin: 8px 3px; font-size: 12px; font-weight: 600; }
+.np-minimum { border: 1px solid #00e8f55c; border-radius: 24px; padding: 7px 10px; background: #003347; color: var(--muted); font-size: 9px; text-align: center; }
+.np-instructions { margin-top: 14px; padding: 12px 13px; }
+.np-instructions h2 { margin: 0 0 9px; font: 700 15px "Manrope",sans-serif; }
+.np-instructions ol { display: grid; gap: 8px; margin: 0 0 12px; padding-left: 22px; color: #e1eef3; font-size: 10px; line-height: 1.38; }
+.np-instructions li::marker { color: var(--cyan); font-weight: 700; }
+.np-instructions p { color: var(--muted); font-size: 10px; line-height: 1.4; }
+.np-instructions a,.np-follow { color: var(--cyan); font-size: 11px; }
+.np-support-hero { position: relative; min-height: 228px; margin: 4px -11px 13px; overflow: hidden; padding: 28px 14px; background: url("/__mockup/images/narke-scene-support.webp") no-repeat right center/auto 100%; }
+.np-support-hero::after { position: absolute; inset: 0; background: linear-gradient(90deg,#00131ef2 0%,#00131ea8 54%,transparent),linear-gradient(0deg,#00131e 0%,transparent 48%); content: ""; }
+.np-support-hero > * { position: relative; z-index: 1; }
+.np-eyebrow { color: var(--cyan); font-size: 9px; font-weight: 700; letter-spacing: .22em; }
+.np-support-hero h2 { margin: 8px 0; font: 800 30px/1 "Manrope",sans-serif; }
+.np-support-hero h2 em { color: var(--cyan); font-style: normal; }
+.np-support-hero p { max-width: 220px; color: #dbeef3; font-size: 11px; line-height: 1.5; }
+.np-hours { position: relative; display: grid; min-height: 82px; grid-template-columns: 53px auto; align-content: center; gap: 0 12px; overflow: hidden; margin: -3px 2px 18px; padding: 9px 14px; }
+.np-hours strong { align-self: end; font: 800 23px "Manrope",sans-serif; }
+.np-hours > span:nth-of-type(2) { grid-column: 2; color: var(--muted); font-size: 11px; }
+.np-hours img { position: absolute; right: 3px; width: 97px; opacity: .72; }
+.np-headset { display: grid; width: 45px; height: 45px; grid-row: span 2; place-items: center; border: 2px solid var(--cyan); border-radius: 50%; color: var(--cyan); }
+.np-headset svg { width: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.np-contact-list { display: grid; gap: 13px; }
+.np-contact { position: relative; display: flex; min-height: 76px; align-items: center; gap: 11px; overflow: hidden; padding: 10px 13px; color: var(--white); text-decoration: none; }
+.np-contact-icon { z-index: 1; display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; border-radius: 50%; background: #039fce; color: white; font-weight: 700; }
+.np-contact-icon svg { width: 23px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+.np-contact-icon.whatsapp { background: #117d69; }
+.np-contact > span:nth-child(2) { z-index: 1; display: grid; gap: 4px; }
+.np-contact small { color: var(--muted); font-size: 9px; }
+.np-contact img { position: absolute; right: 28px; width: 130px; opacity: .76; }
+.np-contact b { z-index: 1; margin-left: auto; font-size: 26px; font-weight: 400; }
+.np-history-note,.np-list-disclaimer { color: var(--muted); font-size: 10px; line-height: 1.4; }
+.np-activity { position: relative; overflow: hidden; margin-top: 10px; padding: 9px 11px; }
+.np-activity::after { position: absolute; z-index: 0; right: 0; bottom: 0; width: 39%; height: 72%; background: url("/__mockup/images/narke-suite-model-1.webp") center/contain no-repeat; mask-image: linear-gradient(90deg,transparent,#000 30%,#000 90%,transparent); opacity: .7; content: ""; }
+.np-activity-head,.np-activity-data,.np-follow { position: relative; z-index: 1; }
+.np-activity-head { min-height: 40px; border-bottom: 1px solid #00e8f535; }
+.np-activity-head strong { margin-right: auto; }
+.np-activity-head > b { border: 1px solid #00e8f5a0; border-radius: 20px; padding: 6px 9px; font-size: 12px; white-space: nowrap; }
+.np-wallet-icon { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--cyan); border-radius: 9px; color: var(--cyan); }
+.np-wallet-icon svg { width: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+.np-activity-data { display: grid; gap: 0; }
+.np-activity-data p { display: flex; justify-content: space-between; gap: 8px; margin: 0; padding: 5px 3px; font-size: 10px; }
+.np-activity-data p span { color: var(--muted); }
+.np-activity-data p strong { text-align: right; }
+.np-status { color: var(--cyan); }
+.np-follow { border: 0; background: none; }
+.np-account-hero { padding-top: 0; }
+.np-account-cover { min-height: 132px; display: flex; flex-direction: column; justify-content: space-between; border-bottom: 1px solid #00e8f57d; padding: 10px 23px; background: linear-gradient(90deg,#00131ef2,#00131e99 44%,transparent 78%),url("/__mockup/images/narke-scene-account.webp") right center/auto 100% no-repeat; }
+.np-account-cover div { display: grid; gap: 5px; }
+.np-account-cover small { color: var(--cyan); font-size: 10px; letter-spacing: .16em; }
+.np-account-cover strong { font: 800 23px "Manrope",sans-serif; }
+.np-account-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 3px; }
+.np-account-actions a { display: flex; min-height: 43px; align-items: center; justify-content: center; gap: 9px; border: 1px solid var(--cyan); border-radius: 10px; background: linear-gradient(115deg,#00394b,#001d2d); color: var(--white); font-weight: 600; text-decoration: none; }
+.np-account-actions svg { width: 22px; height: 22px; fill: none; stroke: var(--cyan); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.np-divider-label { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 13px 0; color: var(--white); letter-spacing: .24em; }
+.np-divider-label::before,.np-divider-label::after { width: 30%; height: 1px; background: var(--cyan); content: ""; }
+.np-divider-label b { color: var(--cyan); font-weight: 500; }
+.np-account-menu,.np-gift { overflow: hidden; margin: 10px 0; padding: 3px 12px; }
+.np-account-menu a,.np-account-menu > button,.np-gift > button { display: flex; width: 100%; min-height: 32px; align-items: center; gap: 12px; border: 0; border-bottom: 1px solid #c4dce62e; background: transparent; color: var(--white); text-align: left; text-decoration: none; }
+.np-account-menu .np-glyph,.np-gift .np-glyph { color: var(--cyan); }
+.np-account-menu b,.np-gift > button span { margin-left: auto; color: var(--white); font-size: 19px; font-weight: 400; }
+.np-account-menu > button:disabled { opacity: 1; }
+.np-gift form { display: grid; gap: 8px; padding: 8px 0 12px; }
+.np-gift label { color: var(--muted); font-size: 11px; }
+.np-gift input { min-height: 40px; border: 1px solid #75dbe28a; border-radius: 8px; padding: 0 10px; background: #003347; color: var(--white); }
+.np-gift form button { min-height: 37px; border: 1px solid var(--cyan); border-radius: 8px; background: #004052; color: var(--white); }
+.np-gift form button:disabled { opacity: .5; }
+.np-gift form p { color: var(--muted); font-size: 10px; }
+.np-mission-hero { min-height: 182px; padding: 16px 2px; background: linear-gradient(90deg,#00131ef5,#00131eb8 44%,transparent),url("/__mockup/images/narke-scene-support.webp") no-repeat right center/auto 100%; }
+.np-mission-hero .np-eyebrow { margin: 16px 0 5px; }
+.np-mission-hero h2 { margin: 0; font: 800 31px/.98 "Manrope",sans-serif; }
+.np-mission-hero h2 em { color: var(--cyan); font-style: normal; }
+.np-mission-hero p { max-width: 290px; margin: 9px 0; color: #dcebf0; font-size: 10px; line-height: 1.45; }
+.np-tabs { display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; border: 1px solid #00e8f59a; border-radius: 25px; background: #002333; }
+.np-tabs button { min-height: 39px; border: 0; background: transparent; color: var(--muted); }
+.np-tabs button[aria-selected="true"] { border-radius: 24px; background: linear-gradient(100deg,#00a9d9,#00dce8); color: white; }
+.np-claimed { display: grid; min-height: 72px; align-content: center; gap: 4px; margin: 12px 0; padding: 10px 15px; background-image: linear-gradient(90deg,#002333 25%,rgb(0 35 51 / 72%) 54%,transparent),url("/__mockup/images/narke-mission-blue.webp"); background-position: center,right 20%; background-size: cover,48% auto; background-repeat: no-repeat; }
+.np-claimed span { font-size: 11px; }
+.np-claimed strong,.np-reward { color: var(--cyan); font: 800 20px "Manrope",sans-serif; }
+.np-claimed small { font-size: 12px; }
+.np-milestone-heading { justify-content: flex-start; margin: 17px 3px 9px; gap: 10px; }
+.np-milestone-heading > .np-glyph { width: 24px; height: 24px; }
+.np-milestone-heading small { color: var(--cyan); font-size: 9px; letter-spacing: .2em; }
+.np-milestone-heading h3 { margin: 2px 0; font: 700 20px "Manrope",sans-serif; }
+.np-mission-list { display: grid; gap: 9px; }
+.np-mission-card { position: relative; min-height: 148px; overflow: hidden; padding: 10px 12px; }
+.np-mission-card::after { position: absolute; z-index: 0; top: 0; right: 0; width: 42%; height: 59%; background: url("/__mockup/images/narke-mission-blue.webp") center/contain no-repeat; mask-image: linear-gradient(90deg,transparent,#000 20%,#000 90%,transparent); opacity: .92; content: ""; }
+.np-mission-card.tier-2::after { background-image: url("/__mockup/images/narke-mission-gold.webp"); }
+.np-mission-card.tier-3::after { background-image: url("/__mockup/images/narke-mission-red.webp"); }
+.np-mission-card h4,.np-mission-card > p,.np-reward,.np-progress-copy,.np-progress,.np-mission-card > button { position: relative; z-index: 1; }
+.np-mission-card h4 { max-width: 70%; margin: 0 0 3px; font-size: 12px; }
+.np-reward { display: flex; align-items: center; gap: 5px; font-size: 15px; }
+.np-reward .np-glyph { width: 18px; height: 18px; }
+.np-mission-card > p { margin: 2px 0 7px; color: var(--muted); font-size: 10px; }
+.np-progress-copy { display: flex; justify-content: space-between; font-size: 9px; }
+.np-progress { height: 7px; overflow: hidden; border-radius: 10px; margin: 4px 0 7px; background: #00131e; }
+.np-progress span { display: block; width: 100%; height: 100%; transform-origin: left; border-radius: inherit; background: linear-gradient(90deg,#00a9d9,#00f4f8); }
+.np-mission-card > button { width: 100%; min-height: 26px; border: 1px solid #00e8f572; border-radius: 7px; background: #005267a8; color: var(--white); font-size: 10px; opacity: .7; }
+.np-mission-note { border: 1px solid #00e8f561; border-radius: 12px; margin: 12px 0; padding: 10px; color: var(--muted); font-size: 10px; }
+.np-team-head { margin: 0 2px 8px; }
+.np-invite-line { display: grid; min-height: 54px; grid-template-columns: 26px minmax(0,1fr) auto; align-items: center; gap: 8px; margin: 8px 0; padding: 6px 8px; }
+.np-invite-line > div { min-width: 0; display: grid; gap: 2px; }
+.np-invite-line strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.np-invite-line small { color: var(--muted); font-size: 9px; }
+.np-invite-line button { min-height: 30px; border: 1px solid var(--cyan); border-radius: 18px; padding: 0 9px; background: #00394b; color: var(--white); font-size: 9px; white-space: nowrap; }
+.np-copy-status { min-height: 13px; margin: 0 3px; color: var(--cyan); font-size: 10px; }
+.np-team-table { overflow: hidden; }
+.np-team-table table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9px; text-align: center; }
+.np-team-table th,.np-team-table td { border-bottom: 1px solid #c4dce633; padding: 8px 4px; }
+.np-team-table th+th,.np-team-table td+td { border-left: 1px solid #c4dce633; }
+.np-team-table td:first-child b { display: block; width: fit-content; margin: 3px auto 0; border: 1px solid var(--cyan); border-radius: 12px; padding: 2px 8px; }
+.np-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 10px 0; }
+.np-stats section { display: grid; min-height: 63px; align-content: center; gap: 4px; padding: 8px; text-align: center; }
+.np-stats strong { font: 800 15px "Manrope",sans-serif; }
+.np-stats span { font-size: 10px; }
+.np-bonus { padding: 12px 13px; }
+.np-bonus h2 { margin: 0 0 9px; font: 700 16px "Manrope",sans-serif; }
+.np-bonus > p:not(.np-legal) { display: grid; grid-template-columns: 78px minmax(0,1fr); gap: 9px; margin: 9px 0; font-size: 10px; line-height: 1.35; }
+.np-bonus > p > b { width: fit-content; border: 1px solid var(--cyan); border-radius: 13px; padding: 3px 8px; }
+.np-legal { color: var(--muted); font-size: 9px; line-height: 1.42; }
+.np-team-levels { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; margin: 9px 0; }
+.np-team-levels button { display: grid; min-height: 102px; align-content: center; justify-items: center; gap: 4px; border: 1px solid #00e8f55d; border-radius: 12px; padding: 6px 3px; background: linear-gradient(130deg,#06384acc,#001b2bf5); color: var(--white); }
+.np-team-levels button[aria-selected="true"] { border-color: var(--cyan); box-shadow: inset 0 0 13px #00e8f52e,0 0 10px #00e8f528; }
+.np-team-levels img { width: 93%; height: 48px; object-fit: contain; mask-image: linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent); }
+.np-team-levels strong { color: var(--white); font-size: 10px; }
+.np-team-levels span { font-size: 9px; }
+.np-list-disclaimer { margin: 4px; }
+.np-member-list { display: grid; gap: 7px; margin-top: 10px; }
+.np-member { display: grid; min-height: 51px; grid-template-columns: 68px minmax(0,1fr) auto; align-items: center; gap: 8px; padding: 4px 8px; }
+.np-member img { width: 65px; height: 38px; object-fit: contain; mask-image: linear-gradient(90deg,transparent,#000 15%,#000 90%,transparent); }
+.np-member > div { display: grid; gap: 3px; }
+.np-member strong,.np-member > b { font-size: 11px; }
+.np-member time { color: var(--muted); font-size: 8px; }
+.np-member > b { border: 1px solid #00e8f59c; border-radius: 18px; padding: 5px 7px; white-space: nowrap; }
+@media (min-width: 700px) { .np-shell { border: 1px solid #00e8f544; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 65px #0008; } }
+@media (max-width: 350px) { .np-header { height: 68px; } .np-content { padding-right: 8px; padding-left: 8px; } }
+@media (prefers-reduced-motion: reduce) { .narke-preview *, .narke-preview *::before, .narke-preview *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+.narke-preview { position: relative; background: #00131e; }
+.narke-preview::after { position: fixed; z-index: 0; right: 0; bottom: 0; left: 0; height: min(14vw,70px); background: url("/__mockup/images/narke-waterline.webp") center bottom/100% 100% no-repeat; opacity: .72; pointer-events: none; content: ""; }
+.np-shell { z-index: 1; background: linear-gradient(180deg,rgb(0 19 30 / 12%),#00131e 66%); }
+.np-header { font-family: "DM Sans",sans-serif; }
+.np-header img { width: 138px; max-height: 46px; }
+.np-bottom,.np-bottom a,.np-titlebar { font-family: "DM Sans",sans-serif; }
+.narke-preview .np-bottom { position: fixed; bottom: 0; left: 50%; width: min(100%,520px); transform: translateX(-50%); z-index: 30; }
+.np-account-actions a,.np-account-actions button { display: flex; min-height: 47px; align-items: center; justify-content: center; gap: 9px; border: 1px solid var(--cyan); border-radius: 10px; background: linear-gradient(115deg,#00394b,#001d2d); color: var(--white); font-weight: 600; text-decoration: none; }
+.np-account-actions button:disabled { opacity: .58; }
+.np-account-actions button svg,.np-account-actions a svg { width: 22px; height: 22px; fill: none; stroke: var(--cyan); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.np-account-cover { background-size: 100% 100%,auto 100%; background-position: center,right center; }
+.np-account-cover strong { font-size: 22px; }
+.np-divider-label { min-height: 20px; margin: 7px 0 9px; font: 500 11px "Manrope",sans-serif; }
+.np-account-menu { background: linear-gradient(120deg,rgb(0 50 70 / 95%),rgb(0 27 43 / 97%)); }
+.np-account-menu > button:disabled { color: var(--white); }
+
+.np-balance.np-boat { position: relative; overflow: hidden; background: linear-gradient(90deg,#00394b 0%,rgb(0 35 51 / 96%) 42%,transparent 82%),#002333; }
+.np-balance.np-boat::after { position: absolute; z-index: 0; top: 0; right: 0; width: 68%; height: 100%; background: url("/__mockup/images/narke-scene-withdraw.webp") right center/auto 100% no-repeat; mask-image: linear-gradient(90deg,transparent 0%,#000 27%,#000 90%,transparent 100%); pointer-events: none; content: ""; }
+.np-balance.np-boat > * { position: relative; z-index: 1; }
+.np-balance > span:first-child { text-align: left; }
+.np-instructions { padding: 12px 13px 14px; }
+.np-instructions h2 { display: flex; min-height: 32px; align-items: center; gap: 8px; border-bottom: 1px solid #00e8f533; padding-bottom: 7px; }
+.np-instructions h2 > .np-glyph { width: 21px; height: 21px; }
+.np-instruction-boats { display: flex; min-width: 0; flex: 1; align-items: center; justify-content: flex-end; gap: 2px; }
+.np-instruction-boats img { width: min(20%,55px); height: 26px; object-fit: contain; mask-image: linear-gradient(90deg,transparent,#000 20%,#000 85%,transparent); }
+.np-instructions ol { gap: 7px; margin-bottom: 10px; list-style: none; padding: 0; counter-reset: withdrawal-step; }
+.np-instructions li { position: relative; min-height: 24px; padding-left: 27px; }
+.np-instructions li::before { position: absolute; top: 0; left: 0; display: grid; width: 19px; height: 19px; place-items: center; border: 1px solid #00e8f5a6; border-radius: 50%; color: var(--cyan); counter-increment: withdrawal-step; content: counter(withdrawal-step); }
+.np-instructions li::marker { content: ""; }
+.np-unavailable { border: 0; padding: 6px 0 0; background: transparent; color: var(--cyan); font-size: 10px; text-align: left; }
+
+.np-support-hero { background-image: linear-gradient(90deg,#00131ef7 0%,#00131edb 33%,#00131e30 72%,transparent),url("/__mockup/images/narke-scene-support.webp"); background-position: center,right center; background-size: cover,auto 100%; }
+.np-support-hero::after { background: linear-gradient(90deg,#00131e 0%,rgb(0 19 30 / 40%) 36%,transparent 76%),linear-gradient(0deg,#00131e 0%,transparent 38%); mask-image: linear-gradient(90deg,transparent 0%,#000 26%,#000 94%,transparent 100%); }
+.np-contact-list { margin-top: 14px; }
+.np-contact { background: linear-gradient(100deg,rgb(0 54 74 / 96%),rgb(0 26 42 / 94%)); }
+.np-contact img { right: 27px; width: 125px; mask-image: linear-gradient(90deg,transparent,#000 25%,#000 85%,transparent); }
+.np-contact:nth-child(2) img { filter: sepia(.4) saturate(1.25); }
+.np-contact:nth-child(3) img { filter: hue-rotate(20deg); }
+
+.np-activity { background: linear-gradient(115deg,#06384acc,#001b2bf5 55%,#002c3c); }
+.np-activity::after { width: 38%; height: 68%; }
+.np-activity-head { justify-content: flex-start; gap: 8px; }
+.np-activity-head strong { margin: 0; font-size: 12px; }
+.np-activity-head > b { margin-left: auto; }
+.np-activity-data { width: 64%; }
+.np-activity-data p { display: grid; grid-template-columns: minmax(65px,38%) minmax(0,1fr); justify-content: initial; gap: 4px; border-bottom: 1px solid #c4dce626; padding: 5px 3px; }
+.np-activity-data p strong { overflow-wrap: anywhere; text-align: left; }
+.np-activity-data p .np-status { width: fit-content; border: 1px solid #00e8f59c; border-radius: 14px; padding: 2px 8px; background: #004052; }
+.np-follow { display: block; width: 64%; padding: 7px 3px 0; text-align: left; }
+
+.np-mission-hero { min-height: 182px; background-image: linear-gradient(90deg,#00131ef5 0%,#00131edb 39%,transparent 79%),url("/__mockup/images/narke-scene-support.webp"); background-position: center,right center; background-size: cover,auto 100%; }
+.np-mission-hero .np-sample { margin-bottom: 3px; }
+.np-claimed { background-image: linear-gradient(90deg,#002333 0%,rgb(0 35 51 / 72%) 52%,transparent 88%),url("/__mockup/images/narke-mission-blue.webp"); }
+.np-mission-card { display: grid; grid-template-columns: minmax(0,1fr); gap: 0; min-height: 148px; padding: 10px 12px; background: linear-gradient(125deg,#06384acc,#001b2bf5 62%,#002c3c); }
+.np-mission-card h4 { grid-column: 1; max-width: 62%; margin-bottom: 3px; }
+.np-mission-card .np-reward { grid-column: 1; justify-self: start; margin: 0; color: var(--cyan); font-size: 16px; }
+.np-mission-card > p { grid-column: 1; margin: 3px 0 6px; }
+.np-progress-copy,.np-progress,.np-mission-card > button { grid-column: 1; }
+.np-mission-card > button { margin-top: 2px; }
+.np-mission-note { border: 1px solid #00e8f561; background: #002333; }
+
+.np-team-head { margin: 0 2px 8px; }
+.np-invite-line { position: relative; overflow: hidden; grid-template-columns: 26px minmax(0,1fr) auto; min-height: 59px; background: linear-gradient(100deg,#06384acc,#001b2bf5 72%,#00364b); }
+.np-invite-line::after { position: absolute; top: 0; right: 102px; width: 31%; height: 100%; background: url("/__mockup/images/narke-mission-blue.webp") center/contain no-repeat; mask-image: linear-gradient(90deg,transparent,#000 20%,#000 86%,transparent); opacity: .8; content: ""; }
+.np-invite-line:nth-of-type(2)::after { background-image: url("/__mockup/images/narke-mission-gold.webp"); }
+.np-invite-line > .np-glyph,.np-invite-line > div,.np-invite-line > button { position: relative; z-index: 1; }
+.np-invite-line button { border: 1px solid #00e8f5; background: #00394b; color: var(--white); }
+.np-team-table table { table-layout: fixed; }
+.np-team-table th:first-child,.np-team-table td:first-child { width: 48%; }
+.np-team-table th:nth-child(2),.np-team-table td:nth-child(2),.np-team-table th:nth-child(3),.np-team-table td:nth-child(3) { width: 26%; }
+.np-team-table td:first-child { position: relative; padding: 8px 4px 8px 74px; text-align: left; }
+.np-level-art { position: absolute; top: 50%; left: 2px; width: 72px; height: 42px; transform: translateY(-50%); object-fit: contain; mask-image: linear-gradient(90deg,transparent,#000 15%,#000 88%,transparent); }
+.np-team-table td:first-child span { display: block; font-size: 9px; }
+.np-team-table td:first-child b { margin: 4px 0 0; padding: 2px 7px; font-size: 9px; }
+.np-bonus { background: linear-gradient(120deg,#06384acc,#001b2bf5 68%,#002d40); }
+.np-bonus h2 { display: flex; align-items: center; gap: 8px; }
+.np-bonus h2 .np-glyph { width: 24px; height: 24px; }
+.np-bonus > p:not(.np-legal) { position: relative; grid-template-columns: 78px minmax(0,1fr); margin-left: 19px; padding-left: 4px; }
+.np-bonus > p:not(.np-legal)::before { position: absolute; top: 4px; left: -19px; width: 9px; height: 9px; border: 2px solid var(--cyan); border-radius: 50%; background: #00131e; content: ""; }
+.np-bonus > p:not(.np-legal):not(:last-of-type)::after { position: absolute; top: 14px; bottom: -11px; left: -14px; width: 1px; background: var(--cyan); content: ""; }
+
+.np-team-levels button { position: relative; overflow: hidden; align-content: end; min-height: 115px; padding: 60px 4px 8px; background: linear-gradient(180deg,transparent 15%,rgb(0 27 43 / 85%) 57%),linear-gradient(130deg,#06384acc,#001b2bf5); }
+.np-team-levels img { position: absolute; top: 1px; right: 0; left: 0; width: 100%; height: 62px; }
+.np-team-levels strong { font-size: 10px; }
+.np-team-levels span { font-size: 9px; }
+.np-member { grid-template-columns: 70px minmax(0,1fr) auto; }
+.np-member > b { border-color: #00e8f5; background: #00394b; }
+.np-unavailable:disabled { opacity: .8; }
+@media (max-width: 370px) {
+  .np-activity-data { width: 68%; }
+  .np-activity-data p { grid-template-columns: 69px minmax(0,1fr); }
+  .np-team-table td:first-child { padding-left: 64px; }
+  .np-level-art { width: 62px; }
+  .np-team-table th,.np-team-table td { padding-right: 2px; padding-left: 2px; }
+}

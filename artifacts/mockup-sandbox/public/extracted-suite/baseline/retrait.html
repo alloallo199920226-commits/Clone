@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retrait — IVECO</title><link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/payment-reference.css"><script src="/pages/payment-reference.js" defer></script></head>
+<body><main class="finance-page">
+  <header class="finance-header"><a class="finance-back" href="/compte" aria-label="Retour au compte">‹</a><h1>Retrait</h1><a class="info-button" href="/historique-retraits" aria-label="Ouvrir l’historique des retraits" data-history-link>i</a></header>
+  <div class="finance-content withdraw-content">
+    <figure class="vehicle-balance"><img src="/pages/assets/iveco-withdraw.jpg" alt="Camion IVECO X-Way dans une carrière"><figcaption>Solde du compte<strong data-account-balance>Chargement…</strong></figcaption></figure>
+    <div class="finance-section-label"><span>Compte de retrait</span></div>
+    <button type="button" class="wallet-select" data-wallet-select><span data-wallet-label>Sélectionnez le compte portefeuille de retrait</span><span class="chevron" aria-hidden="true">›</span></button>
+    <div class="wallet-options" data-wallet-options hidden></div><p class="payment-status" data-wallet-status role="status" aria-live="polite"></p>
+    <div class="finance-section-label amount-title"><span>Montant du retrait</span><small>Frais : 20 %</small></div>
+    <label class="input-wrap"><span>FCFA</span><input id="amount" type="number" min="2300" step="1" inputmode="numeric" placeholder="Veuillez choisir le montant du retrait" aria-label="Montant du retrait"></label>
+    <p class="received-amount" data-amount-received>Montant reçu: FCFA 0.00</p>
+    <p class="minimum-note">Minimum : 2 300 FCFA · De 09 h à 18 h, heure du Maroc · VIP actif requis.</p>
+    <button class="payment-submit withdraw-submit" type="button" data-payment-action data-payment-kind="withdrawal">Retirer de l'argent maintenant</button>
+    <p class="payment-status" data-payment-status role="status" aria-live="polite"></p>
+    <section class="instructions"><h2>Instructions de retrait</h2><ol>
+      <li>1. Vous devez posséder au moins un VIP actif, acheté ou octroyé par l’administration.</li>
+      <li>2. Le minimum de retrait est de 2 300 FCFA. Les demandes sont ouvertes chaque jour de 09 h à 18 h, heure du Maroc (fermeture à 18 h).</li>
+      <li>3. Les frais sont de 20 %, arrondis au FCFA inférieur. Le montant net est indiqué avant confirmation.</li>
+      <li>4. La demande est transmise à l’administration pour versement manuel. Son enregistrement ne signifie pas que le versement a déjà été effectué.</li>
+      <li>5. Veuillez saisir correctement les informations de votre compte de retrait ; toute information incorrecte entraînera l'échec du retrait.</li>
+      <li>6. Le montant demandé doit être disponible sur votre solde. Il est réservé pendant le traitement et libéré si la demande est refusée.</li>
+    </ol></section>
+    <p class="payment-disclosure">Retrait minimum : 2 300 FCFA. Frais : 20 %. Horaires : de 09 h à 18 h, heure du Maroc. Un VIP actif et un solde disponible suffisant sont nécessaires. Consultez l’historique pour suivre votre demande.</p>
+    <p class="payment-disclosure"><a href="/historique-retraits">Historique des retraits</a></p>
+  </div>
+</main>
+<dialog class="finance-dialog" id="reference-info"><h2>Conditions de retrait</h2><p>Un VIP actif est requis. Minimum : 2 300 FCFA. Frais : 20 %. Demandes de 09 h à 18 h, heure du Maroc, fermeture à 18 h. Le montant demandé est réservé jusqu’au traitement manuel par l’administration, sans débit définitif avant validation du versement.</p><button type="button" data-info-close>Compris</button></dialog>
+</body></html>

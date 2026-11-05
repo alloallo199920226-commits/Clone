@@ -4,5 +4,13 @@ export const modules: ModuleMap = {
   "./components/mockups/narke-login/Current.tsx": () => import("../components/mockups/narke-login/Current.tsx"),
   "./components/mockups/narke-login/Home.tsx": () => import("../components/mockups/narke-login/Home.tsx"),
   "./components/mockups/narke-login/Narke.tsx": () => import("../components/mockups/narke-login/Narke.tsx"),
-  "./components/mockups/narke-login/Signup.tsx": () => import("../components/mockups/narke-login/Signup.tsx")
+  "./components/mockups/narke-login/Signup.tsx": () => import("../components/mockups/narke-login/Signup.tsx"),
+  "./components/mockups/narke-suite/Account.tsx": () => import("../components/mockups/narke-suite/Account.tsx"),
+  "./components/mockups/narke-suite/Deposits.tsx": () => import("../components/mockups/narke-suite/Deposits.tsx"),
+  "./components/mockups/narke-suite/Missions.tsx": () => import("../components/mockups/narke-suite/Missions.tsx"),
+  "./components/mockups/narke-suite/NarkeShell.tsx": () => import("../components/mockups/narke-suite/NarkeShell.tsx"),
+  "./components/mockups/narke-suite/Support.tsx": () => import("../components/mockups/narke-suite/Support.tsx"),
+  "./components/mockups/narke-suite/Team.tsx": () => import("../components/mockups/narke-suite/Team.tsx"),
+  "./components/mockups/narke-suite/TeamDetail.tsx": () => import("../components/mockups/narke-suite/TeamDetail.tsx"),
+  "./components/mockups/narke-suite/Withdraw.tsx": () => import("../components/mockups/narke-suite/Withdraw.tsx")
 };

@@ -117,9 +117,24 @@
       levelRows.replaceChildren();
       counts.forEach((count, index) => {
         const row = document.createElement("tr");
-        [`Équipe de niveau ${index + 1} ${team.referral_percentages[index]}%`, String(count), formatAmount(commissions[index])].forEach((value) => {
+        [`Équipe de niveau ${index + 1}`, String(count), formatAmount(commissions[index])].forEach((value, column) => {
           const cell = document.createElement("td");
-          cell.textContent = value;
+          if (column === 0) {
+            const art = document.createElement("img");
+            art.className = "team-level-art";
+            art.src = `/pages/assets/narke-model-${index === 2 ? 4 : index + 1}.png`;
+            art.alt = "";
+            art.setAttribute("aria-hidden", "true");
+            const label = document.createElement("span");
+            label.className = "team-level-name";
+            label.textContent = value;
+            const rate = document.createElement("b");
+            rate.className = "team-level-rate";
+            rate.textContent = `${team.referral_percentages[index]}%`;
+            cell.append(art, label, rate);
+          } else {
+            cell.textContent = value;
+          }
           row.append(cell);
         });
         levelRows.append(row);
@@ -148,8 +163,8 @@
         row.dataset.memberLevel = String(level);
         const avatar = document.createElement("img");
         avatar.className = "team-member-avatar";
-        avatar.src = "/pages/assets/iveco-auth-logo.png";
-        avatar.alt = "IVECO";
+        avatar.src = `/pages/assets/narke-model-${Math.min(3, Math.max(1, level))}.png`;
+        avatar.alt = `Jet-ski NARKE — niveau ${level}`;
         const details = document.createElement("div");
         details.className = "team-member-details";
         const phone = document.createElement("strong");

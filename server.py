@@ -45,6 +45,8 @@ MORE_PAGES = {
     "/service-client": "service-client.html",
 }
 STATIC_FILES = {
+    "/pages/narke-suite.css": ("pages/narke-suite.css", "text/css; charset=utf-8"),
+    "/pages/narke-suite.js": ("pages/narke-suite.js", "text/javascript; charset=utf-8"),
     "/pages/missions.js": ("pages/missions.js", "text/javascript; charset=utf-8"),
     "/pages/missions.css": ("pages/missions.css", "text/css; charset=utf-8"),
     "/favicon.ico": ("pages/assets/iveco-favicon.ico", "image/x-icon"),
@@ -209,8 +211,8 @@ class Handler(BaseHTTPRequestHandler):
             candidate = (ROOT / route.lstrip("/")).resolve()
             if candidate.is_relative_to(ROOT / "pages" / "assets") and candidate.name in {"empty-records.svg", "team-avatar.svg"}:
                 return candidate, "image/svg+xml"
-            if candidate.is_relative_to(ROOT / "pages" / "assets") and candidate.suffix in {".jpg", ".jpeg", ".png"}:
-                return candidate, "image/png" if candidate.suffix == ".png" else "image/jpeg"
+            if candidate.is_relative_to(ROOT / "pages" / "assets") and candidate.suffix in {".jpg", ".jpeg", ".png", ".webp"}:
+                return candidate, {".png": "image/png", ".webp": "image/webp"}.get(candidate.suffix, "image/jpeg")
         if route == "/pages/reference.css":
             return ROOT / "pages/reference.css", "text/css; charset=utf-8"
         for folder in set(PAGES.values()):

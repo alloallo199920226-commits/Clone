@@ -271,6 +271,20 @@ async function main() {
     })()`);
     assert.equal(registration.status, 201, JSON.stringify(registration.body));
     userId = registration.body.user.id;
+    if (process.argv.includes("--narke-previews")) {
+      await require("./narke-preview-browser.cjs")({ call, evaluate, waitFor, screenshot });
+      assert.deepEqual(errors, []);
+      return;
+    }
+    if (process.argv.includes("--narke-suite")) {
+      await require("./narke-suite-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, base,
+        owner: registration.body.user, phone, payload,
+        trackUser: id => childUserIds.push(id),
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--narke-home")) {
       await require("./narke-home-browser.cjs")({call,evaluate,waitFor,navigate,screenshot});
       assert.deepEqual(errors, []);

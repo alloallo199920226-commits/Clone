@@ -60,6 +60,16 @@
     const card = document.createElement("article");
     card.className = `mission-card${claimed ? " is-claimed" : ""}`;
     card.style.animationDelay = `${Math.min(index * 55, 220)}ms`;
+    const artwork = document.createElement("img");
+    artwork.className = "mission-art";
+    artwork.src = [
+      "/pages/assets/narke-mission-blue.webp",
+      "/pages/assets/narke-mission-gold.webp",
+      "/pages/assets/narke-mission-red.webp"
+    ][index % 3];
+    artwork.alt = "";
+    artwork.setAttribute("aria-hidden", "true");
+    card.append(artwork);
     card.append(makeText("h3", "mission-title", mission.title || "Mission"));
     const rewardLabel = document.createElement("div");
     rewardLabel.className = "mission-reward";

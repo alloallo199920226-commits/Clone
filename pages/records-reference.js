@@ -51,7 +51,11 @@
         const title = document.createElement("div");
         title.className = "reference-activity-title";
         const heading = document.createElement("span");
-        heading.textContent = kind === "recharge" ? "Ordre de dépôt" : "Ordre de retrait";
+        const ledgerIcon = document.createElement("span");
+        ledgerIcon.className = "reference-activity-icon";
+        ledgerIcon.setAttribute("aria-hidden", "true");
+        ledgerIcon.innerHTML = '<svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="5" width="18" height="15" rx="2"></rect><path d="M3 9h18m-6 5h3"></path></svg>';
+        heading.append(ledgerIcon, document.createTextNode(kind === "recharge" ? "Ordre de dépôt" : "Ordre de retrait"));
         const amount = document.createElement("strong");
         amount.textContent = formatMoney(item.amount_fcfa);
         title.append(heading, amount);

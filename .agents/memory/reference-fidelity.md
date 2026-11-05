@@ -5,12 +5,14 @@ description: User expectations for faithful screen reproduction and meaningful v
 
 Reproduce the user’s supplied screen composition and text closely rather than substituting a different interface.
 
-La reconstruction NARKE concerne la connexion, l’inscription et l’accueil,
+La reconstruction NARKE concerne la connexion, l’inscription, l’accueil et les
+écrans clients de retrait, service, historique, compte, missions et équipe,
 sans modifier l’administration ni les règles financières existantes.
 
 **Why:** le protocole fourni demande une reconstruction visuelle tout en
 conservant l’authentification et les données ; l’utilisateur a explicitement
-rappelé l’inscription puis fourni une référence distincte pour l’accueil.
+rappelé l’inscription puis fourni des références distinctes pour l’accueil
+et les sept écrans de gestion du compte et de l’équipe.
 Les montants du catalogue administré priment sur les exemples de la capture.
 
 **How to apply:** garder les vrais champs et la connexion serveur ; distinguer
@@ -51,25 +53,24 @@ sans les précisions ajoutées par l’agent.
 **How to apply:** cette consigne concerne la copie de cet encadré ; ne pas changer
 la validation réelle du dépôt ni simuler une réussite de paiement.
 
-Les visuels de véhicules doivent représenter des camions IVECO, avec des photos
-différentes selon les emplacements et les offres, plutôt que des voitures.
+Les nouveaux écrans clients référencés NARKE utilisent les jet-skis des captures
+fournies, et non les anciens camions IVECO ou des véhicules génériques.
 
-**Why:** l’utilisateur a demandé de remplacer partout les images de voitures par
-des camions IVECO « totalement différents » pour chaque partie.
+**Why:** la demande de reconstruction NARKE remplace l’ancienne direction IVECO
+pour ces écrans et impose de conserver l’orientation et les couleurs des visuels.
 
-**How to apply:** choisir des photos réelles et distinctes pour les nouvelles
-sections ; conserver une même photo pour un même produit entre son catalogue,
-sa fenêtre d’achat et son historique.
+**How to apply:** extraire uniquement les illustrations, sans texte ni contrôles
+intégrés ; ne jamais utiliser une capture complète comme fond de page.
 
-La seule marque affichée sur le site doit être IVECO : aucune mention visible
-de SHINERAY ne doit subsister, y compris dans les notifications et l’administration.
+NARKE est la marque des écrans clients reconstruits. Les anciennes consignes
+IVECO restent historiques pour les parties non concernées par cette reconstruction.
 
-**Why:** l’utilisateur a demandé « Je ne veux plus voir SHINERAY nul part
-mentionner dans le site je veux juste […] iveco ».
+**Why:** l’utilisateur a ensuite fourni une identité NARKE et explicitement
+demandé une reconstruction fidèle, sans remplacement libre de marque.
 
-**How to apply:** utiliser IVECO dans les textes visibles et les titres, sans
-renommer les identifiants techniques historiques ni modifier les données des comptes.
-Ne pas attribuer l’histoire d’un autre constructeur à IVECO.
+**How to apply:** utiliser NARKE dans les écrans de référence, sans renommer les
+identifiants historiques ni modifier les données ou les destinations de contact
+configurées pour faire correspondre un pseudonyme illustratif.
 
 Verify brand identity in downloaded logos, not just the search result name.
 

@@ -1,0 +1,568 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+/* NARKE account suite — scope is deliberately limited to the seven requested routes. */
+body.narke-suite-page {
+  --narke-abyss: #00131e;
+  --narke-deep: #002333;
+  --narke-ocean: #00394b;
+  --narke-cyan: #00e8f5;
+  --narke-cyan-soft: #00bcd4;
+  --narke-blue: #00a9d9;
+  --narke-white: #f5fbff;
+  --narke-muted: #c4dce6;
+  --narke-glass: linear-gradient(140deg, rgb(7 57 75 / 85%), rgb(0 23 37 / 94%) 62%, rgb(0 39 55 / 89%));
+  min-height: 100dvh;
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 52% 16%, rgb(0 169 217 / 12%), transparent 34rem),
+    radial-gradient(ellipse at 6% 72%, rgb(0 232 245 / 7%), transparent 30rem),
+    var(--narke-abyss);
+  color: var(--narke-white);
+  font-family: "DM Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+html:has(body.narke-suite-page) { background: #00131e; }
+body.narke-suite-page::before {
+  position: fixed;
+  z-index: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: min(14vw, 70px);
+  pointer-events: none;
+  background-image: url("/pages/assets/narke-waterline.webp");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: .72;
+  content: "";
+}
+body.narke-suite-page :is(.finance-page,.page,.account-shell,.team-portal,.missions-app) {
+  position: relative;
+  z-index: 1;
+  color: var(--narke-white);
+  background: transparent;
+  font-family: "DM Sans", sans-serif;
+}
+body.narke-suite-page :is(a,button,input) { -webkit-tap-highlight-color: transparent; }
+body.narke-suite-page :is(button,a):focus-visible,
+body.narke-suite-page input:focus-visible {
+  outline: 2px solid var(--narke-cyan);
+  outline-offset: 3px;
+}
+.narke-suite-header {
+  position: relative;
+  z-index: 8;
+  display: grid;
+  width: min(100%, 480px);
+  height: 76px;
+  grid-template-columns: 46px 1fr 46px;
+  align-items: center;
+  margin: 0 auto;
+  border-bottom: 1px solid rgb(0 232 245 / 25%);
+  padding: 0 13px;
+  background:
+    linear-gradient(115deg, transparent 0 22%, rgb(0 232 245 / 14%) 22.2%, transparent 23% 71%, rgb(0 169 217 / 14%) 71.2%, transparent 72%),
+    linear-gradient(180deg, rgb(0 32 49 / 95%), rgb(0 19 30 / 86%));
+  box-shadow: inset 0 -1px rgb(0 232 245 / 12%), 0 8px 25px rgb(0 0 0 / 18%);
+}
+.narke-suite-logo {
+  display: block;
+  width: 135px;
+  height: auto;
+  max-height: 49px;
+  justify-self: center;
+  object-fit: contain;
+}
+.narke-suite-header button,
+.narke-suite-header a {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--narke-white);
+  cursor: pointer;
+}
+.narke-suite-header svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+.narke-suite-header [data-suite-bell] { position: relative; justify-self: end; }
+.narke-suite-header [data-suite-bell]::after {
+  position: absolute;
+  top: 7px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--narke-cyan);
+  box-shadow: 0 0 10px var(--narke-cyan);
+  content: "";
+}
+.narke-suite-menu {
+  position: absolute;
+  z-index: 20;
+  top: 66px;
+  left: 10px;
+  display: grid;
+  min-width: 215px;
+  gap: 2px;
+  border: 1px solid rgb(0 232 245 / 65%);
+  border-radius: 13px;
+  padding: 8px;
+  background: rgb(0 25 39 / 97%);
+  box-shadow: 0 10px 35px rgb(0 0 0 / 50%), 0 0 16px rgb(0 232 245 / 13%);
+}
+.narke-suite-menu[hidden] { display: none; }
+.narke-suite-menu a { display: flex; width: auto; height: auto; justify-content: flex-start; border-radius: 8px; padding: 11px 12px; color: var(--narke-white); font-size: 13px; text-decoration: none; }
+.narke-suite-menu a:hover { background: rgb(0 232 245 / 11%); }
+.narke-suite-header.narke-embedded-header { position: relative; }
+.narke-suite-header.narke-embedded-header > .narke-suite-menu { position: absolute; }
+.narke-suite-header.narke-embedded-header > button,
+.narke-suite-header.narke-embedded-header > a[data-suite-bell] { z-index: 2; }
+body.narke-team-page .team-brandbar.narke-embedded-header { grid-template-columns: 40px minmax(0,1fr) auto 40px; }
+body.narke-team-page .team-brandbar.narke-embedded-header .team-wordmark { width: 0; height: 0; }
+body.narke-team-page .team-brandbar.narke-embedded-header .team-header-actions { position: relative; z-index: 2; display: flex; gap: 5px; }
+body.narke-team-page .team-brandbar.narke-embedded-header .team-header-actions a { width: auto; height: 31px; min-height: 31px; padding: 0 8px; font-size: 9px; white-space: nowrap; }
+body.narke-missions-page .missions-header.narke-embedded-header { grid-template-columns: 40px minmax(0,1fr) auto 40px; }
+body.narke-missions-page .missions-header.narke-embedded-header .brand-mark { grid-column: 2; justify-self: center; }
+body.narke-missions-page .missions-header.narke-embedded-header .back-link { grid-column: 3; width: auto; height: 32px; white-space: nowrap; }
+
+body.narke-withdraw-page .finance-page,
+body.narke-support-page .page,
+body.narke-history-page .page,
+body.narke-team-detail-page .page { width: min(100%, 480px); margin: 0 auto; padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+body.narke-suite-page .finance-header,
+body.narke-suite-page .page-header {
+  position: sticky;
+  z-index: 4;
+  top: 0;
+  height: 54px;
+  grid-template-columns: 44px 1fr 38px;
+  border-bottom: 1px solid rgb(0 232 245 / 24%);
+  padding: 0 10px;
+  background: rgb(0 26 41 / 91%);
+  color: var(--narke-white);
+  backdrop-filter: blur(12px);
+}
+body.narke-suite-page :is(.finance-header h1,.page-header h1) { color: var(--narke-white); font: 700 17px "Manrope", sans-serif; }
+body.narke-suite-page :is(.finance-back,.page-header .back) { color: var(--narke-white); font-size: 28px; text-decoration: none; }
+body.narke-suite-page .info-button { border: 1px solid var(--narke-cyan); background: transparent; color: var(--narke-cyan); box-shadow: 0 0 11px rgb(0 232 245 / 25%); }
+
+/* Withdrawal: keep original request form and rule copy intact; only surface styling changes. */
+body.narke-withdraw-page .finance-content { padding: 0 10px 38px; }
+body.narke-withdraw-page .vehicle-balance {
+  position: relative;
+  height: 105px;
+  overflow: hidden;
+  border: 1px solid rgb(0 232 245 / 78%);
+  border-radius: 14px;
+  margin: 9px 0 0;
+  padding: 17px 17px;
+  background: linear-gradient(90deg,#00394b 0%,rgb(0 35 51 / 97%) 41%,transparent 85%),#002333;
+  box-shadow: inset 0 0 15px rgb(0 232 245 / 14%), 0 0 12px rgb(0 169 217 / 20%);
+}
+body.narke-withdraw-page .vehicle-balance img { position: absolute; z-index: 0; top: 0; right: 0; width: 68%; height: 100%; object-fit: cover; object-position: right center; mask-image: linear-gradient(90deg,transparent 0%,#000 22%,#000 87%,transparent 100%); }
+body.narke-withdraw-page .vehicle-balance figcaption { position: absolute; z-index: 1; top: 17px; right: auto; left: 17px; display: grid; width: 48%; gap: 5px; color: var(--narke-muted); font-size: 14px; text-align: left; }
+body.narke-withdraw-page .vehicle-balance strong { color: var(--narke-cyan); font: 800 25px "Manrope",sans-serif; }
+body.narke-withdraw-page .finance-section-label { min-height: 25px; gap: 10px; margin: 13px 3px 8px; color: var(--narke-white); font-size: 15px; }
+body.narke-withdraw-page .finance-section-label::before { display: none; content: none; }
+body.narke-withdraw-page .narke-finance-icon { width: 22px; height: 22px; flex: 0 0 22px; fill: none; stroke: var(--narke-cyan); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+body.narke-withdraw-page .finance-section-label.amount-title { justify-content: space-between; margin-top: 12px; }
+body.narke-withdraw-page .finance-section-label.amount-title::before { display: none; content: none; }
+body.narke-withdraw-page .finance-section-label small { margin-left: auto; color: var(--narke-white); font-size: 13px; }
+body.narke-withdraw-page .wallet-select,
+body.narke-withdraw-page .input-wrap {
+  min-height: 40px;
+  border: 1px solid rgb(133 226 238 / 65%);
+  border-radius: 9px;
+  background: linear-gradient(100deg,rgb(0 56 74 / 88%),rgb(0 27 43 / 96%));
+  color: var(--narke-white);
+  box-shadow: inset 0 0 10px rgb(0 232 245 / 6%), 0 0 9px rgb(0 169 217 / 10%);
+}
+body.narke-withdraw-page .wallet-select { width: 100%; justify-content: space-between; font: 13px "DM Sans",sans-serif; }
+body.narke-withdraw-page .input-wrap { height: 42px; padding: 0 15px; }
+body.narke-withdraw-page .input-wrap input { color: var(--narke-white); font-family: "DM Sans",sans-serif; }
+body.narke-withdraw-page .input-wrap input::placeholder { color: #8caab6; }
+body.narke-withdraw-page .received-amount { margin: 8px 3px; color: var(--narke-white); font-size: 12px; font-weight: 600; }
+body.narke-withdraw-page .minimum-note { border: 1px solid rgb(0 232 245 / 40%); border-radius: 30px; padding: 7px 10px; background: rgb(0 57 75 / 52%); color: var(--narke-muted); font-size: 10px; text-align: center; }
+body.narke-withdraw-page .payment-submit { min-height: 41px; border: 1px solid #5af8ff; border-radius: 13px; background: linear-gradient(180deg,#18dce7,#009eb9); color: #f5fbff; font: 700 14px "Manrope",sans-serif; box-shadow: inset 0 1px rgb(255 255 255 / 28%), 0 0 16px rgb(0 232 245 / 28%); }
+body.narke-withdraw-page .payment-submit:active { transform: translateY(1px); }
+body.narke-withdraw-page .instructions {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(0 232 245 / 65%);
+  border-radius: 12px;
+  margin-top: 13px;
+  padding: 12px 14px 14px;
+  background: var(--narke-glass);
+  box-shadow: inset 0 0 17px rgb(0 232 245 / 9%), 0 7px 22px rgb(0 0 0 / 25%);
+}
+body.narke-withdraw-page .instructions::after { display: none; }
+body.narke-withdraw-page .instructions h2 { display: flex; min-height: 35px; align-items: center; gap: 8px; border-bottom: 1px solid rgb(0 232 245 / 22%); margin: 0 0 8px; padding: 0 0 7px; color: var(--narke-white); font: 700 15px "Manrope",sans-serif; }
+body.narke-withdraw-page .instruction-icon { width: 22px; height: 22px; flex: 0 0 22px; fill: none; stroke: var(--narke-cyan); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+body.narke-withdraw-page .instruction-boats { display: flex; min-width: 0; flex: 1; align-items: center; justify-content: flex-end; gap: 1px; }
+body.narke-withdraw-page .instruction-boats img { width: min(20%,55px); height: 28px; object-fit: contain; mask-image: linear-gradient(90deg,transparent,#000 20%,#000 85%,transparent); }
+body.narke-withdraw-page .instructions ol { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; counter-reset: rule; }
+body.narke-withdraw-page .instructions li { position: relative; padding-left: 27px; color: #e1eef3; font-size: 10.5px; line-height: 1.3; }
+body.narke-withdraw-page .instructions li::before { position: absolute; left: 0; top: -1px; width: 18px; height: 18px; border: 1px solid var(--narke-cyan); border-radius: 50%; color: var(--narke-white); font-size: 10px; line-height: 17px; text-align: center; content: counter(rule); counter-increment: rule; }
+body.narke-withdraw-page .payment-disclosure { position: relative; z-index: 1; color: var(--narke-muted); font-size: 10px; line-height: 1.4; }
+body.narke-withdraw-page .payment-disclosure a { color: var(--narke-cyan); }
+body.narke-withdraw-page .finance-dialog { border: 1px solid var(--narke-cyan); border-radius: 14px; background: #002333; color: var(--narke-white); }
+
+/* Service & activity records */
+body.narke-support-page .reference-page { position: relative; padding: 0 10px 30px; }
+body.narke-support-page .service-banner { position: relative; height: 225px; overflow: hidden; border-radius: 0 0 13px 13px; margin: 0 -10px 11px; background: linear-gradient(90deg,#00131e 0%,rgb(0 19 30 / 95%) 29%,transparent 75%),url("/pages/assets/narke-scene-support.webp") right center / auto 100% no-repeat,#00131e; }
+body.narke-support-page .service-banner img { display: none; }
+body.narke-support-page .service-banner::after { position: absolute; inset: 0; background: linear-gradient(90deg,#00131e 0%,transparent 24%),linear-gradient(0deg,#00131e55,transparent 30%); mask-image: linear-gradient(90deg,transparent 0%,#000 34%,#000 95%,transparent 100%); pointer-events: none; content: ""; }
+body.narke-support-page .narke-service-copy { position: absolute; z-index: 2; top: 24px; left: 14px; display: block; width: min(220px,58%); color: var(--narke-white); }
+body.narke-support-page .narke-service-copy > span { color: var(--narke-cyan); font-size: 9px; font-weight: 700; letter-spacing: .22em; }
+body.narke-support-page .narke-service-copy h2 { margin: 8px 0; font: 800 29px/1 "Manrope",sans-serif; }
+body.narke-support-page .narke-service-copy h2 b { color: var(--narke-cyan); }
+body.narke-support-page .narke-service-copy p { max-width: 215px; margin: 8px 0; color: #e1eef3; font-size: 11px; line-height: 1.45; }
+body.narke-support-page .reference-hours,
+body.narke-support-page .reference-contact { border: 1px solid rgb(0 232 245 / 68%); border-radius: 13px; background: var(--narke-glass); color: var(--narke-white); box-shadow: inset 0 0 14px rgb(0 232 245 / 10%), 0 0 11px rgb(0 169 217 / 12%); }
+body.narke-support-page .reference-hours { display: grid; min-height: 82px; grid-template-columns: 48px 1fr; align-content: center; justify-items: start; gap: 1px 12px; margin: -1px 3px 19px; padding: 12px 18px; background-image: url("/pages/assets/narke-model-1.png"); background-repeat: no-repeat; background-position: right 8px center; background-size: 105px auto; text-align: left; }
+body.narke-support-page .narke-headset-icon { width: 42px; height: 42px; grid-row: span 2; fill: none; stroke: var(--narke-cyan); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+body.narke-support-page .reference-hours strong { color: var(--narke-white); font: 800 24px "Manrope",sans-serif; }
+body.narke-support-page .reference-hours span { color: var(--narke-muted); }
+body.narke-support-page .reference-contact-list { display: grid; gap: 14px; margin: 16px 0 0; border: 0; padding: 0 !important; background: transparent !important; box-shadow: none !important; }
+body.narke-support-page .reference-contact { min-height: 76px; padding: 10px 14px; }
+body.narke-support-page .reference-contact { position: relative; overflow: hidden; }
+body.narke-support-page .reference-contact::after { position: absolute; top: 3px; right: 30px; width: 124px; height: calc(100% - 6px); background: url("/pages/assets/narke-model-1.png") center / contain no-repeat; mask-image: linear-gradient(90deg,transparent,#000 22%,#000 80%,transparent); opacity: .82; pointer-events: none; content: ""; }
+body.narke-support-page .reference-contact:nth-child(2)::after { filter: sepia(.8) saturate(1.6); }
+body.narke-support-page .reference-contact:nth-child(3)::after { filter: hue-rotate(145deg) saturate(1.2); }
+body.narke-support-page .reference-telegram { border: 1px solid rgb(255 255 255 / 40%); background: linear-gradient(145deg,#15bce5,#087ab5); box-shadow: 0 0 10px rgb(0 232 245 / 35%); }
+body.narke-support-page .contact-main { gap: 12px; }
+body.narke-support-page .contact-chevron { color: var(--narke-white); }
+body.narke-support-page .reference-contact .contact-main,
+body.narke-support-page .reference-contact .contact-chevron { position: relative; z-index: 1; }
+body.narke-support-page .reference-contact .contact-main > span:last-child { color: var(--narke-white); font-size: 13px; font-weight: 600; }
+body.narke-history-page .reference-history { padding-bottom: 84px; }
+body.narke-history-page .narke-suite-bottom {
+  position: fixed;
+  z-index: 7;
+  right: 0;
+  bottom: max(0px,env(safe-area-inset-bottom));
+  left: 0;
+  display: grid;
+  width: min(100%,480px);
+  height: 65px;
+  grid-template-columns: repeat(4,1fr);
+  margin: 0 auto;
+  border: 1px solid rgb(0 232 245 / 45%);
+  border-radius: 15px 15px 0 0;
+  background: rgb(0 28 43 / 96%);
+  box-shadow: 0 -4px 22px rgb(0 232 245 / 9%);
+}
+body.narke-history-page .narke-suite-bottom a { display: grid; align-content: center; justify-items: center; gap: 2px; color: #b6cdd6; font-size: 10px; text-decoration: none; }
+body.narke-history-page .narke-suite-bottom a[aria-current="page"] { color: var(--narke-cyan); }
+body.narke-history-page .narke-suite-bottom svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+body.narke-history-page .reference-history .page-content { padding: 8px 17px 20px; }
+body.narke-history-page .reference-activity-card { position: relative; overflow: hidden; border: 1px solid rgb(0 232 245 / 58%); border-radius: 13px; margin-bottom: 11px; padding: 11px 12px; background: var(--narke-glass); color: var(--narke-white); box-shadow: inset 0 0 13px rgb(0 232 245 / 8%), 0 0 10px rgb(0 169 217 / 12%); }
+body.narke-history-page .reference-activity-card::after { position: absolute; z-index: 0; right: 0; bottom: 4px; width: 38%; height: 68%; background: url("/pages/assets/narke-model-1.png") center / contain no-repeat; mask-image: linear-gradient(90deg,transparent,#000 26%,#000 88%,transparent); opacity: .75; pointer-events: none; content: ""; }
+body.narke-history-page .reference-activity-card:nth-of-type(3n + 2)::after { background-image: url("/pages/assets/narke-model-2.png"); }
+body.narke-history-page .reference-activity-card:nth-of-type(3n)::after { background-image: url("/pages/assets/narke-model-3.png"); }
+body.narke-history-page .reference-activity-title { position: relative; z-index: 1; border-bottom: 1px solid rgb(0 232 245 / 22%); padding-bottom: 8px; color: var(--narke-white); }
+body.narke-history-page .reference-activity-title { width: 65%; }
+body.narke-history-page .reference-activity-title > span:first-child { display: inline-flex; min-width: 0; align-items: center; gap: 10px; }
+body.narke-history-page .reference-activity-icon { display: grid; width: 32px; height: 32px; flex: 0 0 32px; place-items: center; border: 1px solid var(--narke-cyan); border-radius: 9px; color: var(--narke-cyan); }
+body.narke-history-page .reference-activity-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+body.narke-history-page .reference-activity-title strong { border: 1px solid rgb(0 232 245 / 72%); border-radius: 15px; padding: 6px 10px; background: rgb(0 44 62 / 85%); }
+body.narke-history-page .reference-activity-row { position: relative; z-index: 1; width: 65%; min-height: 24px; border-bottom: 1px solid rgb(196 220 230 / 16%); padding: 3px 4px; color: var(--narke-muted); font-size: 11px; }
+body.narke-history-page .reference-activity-label { flex: 0 0 42%; color: var(--narke-white); }
+body.narke-history-page .reference-activity-value { flex: 1; color: var(--narke-white); text-align: right; }
+body.narke-history-page .reference-activity-value[data-status] { width: fit-content; flex: 0 0 auto; border: 1px solid rgb(0 232 245 / 56%); border-radius: 12px; padding: 2px 8px; background: rgb(0 74 94 / 72%); }
+body.narke-history-page .reference-activity-value[data-status="failed"] { color: var(--narke-cyan); }
+body.narke-history-page .wallet-link { position: relative; z-index: 2; color: var(--narke-cyan); }
+body.narke-history-page .records-skeleton { border: 1px solid rgb(0 232 245 / 28%); background: linear-gradient(110deg,#002333,#06455a,#002333); background-size: 220% 100%; animation: narke-shimmer 1.8s ease infinite; }
+@keyframes narke-shimmer { to { background-position: -220% 0; } }
+
+/* Account portal */
+body.narke-account-page { background: var(--narke-abyss); }
+body.narke-account-page .account-shell { max-width: 480px; padding-bottom: calc(88px + env(safe-area-inset-bottom)); overflow: visible; }
+body.narke-account-page .account-hero { height: 132px; min-height: 132px; border-bottom: 1px solid rgb(0 232 245 / 55%); background: #00131e; }
+body.narke-account-page .hero-vehicle { object-fit: cover; object-position: 66% center; }
+body.narke-account-page .hero-shade { background: linear-gradient(90deg,rgb(0 19 30 / 92%),rgb(0 19 30 / 28%) 85%),linear-gradient(0deg,rgb(0 19 30 / 28%),transparent); }
+body.narke-account-page .hero-details { padding: 22px 24px 21px; }
+body.narke-account-page .hero-label { color: var(--narke-cyan); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; }
+body.narke-account-page .hero-phone { font: 700 22px "Manrope",sans-serif; }
+body.narke-account-page .hero-balance { margin-top: 10px; }
+body.narke-account-page .balance-amount { font: 800 22px "Manrope",sans-serif; }
+body.narke-account-page .account-content { padding: 0 12px 20px; }
+body.narke-account-page .wallet-actions { gap: 12px; margin: 11px 3px 13px; }
+body.narke-account-page .wallet-button { min-height: 43px; border: 1px solid var(--narke-cyan); border-radius: 11px; background: linear-gradient(120deg,#00394b,#001b2b); color: var(--narke-white); box-shadow: inset 0 0 12px rgb(0 232 245 / 12%),0 0 9px rgb(0 232 245 / 14%); }
+body.narke-account-page .wallet-button { display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
+body.narke-account-page .wallet-button svg { width: 24px; height: 24px; fill: none; stroke: var(--narke-cyan); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+body.narke-account-page .menu-group { border: 1px solid rgb(0 232 245 / 55%); border-radius: 12px; margin: 10px 0; padding: 5px 13px; background: var(--narke-glass); box-shadow: inset 0 0 14px rgb(0 232 245 / 7%); }
+body.narke-account-page .menu-group ul { margin: 0; padding: 0; }
+body.narke-account-page .menu-group li { border-color: rgb(196 220 230 / 22%); }
+body.narke-account-page .menu-row { min-height: 32px; padding: 4px 2px; color: var(--narke-white); }
+body.narke-account-page .menu-row span { color: inherit; }
+body.narke-account-page .menu-row svg { color: var(--narke-cyan); }
+body.narke-account-page .gift-code-toggle { min-height: 32px; padding: 4px 2px; color: var(--narke-white); }
+body.narke-account-page .bottom-navigation { bottom: max(0px,env(safe-area-inset-bottom)); height: 73px; border: 1px solid rgb(0 232 245 / 45%); border-radius: 17px 17px 0 0; background: rgb(0 28 43 / 96%); box-shadow: 0 -4px 22px rgb(0 232 245 / 9%); }
+body.narke-account-page .bottom-tab { color: #b6cdd6; }
+body.narke-account-page .bottom-tab.active,
+body.narke-account-page .bottom-label { color: var(--narke-cyan); }
+
+/* Missions */
+body.narke-missions-page { --red: var(--narke-cyan); --red-deep: var(--narke-cyan-soft); --ink: var(--narke-white); --muted: var(--narke-muted); --paper: var(--narke-abyss); color-scheme: dark; }
+body.narke-missions-page .missions-app { width: min(100%, 480px); padding: 0 15px 30px; }
+body.narke-missions-page .missions-header { height: 54px; border-bottom-color: rgb(0 232 245 / 22%); }
+body.narke-missions-page .brand-mark { width: 130px; }
+body.narke-missions-page .missions-header img { opacity: 0; }
+body.narke-missions-page .brand-mark { position: relative; }
+body.narke-missions-page .brand-mark::before { position: absolute; inset: 0; width: 130px; height: 48px; background: url("/pages/assets/narke-home-logo.png") center / contain no-repeat; content: ""; }
+body.narke-missions-page .back-link { border: 1px solid rgb(0 232 245 / 62%); border-radius: 18px; padding: 5px 11px; color: var(--narke-white); }
+body.narke-missions-page .missions-intro { min-height: 193px; padding: 27px 3px 18px; background: url("/pages/assets/narke-home-hero.png") no-repeat right 38% / 66% auto; }
+body.narke-missions-page .missions-intro::after { position: absolute; inset: 0; background: linear-gradient(90deg,#00131e 5%,rgb(0 19 30 / 91%) 36%,transparent 100%); content: ""; }
+body.narke-missions-page .missions-intro > * { position: relative; z-index: 1; }
+body.narke-missions-page .eyebrow { color: var(--narke-cyan); }
+body.narke-missions-page .missions-intro h1 { font-size: 34px; letter-spacing: -.04em; }
+body.narke-missions-page .missions-intro h1 span { color: var(--narke-cyan); }
+body.narke-missions-page .intro-copy { max-width: 310px; color: #e1eef3; font-size: 12px; line-height: 1.4; }
+body.narke-missions-page .mission-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; overflow: hidden; border: 1px solid rgb(0 232 245 / 62%); border-radius: 28px; background: #002333; }
+body.narke-missions-page .mission-tab { justify-content: center; color: var(--narke-muted); }
+body.narke-missions-page .mission-tab.is-active { border-radius: 26px; background: linear-gradient(100deg,#00a9d9,#00dce8); color: var(--narke-white); box-shadow: 0 0 13px rgb(0 232 245 / 24%); }
+body.narke-missions-page .mission-tab::after { display: none; }
+body.narke-missions-page .reward-summary { position: relative; min-height: 79px; overflow: hidden; border: 1px solid rgb(0 232 245 / 61%); border-radius: 13px; margin: 12px 0 16px; padding: 12px 17px; background: url("/pages/assets/narke-model-1.png") no-repeat right 20% center / 42% auto, var(--narke-glass); box-shadow: inset 0 0 16px rgb(0 232 245 / 10%); }
+body.narke-missions-page .reward-summary::after { position: absolute; inset: 0; background: linear-gradient(90deg,transparent 48%,rgb(0 19 30 / 10%)); pointer-events: none; content: ""; }
+body.narke-missions-page .summary-label { color: var(--narke-white); font-size: 12px; }
+body.narke-missions-page .reward-summary strong,.summary-unit { color: var(--narke-cyan); }
+body.narke-missions-page .mission-section { padding-bottom: 16px; }
+body.narke-missions-page .section-heading { margin-bottom: 9px; }
+body.narke-missions-page .section-heading h2 { font-size: 21px; }
+body.narke-missions-page .section-mark { display: none; }
+body.narke-missions-page .mission-list { gap: 9px; }
+body.narke-missions-page .mission-card { min-height: 150px; grid-template-columns: minmax(0,1fr) auto; gap: 6px 9px; border: 1px solid rgb(0 232 245 / 61%); border-radius: 13px; padding: 10px 12px; background: var(--narke-glass); box-shadow: inset 0 0 13px rgb(0 232 245 / 7%),0 0 12px rgb(0 169 217 / 10%); }
+body.narke-missions-page .mission-card::before { width: 2px; background: var(--narke-cyan); }
+body.narke-missions-page .mission-art { position: absolute; z-index: 0; top: 2px; right: 0; width: 42%; height: 78px; object-fit: contain; mask-image: linear-gradient(90deg,transparent,#000 24%); opacity: .85; pointer-events: none; }
+body.narke-missions-page .mission-title { position: relative; z-index: 1; font-size: 13px; }
+body.narke-missions-page .mission-reward { position: relative; z-index: 1; color: var(--narke-cyan); font-size: 18px; }
+body.narke-missions-page .mission-detail { position: relative; z-index: 1; color: var(--narke-muted); font-size: 11px; }
+body.narke-missions-page .progress-block { position: relative; z-index: 1; gap: 5px; }
+body.narke-missions-page .progress-copy { color: var(--narke-white); font-size: 10px; }
+body.narke-missions-page .progress-copy strong { color: var(--narke-white); }
+body.narke-missions-page .progress-track { height: 7px; background: rgb(0 24 37 / 90%); }
+body.narke-missions-page .progress-fill { border-radius: inherit; background: linear-gradient(90deg,#00a9d9,#00f4f8); box-shadow: 0 0 8px rgb(0 232 245 / 60%); }
+body.narke-missions-page .mission-action { min-height: 28px; border-color: rgb(0 232 245 / 59%); border-radius: 8px; background: linear-gradient(100deg,#00576a,#003243); color: var(--narke-white); font-size: 11px; }
+body.narke-missions-page .mission-action:disabled { border-color: rgb(0 232 245 / 34%); background: rgb(0 89 105 / 38%); color: #d8edf1; }
+body.narke-missions-page .mission-skeleton { border: 1px solid rgb(0 232 245 / 24%); background: linear-gradient(110deg,#002333,#06455a,#002333); background-size: 200% 100%; }
+body.narke-missions-page .mission-empty,.mission-error { border-color: rgb(0 232 245 / 40%); background: var(--narke-glass); color: var(--narke-white); }
+body.narke-missions-page .missions-footer { border-top-color: rgb(0 232 245 / 27%); color: var(--narke-muted); }
+body.narke-missions-page .missions-footer span:first-child { color: var(--narke-cyan); }
+
+/* Team portal and member detail */
+body.narke-team-page { background: var(--narke-abyss); }
+body.narke-team-page .team-portal { max-width: 480px; padding: 0 10px 87px; }
+body.narke-team-page .team-brandbar { height: 63px; border: 1px solid rgb(0 232 245 / 48%); border-radius: 0 0 13px 13px; padding: 0 10px; background: linear-gradient(100deg,#002333,#00131e); }
+body.narke-team-page .team-wordmark { width: 132px; }
+body.narke-team-page .team-wordmark img { max-height: 35px; filter: brightness(0) invert(1); }
+body.narke-team-page .team-brandbar::before { position: absolute; inset: 0; background: url("/pages/assets/narke-home-logo.png") center / 132px auto no-repeat; pointer-events: none; content: ""; }
+body.narke-team-page .team-header-actions { position: relative; z-index: 1; display: flex; gap: 6px; }
+body.narke-team-page .team-view-link,.team-copy,.team-missions-link { min-height: 31px; border: 1px solid var(--narke-cyan); border-radius: 18px; padding: 0 11px; background: linear-gradient(100deg,#004359,#003243); color: var(--narke-white); font: 600 10px "DM Sans",sans-serif; box-shadow: 0 0 9px rgb(0 232 245 / 15%); }
+body.narke-team-page .team-view-link { min-width: unset; }
+body.narke-team-page .team-wordmark { visibility: hidden; }
+body.narke-team-page .team-invite { min-height: auto; border: 1px solid rgb(0 232 245 / 53%); border-radius: 11px; margin-bottom: 10px; padding: 6px 9px; background: var(--narke-glass); box-shadow: inset 0 0 11px rgb(0 232 245 / 8%); }
+body.narke-team-page .team-invite-row { min-height: 51px; grid-template-columns: minmax(0,1fr) auto; }
+body.narke-team-page .team-invite-value { color: var(--narke-white); font-size: 12px; font-weight: 700; }
+body.narke-team-page .team-invite-label { color: var(--narke-muted); font-size: 10px; }
+body.narke-team-page .team-copy[data-copied="true"] { background: #007a86; }
+body.narke-team-page .team-table-wrap { overflow: hidden; border: 1px solid rgb(0 232 245 / 62%); border-radius: 12px; background: var(--narke-glass); color: var(--narke-white); }
+body.narke-team-page .team-commission-table { font-size: 11px; }
+body.narke-team-page .team-commission-table th,body.narke-team-page .team-commission-table td { height: 36px; border-color: rgb(196 220 230 / 24%); }
+body.narke-team-page .team-commission-table th+th,body.narke-team-page .team-commission-table td+td { border-left: 1px solid rgb(196 220 230 / 24%); }
+body.narke-team-page .team-metrics { gap: 9px; margin: 10px 0; }
+body.narke-team-page .team-metric,body.narke-team-page .team-terms { border: 1px solid rgb(0 232 245 / 55%); border-radius: 11px; background: var(--narke-glass); color: var(--narke-white); box-shadow: inset 0 0 13px rgb(0 232 245 / 8%); }
+body.narke-team-page .team-terms { position: relative; overflow: hidden; }
+body.narke-team-page .team-terms::after { position: absolute; top: 2px; right: 0; width: 41%; height: 75px; background: url("/pages/assets/narke-model-1.png") center / contain no-repeat; mask-image: linear-gradient(90deg,transparent,#000 30%); opacity: .62; pointer-events: none; content: ""; }
+body.narke-team-page .team-terms h2 { border-color: var(--narke-cyan); }
+body.narke-team-page .team-disclosure { color: var(--narke-muted); }
+body.narke-team-page .team-bottom-nav { bottom: max(0px,env(safe-area-inset-bottom)); height: 68px; border: 1px solid rgb(0 232 245 / 46%); border-radius: 15px 15px 0 0; background: rgb(0 28 43 / 96%); }
+body.narke-team-page .team-bottom-nav a[aria-current="page"] { color: var(--narke-cyan); }
+body.narke-team-page .team-level-tab { min-height: 94px; border: 1px solid rgb(0 232 245 / 45%); border-radius: 12px; margin: 4px; background: var(--narke-glass); color: var(--narke-white); font: 12px "DM Sans",sans-serif; }
+body.narke-team-page .team-level-tab[aria-selected="true"] { border-color: var(--narke-cyan); box-shadow: inset 0 0 13px rgb(0 232 245 / 18%),0 0 10px rgb(0 232 245 / 16%); }
+body.narke-team-page .team-level-tabs { gap: 1px; border: 0; }
+body.narke-team-page .team-level-revenue { color: var(--narke-cyan); font-weight: 700; }
+body.narke-team-page .team-member-row { min-height: 50px; border: 1px solid rgb(0 232 245 / 52%); border-radius: 12px; margin: 7px 10px; padding: 5px 9px; background: var(--narke-glass); color: var(--narke-white); }
+body.narke-team-page .team-member-avatar { width: 58px; height: 34px; border-right: 1px solid rgb(196 220 230 / 32%); border-radius: 0; padding-right: 8px; object-fit: contain; mask-image: linear-gradient(90deg,transparent,#000 18%,#000 88%,transparent); }
+body.narke-team-page .team-member-phone,body.narke-team-page .team-member-investment { color: var(--narke-white); }
+body.narke-team-page .team-member-date { color: var(--narke-muted); }
+body.narke-team-page .team-detail-empty { color: var(--narke-muted); }
+body.narke-team-page .team-detail-status { color: #ffd2d4; }
+
+@media (min-width: 700px) {
+  body.narke-suite-page { padding: 22px 0; }
+  body.narke-suite-page :is(.finance-page,.page,.account-shell,.team-portal,.missions-app) { border: 1px solid rgb(0 232 245 / 25%); border-radius: 15px; overflow: hidden; box-shadow: 0 20px 65px rgb(0 0 0 / 35%); }
+  body.narke-suite-page .narke-suite-header { border-radius: 14px 14px 0 0; }
+}
+@media (max-width: 360px) {
+  body.narke-suite-page .narke-suite-header { height: 68px; }
+  body.narke-support-page .reference-contact { padding-right: 8px; }
+  body.narke-support-page .reference-contact::after { width: 90px; opacity: .65; }
+  body.narke-team-page .team-invite-row { grid-template-columns: minmax(0,1fr) auto; gap: 4px; }
+  body.narke-team-page .team-copy { padding: 0 8px; font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.narke-suite-page *, body.narke-suite-page *::before, body.narke-suite-page *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* Reference-fit corrections: geometry and photo placement take precedence over the old SHINERAY component defaults. */
+body.narke-withdraw-page .input-wrap {
+  border: 1px solid rgb(0 232 245 / 70%);
+  background: linear-gradient(100deg,rgb(0 56 74 / 88%),rgb(0 27 43 / 96%));
+  box-shadow: inset 0 0 10px rgb(0 232 245 / 7%),0 0 9px rgb(0 169 217 / 11%);
+}
+body.narke-withdraw-page .instructions h2 { justify-content: flex-start; }
+body.narke-withdraw-page .instructions .payment-disclosure { margin: 11px 0 0; }
+body.narke-withdraw-page .instructions .payment-disclosure + .payment-disclosure { margin-top: 10px; }
+body.narke-withdraw-page .instructions .payment-disclosure a { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; text-decoration: underline; }
+body.narke-support-page .service-banner { background-image: linear-gradient(90deg,#00131e 0%,rgb(0 19 30 / 91%) 32%,transparent 77%),url("/pages/assets/narke-scene-support.webp"); }
+body.narke-support-page .reference-hours { background-image: linear-gradient(100deg,rgb(0 66 84 / 30%),rgb(0 19 30 / 10%)),url("/pages/assets/narke-model-1.png"); }
+body.narke-support-page .reference-contact-list,
+body.narke-support-page .service-page .reference-contact-list {
+  border: 0 !important;
+  margin: 16px 0 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+body.narke-support-page .reference-contact { min-height: 76px; border: 1px solid rgb(0 232 245 / 74%); background: linear-gradient(100deg,rgb(0 67 87 / 90%),rgb(0 28 43 / 94%)); }
+body.narke-support-page .reference-contact:nth-child(2)::after { background-image: url("/pages/assets/narke-model-4.png"); filter: none; }
+body.narke-support-page .reference-contact:nth-child(3)::after { background-image: url("/pages/assets/narke-model-2.png"); filter: none; }
+body.narke-support-page .reference-contact .contact-main > span:last-child { max-width: 200px; overflow-wrap: anywhere; }
+
+body.narke-account-page .narke-suite-header { height: 54px; }
+body.narke-account-page .account-hero { height: 132px; min-height: 132px; }
+body.narke-account-page .hero-vehicle { object-fit: contain; object-position: right center; }
+body.narke-account-page .hero-shade { background: linear-gradient(90deg,rgb(0 19 30 / 94%),rgb(0 19 30 / 74%) 36%,rgb(0 19 30 / 13%) 78%),linear-gradient(0deg,rgb(0 19 30 / 22%),transparent 45%); }
+body.narke-account-page .hero-details { padding: 9px 24px 14px; }
+body.narke-account-page .hero-phone { font-size: 18px; }
+body.narke-account-page .narke-marine-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 4px 0 8px;
+  color: var(--narke-white);
+  font: 500 12px "Manrope",sans-serif;
+  letter-spacing: .25em;
+}
+body.narke-account-page .narke-marine-divider::before,
+body.narke-account-page .narke-marine-divider::after { width: 30%; height: 1px; background: var(--narke-cyan); content: ""; }
+body.narke-account-page .narke-marine-divider b { color: var(--narke-cyan); font-weight: 500; }
+body.narke-account-page .menu-group { margin: 8px 0; }
+body.narke-account-page .bottom-tab,
+body.narke-account-page .bottom-tab span { font-family: "DM Sans",sans-serif; }
+
+body.narke-missions-page .missions-app { padding-right: 15px; padding-left: 15px; }
+body.narke-missions-page .missions-header.narke-embedded-header { grid-template-columns: 40px minmax(0,1fr) max-content 40px; }
+body.narke-missions-page .missions-header.narke-embedded-header .brand-mark { min-width: 0; }
+body.narke-missions-page .missions-header.narke-embedded-header .back-link { display: flex; min-width: max-content; align-items: center; gap: 4px; padding: 4px 9px; font-size: 11px; white-space: nowrap; }
+body.narke-missions-page .missions-intro {
+  min-height: 174px;
+  background-image: linear-gradient(90deg,#00131e 0%,rgb(0 19 30 / 96%) 35%,rgb(0 19 30 / 12%) 80%),url("/pages/assets/narke-scene-support.webp");
+  background-position: center,right center;
+  background-size: cover,auto 100%;
+  background-repeat: no-repeat;
+}
+body.narke-missions-page .missions-intro::after { background: linear-gradient(90deg,#00131e 0%,rgb(0 19 30 / 55%) 46%,transparent 88%); }
+body.narke-missions-page .reward-summary { background-image: linear-gradient(90deg,#002333 0%,rgb(0 35 51 / 86%) 45%,transparent 80%),url("/pages/assets/narke-mission-blue.webp"); background-position: center,right 8% center; background-size: cover,45% auto; background-repeat: no-repeat; }
+body.narke-missions-page .reward-summary { display: grid; grid-template-columns: max-content max-content; grid-template-rows: auto auto; justify-content: start; gap: 0 5px; }
+body.narke-missions-page .reward-summary > div { display: contents; }
+body.narke-missions-page .summary-label { grid-column: 1 / -1; grid-row: 1; }
+body.narke-missions-page .reward-summary strong { grid-column: 1; grid-row: 2; }
+body.narke-missions-page .summary-unit { position: static; grid-column: 2; grid-row: 2; align-self: end; justify-self: start; margin: 0 0 4px; font-size: 14px; }
+body.narke-missions-page .mission-card { display: grid; grid-template-columns: minmax(0,1fr); gap: 0; min-height: 142px; padding: 10px 14px; }
+body.narke-missions-page .mission-card .mission-title { grid-column: 1; max-width: 65%; margin: 0 0 3px; }
+body.narke-missions-page .mission-art { top: 4px; right: 4px; width: 43%; height: 75px; object-fit: contain; mask-image: linear-gradient(90deg,transparent,#000 25%,#000 92%,transparent); }
+body.narke-missions-page .mission-card:nth-child(2) .mission-art { filter: none; }
+body.narke-missions-page .mission-card:nth-child(3) .mission-art { filter: none; }
+body.narke-missions-page .mission-reward { display: flex; grid-column: 1; align-items: baseline; gap: 5px; margin: 0; color: var(--narke-cyan); text-align: left; }
+body.narke-missions-page .mission-reward small { display: inline; margin: 0; color: var(--narke-cyan); font-size: 12px; text-align: left; }
+body.narke-missions-page .mission-detail { grid-column: 1; margin: 3px 0 8px; }
+body.narke-missions-page .progress-block { grid-column: 1; }
+body.narke-missions-page .mission-action { grid-column: 1; margin-top: 7px; }
+body.narke-missions-page .missions-footer { border: 1px solid rgb(0 232 245 / 48%); border-radius: 14px; margin-top: 8px; padding: 11px 14px; background: var(--narke-glass); }
+
+body.narke-team-page .team-brandbar.narke-embedded-header { grid-template-columns: 40px minmax(0,1fr) 40px; }
+body.narke-team-page .team-brandbar.narke-embedded-header .team-wordmark { width: 0; height: 0; }
+body.narke-team-page .team-page-heading { display: grid; min-height: 44px; grid-template-columns: minmax(0,1fr) auto auto; align-items: center; gap: 7px; margin: 5px 5px 7px; }
+body.narke-team-page .team-page-heading h1 { display: flex; align-items: center; gap: 9px; margin: 0; font: 800 20px "Manrope",sans-serif; }
+body.narke-team-page .team-page-heading h1 svg { width: 26px; height: 26px; fill: none; stroke: var(--narke-cyan); stroke-width: 2; }
+body.narke-team-page .team-page-heading .team-view-link,
+body.narke-team-page .team-page-heading .team-missions-link { display: inline-flex; min-height: 31px; align-items: center; gap: 6px; border: 1px solid var(--narke-cyan); border-radius: 20px; padding: 0 9px; background: linear-gradient(100deg,#004359,#003243); color: var(--narke-white); font: 600 10px "DM Sans",sans-serif; text-decoration: none; white-space: nowrap; }
+body.narke-team-page .team-page-heading .team-view-link { display: none; }
+body.narke-team-page .team-page-heading .team-missions-link { display: inline-flex; }
+body.narke-team-page .team-invite { position: relative; overflow: hidden; min-height: 53px; margin: 7px 0; padding: 5px 9px; }
+body.narke-team-page .team-invite::after { position: absolute; z-index: 0; top: 0; right: 115px; width: 31%; height: 100%; background: url("/pages/assets/narke-model-1.png") center / contain no-repeat; mask-image: linear-gradient(90deg,transparent,#000 25%,#000 80%,transparent); opacity: .84; pointer-events: none; content: ""; }
+body.narke-team-page .team-invite-link::after { background-image: url("/pages/assets/narke-model-4.png"); }
+body.narke-team-page .team-invite-row { position: relative; z-index: 1; min-height: 48px; grid-template-columns: minmax(0,1fr) auto; gap: 6px; }
+body.narke-team-page .team-invite-row > div { min-width: 0; }
+body.narke-team-page .team-invite-value { max-width: 100%; font-size: 12px; }
+body.narke-team-page .team-copy { min-height: 31px; padding: 0 10px; font-size: 10px; white-space: nowrap; }
+body.narke-team-page .team-invite .team-status { position: absolute; z-index: 2; right: 8px; bottom: -1px; max-width: 65%; min-height: 0; margin: 0; font-size: 9px; }
+body.narke-team-page .team-invite .team-status:empty { display: none; }
+body.narke-team-page .team-table-wrap { margin-top: 8px; }
+body.narke-team-page .team-commission-table { table-layout: fixed; }
+body.narke-team-page .team-commission-table th:first-child,
+body.narke-team-page .team-commission-table td:first-child { width: 49%; }
+body.narke-team-page .team-commission-table th:nth-child(2),
+body.narke-team-page .team-commission-table td:nth-child(2),
+body.narke-team-page .team-commission-table th:nth-child(3),
+body.narke-team-page .team-commission-table td:nth-child(3) { width: 25.5%; }
+body.narke-team-page .team-commission-table td:first-child { display: table-cell; position: relative; height: 52px; padding: 6px 47px 6px 66px; vertical-align: middle; text-align: left; }
+body.narke-team-page .team-level-art { position: absolute; left: 5px; top: 50%; width: 58px; height: 36px; transform: translateY(-50%); object-fit: contain; mask-image: linear-gradient(90deg,transparent,#000 18%,#000 90%,transparent); }
+body.narke-team-page .team-level-name { display: block; min-width: 0; font-size: 10px; line-height: 1.2; white-space: normal; }
+body.narke-team-page .team-level-rate { position: absolute; top: 50%; right: 5px; width: fit-content; transform: translateY(-50%); border: 1px solid var(--narke-cyan); border-radius: 12px; padding: 2px 5px; color: var(--narke-white); font-size: 10px; }
+body.narke-account-page .bottom-tab,
+body.narke-account-page .bottom-tab span { font-family: "DM Sans",sans-serif; }
+body.narke-account-page .bottom-tab.active,
+body.narke-account-page .bottom-tab.active span,
+body.narke-account-page .bottom-tab.active svg { color: var(--narke-cyan); fill: var(--narke-cyan); }
+body.narke-suite-page.narke-history-page .reference-activity-title { width: 100%; max-width: 100%; }
+body.narke-withdraw-page .narke-suite-header { height: 54px; }
+body.narke-withdraw-page .finance-header { min-height: 40px; height: 40px; }
+@layer form-controls {
+  body.narke-withdraw-page .input-wrap { border: 1px solid #83bac9 !important; box-shadow: inset 0 0 10px #00e8f512 !important; }
+  body.narke-withdraw-page .input-wrap:focus-within { border-color: #00e8f5 !important; }
+}
+body.narke-withdraw-page .payment-status:empty { display: none; }
+body.narke-withdraw-page .instructions { margin: 16px 0 0; }
+@media (max-width: 350px) {
+  body.narke-team-page .team-commission-table td:first-child { padding-left: 46px; padding-right: 37px; }
+  body.narke-team-page .team-level-art { left: 3px; width: 40px; }
+  body.narke-team-page .team-level-name { font-size: 9px; }
+  body.narke-team-page .team-level-rate { right: 3px; padding: 2px 3px; font-size: 9px; }
+}
+body.narke-team-page .team-terms h2 { display: flex; align-items: center; gap: 10px; border: 0; margin: 0 0 11px; padding: 0; font: 700 17px "Manrope",sans-serif; }
+body.narke-team-page .team-terms h2 svg { width: 25px; height: 25px; fill: none; stroke: var(--narke-cyan); stroke-width: 1.7; }
+body.narke-team-page .team-terms > p:not(:nth-of-type(n + 4)) { position: relative; margin: 0 0 10px 27px; padding-left: 78px; font-size: 11px; line-height: 1.3; }
+body.narke-team-page .team-terms > p:not(:nth-of-type(n + 4))::before { position: absolute; top: 1px; left: -23px; width: 9px; height: 9px; border: 2px solid var(--narke-cyan); border-radius: 50%; background: var(--narke-abyss); content: ""; }
+body.narke-team-page .team-terms > p:not(:nth-of-type(n + 4))::after { position: absolute; top: 11px; bottom: -10px; left: -19px; width: 1px; background: var(--narke-cyan); content: ""; }
+body.narke-team-page .team-terms > p:not(:nth-of-type(n + 4)) { counter-increment: invite-level; }
+body.narke-team-page .team-terms > p:not(:nth-of-type(n + 4)) .team-term-level { position: absolute; left: 0; top: 0; border: 1px solid var(--narke-cyan); border-radius: 13px; padding: 3px 8px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+body.narke-team-page .team-terms > p:not(:nth-of-type(n + 4))::marker { color: var(--narke-cyan); }
+body.narke-team-page .team-terms .team-disclosure { position: relative; z-index: 1; border-top: 1px solid rgb(196 220 230 / 24%); padding-top: 9px; }
+body.narke-team-page .team-bottom-nav a,
+body.narke-team-page .team-bottom-nav { font-family: "DM Sans",sans-serif; }
+
+body.narke-team-page .team-level-tab { position: relative; min-height: 109px; align-content: end; gap: 3px; overflow: hidden; padding: 55px 3px 8px; background-image: linear-gradient(180deg,transparent 22%,rgb(0 27 43 / 83%) 60%),url("/pages/assets/narke-model-1.png"); background-position: center,center 1px; background-size: cover,116px 62px; background-repeat: no-repeat; }
+body.narke-team-page .team-level-tab:nth-child(2) { background-image: linear-gradient(180deg,transparent 22%,rgb(0 27 43 / 83%) 60%),url("/pages/assets/narke-model-2.png"); }
+body.narke-team-page .team-level-tab:nth-child(3) { background-image: linear-gradient(180deg,transparent 22%,rgb(0 27 43 / 83%) 60%),url("/pages/assets/narke-model-4.png"); }
+body.narke-team-page .team-level-revenue { color: var(--narke-white); font-size: 15px; }
+body.narke-team-page .team-member-investment { position: relative; border: 1px solid var(--narke-cyan); border-radius: 20px; padding: 5px 9px; font-size: 12px; white-space: nowrap; }
+body.narke-team-page .team-member-investment::before { content: "FCFA "; }
+body.narke-team-page .team-detail-more { color: var(--narke-muted); }
+body.narke-account-page .bottom-navigation-inner { font-family: "DM Sans",sans-serif; }
+body.narke-history-page .wallet-link { display: block; width: 65%; }
+body.narke-missions-page .missions-header.narke-embedded-header { grid-template-columns: 38px minmax(0,1fr) max-content 38px; column-gap: 4px; padding-right: 8px; padding-left: 8px; }
+body.narke-missions-page .summary-unit { position: static; }
+@media (max-width: 390px) {
+  body.narke-team-page .team-page-heading { grid-template-columns: minmax(0,1fr) auto; }
+  body.narke-team-page .team-page-heading .team-missions-link { display: inline-flex; }
+  body.narke-team-page .team-page-heading .team-view-link { display: none; }
+  body.narke-team-page .team-invite::after { right: 92px; width: 26%; }
+  body.narke-team-page .team-copy { padding: 0 7px; font-size: 9px; }
+}

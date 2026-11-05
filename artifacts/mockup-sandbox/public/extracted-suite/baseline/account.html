@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Espace Utilisateur - Le mien</title>
+<link rel="stylesheet" href="/pages/account.css"/>
+</head>
+<body class="account-page">
+<!-- Mobile Container Wrapper -->
+<div class="account-shell">
+<!-- BEGIN: UserProfileBanner -->
+<!-- Top banner with photographic background of utility truck and account details -->
+<section class="account-hero" data-purpose="user-profile-header">
+<!-- Background Vehicle Image -->
+<img alt="Camion IVECO T-Way sur un chantier" class="hero-vehicle" src="/pages/assets/iveco-account.jpg"/>
+<!-- Dark gradient overlay for readability -->
+<div class="hero-shade"></div>
+<!-- User Account Information Layer -->
+<div class="hero-details">
+<!-- Phone Number Block -->
+<div>
+<p class="hero-label">Numéro de téléphone</p>
+<div class="hero-phone-row">
+<h1 class="hero-phone" data-user-phone>…</h1>
+<button class="hero-phone-copy" type="button" data-copy-phone aria-label="Copier mon numéro de téléphone" title="Copier le numéro" disabled>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path></svg>
+</button>
+</div>
+<p class="hero-copy-status" data-phone-copy-status role="status" aria-live="polite" aria-atomic="true"></p>
+</div>
+<!-- Account Balance Block -->
+<div class="hero-balance">
+<p class="hero-label">Solde du compte</p>
+<div class="balance-line">
+<span class="balance-currency">FCFA</span>
+<span class="balance-amount" data-demo-balance>…</span>
+</div>
+</div>
+</div>
+</section>
+<!-- END: UserProfileBanner -->
+<!-- Main Container Content -->
+<main class="account-content">
+<!-- BEGIN: ActionButtons -->
+<!-- Recharge and Withdrawal Buttons -->
+<section class="wallet-actions" data-purpose="wallet-actions">
+<!-- Recharge Button -->
+<button aria-label="Recharger le compte" class="wallet-button" data-route="/recharger" type="button">
+          Recharger
+        </button>
+<!-- Retrait Button -->
+<button aria-label="Faire un retrait" class="wallet-button" data-route="/retrait" type="button">
+          Retrait
+        </button>
+</section>
+<!-- END: ActionButtons -->
+<!-- BEGIN: FinancialManagementMenu -->
+<!-- Section with Financial options and transaction history -->
+<section class="menu-group" data-purpose="finance-menu-group">
+<ul class="divide-y divide-gray-100/80">
+<!-- Item: Détails du financement -->
+<li>
+<a class="menu-row" href="/financement">
+<div class="flex items-center space-x-3.5">
+<!-- Icon: Stats & Coins -->
+<div class="w-6 h-6 flex items-center justify-center text-gray-700">
+<svg class="w-5 h-5 fill-none stroke-current stroke-[1.8]" viewbox="0 0 24 24">
+<rect height="11" rx="1.5" width="15" x="2" y="3"></rect>
+<path d="M5 10l3-3 2 2 4-4" stroke-linecap="round" stroke-linejoin="round"></path>
+<circle cx="17.5" cy="17.5" r="3.5"></circle>
+<path d="M14 15h7M14 19h7" stroke-linecap="round"></path>
+</svg>
+</div>
+<span class="text-sm font-normal text-gray-800">Détails du financement</span>
+</div>
+<svg class="w-4 h-4 text-gray-500 stroke-[2]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</li>
+<!-- Item: Historique des recharges -->
+<li>
+<a class="menu-row" href="/historique-recharges">
+<div class="flex items-center space-x-3.5">
+<!-- Icon: Notebook / Pen Edit -->
+<div class="w-6 h-6 flex items-center justify-center text-gray-700">
+<svg class="w-5 h-5 fill-none stroke-current stroke-[1.8]" viewbox="0 0 24 24">
+<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-sm font-normal text-gray-800">Historique des recharges</span>
+</div>
+<svg class="w-4 h-4 text-gray-500 stroke-[2]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</li>
+<!-- Item: Registres de retrait -->
+<li>
+<a class="menu-row" href="/historique-retraits">
+<div class="flex items-center space-x-3.5">
+<!-- Icon: Notebook / Pen Edit -->
+<div class="w-6 h-6 flex items-center justify-center text-gray-700">
+<svg class="w-5 h-5 fill-none stroke-current stroke-[1.8]" viewbox="0 0 24 24">
+<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-sm font-normal text-gray-800">Registres de retrait</span>
+</div>
+<svg class="w-4 h-4 text-gray-500 stroke-[2]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</li>
+<!-- Item: Gestion de compte bancaire -->
+<li>
+<a class="menu-row" href="/gestion-compte-bancaire">
+<div class="flex items-center space-x-3.5">
+<!-- Icon: Bank Card -->
+<div class="w-6 h-6 flex items-center justify-center text-gray-700">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24">
+<path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"></path>
+<circle cx="7" cy="15" r="1.5"></circle>
+</svg>
+</div>
+<span class="text-sm font-normal text-gray-800">Gestion de compte bancaire</span>
+</div>
+<svg class="w-4 h-4 text-gray-500 stroke-[2]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</li>
+</ul>
+</section>
+<!-- END: FinancialManagementMenu -->
+<!-- BEGIN: SupportAndInfoMenu -->
+<link rel="stylesheet" href="/pages/gift-codes.css">
+<script src="/pages/gift-codes.js" defer></script>
+<section class="menu-group gift-code-card" aria-label="Code cadeau">
+  <button class="gift-code-toggle" type="button" aria-expanded="false" aria-controls="gift-code-panel">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h18v4H3zM5 12v9h14v-9M12 8v13M12 8H8a3 3 0 1 1 3-3l1 3Zm0 0h4a3 3 0 1 0-3-3l-1 3Z"/></svg>
+    <span>Code cadeau</span><span aria-hidden="true" class="gift-code-chevron">⌄</span>
+  </button>
+  <form id="gift-code-panel" class="gift-code-form" hidden>
+    <label for="gift-code-input">Saisissez votre code cadeau</label>
+    <input id="gift-code-input" name="code" type="text" required minlength="16" maxlength="64" pattern="[A-Za-z0-9_-]{16,64}" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Votre code cadeau">
+    <button type="submit">Valider le code</button>
+    <p class="gift-code-status" role="status" aria-live="polite"></p>
+  </form>
+</section>
+<!-- Section with Platform Information and Support -->
+<section class="menu-group" data-purpose="support-menu-group">
+<ul class="divide-y divide-gray-100/80">
+<!-- Item: À propos de nous -->
+<li>
+<a class="menu-row" href="/a-propos">
+<div class="flex items-center space-x-3.5">
+<!-- Icon: Circle Information -->
+<div class="w-6 h-6 flex items-center justify-center text-gray-700">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path>
+</svg>
+</div>
+<span class="text-sm font-normal text-gray-800">À propos de nous</span>
+</div>
+<svg class="w-4 h-4 text-gray-500 stroke-[2]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</li>
+<!-- Item: Règles de la plateforme -->
+<li>
+<a class="menu-row" href="/regles">
+<div class="flex items-center space-x-3.5">
+<!-- Icon: Circle Play / Rules -->
+<div class="w-6 h-6 flex items-center justify-center text-gray-700">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"></path>
+</svg>
+</div>
+<span class="text-sm font-normal text-gray-800">Règles de la plateforme</span>
+</div>
+<svg class="w-4 h-4 text-gray-500 stroke-[2]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</li>
+<!-- Item: Service client -->
+<li>
+<a class="menu-row" href="/service-client">
+<div class="flex items-center space-x-3.5">
+<!-- Icon: Customer Support Headset -->
+<div class="w-6 h-6 flex items-center justify-center text-gray-700">
+<svg class="w-5 h-5 fill-none stroke-current stroke-[1.8]" viewbox="0 0 24 24">
+<path d="M3 18v-6a9 9 0 0 1 18 0v6" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" fill="currentColor"></path>
+</svg>
+</div>
+<span class="text-sm font-normal text-gray-800">Service client</span>
+</div>
+<svg class="w-4 h-4 text-gray-500 stroke-[2]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</li>
+<li>
+<button class="menu-row logout-row" data-logout type="button">
+<span class="menu-leading">
+<span class="menu-icon" aria-hidden="true"><svg class="w-5 h-5 fill-none stroke-current stroke-[1.8]" viewbox="0 0 24 24"><path d="M12 2v10M5.5 5.5a9 9 0 1 0 13 0" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span class="menu-label">Sortie sécurisée</span>
+</span>
+<svg class="row-chevron" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</button>
+</li>
+</ul>
+</section>
+<!-- END: SupportAndInfoMenu -->
+</main>
+<!-- BEGIN: BottomNavigation -->
+<!-- Fixed Bottom App Navigation Bar -->
+<nav class="bottom-navigation" data-purpose="bottom-navigation">
+<div class="bottom-navigation-inner">
+<!-- Tab: Maison -->
+<a class="bottom-tab" href="/accueil">
+<svg class="w-6 h-6 fill-current" viewbox="0 0 24 24">
+<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+</svg>
+<span class="text-[11px] mt-1 font-medium text-gray-400">Maison</span>
+</a>
+<!-- Tab: Projet -->
+<a class="bottom-tab" href="/projet">
+<svg class="w-6 h-6 fill-current" viewbox="0 0 24 24">
+<path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"></path>
+</svg>
+<span class="text-[11px] mt-1 font-medium text-gray-400">Projet</span>
+</a>
+<!-- Tab: Équipe -->
+<a class="bottom-tab" href="/equipe">
+<svg class="w-6 h-6 fill-current" viewbox="0 0 24 24">
+<polygon points="12,2 13.5,6.5 18,6.5 14.5,9.5 16,14 12,11 8,14 9.5,9.5 6,6.5 10.5,6.5"></polygon>
+<polygon points="6,15 7,17.5 10,17.5 7.5,19.5 8.5,22.5 6,20.5 3.5,22.5 4.5,19.5 2,17.5 5,17.5"></polygon>
+<polygon points="18,15 19,17.5 22,17.5 19.5,19.5 20.5,22.5 18,20.5 15.5,22.5 16.5,19.5 14,17.5 17,17.5"></polygon>
+</svg>
+<span class="text-[11px] mt-1 font-medium text-gray-400">Équipe</span>
+</a>
+<!-- Tab: Le mien (Active tab) -->
+<a class="bottom-tab active" href="/compte">
+<div class="relative">
+<svg class="w-6 h-6 fill-brand-gold" viewbox="0 0 24 24">
+<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+</svg>
+</div>
+       <span class="bottom-label">Le mien</span>
+</a>
+</div>
+</nav>
+<!-- END: BottomNavigation -->
+<script>
+  const phoneCopyButton = document.querySelector('[data-copy-phone]');
+  const phoneCopyStatus = document.querySelector('[data-phone-copy-status]');
+  phoneCopyButton.addEventListener('click', async () => {
+    const value = phoneCopyButton.dataset.phone;
+    if (!value) return;
+    phoneCopyButton.disabled = true;
+    phoneCopyStatus.textContent = '';
+    try {
+      try {
+        if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+        await navigator.clipboard.writeText(value);
+      } catch {
+        const field = document.createElement('textarea');
+        field.value = value;
+        field.readOnly = true;
+        field.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px;';
+        document.body.append(field);
+        try {
+          field.focus({ preventScroll: true });
+          field.select();
+          field.setSelectionRange(0, value.length);
+          if (!document.execCommand('copy')) throw new Error('Copy refused');
+        } finally {
+          field.remove();
+          phoneCopyButton.focus({ preventScroll: true });
+        }
+      }
+      phoneCopyStatus.textContent = 'Numéro copié !';
+    } catch {
+      phoneCopyStatus.textContent = 'Copie impossible. Maintenez le numéro pour le copier.';
+    } finally {
+      phoneCopyButton.disabled = false;
+    }
+  });
+  document.querySelectorAll('[data-route]').forEach((button) => {
+    button.addEventListener('click', () => { window.location.href = button.dataset.route; });
+  });
+  fetch('/api/me')
+    .then(async (response) => {
+      if (response.status === 401) {
+        window.location.replace('/connexion');
+        return null;
+      }
+      if (!response.ok) throw new Error('Compte indisponible.');
+      return response.json();
+    })
+    .then((user) => {
+      if (!user) return;
+      if (user.is_admin) {
+        const consoleLink = document.createElement('a');
+        consoleLink.className = 'menu-row';
+        consoleLink.href = '/omarshark-junior-panam';
+        consoleLink.textContent = 'Console d’administration';
+        document.querySelector('[data-purpose="finance-menu-group"]').append(consoleLink);
+        const link = document.createElement('a');
+        link.className = 'menu-row';
+        link.href = '/administration-depots';
+        link.textContent = 'Administration — approuver un dépôt';
+        document.querySelector('[data-purpose="finance-menu-group"]').append(link);
+      }
+      document.querySelector('[data-user-phone]').textContent = user.phone.replace(/^\+(\d{3})(.*)$/, '$1 $2');
+      phoneCopyButton.dataset.phone = user.phone;
+      phoneCopyButton.disabled = false;
+      document.querySelector('[data-demo-balance]').textContent =
+        new Intl.NumberFormat('fr-FR').format(user.balance_fcfa);
+    })
+    .catch(() => {
+      document.querySelector('[data-user-phone]').textContent = 'Compte temporairement indisponible';
+    });
+  document.querySelector('[data-logout]').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' });
+      if (!response.ok) throw new Error();
+      window.location.replace('/connexion');
+    } catch {
+      button.disabled = false;
+      button.textContent = 'Déconnexion impossible — réessayez';
+    }
+  });
+</script>
+</div>
+</body></html>
