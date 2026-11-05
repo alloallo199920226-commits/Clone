@@ -114,3 +114,12 @@ après avoir montré le champ téléphone sur iPhone.
 **How to apply:** conserver un texte de saisie d’au moins 16 pixels et le zoom
 manuel accessible. Indiquer le focus clavier sans contour, et distinguer les
 décorations du site des éléments natifs du clavier Safari.
+
+La page Équipe doit conserver une section visible pour parcourir les filleuls
+des niveaux 1, 2 et 3, avec leurs numéros masqués, ainsi qu’un accès clair au détail.
+
+**Why:** l’utilisateur a signalé que cette consultation avait disparu après la
+reconstruction visuelle.
+
+**How to apply:** ne pas masquer cet accès pendant une refonte ; vérifier les
+trois onglets, les listes réelles et l’état vide depuis la page Équipe.

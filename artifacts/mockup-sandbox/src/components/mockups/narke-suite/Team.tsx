@@ -7,9 +7,15 @@ const levels = [
   ["Équipe de niveau 2", "2 %", "5", "FCFA 0"],
   ["Équipe de niveau 3", "1 %", "3", "FCFA 0"],
 ];
+const sampleMembers = [
+  [{ phone: "229 •• •• •• 14", date: "12/04/2025", deposits: "18 500" }, { phone: "229 •• •• •• 72", date: "08/04/2025", deposits: "9 000" }],
+  [{ phone: "229 •• •• •• 08", date: "03/04/2025", deposits: "6 500" }],
+  [{ phone: "229 •• •• •• 41", date: "29/03/2025", deposits: "4 000" }],
+];
 
 export function Team() {
   const [copied, setCopied] = useState("");
+  const [activeLevel, setActiveLevel] = useState(1);
   const copy = async (value: string, label: string) => {
     try {
       await navigator.clipboard.writeText(value);
@@ -23,9 +29,11 @@ export function Team() {
     <section className="np-card np-invite-line"><Glyph name="team" /><div><strong>361821056C</strong><small>Code d’invitation · illustratif</small></div><button type="button" onClick={() => void copy("361821056C", "Code")}>{copied.includes("Code") ? "Copié" : "Copier le code"}</button></section>
     <section className="np-card np-invite-line"><Glyph name="link" /><div><strong className="np-truncate">https://exemple.narke.test/inscription</strong><small>Lien d’invitation · illustratif</small></div><button type="button" onClick={() => void copy("https://exemple.narke.test/inscription", "Lien")}>{copied.includes("Lien") ? "Copié" : "Copier le lien"}</button></section>
     <p className="np-copy-status" role="status">{copied}</p>
-     <div className="np-card np-team-table"><table><thead><tr><th>Taux de commission</th><th>Nombre d’invités</th><th>Revenu</th></tr></thead><tbody>{levels.map((row, index) => <tr key={row[0]}><td><img className="np-level-art" src={`/__mockup/images/narke-mission-${index === 0 ? "blue" : index === 1 ? "gold" : "red"}.webp`} alt="" /><span>{row[0]}</span><b>{row[1]}</b></td><td>{row[2]}</td><td>{row[3]}</td></tr>)}</tbody></table></div>
+      <p className="np-copy-status">Chiffres et membres ci-dessous : données illustratives, aucune mutation réelle.</p>
+      <div className="np-card np-team-table"><table><thead><tr><th>Taux de commission</th><th>Nombre d’invités</th><th>Revenu</th></tr></thead><tbody>{levels.map((row, index) => <tr key={row[0]}><td><img className="np-level-art" src={`/__mockup/images/narke-mission-${index === 0 ? "blue" : index === 1 ? "gold" : "red"}.webp`} alt="" /><span>{row[0]}</span><b>{row[1]}</b></td><td>{row[2]}</td><td>{row[3]}</td></tr>)}</tbody></table></div>
     <div className="np-stats"><section className="np-card"><strong>137</strong><span>Nombre d’invités</span></section><section className="np-card"><strong>FCFA 3 000</strong><span>Revenus sur invitation</span></section></div>
-     <section className="np-card np-bonus"><h2><Glyph name="gift" />Bonus d’invitation</h2>{levels.map((row, i) => <p key={row[0]}><b>Niveau {i + 1}</b><span>Vous recevez {row[1]} du premier dépôt approuvé {i === 0 ? "de votre filleul direct" : "du membre"}.</span></p>)}<div className="np-rule" /><p className="np-legal">Commissions créditées uniquement après approbation du premier dépôt. Les dépôts suivants, inscriptions, bonus et achats ne donnent aucune commission. Exemples visibles dans l’aperçu uniquement.</p></section>
+      <section className="np-card np-bonus"><h2><Glyph name="team" />Mes filleuls · illustratif</h2><div className="np-row" role="tablist" aria-label="Niveaux de filleuls">{levels.map((row, index) => <button className="np-pill" type="button" role="tab" aria-selected={activeLevel === index + 1} onClick={() => setActiveLevel(index + 1)} key={row[0]}>Niveau {index + 1} · {row[2]}</button>)}</div><div role="tabpanel" aria-label={`Filleuls de niveau ${activeLevel}`}>{sampleMembers[activeLevel - 1].map((member) => <p className="np-row" key={member.phone}><strong>{member.phone}</strong><span>{member.date} · FCFA {member.deposits}</span></p>)}</div></section>
+      <section className="np-card np-bonus"><h2><Glyph name="gift" />Bonus d’invitation</h2>{levels.map((row, i) => <p key={row[0]}><b>Niveau {i + 1}</b><span>Vous recevez {row[1]} du premier dépôt approuvé {i === 0 ? "de votre filleul direct" : "du membre"}.</span></p>)}<div className="np-rule" /><p className="np-legal">Commissions créditées uniquement après approbation du premier dépôt. Les dépôts suivants, inscriptions, bonus et achats ne donnent aucune commission. Exemples visibles dans l’aperçu uniquement.</p></section>
    </div></SuitePage>;
 }
 

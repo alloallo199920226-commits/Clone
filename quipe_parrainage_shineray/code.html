@@ -16,7 +16,7 @@
     </header>
     <section class="team-page-heading">
       <h1><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 20v-2a4 4 0 0 0-3-3.9M16 2.1a4 4 0 0 1 0 7.8"/></svg>Mon équipe</h1>
-      <a class="team-view-link" href="/mon-equipe">Mon équipe <span aria-hidden="true">›</span></a>
+      <a class="team-view-link" href="/mon-equipe">Voir mes filleuls <span aria-hidden="true">›</span></a>
       <a class="team-missions-link" href="/missions">Missions <span aria-hidden="true">›</span></a>
     </section>
     <section class="team-invite team-invite-code" aria-label="Code d’invitation">
@@ -42,6 +42,21 @@
     <section class="team-metrics" data-purpose="statistics-overview">
       <div class="team-metric"><span class="font-mono">—</span><span>Nombre d’invités</span></div>
       <div class="team-metric"><span class="font-mono">FCFA —</span><span>Revenus sur invitation</span></div>
+    </section>
+    <section class="team-members-inline" aria-labelledby="team-members-title">
+      <div class="team-members-heading">
+        <div><span class="team-members-kicker">Réseau</span><h2 id="team-members-title">Mes filleuls</h2></div>
+        <a class="team-inline-detail-link" href="/mon-equipe">Voir la page détaillée <span aria-hidden="true">›</span></a>
+      </div>
+      <nav class="team-level-tabs" aria-label="Filtrer les filleuls par niveau">
+        <button class="team-level-tab" type="button" data-team-level-tab="1" aria-selected="true"><span class="team-level-revenue" data-team-level-revenue>—</span><span>Niveau 1 (<span data-team-level-count="1">—</span>)</span></button>
+        <button class="team-level-tab" type="button" data-team-level-tab="2" aria-selected="false"><span class="team-level-revenue" data-team-level-revenue>—</span><span>Niveau 2 (<span data-team-level-count="2">—</span>)</span></button>
+        <button class="team-level-tab" type="button" data-team-level-tab="3" aria-selected="false"><span class="team-level-revenue" data-team-level-revenue>—</span><span>Niveau 3 (<span data-team-level-count="3">—</span>)</span></button>
+      </nav>
+      <section class="team-member-list" data-team-members aria-live="polite"></section>
+      <p class="team-detail-more" data-team-detail-more hidden>Les 100 membres les plus récents de chaque niveau sont affichés.</p>
+      <div class="team-detail-empty" data-team-detail-empty hidden><img src="/pages/assets/empty-records.svg" alt="" aria-hidden="true"><span>Plus aucune donnée</span></div>
+      <p class="team-detail-status" data-team-detail-error hidden role="status"></p>
     </section>
     <section class="team-terms">
       <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h18v4H3zM5 13v8h14v-8M12 9v12m0-12H8a3 3 0 1 1 3-3l1 3Zm0 0h4a3 3 0 1 0-3-3l-1 3Z"></path></svg>Bonus d’invitation</h2>

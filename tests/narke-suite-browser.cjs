@@ -27,6 +27,15 @@ with auth_backend.connect() as conn, conn.cursor() as cur:
     })})}).then(async r=>({status:r.status,body:await r.json()}))`);
   assert.equal(child.status, 201);
   trackUser(child.body.user.id);
+  const childProfile = await evaluate("fetch('/api/me').then(r=>r.json())");
+  const grandchild = await evaluate(`fetch('/api/auth/register',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(${JSON.stringify({
+      country_code: "+228", phone: "9" + randomInt(1000000, 9999999),
+      password: payload.password, referral_code: childProfile.referral_code,
+    })})}).then(async r=>({status:r.status,body:await r.json()}))`);
+  assert.equal(grandchild.status, 201);
+  trackUser(grandchild.body.user.id);
   const login = await evaluate(`fetch('/api/auth/login',{
     method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify(${JSON.stringify(payload)})}).then(r=>r.status)`);
@@ -36,6 +45,7 @@ with auth_backend.connect() as conn, conn.cursor() as cur:
     ["/retrait", "withdraw", "document.querySelector('[data-account-balance]').dataset.available"],
     ["/service-client", "support", "document.querySelector('.reference-contact')"],
     ["/historique-recharges", "deposits", "document.querySelector('[data-activity-list]').getAttribute('aria-busy')==='false'"],
+    ["/historique-retraits", "withdrawal-history", "document.querySelector('[data-activity-list]').getAttribute('aria-busy')==='false'"],
     ["/compte", "account", "/[0-9]/.test(document.querySelector('[data-demo-balance]').textContent)"],
     ["/missions", "missions", "document.querySelector('[data-mission-list]').getAttribute('aria-busy')==='false'"],
     ["/missions-vip", "missions-vip", "document.querySelector('[data-mission-list]').getAttribute('aria-busy')==='false'"],
@@ -83,8 +93,25 @@ with auth_backend.connect() as conn, conn.cursor() as cur:
   assert(await evaluate("!document.querySelector('#gift-code-panel').hidden"));
   assert.equal(await evaluate("document.querySelector('.gift-code-toggle').getAttribute('aria-expanded')"), "true");
   await screenshot("narke-suite-gift-open");
+  assert(await evaluate(`(()=>{
+    const input=document.querySelector('#gift-code-panel input'),submit=document.querySelector('#gift-code-panel button[type="submit"]');
+    const i=getComputedStyle(input),b=getComputedStyle(submit);
+    return parseFloat(i.fontSize)>=16 && i.backgroundColor==='rgb(0, 35, 51)' &&
+      b.backgroundImage.includes('gradient') && !b.backgroundImage.includes('rgb(239, 0, 40)');
+  })()`), "Gift form must use marine/cyan rather than the legacy red theme");
   await evaluate("document.querySelector('.gift-code-toggle').click()");
   assert(await evaluate("document.querySelector('#gift-code-panel').hidden"));
+  const historyLink = await evaluate(`(()=>{
+    const a=document.querySelector('a[href="/historique-retraits"]');
+    a.scrollIntoView({block:'center'}); const r=a.getBoundingClientRect();
+    return {x:r.x+r.width/2,y:r.y+r.height/2};
+  })()`);
+  await call("Input.dispatchMouseEvent", {type:"mousePressed",...historyLink,button:"left",clickCount:1});
+  await call("Input.dispatchMouseEvent", {type:"mouseReleased",...historyLink,button:"left",clickCount:1});
+  await waitFor("location.pathname==='/historique-retraits' && document.body.classList.contains('narke-history-page') && document.querySelector('[data-activity-empty]')?.hidden===false");
+  await waitFor(`(()=>{const h=document.querySelector('.page-header h1'),r=h?.getBoundingClientRect();return r&&document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('.page-header');})()`);
+  await screenshot("narke-suite-withdrawal-history-from-account");
+  await open("/compte");
   await evaluate("document.querySelector('[data-suite-menu-button]').click()");
   assert(await evaluate("!document.querySelector('#narke-suite-menu').hidden"));
   assert.equal(await evaluate("document.querySelector('[data-suite-menu-button]').getAttribute('aria-expanded')"), "true");
@@ -132,6 +159,16 @@ with auth_backend.connect() as conn, conn.cursor() as cur:
   await open("/equipe");
   const team = await get("/api/team");
   assert.equal(team.levels[0], 1);
+  assert.equal(team.levels[1], 1);
+  assert.equal(team.levels[2], 0);
+  assert(await evaluate("document.querySelector('.team-view-link').getBoundingClientRect().width>0"));
+  for (const level of [1,2,3,1]) {
+    await evaluate(`document.querySelector('[data-team-level-tab="${level}"]').click()`);
+    assert.equal(await evaluate("document.querySelectorAll('.team-member-row').length"), level===3?0:1);
+    assert(await evaluate("[...document.querySelectorAll('.team-member-phone')].every(n=>n.textContent.includes('*'))"));
+    assert.equal(await evaluate("document.querySelector('[data-team-detail-empty]').hidden"), level!==3);
+  }
+  await screenshot("narke-suite-inline-members");
   assert.equal(await evaluate("document.querySelector('[data-referral-code]').textContent"), me.referral_code);
   assert(await evaluate("document.querySelector('[data-referral-link]').textContent.includes('/inscription?c=')"));
   await call("Browser.grantPermissions", { origin: base, permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"] });
@@ -150,7 +187,7 @@ with auth_backend.connect() as conn, conn.cursor() as cur:
   for (const level of [2, 3, 1]) {
     await evaluate(`document.querySelector('[data-team-level-tab="${level}"]').click()`);
     assert.equal(await evaluate(`document.querySelector('[data-team-level-tab="${level}"]').getAttribute('aria-selected')`), "true");
-    assert.equal(await evaluate("document.querySelectorAll('.team-member-row').length"), level === 1 ? 1 : 0);
+    assert.equal(await evaluate("document.querySelectorAll('.team-member-row').length"), level === 3 ? 0 : 1);
   }
   await call("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
   assert(await evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches"));
@@ -169,5 +206,5 @@ with auth_backend.connect() as conn, conn.cursor() as cur:
   await call("Input.dispatchMouseEvent", { type: "mouseReleased", x: logoutPosition.x, y: logoutPosition.y, button: "left", clickCount: 1 });
   await waitFor("location.pathname==='/connexion'");
   assert.equal(await evaluate("fetch('/api/me').then(r=>r.status)"), 401);
-  console.log("PASS: NARKE eight real routes across five widths, live balance/history/referral/mission data, masked member tabs, real clipboard, gift accordion, exact withdrawal rounding, safe blocked withdrawal, configured support URLs and logout.");
+  console.log("PASS: Nine real NARKE routes, marine gift form, withdrawal history via real account link, inline and detailed masked referrals across all three tabs, live data, claim idempotency, clipboard, withdrawal rounding and logout.");
 };
