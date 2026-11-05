@@ -21,6 +21,15 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot }) => {
     if(path==="/a-propos") {
       assert.equal(await evaluate("!!document.querySelector('a[href=\"/pages/regles.html\"]')"),false,
         "Remove the broken legacy rules link");
+      assert.deepEqual(await evaluate(`Array.from(document.querySelectorAll(
+        '.info-hero-copy p,.info-hero h1,.info-hero h1 em,.info-section h2,.info-section-copy p,.about-overline,.about-disclaimer,.info-bottom p,.about-colophon,.info-jumpbar a'
+      )).filter(node=>{
+        if(getComputedStyle(node).color!=='rgb(0, 0, 0)') return true;
+        for(let parent=node;parent;parent=parent.parentElement) {
+          if(Number(getComputedStyle(parent).opacity)<1) return true;
+        }
+        return false;
+      }).map(node=>node.className||node.tagName)`),[], "About text must be opaque pure black on light surfaces");
     }
     for (const [width,height] of [[320,568],[390,844],[768,1024],[1280,900]]) {
       await call("Emulation.setDeviceMetricsOverride", { width,height,deviceScaleFactor:1,mobile:true });

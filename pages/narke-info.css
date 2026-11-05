@@ -501,8 +501,8 @@
 .about-page {
   --about-paper: #e9f0eb;
   --about-paper-deep: #dce8e2;
-  --about-ink: #102d3a;
-  --about-muted: #4c6570;
+  --about-ink: #000;
+  --about-muted: #000;
   --about-teal: #147c82;
   --about-line: rgba(16, 69, 79, .2);
   width: min(100%, 1080px);
@@ -738,6 +738,25 @@
   color: #71848a;
   font-size: 10px;
   line-height: 1.65;
+}
+/* Opaque black on the light profile surfaces; keep white text on photos
+   and on the dark support button for contrast. Rules remain unchanged. */
+.about-page .info-hero-copy > p:last-child,
+.about-page .info-hero-copy .info-eyebrow,
+.about-page .info-hero h1 em,
+.about-page .about-overline,
+.about-page .info-jumpbar a,
+.about-page .info-jumpbar a:hover,
+.about-page .info-section-copy,
+.about-page .info-section-copy :is(p, strong, li),
+.about-page .about-callout,
+.about-page .about-disclaimer,
+.about-page .about-flow article > span,
+.about-page .info-bottom p,
+.about-page .about-colophon {
+  color: #000;
+  opacity: 1;
+  text-shadow: none;
 }
 @media (min-width: 760px) {
   .about-page { padding-right: 52px; padding-left: 52px; }
