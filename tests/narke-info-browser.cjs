@@ -23,26 +23,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot }) => {
     assert(await evaluate("location.hash.length>1"), "Section anchor works");
     const text=await evaluate("document.body.innerText");
     if(path==="/regles") {
-      await waitFor("document.querySelector('[data-investment-rows]')?.closest('table').getAttribute('aria-busy')==='false'");
-      const catalogue=await evaluate("(async()=> (await (await fetch('/api/products/catalog',{cache:'no-store'})).json()).products)()");
-      const rendered=await evaluate("[...document.querySelectorAll('[data-investment-rows] tr')].map(row=>[...row.children].map(cell=>cell.textContent))");
-      assert.equal(rendered.length,catalogue.length);
-      for(const product of catalogue) {
-        const row=rendered.find(cells=>cells[0]===product.code.toUpperCase());
-        assert(row, `Missing ${product.code}`);
-        assert.deepEqual(row.slice(1).map(text=>Number(text.replace(/[^0-9]/g,''))),
-          [product.price,product.dailyIncome,product.totalIncome,product.durationDays]);
-      }
-      await call("Network.setBlockedURLs", { urls:["*/api/products/catalog"] });
-      await navigate("/regles");
-      await waitFor("document.querySelector('[data-investment-retry]')?.hidden===false");
-      assert.equal(await evaluate("document.querySelector('[data-investment-rows]').children.length"),0,
-        "Never show stale prices when catalogue loading fails");
-      await call("Network.setBlockedURLs", { urls:[] });
-      await evaluate("document.querySelector('[data-investment-retry]').click()");
-      await waitFor(`document.querySelector('[data-investment-rows]').children.length===${catalogue.length} && document.querySelector('[data-investment-retry]').hidden`);
-      await evaluate("document.querySelector('#investissements').scrollIntoView({block:'start'})");
-      await screenshot("narke-investment-table");
+      assert.equal(await evaluate("document.querySelector('#investissements, a[href=\"#investissements\"],script[src=\"/pages/narke-investments.js\"]')"),null);
       assert.match(text,/24 heures/);
       assert.match(text,/18h00/);
       assert.match(text,/20\s*%/);

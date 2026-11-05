@@ -96,15 +96,6 @@ conserver les actions accessibles sur petit écran, y compris pour le code
 temporaire et les messages de connexion interrompue, sans masquer un contrôle
 par un simple débordement coupé.
 
-La page « Règles de la plateforme » doit conserver un tableau des investissements
-VIP dans le design NARKE, et pas seulement une explication des offres.
-
-**Why:** l’utilisateur a signalé la disparition du tableau lors de la refonte
-et demandé de le faire réapparaître dans le nouveau design.
-
-**How to apply:** préserver cette section lors des futures refontes ; les valeurs
-du catalogue administré priment toujours sur celles d’une ancienne illustration.
-
 Verify brand identity in downloaded logos, not just the search result name.
 
 **Why:** searches for Moov Africa returned unrelated Moov Inc. assets, and MTN results mixed older multicolor marks with the requested black/yellow mark.
