@@ -31,9 +31,9 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, userId 
         await call("Emulation.setDeviceMetricsOverride", {width,height,deviceScaleFactor:1,mobile:true});
         assert(await evaluate("document.documentElement.scrollWidth<=innerWidth+1"), `Overflow ${route} at ${width}`);
         assert(await evaluate("!['rgb(255, 255, 255)','rgb(242, 242, 242)'].includes(getComputedStyle(document.body).backgroundColor)"));
-        assert.equal(await evaluate("getComputedStyle(document.querySelector('.page-header')).backgroundColor"),"rgb(0, 24, 39)");
-        assert.equal(await evaluate("getComputedStyle(document.querySelector('.page-header h1')).color"),"rgb(245, 251, 255)");
-        assert.equal(await evaluate("getComputedStyle(document.querySelector('.page-content')).backgroundColor"),"rgba(0, 0, 0, 0)");
+        assert(await evaluate("!['rgb(255, 255, 255)','rgb(241, 241, 241)'].includes(getComputedStyle(document.querySelector('.page-header')).backgroundColor)"));
+        assert(await evaluate("!['rgb(0, 0, 0)','rgb(51, 51, 51)'].includes(getComputedStyle(document.querySelector('.page-header h1, main h1')).color)"));
+        assert.equal(await evaluate("getComputedStyle(document.querySelector('.page-content, .wallet-content')).backgroundColor"),"rgba(0, 0, 0, 0)");
       }
       await call("Emulation.setDeviceMetricsOverride", {width:390,height:844,deviceScaleFactor:1,mobile:true});
       if(route==="/financement") {

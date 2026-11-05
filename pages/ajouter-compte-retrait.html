@@ -1,11 +1,79 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Ajoutez un compte de retrait à votre espace membre NARKE."><meta name="theme-color" content="#00131e"><title>Ajouter un compte de retrait — NARKE</title><link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/member-reference.css"><link rel="stylesheet" href="/pages/narke-suite.css"><script src="/pages/pages.js" defer></script></head>
-<body class="narke-suite-page narke-record-page narke-wallet-form-page"><main class="page"><header class="page-header"><a class="back" href="/gestion-compte-bancaire" aria-label="Retour aux comptes de retrait">‹</a><h1>Ajouter un compte</h1><img class="narke-header-mark" src="/pages/assets/narke-home-logo.png" alt="NARKE"></header><div class="page-content">
-<section class="narke-record-intro">
-  <div class="narke-record-copy"><p class="narke-kicker">NARKE · COORDONNÉES</p><h2>Un nouveau cap pour vos retraits.</h2><p>Enregistrez les coordonnées du portefeuille que vous souhaitez utiliser.</p></div>
-  <img src="/pages/assets/narke-scene-account.webp" alt="Jet-ski NARKE sur une eau calme au crépuscule">
-</section>
-<form class="wallet-form narke-form-panel" data-wallet-form aria-label="Ajouter un compte de retrait"><header class="narke-panel-heading"><div><p class="narke-kicker">NOUVEAU MOYEN</p><h2>Coordonnées du compte</h2></div><span class="narke-live-mark">ÉTAPE 01</span></header><label class="field-label" for="wallet-type">*Sélectionnez le type de portefeuille</label><select class="select" id="wallet-type" name="provider" required><option value="">Veuillez sélectionner</option><option value="TOGOCEL">TOGOCEL</option><option value="MOOV">Moov</option><option value="MTN">MTN</option><option value="ORANGE">Orange</option><option value="AIRTEL">Airtel</option><option value="WAVE">Wave</option></select>
-<label class="field-label" for="wallet-holder">*Nom</label><input class="input" id="wallet-holder" name="holder_name" type="text" autocomplete="name" maxlength="120" placeholder="Veuillez entrer votre nom" required>
-<label class="field-label" for="wallet-number">*Compte portefeuille</label><input class="input" id="wallet-number" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Numéro local ou avec l’indicatif de votre pays" required>
- <button class="button-red button-wide wallet-submit" type="submit">Enregistrer le compte</button><p class="status narke-record-status" data-status role="status" aria-live="polite"></p></form></div></main></body></html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Ajoutez un compte de retrait à votre espace membre NARKE.">
+  <meta name="theme-color" content="#00131e">
+  <title>Ajouter un compte de retrait — NARKE</title>
+  <link rel="stylesheet" href="/pages/pages.css">
+  <link rel="stylesheet" href="/pages/member-reference.css">
+  <link rel="stylesheet" href="/pages/narke-suite.css">
+  <link rel="stylesheet" href="/pages/narke-wallet-form.css">
+  <script src="/pages/pages.js" defer></script>
+</head>
+<body class="narke-suite-page narke-record-page narke-wallet-form-page">
+  <main class="page wallet-page">
+    <header class="page-header wallet-header">
+      <a class="back" href="/gestion-compte-bancaire" aria-label="Retour aux comptes de retrait">‹</a>
+      <a class="wallet-brand" href="/gestion-compte-bancaire" aria-label="NARKE — comptes de retrait">
+        <img class="narke-header-mark" src="/pages/assets/narke-home-logo.png" alt="NARKE">
+      </a>
+      <span class="wallet-header-label">ESPACE MEMBRE</span>
+    </header>
+
+    <div class="wallet-content">
+      <section class="wallet-stage" aria-labelledby="wallet-page-title">
+        <div class="wallet-scene">
+          <img src="/pages/assets/narke-scene-account.webp" alt="Jet-ski NARKE sur une eau calme au crépuscule">
+          <div class="wallet-scene-copy">
+            <p class="narke-kicker">NARKE <span aria-hidden="true">/</span> COORDONNÉES</p>
+            <h1 id="wallet-page-title">Votre compte.<br><span>Votre cap.</span></h1>
+            <p>Enregistrez le portefeuille que vous souhaitez utiliser pour vos retraits.</p>
+          </div>
+          <span class="scene-index" aria-hidden="true">NARKE <i></i> INDUSTRIES</span>
+        </div>
+
+        <form class="wallet-form narke-form-panel" data-wallet-form aria-label="Ajouter un compte de retrait">
+          <header class="narke-panel-heading">
+            <div>
+              <p class="narke-kicker">NOUVEAU MOYEN</p>
+              <h2>Coordonnées du compte</h2>
+            </div>
+            <span class="narke-live-mark">01</span>
+          </header>
+
+          <div class="wallet-fields">
+            <div class="wallet-field wallet-field-provider">
+              <label class="field-label" for="wallet-type">Type de portefeuille <span aria-hidden="true">*</span></label>
+              <select class="select" id="wallet-type" name="provider" required>
+                <option value="">Veuillez sélectionner</option>
+                <option value="TOGOCEL">TOGOCEL</option>
+                <option value="MOOV">Moov</option>
+                <option value="MTN">MTN</option>
+                <option value="ORANGE">Orange</option>
+                <option value="AIRTEL">Airtel</option>
+                <option value="WAVE">Wave</option>
+              </select>
+            </div>
+
+            <div class="wallet-field">
+              <label class="field-label" for="wallet-holder">Nom <span aria-hidden="true">*</span></label>
+              <input class="input" id="wallet-holder" name="holder_name" type="text" autocomplete="name" maxlength="120" placeholder="Veuillez entrer votre nom" required>
+            </div>
+
+            <div class="wallet-field">
+              <label class="field-label" for="wallet-number">Compte portefeuille <span aria-hidden="true">*</span></label>
+              <input class="input" id="wallet-number" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Numéro local ou avec l’indicatif de votre pays" required>
+            </div>
+          </div>
+
+          <button class="button-red button-wide wallet-submit" type="submit">Enregistrer le compte <span aria-hidden="true">↗</span></button>
+          <p class="status narke-record-status" data-status role="status" aria-live="polite"></p>
+        </form>
+      </section>
+      <p class="wallet-footnote"><span aria-hidden="true">N</span> NARKE <i aria-hidden="true"></i> COORDONNÉES DE RETRAIT</p>
+    </div>
+  </main>
+</body>
+</html>

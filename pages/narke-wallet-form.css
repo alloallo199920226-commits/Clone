@@ -1,0 +1,526 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+@media (max-width: 900px) {
+  body.narke-wallet-form-page .wallet-scene .scene-index { display: none; }
+}
+
+body.narke-wallet-form-page {
+  --wallet-abyss: #00131e;
+  --wallet-deep: #002433;
+  --wallet-cyan: #00e8f5;
+  --wallet-ice: #eaf5f5;
+  --wallet-ink: #062635;
+  --wallet-muted: #bfd4dc;
+  min-height: 100dvh;
+}
+
+body.narke-wallet-form-page .page {
+  width: 100%;
+  max-width: none;
+  min-height: 100dvh;
+  padding: 0 0 max(18px, env(safe-area-inset-bottom));
+}
+
+body.narke-wallet-form-page .wallet-header {
+  display: grid;
+  width: min(100% - 44px, 1320px);
+  height: 78px;
+  grid-template-columns: 52px 1fr auto;
+  margin: 0 auto;
+  padding: 0 2px;
+  background: transparent;
+  border-bottom: 1px solid rgb(0 232 245 / 22%);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+body.narke-wallet-form-page .wallet-header .back {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgb(0 232 245 / 38%);
+  border-radius: 50%;
+  color: #eaf7fa;
+  font: 400 25px/1 "DM Sans", sans-serif;
+  text-decoration: none;
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+body.narke-wallet-form-page .wallet-header .back:hover {
+  transform: translateX(-2px);
+  background: rgb(0 232 245 / 9%);
+}
+
+body.narke-wallet-form-page .wallet-brand {
+  justify-self: center;
+  line-height: 0;
+}
+
+body.narke-wallet-form-page .wallet-brand img {
+  display: block;
+  width: 156px;
+  max-height: 51px;
+  object-fit: contain;
+}
+
+body.narke-wallet-form-page .wallet-header-label {
+  color: #a9c3cc;
+  font: 700 10px/1 "Manrope", sans-serif;
+  letter-spacing: .19em;
+}
+
+body.narke-wallet-form-page .wallet-content {
+  width: min(100% - 44px, 1180px);
+  margin: 0 auto;
+}
+
+body.narke-wallet-form-page .wallet-stage {
+  display: grid;
+  min-height: min(690px, calc(100dvh - 130px));
+  grid-template-columns: minmax(0, 1.05fr) minmax(420px, .95fr);
+  align-items: stretch;
+  margin: 34px 0 0;
+  border: 1px solid rgb(0 232 245 / 23%);
+  border-radius: 20px;
+  background: linear-gradient(120deg, rgb(0 38 54 / 96%), rgb(0 24 39 / 97%));
+  box-shadow: 0 25px 75px rgb(0 0 0 / 22%), inset 0 1px rgb(255 255 255 / 3%);
+}
+
+body.narke-wallet-form-page .wallet-scene {
+  position: relative;
+  display: flex;
+  min-height: 580px;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border-radius: 19px 0 0 19px;
+  padding: clamp(28px, 5vw, 68px);
+  isolation: isolate;
+}
+
+body.narke-wallet-form-page .wallet-scene::before,
+body.narke-wallet-form-page .wallet-scene::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+}
+
+body.narke-wallet-form-page .wallet-scene::before {
+  background: linear-gradient(90deg, rgb(0 19 30 / 83%), rgb(0 19 30 / 20%) 80%),
+    linear-gradient(0deg, rgb(0 19 30 / 88%), transparent 68%);
+}
+
+body.narke-wallet-form-page .wallet-scene::after {
+  inset: 18px;
+  border: 1px solid rgb(234 247 250 / 20%);
+  border-radius: 12px 0 12px 0;
+}
+
+body.narke-wallet-form-page .wallet-scene > img {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% center;
+}
+
+body.narke-wallet-form-page .wallet-scene-copy {
+  max-width: 470px;
+  padding-bottom: 25px;
+}
+
+body.narke-wallet-form-page .wallet-scene-copy .narke-kicker,
+body.narke-wallet-form-page .narke-panel-heading .narke-kicker {
+  margin: 0 0 15px;
+  color: var(--wallet-cyan);
+  font: 700 10px/1.4 "Manrope", sans-serif;
+  letter-spacing: .22em;
+}
+
+body.narke-wallet-form-page .wallet-scene-copy .narke-kicker span {
+  padding: 0 6px;
+  color: rgb(0 232 245 / 55%);
+}
+
+body.narke-wallet-form-page .wallet-scene-copy h1 {
+  margin: 0;
+  color: #f4fbfd;
+  font: 800 clamp(42px, 5.7vw, 76px)/.99 "Manrope", sans-serif;
+  letter-spacing: -.065em;
+}
+
+body.narke-wallet-form-page .wallet-scene-copy h1 span {
+  color: var(--wallet-cyan);
+}
+
+body.narke-wallet-form-page .wallet-scene-copy > p:last-child {
+  max-width: 340px;
+  margin: 22px 0 0;
+  color: #e0edf1;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+body.narke-wallet-form-page .scene-index {
+  position: absolute;
+  right: 43px;
+  bottom: 42px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: #d7e8ed;
+  font: 600 11px "Manrope", sans-serif;
+  letter-spacing: .14em;
+}
+
+body.narke-wallet-form-page .scene-index i {
+  width: 43px;
+  height: 1px;
+  background: var(--wallet-cyan);
+}
+
+body.narke-wallet-form-page .wallet-form {
+  align-self: center;
+  width: min(100%, 590px);
+  margin: 0 auto;
+  border: 0;
+  border-radius: 0 19px 19px 0;
+  padding: clamp(28px, 5vw, 64px) clamp(28px, 5vw, 68px);
+  background: transparent;
+  box-shadow: none;
+}
+
+body.narke-wallet-form-page .narke-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 35px;
+  border-bottom: 1px solid rgb(0 232 245 / 23%);
+  padding: 0 0 22px;
+}
+
+body.narke-wallet-form-page .narke-panel-heading .narke-kicker {
+  margin-bottom: 9px;
+}
+
+body.narke-wallet-form-page .narke-panel-heading h2 {
+  margin: 0;
+  color: #f2f9fb;
+  font: 700 clamp(22px, 2.2vw, 28px)/1.2 "Manrope", sans-serif;
+  letter-spacing: -.035em;
+}
+
+body.narke-wallet-form-page .narke-live-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  place-items: center;
+  border: 1px solid rgb(0 232 245 / 60%);
+  border-radius: 50%;
+  color: var(--wallet-cyan);
+  font: 700 12px "Manrope", sans-serif;
+}
+
+body.narke-wallet-form-page .wallet-fields {
+  display: grid;
+  gap: 22px;
+}
+
+body.narke-wallet-form-page .wallet-field {
+  display: grid;
+  min-width: 0;
+  gap: 9px;
+}
+
+body.narke-wallet-form-page .wallet-form .field-label {
+  display: block;
+  margin: 0;
+  color: #e9f4f7;
+  font: 600 14px/1.3 "DM Sans", sans-serif;
+}
+
+body.narke-wallet-form-page .wallet-form .field-label span {
+  color: var(--wallet-cyan);
+}
+
+body.narke-wallet-form-page .wallet-form :is(.input, .select) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 58px;
+  border: 1px solid rgb(123 177 190 / 65%);
+  border-radius: 9px;
+  padding: 0 16px;
+  background: var(--wallet-ice);
+  color: var(--wallet-ink);
+  caret-color: #007b91;
+  font: 500 16px/1.4 "DM Sans", sans-serif;
+  box-shadow: inset 0 1px rgb(255 255 255 / 70%);
+  appearance: auto;
+}
+
+body.narke-wallet-form-page .wallet-form .select {
+  padding-right: 42px;
+  color-scheme: light;
+}
+
+body.narke-wallet-form-page .wallet-form :is(.input, .select)::placeholder {
+  color: #536c77;
+  opacity: 1;
+}
+
+body.narke-wallet-form-page .wallet-form :is(.input, .select):focus {
+  border-color: rgb(123 177 190 / 65%);
+  outline: none;
+  box-shadow: inset 0 1px rgb(255 255 255 / 70%);
+}
+
+body.narke-wallet-form-page .wallet-submit {
+  display: flex;
+  width: 100%;
+  min-height: 58px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1px solid #28e6ed;
+  border-radius: 9px;
+  margin-top: 30px;
+  padding: 0 18px 0 21px;
+  background: linear-gradient(105deg, #06bfd0, #008ca8);
+  color: #f4fcfd;
+  font: 700 15px "Manrope", sans-serif;
+  box-shadow: inset 0 1px rgb(255 255 255 / 25%);
+  cursor: pointer;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+body.narke-wallet-form-page .wallet-submit:hover {
+  filter: brightness(1.08);
+}
+
+body.narke-wallet-form-page .wallet-submit:active {
+  transform: translateY(1px);
+}
+
+body.narke-wallet-form-page .wallet-submit:disabled {
+  cursor: wait;
+  filter: saturate(.55);
+}
+
+body.narke-wallet-form-page .wallet-submit span {
+  font-size: 21px;
+  font-weight: 400;
+}
+
+body.narke-wallet-form-page .narke-record-status {
+  min-height: 22px;
+  margin: 14px 0 0;
+  color: #d4e9ee;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+body.narke-wallet-form-page .wallet-footnote {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  margin: 18px 4px 0;
+  color: #a4c1cb;
+  font: 600 9px "Manrope", sans-serif;
+  letter-spacing: .18em;
+}
+
+body.narke-wallet-form-page .wallet-footnote > span {
+  color: var(--wallet-cyan);
+  font-size: 13px;
+}
+
+body.narke-wallet-form-page .wallet-footnote i {
+  width: 28px;
+  height: 1px;
+  background: rgb(0 232 245 / 60%);
+}
+
+/* Keep editable fields readable even when the shared focus rule is applied.
+   The selectors intentionally stay in the shared named layer and are more specific. */
+@layer form-controls {
+  body.narke-wallet-form-page .wallet-form :is(#wallet-holder, #wallet-number, #wallet-type) {
+    background-color: #eaf5f5 !important;
+    color: #062635 !important;
+    caret-color: #007b91 !important;
+    -webkit-text-fill-color: #062635 !important;
+    font-size: 16px !important;
+    text-shadow: none !important;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  body.narke-wallet-form-page .wallet-form :is(#wallet-holder, #wallet-number, #wallet-type):focus,
+  body.narke-wallet-form-page .wallet-form :is(#wallet-holder, #wallet-number, #wallet-type):focus-visible {
+    background-color: #eaf5f5 !important;
+    color: #062635 !important;
+    caret-color: #007b91 !important;
+    -webkit-text-fill-color: #062635 !important;
+    outline: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body.narke-wallet-form-page .wallet-form :is(#wallet-holder, #wallet-number):-webkit-autofill,
+  body.narke-wallet-form-page .wallet-form :is(#wallet-holder, #wallet-number):-webkit-autofill:hover,
+  body.narke-wallet-form-page .wallet-form :is(#wallet-holder, #wallet-number):-webkit-autofill:focus,
+  body.narke-wallet-form-page .wallet-form :is(#wallet-holder, #wallet-number):-webkit-autofill:focus-visible {
+    -webkit-text-fill-color: #062635 !important;
+    caret-color: #007b91 !important;
+    -webkit-box-shadow: 0 0 0 1000px #eaf5f5 inset !important;
+    box-shadow: 0 0 0 1000px #eaf5f5 inset !important;
+    background-color: #eaf5f5 !important;
+  }
+}
+
+@media (max-width: 800px) {
+  body.narke-wallet-form-page .wallet-content {
+    width: min(100% - 30px, 620px);
+  }
+
+  body.narke-wallet-form-page .wallet-stage {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    margin-top: 19px;
+  }
+
+  body.narke-wallet-form-page .wallet-scene {
+    min-height: 255px;
+    border-radius: 19px 19px 0 0;
+    padding: 29px;
+  }
+
+  body.narke-wallet-form-page .wallet-scene::after {
+    inset: 10px;
+  }
+
+  body.narke-wallet-form-page .wallet-scene > img {
+    object-position: 62% 54%;
+  }
+
+  body.narke-wallet-form-page .wallet-scene-copy {
+    max-width: 380px;
+    padding: 0;
+  }
+
+  body.narke-wallet-form-page .wallet-scene-copy .narke-kicker {
+    margin-bottom: 9px;
+  }
+
+  body.narke-wallet-form-page .wallet-scene-copy h1 {
+    font-size: clamp(38px, 9vw, 54px);
+  }
+
+  body.narke-wallet-form-page .wallet-scene-copy > p:last-child {
+    max-width: 320px;
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  body.narke-wallet-form-page .scene-index {
+    right: 28px;
+    bottom: 24px;
+    font-size: 10px;
+  }
+
+  body.narke-wallet-form-page .wallet-form {
+    width: 100%;
+    padding: 28px clamp(22px, 6vw, 38px) 18px;
+  }
+
+  body.narke-wallet-form-page .narke-panel-heading {
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+  }
+
+  body.narke-wallet-form-page .wallet-fields {
+    gap: 18px;
+  }
+
+  body.narke-wallet-form-page .wallet-footnote {
+    margin-top: 13px;
+  }
+}
+
+@media (max-width: 420px) {
+  body.narke-wallet-form-page .wallet-header {
+    width: calc(100% - 28px);
+    height: 66px;
+    grid-template-columns: 42px 1fr auto;
+  }
+
+  body.narke-wallet-form-page .wallet-header .back {
+    width: 38px;
+    height: 38px;
+  }
+
+  body.narke-wallet-form-page .wallet-brand img {
+    width: 126px;
+    max-height: 42px;
+  }
+
+  body.narke-wallet-form-page .wallet-header-label {
+    font-size: 8px;
+    letter-spacing: .12em;
+  }
+
+  body.narke-wallet-form-page .wallet-content {
+    width: calc(100% - 22px);
+  }
+
+  body.narke-wallet-form-page .wallet-scene {
+    min-height: 238px;
+    padding: 24px;
+  }
+
+  body.narke-wallet-form-page .wallet-scene-copy h1 {
+    font-size: clamp(37px, 11vw, 46px);
+  }
+
+  body.narke-wallet-form-page .wallet-scene-copy > p:last-child {
+    max-width: 265px;
+    font-size: 13px;
+  }
+
+  body.narke-wallet-form-page .wallet-form {
+    padding: 25px 19px 12px;
+  }
+
+  body.narke-wallet-form-page .wallet-form :is(.input, .select) {
+    min-height: 56px;
+    padding-right: 12px;
+    padding-left: 13px;
+  }
+
+  body.narke-wallet-form-page .wallet-form .select {
+    padding-right: 34px;
+  }
+
+  body.narke-wallet-form-page .wallet-submit {
+    min-height: 56px;
+    margin-top: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.narke-wallet-form-page *,
+  body.narke-wallet-form-page *::before,
+  body.narke-wallet-form-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}

@@ -298,6 +298,13 @@ async function main() {
       assert.deepEqual(errors, []);
       return;
     }
+    if (process.argv.includes("--narke-wallet")) {
+      await require("./narke-wallet-form-browser.cjs")({
+        call,evaluate,waitFor,navigate,screenshot,userId:registration.body.user.id,
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--narke-home")) {
       await require("./narke-home-browser.cjs")({call,evaluate,waitFor,navigate,screenshot});
       assert.deepEqual(errors, []);

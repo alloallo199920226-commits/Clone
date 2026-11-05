@@ -46,6 +46,7 @@ MORE_PAGES = {
 }
 STATIC_FILES = {
     "/pages/narke-suite.css": ("pages/narke-suite.css", "text/css; charset=utf-8"),
+    "/pages/narke-wallet-form.css": ("pages/narke-wallet-form.css", "text/css; charset=utf-8"),
     "/pages/narke-suite.js": ("pages/narke-suite.js", "text/javascript; charset=utf-8"),
     "/pages/missions.js": ("pages/missions.js", "text/javascript; charset=utf-8"),
     "/pages/missions.css": ("pages/missions.css", "text/css; charset=utf-8"),
