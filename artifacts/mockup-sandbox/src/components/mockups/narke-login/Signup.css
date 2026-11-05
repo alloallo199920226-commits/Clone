@@ -1,0 +1,43 @@
+.narke-signup-page {
+  overflow: visible;
+  background:
+    linear-gradient(180deg, rgba(0, 19, 33, 0) 0%, #001321 100%) bottom / 100% 142px no-repeat,
+    url("/__mockup/images/narke-water-reference.png") center bottom / 100% 114px no-repeat,
+    radial-gradient(ellipse at 50% 57%, rgba(0, 164, 209, .14), transparent 50%),
+    #001321;
+}
+.narke-signup-card {
+  min-height: 0;
+  padding-bottom: 34px;
+}
+.narke-signup-card h1 { font-size: 22px; line-height: 1.3; }
+.narke-signup-card .narke-subtitle { margin-bottom: 16px; }
+.narke-signup-form { gap: 12px !important; }
+.narke-signup-form .narke-phone-field { padding-left: 14px; }
+.narke-signup-form .narke-signup-referral {
+  display: block;
+  width: 100%;
+  height: 45px;
+  min-height: 45px;
+  border: 1px solid rgba(174, 219, 240, .73);
+  border-radius: 14px;
+  padding: 0 14px;
+  background: linear-gradient(110deg, rgba(31, 75, 100, .76), rgba(7, 39, 62, .75));
+  color: #f7fcff;
+  font-size: 16px;
+  box-shadow: inset 0 1px 5px rgba(203, 241, 255, .07), 0 3px 10px rgba(0, 10, 20, .12);
+}
+.narke-signup-form .narke-signup-referral::placeholder { color: #d1e0e9; opacity: 1; }
+.narke-signup-form .narke-signup-referral:focus-visible {
+  outline: 2px solid #63efff;
+  outline-offset: 2px;
+}
+.narke-signup-form .narke-primary-button { margin-top: 2px; }
+.narke-signup-form .narke-form-divider { margin-bottom: 4px; }
+.narke-signup-form .narke-switch-copy { margin-top: 0; }
+.narke-signup-form .narke-password-toggle { touch-action: manipulation; }
+@media (max-width: 380px) {
+  .narke-signup-card { width: calc(100% - 28px); margin-right: 14px; margin-left: 14px; padding-right: 14px; padding-left: 14px; }
+  .narke-signup-form { gap: 11px !important; }
+  .narke-signup-card h1 { font-size: 20px; }
+}

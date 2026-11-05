@@ -147,6 +147,15 @@ async function main() {
       width: 472, height: 864, deviceScaleFactor: 1, mobile: true,
     });
     await navigate("/connexion");
+    if (process.argv.includes("--narke-signup")) {
+      await require("./narke-signup-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot,
+        trackUser: id => { userId = id; },
+        trackChild: id => childUserIds.push(id),
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--narke-login")) {
       await require("./narke-login-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot,

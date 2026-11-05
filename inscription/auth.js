@@ -5,6 +5,16 @@
   const confirmation = document.querySelector("#signup-confirm");
   const referral = document.querySelector("#signup-referral");
   referral.value = new URLSearchParams(location.search).get("c") || "";
+  document.querySelectorAll("[data-password-toggle]").forEach(toggle => {
+    const input = document.getElementById(toggle.getAttribute("aria-controls"));
+    if (!input || ![password, confirmation].includes(input)) return;
+    toggle.addEventListener("click", () => {
+      const visible = input.type === "password";
+      input.type = visible ? "text" : "password";
+      toggle.setAttribute("aria-pressed", String(visible));
+      toggle.setAttribute("aria-label", visible ? "Masquer le mot de passe" : "Afficher le mot de passe");
+    });
+  });
 
   confirmation.addEventListener("input", () => {
     confirmation.setCustomValidity(

@@ -5,11 +5,12 @@ description: User expectations for faithful screen reproduction and meaningful v
 
 Reproduce the user’s supplied screen composition and text closely rather than substituting a different interface.
 
-La référence NARKE demandée concerne l’écran de connexion, pas une modification
-des comptes, de l’administration ou des règles financières existantes.
+La référence NARKE demandée concerne les écrans de connexion et d’inscription,
+pas une modification de l’administration ou des règles financières existantes.
 
-**Why:** le protocole fourni demande une reconstruction visuelle du formulaire
-NARKE tout en conservant les intégrations d’authentification et les données.
+**Why:** le protocole fourni demande une reconstruction visuelle tout en
+conservant l’authentification et les données ; l’utilisateur a explicitement
+rappelé de ne pas oublier la page d’inscription.
 
 **How to apply:** garder les vrais champs et la connexion serveur ; distinguer
 l’aperçu Design (sans authentification) du formulaire réel. Ne pas annoncer une
