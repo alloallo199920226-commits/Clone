@@ -98,6 +98,15 @@ par un simple débordement coupé.
 
 Verify brand identity in downloaded logos, not just the search result name.
 
+La page « À propos de nous » doit avoir une identité visuelle distincte de celle
+des Règles, tout en restant dans l’univers marin NARKE.
+
+**Why:** l’utilisateur a demandé explicitement de différencier ces deux pages.
+
+**How to apply:** ne pas réutiliser la présentation du règlement à l’identique
+pour la présentation de la plateforme ; conserver un contenu fidèle au catalogue
+numérique, sans inventer une vente physique ou des faits sur l’entreprise.
+
 **Why:** searches for Moov Africa returned unrelated Moov Inc. assets, and MTN results mixed older multicolor marks with the requested black/yellow mark.
 
 **How to apply:** inspect each logo image before using it and retain its source URL. An administrator-supplied logo remains authoritative.

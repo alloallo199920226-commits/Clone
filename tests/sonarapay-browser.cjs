@@ -6,7 +6,8 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   const premiumLayout = async () => {
     assert.equal(await evaluate("!!document.querySelector('link[href=\"/pages/narke-payment.css\"]')"), true);
     assert(!await evaluate("/IVECO|Valhalla|MAQUETTE|DEMO-NA/.test(document.title+' '+document.body.innerText)"));
-    assert(await evaluate("getComputedStyle(document.querySelector('.narke-payment-scene')).backgroundImage.includes('narke-recharge-hero.jpg')"));
+    assert(await evaluate("getComputedStyle(document.querySelector('.narke-payment-scene')).backgroundImage.includes('narke-payment-ocean.webp')"));
+    assert(await evaluate("(async()=>{const image=new Image();image.src='/pages/assets/narke-payment-ocean.webp';await image.decode();return image.naturalWidth>0;})()"), "Premium marine background must load");
     assert(await evaluate("[...document.images].every(image=>image.complete&&image.naturalWidth>0)"), "All visible payment assets must load");
     for (const [width,height] of [[320,568],[390,667],[390,844],[472,802],[768,844],[1280,900]]) {
       await call("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: true });

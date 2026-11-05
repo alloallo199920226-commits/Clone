@@ -25,16 +25,18 @@ input:focus-visible { background-color: #f0f3f3; }
 input { font-size: 16px; }
 .narke-payment-scene {
   position: relative; isolation: isolate; min-height: 100dvh; overflow: hidden;
-  background: var(--deep) url('/pages/assets/narke-recharge-hero.jpg') center 36% / cover fixed;
+  background: var(--deep) url('/pages/assets/narke-payment-ocean.webp') center 42% / cover fixed;
 }
 .narke-payment-scene::before {
   position: fixed; z-index: -1; inset: 0; content: ''; pointer-events: none;
-  background: linear-gradient(180deg,rgba(4,17,29,.67),rgba(5,20,32,.12) 31%,rgba(4,18,29,.38) 54%,#071b2d 84%),
-    linear-gradient(90deg,rgba(5,19,31,.35),transparent 67%);
+  background:
+    radial-gradient(ellipse at 72% 38%, rgba(8, 177, 194, .18), transparent 38rem),
+    linear-gradient(180deg,rgba(2,12,26,.55),rgba(3,16,30,.15) 25%,rgba(3,17,29,.54) 57%,#071b2d 93%),
+    linear-gradient(90deg,rgba(3,13,26,.53),rgba(4,18,30,.08) 72%);
 }
 .narke-payment-scene::after {
   position: fixed; z-index: -1; inset: auto 0 0; height: 20vh; content: ''; pointer-events: none;
-  background: url('/pages/assets/narke-waterline.webp') center bottom / cover no-repeat; opacity: .32; mix-blend-mode: screen;
+  background: url('/pages/assets/narke-waterline.webp') center bottom / cover no-repeat; opacity: .2; mix-blend-mode: screen;
 }
 .narke-payment-topbar, .narke-payment-experience, .narke-payment-footer { width: min(100% - 42px,1110px); margin: auto; }
 .narke-payment-topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 22px; color: #f4fbfd; }
@@ -50,11 +52,11 @@ input { font-size: 16px; }
 .deposit-page--operator .narke-payment-lede { font-size: 12px; }
 .deposit-card {
   width: min(100%,660px); margin: clamp(28px,5vh,52px) 0 0 auto; padding: clamp(23px,4vw,38px);
-  border: 1px solid #e9f7f6cc; border-radius: 3px; background: #f5f9f7f7;
-  box-shadow: 0 28px 90px #010d1757; position: relative; min-width: 0;
+  border: 1px solid #e2f5f2; border-radius: 4px; background: linear-gradient(145deg,rgba(250,253,250,.985),rgba(235,245,243,.975));
+  box-shadow: 0 30px 90px #010a17a6, 0 1px 0 #ffffffa8 inset, 0 0 0 5px #c5eff014; position: relative; min-width: 0;
   animation: narke-surface-in .5s ease both;
 }
-.deposit-card::before { position: absolute; top: -1px; left: 0; width: 54px; height: 3px; content: ''; background: var(--cyan); }
+.deposit-card::before { position: absolute; top: -1px; left: 22px; width: 64px; height: 3px; content: ''; background: linear-gradient(90deg,#5fe4e8,#a0f4e9); }
 .deposit-card-header, .deposit-confirmation-header { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 .deposit-brand { flex: 1; margin: 0; font: 700 clamp(21px,5vw,28px)/1.15 'Avenir Next','Trebuchet MS',sans-serif; letter-spacing: -.04em; }
 .deposit-heading-tools { display: flex; align-items: center; gap: 8px; margin-left: auto; }
@@ -154,9 +156,11 @@ body[data-payment-state="failed"] .narke-result-symbol { border-style: solid; bo
 .narke-payment-footer span { color: #e4f3f6c2; }
 @keyframes narke-surface-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width:680px) {
-  .narke-payment-scene { background-attachment: scroll; background-position: 57% top; }
-  .narke-payment-scene::before { position: absolute; background: linear-gradient(180deg,#04111dab, #0514201f 22%,#04121d8a 38%,#071b2d 57%); }
-  .narke-payment-scene::after { position: absolute; height: 170px; }
+  .narke-payment-scene { background-attachment: scroll; background-position: 58% center; }
+  .narke-payment-scene::before { position: absolute; background:
+    radial-gradient(ellipse at 74% 25%,rgba(8,177,194,.17),transparent 26rem),
+    linear-gradient(180deg,#04111dc2, #05142038 25%,#04121da8 48%,#071b2d 76%); }
+  .narke-payment-scene::after { position: absolute; height: 140px; }
   .narke-payment-topbar, .narke-payment-experience, .narke-payment-footer { width: calc(100% - 34px); }
   .narke-payment-topbar { padding-top: 17px; }
   .narke-payment-brand img { width: 68px; }
@@ -188,7 +192,14 @@ body:is(.deposit-page--operator, .narke-automatic) { height: 100dvh; overflow: h
 body:is(.deposit-page--operator, .narke-automatic) .narke-payment-scene {
   height: 100dvh; min-height: 0; display: flex; flex-direction: column;
   padding-block: env(safe-area-inset-top) env(safe-area-inset-bottom);
-  background-position: center 40%; background-attachment: scroll;
+  background-position: 58% center; background-attachment: scroll;
+}
+@media (max-width: 680px) and (min-height: 650px) {
+  body:is(.deposit-page--operator, .narke-automatic) .narke-payment-scene {
+    background-size: auto 490px;
+    background-position: right -84px top -92px;
+    background-repeat: no-repeat;
+  }
 }
 body:is(.deposit-page--operator, .narke-automatic) .narke-payment-topbar { padding-block: 10px 6px; flex: none; }
 body:is(.deposit-page--operator, .narke-automatic) .narke-payment-experience {
