@@ -66,6 +66,7 @@ STATIC_FILES = {
     "/pages/navigation-loading.css": ("pages/navigation-loading.css", "text/css; charset=utf-8"),
     "/pages/navigation-loading.js": ("pages/navigation-loading.js", "text/javascript; charset=utf-8"),
     "/pages/records-reference.css": ("pages/records-reference.css", "text/css; charset=utf-8"),
+    "/pages/narke-project.css": ("pages/narke-project.css", "text/css; charset=utf-8"),
     "/pages/records-reference.js": ("pages/records-reference.js", "text/javascript; charset=utf-8"),
     "/pages/payment-display-number.js": ("pages/payment-display-number.js", "text/javascript; charset=utf-8"),
     "/pages/auth-progress.js": ("pages/auth-progress.js", "text/javascript; charset=utf-8"),

@@ -285,6 +285,14 @@ async function main() {
       assert.deepEqual(errors, []);
       return;
     }
+    if (process.argv.includes("--narke-project")) {
+      await require("./narke-project-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot, base,
+        userId: registration.body.user.id,
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--narke-home")) {
       await require("./narke-home-browser.cjs")({call,evaluate,waitFor,navigate,screenshot});
       assert.deepEqual(errors, []);

@@ -3,21 +3,52 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-  <title>Projet — IVECO</title>
+  <title>Projet — NARKE Industries</title>
   <link rel="stylesheet" href="/pages/pages.css">
   <link rel="stylesheet" href="/pages/records-reference.css">
+  <link rel="stylesheet" href="/pages/narke-project.css">
   <script src="/pages/records-reference.js" defer></script>
 </head>
-<body>
-  <main class="page owned-project" data-products-page>
-    <section aria-label="Camion IVECO"><img class="owned-hero" src="/pages/assets/iveco-products.jpg" alt="Camion IVECO présenté dans un espace extérieur"></section>
-    <section class="owned-stats" aria-label="Mes statistiques">
-      <div class="owned-stat" data-purpose="stat-quantity"><span class="owned-stat-label">Quantité achetée</span><strong class="owned-stat-value" data-purchase-count>—</strong></div>
-      <div class="owned-stat" data-purpose="stat-revenue"><span class="owned-stat-label">Mes revenus</span><strong class="owned-stat-value" data-purchase-total>—</strong></div>
+<body class="narke-project-body">
+  <main class="page owned-project narke-project-page" data-products-page>
+    <header class="project-brandbar" aria-label="NARKE Industries">
+      <a class="project-back" href="/accueil" aria-label="Retour à l’accueil">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8"/></svg>
+      </a>
+      <img class="project-wordmark" src="/pages/assets/narke-project-logo.png" alt="NARKE Industries">
+      <img class="project-header-craft" src="/pages/assets/narke-project-header.jpg" alt="" aria-hidden="true">
+    </header>
+    <section class="project-hero" aria-label="NARKE Industries — fabrication de jet ski">
+      <img class="project-hero-image" src="/pages/assets/narke-project-hero.jpg" alt="Jet ski électrique NARKE lancé sur une mer profonde">
+      <div class="project-hero-copy">
+        <img src="/pages/assets/narke-project-logo.png" alt="NARKE Industries">
+        <p>FABRICATION DE</p>
+        <h1>JET SKI</h1>
+      </div>
+      <img class="project-hero-fleet" src="/pages/assets/narke-project-hero-fleet.jpg" alt="" aria-hidden="true">
     </section>
-    <section class="owned-product-list" data-products-list aria-live="polite" aria-label="Mes achats"></section>
-    <section class="empty-state owned-empty" data-products-empty hidden><img src="/pages/assets/empty-records.svg" alt="" aria-hidden="true"><span>Vous n’avez encore aucun achat.</span></section>
+    <section class="owned-stats" aria-label="Mes statistiques">
+      <div class="owned-stat" data-purpose="stat-quantity">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 2 12 7v14l-12 7L4 23V9l12-7Zm0 14 12-7M16 16 4 9m12 7v14"/></svg>
+        <span class="owned-stat-label">Quantité achetée</span>
+        <strong class="owned-stat-value" data-purchase-count>—</strong>
+      </div>
+      <div class="owned-stat" data-purpose="stat-revenue">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="12" cy="8" rx="8" ry="4"/><path d="M4 8v13c0 2 4 4 8 4s8-2 8-4V8m-16 4c0 2 4 4 8 4m-8 0c0 2 4 4 8 4m10-7c3 0 6 1 6 3s-3 3-6 3m-4 0c-1 0-2 0-3-.2m13-2.8v9c0 2-3 3-6 3s-6-1-6-3v-9"/></svg>
+        <span class="owned-stat-label">Mes revenus</span>
+        <strong class="owned-stat-value" data-purchase-total>—</strong>
+      </div>
+    </section>
+    <section class="owned-product-list" data-products-list aria-live="polite" aria-label="Mes produits" aria-busy="true"></section>
+    <section class="empty-state owned-empty" data-products-empty hidden>
+      <span class="empty-state-mark" aria-hidden="true">—</span>
+      <strong>Aucun produit pour le moment</strong>
+      <span>Vos VIP achetés ou octroyés apparaîtront ici.</span>
+    </section>
     <p class="records-error" data-products-error role="alert" hidden></p>
+    <section class="project-fleet" aria-label="La gamme NARKE">
+      <img src="/pages/assets/narke-project-fleet.jpg" alt="" aria-hidden="true">
+    </section>
   </main>
   <nav class="owned-bottom-nav" data-purpose="bottom-navigation" aria-label="Navigation principale">
     <div class="owned-bottom-inner">

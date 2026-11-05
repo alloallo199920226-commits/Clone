@@ -123,3 +123,14 @@ reconstruction visuelle.
 
 **How to apply:** ne pas masquer cet accès pendant une refonte ; vérifier les
 trois onglets, les listes réelles et l’état vide depuis la page Équipe.
+
+Les contrôles visuels doivent vérifier la géométrie et la visibilité des données,
+pas seulement leur présence dans le DOM.
+
+**Why:** les éléments natifs `<details>` distribuent leur contenu dans un arbre
+interne du navigateur ; leur appliquer une grille comme à un conteneur ordinaire
+a produit des cartes démesurées alors que les assertions de texte réussissaient.
+
+**How to apply:** garder la grille sur un conteneur ordinaire et le contrôle
+natif à l’intérieur ; mesurer les cartes et les lignes visibles, puis examiner
+une capture authentifiée avant de valider une reconstruction.

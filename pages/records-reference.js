@@ -104,65 +104,125 @@
   const error = document.querySelector("[data-products-error]");
   const quantity = document.querySelector("[data-purchase-count]");
   const income = document.querySelector("[data-purchase-total]");
-  productRoot.setAttribute("aria-busy", "true");
-  productRoot.innerHTML = '<div class="records-skeleton" aria-hidden="true"></div>';
-  const field = (label, value) => {
-    const p = document.createElement("p");
-    p.textContent = `${label} : ${value}`;
-    return p;
+  const iconPaths = {
+    daily: '<path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="4"/>',
+    total: '<path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/>',
+    validity: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    bought: '<path d="M3 4h2l2.2 11h10.9l2-8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>',
+    paid: '<path d="M5 7h14v13H5zM7 7V5a2 2 0 0 1 2-2h9"/><path d="M8 12h8m-8 4h5"/>',
+    next: '<path d="M4 5h16v15H4zM8 3v4m8-4v4M4 10h16"/><path d="m9 15 2 2 4-4"/>'
   };
-  getJson("/api/products").then((payload) => {
-    if (!Array.isArray(payload.products) || !Number.isSafeInteger(payload.quantity)) throw new Error("Les données de vos achats sont indisponibles.");
-    if (quantity) quantity.textContent = String(payload.quantity);
-    if (income) income.textContent = formatMoney(payload.income_fcfa);
-    productRoot.replaceChildren();
-    payload.products.forEach((product) => {
-      const article = document.createElement("article");
-      article.className = "owned-product";
-      article.dataset.productId = String(product.id);
-      const image = document.createElement("img");
-      const vip = Number(product.vip);
-      image.src = `/pages/assets/iveco-vip-${Number.isInteger(vip) && vip >= 1 && vip <= 6 ? vip : 1}.jpg`;
-      image.alt = "";
-      image.className = "owned-product-image";
-      const copy = document.createElement("div");
-      copy.className = "owned-product-copy";
-      const heading = document.createElement("h2");
-      heading.className = "owned-product-heading";
-      const name = document.createElement("span");
-      name.textContent = product.name || "Produit";
-      const amount = document.createElement("strong");
-      amount.textContent = formatMoney(product.amount_fcfa);
-      heading.append(name, amount);
-      copy.append(heading,
-        field("Revenu quotidien", formatMoney(product.daily_income_fcfa)),
-        field("Revenu total", formatMoney(product.total_income_fcfa)),
-        field("Période de validité", Number.isSafeInteger(product.validity_days) ? `${product.validity_days} jours` : "—"),
-        field("Heure d'achat", displayDate(product.created_at)));
-      if (product.source !== "admin_grant") {
-        copy.append(field("Revenus déjà versés", formatMoney(product.income_fcfa)));
-        if (product.automatic_income_enabled) {
-          copy.append(field("Prochain versement", product.next_income_at
-            ? displayDate(product.next_income_at) : "Cycle terminé"));
-        } else {
-          copy.append(field("Versements automatiques", "Configuration en attente"));
-        }
-      }
-      article.append(image, copy);
-      productRoot.append(article);
-    });
-    if (empty) empty.hidden = payload.products.length !== 0;
-    if (payload.has_more === true && payload.products.length) {
-      const notice = document.createElement("p");
-      notice.className = "records-more";
-      notice.textContent = "Les 100 achats les plus récents sont affichés.";
-      productRoot.append(notice);
-    }
-  }).catch((failure) => {
-    productRoot.replaceChildren();
+  const field = (label, value, iconKey) => {
+    const line = document.createElement("div");
+    line.className = "owned-product-row";
+    const icon = document.createElement("span");
+    icon.className = "owned-product-row-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.innerHTML = `<svg viewBox="0 0 24 24" focusable="false">${iconPaths[iconKey]}</svg>`;
+    const name = document.createElement("span");
+    name.className = "owned-product-row-label";
+    name.textContent = label;
+    const valueNode = document.createElement("strong");
+    valueNode.className = "owned-product-row-value";
+    valueNode.textContent = value;
+    line.append(icon, name, valueNode);
+    return line;
+  };
+  const setLoading = () => {
+    productRoot.setAttribute("aria-busy", "true");
+    productRoot.innerHTML = '<div class="project-skeleton" aria-hidden="true"></div><div class="project-skeleton" aria-hidden="true"></div>';
     if (empty) empty.hidden = true;
-    if (quantity) quantity.textContent = "—";
-    if (income) income.textContent = "—";
-    if (error) { error.hidden = false; error.textContent = failure.message || "Chargement impossible."; }
-  }).finally(() => productRoot.setAttribute("aria-busy", "false"));
+    if (error) error.hidden = true;
+  };
+  const loadProducts = () => {
+    setLoading();
+    getJson("/api/products").then((payload) => {
+      if (!Array.isArray(payload.products) || !Number.isSafeInteger(payload.quantity)) throw new Error("Les données de vos produits sont indisponibles.");
+      if (quantity) quantity.textContent = String(payload.quantity);
+      if (income) income.textContent = formatMoney(payload.income_fcfa);
+      productRoot.replaceChildren();
+      payload.products.forEach((product, index) => {
+        const isGrant = product.source === "admin_grant";
+        const article = document.createElement("article");
+        article.className = "owned-product";
+        article.dataset.productId = String(product.id);
+        article.style.setProperty("--card-order", String(index));
+
+        const image = document.createElement("img");
+        const vip = Number(product.vip);
+        image.src = vip === 1 ? "/pages/assets/narke-vip-gold.jpg" : "/pages/assets/narke-vip-blue.jpg";
+        image.alt = "";
+        image.className = "owned-product-image";
+        image.loading = "lazy";
+
+        const details = document.createElement("details");
+        details.className = "owned-product-details";
+        details.open = true;
+        const summary = document.createElement("summary");
+        summary.className = "owned-product-summary";
+        const heading = document.createElement("span");
+        heading.className = "owned-product-heading";
+        const title = document.createElement("h2");
+        title.className = "owned-product-title";
+        title.textContent = product.name || "Produit";
+        const origin = document.createElement("span");
+        origin.className = `owned-product-origin${isGrant ? " is-grant" : ""}`;
+        origin.textContent = isGrant ? "VIP octroyé" : "VIP acheté";
+        const amount = document.createElement("strong");
+        amount.className = "owned-product-price";
+        amount.textContent = formatMoney(product.amount_fcfa);
+        const chevron = document.createElement("span");
+        chevron.className = "owned-product-chevron";
+        chevron.setAttribute("aria-hidden", "true");
+        chevron.textContent = "›";
+        heading.append(title, origin);
+        summary.append(heading, amount, chevron);
+
+        const copy = document.createElement("div");
+        copy.className = "owned-product-copy";
+        const paid = isGrant ? "Non applicable" : formatMoney(product.income_fcfa);
+        const next = isGrant
+          ? "Non applicable"
+          : product.next_income_at
+            ? displayDate(product.next_income_at)
+            : product.automatic_income_enabled ? "Cycle terminé" : "Configuration en attente";
+        copy.append(
+          field("Revenu quotidien", formatMoney(product.daily_income_fcfa), "daily"),
+          field("Revenu total", formatMoney(product.total_income_fcfa), "total"),
+          field("Période de validité", Number.isSafeInteger(product.validity_days) ? `${product.validity_days} jours` : "—", "validity"),
+          field("Heure d’achat", displayDate(product.created_at), "bought"),
+          field("Revenus déjà versés", paid, "paid"),
+          field("Prochain versement", next, "next")
+        );
+        details.append(summary, copy);
+        article.append(image, details);
+        productRoot.append(article);
+      });
+      if (empty) empty.hidden = payload.products.length !== 0;
+      if (payload.has_more === true && payload.products.length) {
+        const notice = document.createElement("p");
+        notice.className = "records-more";
+        notice.textContent = "Les 100 produits les plus récents sont affichés.";
+        productRoot.append(notice);
+      }
+    }).catch((failure) => {
+      productRoot.replaceChildren();
+      if (empty) empty.hidden = true;
+      if (quantity) quantity.textContent = "—";
+      if (income) income.textContent = "—";
+      if (error) {
+        error.replaceChildren();
+        const message = document.createElement("span");
+        message.textContent = failure.message || "Chargement impossible.";
+        const retry = document.createElement("button");
+        retry.type = "button";
+        retry.className = "project-retry";
+        retry.textContent = "Réessayer";
+        retry.addEventListener("click", loadProducts, { once: true });
+        error.append(message, retry);
+        error.hidden = false;
+      }
+    }).finally(() => productRoot.setAttribute("aria-busy", "false"));
+  };
+  loadProducts();
 })();
