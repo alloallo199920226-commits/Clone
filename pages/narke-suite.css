@@ -968,6 +968,9 @@ body.narke-wallet-form-page .wallet-submit {
   cursor: pointer;
   transition: transform .18s ease, background-color .18s ease;
 }
+body.narke-wallet-page .wallet-add {
+  margin-inline: auto;
+}
 body.narke-record-page .narke-add-mark {
   position: relative;
   width: 16px;
