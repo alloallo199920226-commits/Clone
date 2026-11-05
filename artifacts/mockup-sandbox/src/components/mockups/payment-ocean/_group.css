@@ -1,0 +1,220 @@
+.ocean-pay {
+  --ocean-ink: #10283b;
+  --ocean-muted: #607787;
+  --ocean-deep: #08243a;
+  --ocean-mid: #0c3e59;
+  --ocean-cyan: #52c4d4;
+  --ocean-faint: #eef7f8;
+  --ocean-line: #d9e8eb;
+  min-height: 100dvh;
+  padding: 15px 16px 28px;
+  box-sizing: border-box;
+  color: var(--ocean-ink);
+  background:
+    radial-gradient(ellipse at 15% 2%, rgba(142, 216, 225, .27), transparent 36%),
+    linear-gradient(180deg, #e9f4f5 0%, #f5f8f7 36%, #edf4f3 100%);
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.ocean-pay *, .ocean-pay *::before, .ocean-pay *::after { box-sizing: border-box; }
+.ocean-pay__shell { width: min(100%, 430px); margin: 0 auto; animation: ocean-arrive .48s cubic-bezier(.2,.7,.2,1) both; }
+.ocean-pay__topline { display:flex; align-items:center; justify-content:space-between; padding: 0 2px 13px; }
+.ocean-pay__tools { display:flex; align-items:center; justify-content:flex-end; gap:6px; }
+.ocean-pay__locale,.ocean-pay__clock { color:#5e7b86; font-size:9px; font-weight:700; font-variant-numeric:tabular-nums; }
+.ocean-pay__locale { padding:5px 6px; border:1px solid #ccdee1; border-radius:99px; background:rgba(255,255,255,.45); }
+.ocean-pay__clock { white-space:nowrap; }
+.ocean-pay__brand { display:flex; align-items:center; gap:9px; min-width:0; }
+.ocean-pay__brand img { width:35px; height:35px; object-fit:contain; }
+.ocean-pay__brand-copy { display:flex; flex-direction:column; gap:1px; }
+.ocean-pay__brand-name { color:#10384d; font:800 13px/1 'Manrope',sans-serif; letter-spacing:.16em; }
+.ocean-pay__brand-caption { color:#68808b; font-size:9px; letter-spacing:.14em; text-transform:uppercase; }
+.ocean-pay__demo { color:#597580; border:1px solid #ccdee1; background:rgba(255,255,255,.45); border-radius:99px; padding:5px 8px; font-size:9px; line-height:1.2; letter-spacing:.035em; white-space:nowrap; }
+.ocean-pay__hero { height:137px; position:relative; overflow:hidden; border-radius:17px; background:#0b3549; box-shadow:0 12px 30px rgba(13,56,75,.16); }
+.ocean-pay__hero-image { width:100%; height:100%; display:block; object-fit:cover; object-position:center 48%; }
+.ocean-pay__hero::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(4,28,43,.72),rgba(4,28,43,.11) 72%),linear-gradient(0deg,rgba(4,29,44,.28),transparent 58%); }
+.ocean-pay__hero-copy { position:absolute; z-index:1; inset:auto 16px 15px; color:#fff; }
+.ocean-pay__eyebrow { color:#9de3e9; font-size:9px; letter-spacing:.18em; text-transform:uppercase; font-weight:700; }
+.ocean-pay__hero h1 { margin:5px 0 0; font:700 21px/1.08 'Manrope',sans-serif; letter-spacing:-.035em; }
+.ocean-pay__content { margin-top:12px; overflow:hidden; border:1px solid rgba(205,224,227,.9); border-radius:18px; background:rgba(255,255,255,.93); box-shadow:0 18px 42px rgba(28,73,88,.09); }
+.ocean-pay__amount { display:flex; align-items:center; justify-content:space-between; padding:15px 16px; color:#eaf8f9; background:linear-gradient(105deg,#0c354a,#125269); }
+.ocean-pay__amount-label { display:block; color:#abd0d8; font-size:11px; }
+.ocean-pay__amount-note { display:block; margin-top:3px; color:#d7ebee; font-size:10px; }
+.ocean-pay__amount strong { font:800 21px/1 'Manrope',sans-serif; letter-spacing:-.04em; white-space:nowrap; }
+.ocean-pay__amount strong small { margin-left:3px; color:#a9dfe4; font:600 10px 'DM Sans',sans-serif; letter-spacing:.02em; }
+.ocean-pay__form { padding:16px; }
+.ocean-pay__section-label { margin:0 0 9px; color:#526e7d; font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+.ocean-pay__operators { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin-bottom:17px; }
+.ocean-pay__operator { min-width:0; position:relative; }
+.ocean-pay__operator input { position:absolute; width:1px; height:1px; opacity:0; }
+.ocean-pay__operator label { min-height:54px; padding:8px 4px; display:flex; align-items:center; justify-content:center; text-align:center; border:1px solid #d6e4e7; border-radius:11px; background:#fbfdfd; color:#365264; cursor:pointer; font-size:11px; font-weight:600; line-height:1.2; transition:background .18s,border-color .18s,transform .18s; }
+.ocean-pay__operator label::before { content:""; width:7px; height:7px; flex:none; margin-right:5px; border-radius:50%; background:#a8bbc1; }
+.ocean-pay__operator input:checked + label { color:#0d394d; border-color:#51bdcc; background:#edf9fa; box-shadow:inset 0 0 0 1px rgba(81,189,204,.25); }
+.ocean-pay__operator input:checked + label::before { background:#27aabd; box-shadow:0 0 0 3px #d4f2f4; }
+.ocean-pay__operator input:focus-visible + label { outline:3px solid rgba(45,166,185,.3); outline-offset:2px; }
+.ocean-pay__field { display:block; margin:0 0 7px; color:#254456; font-size:12px; font-weight:700; }
+.ocean-pay__phone-wrap { display:flex; align-items:center; min-height:49px; border:1px solid #cddfe3; border-radius:11px; background:#fff; overflow:hidden; }
+.ocean-pay__country { align-self:stretch; display:flex; align-items:center; gap:6px; padding:0 10px; color:#345667; background:#f2f8f8; border-right:1px solid #dbe8e9; font-size:12px; font-weight:700; white-space:nowrap; }
+.ocean-pay__phone-wrap input { width:100%; min-width:0; height:48px; border:0; outline:0; padding:0 11px; color:#18394b; background:transparent; font:500 16px 'DM Sans',sans-serif; }
+.ocean-pay input::placeholder { color:#9aadb4; }
+.ocean-pay__phone-wrap:focus-within,.ocean-pay__otp-input:focus { border-color:#48b6c6; box-shadow:0 0 0 3px rgba(72,182,198,.13); }
+.ocean-pay__hint { margin:7px 0 0; color:#708691; font-size:10px; line-height:1.45; }
+.ocean-pay__otp { margin-top:13px; padding:12px; border:1px solid #d7e8ea; border-radius:12px; background:#f4fafb; animation:ocean-arrive .22s ease-out both; }
+.ocean-pay__otp p { margin:4px 0 9px; color:#637b86; font-size:11px; line-height:1.45; }
+.ocean-pay__otp input { width:100%; height:46px; padding:0 11px; border:1px solid #cfdee2; border-radius:9px; outline:0; background:white; color:#16384b; font:500 16px 'DM Sans',sans-serif; }
+.ocean-pay__ussd { display:flex; align-items:flex-start; gap:9px; margin-top:14px; padding:11px 12px; border-radius:11px; color:#35596a; background:#f0f7f8; }
+.ocean-pay__ussd-mark { width:21px; height:21px; display:grid; place-items:center; flex:none; border-radius:7px; color:#0e7182; background:#d6f0f2; font-size:12px; font-weight:700; }
+.ocean-pay__ussd strong { display:block; font:700 10px 'Manrope',sans-serif; letter-spacing:.07em; text-transform:uppercase; }
+.ocean-pay__ussd code { display:block; margin-top:4px; color:#123e53; font:700 12px/1.2 'DM Sans',sans-serif; letter-spacing:.025em; }
+.ocean-pay__ussd small { display:block; margin-top:4px; color:#708791; font-size:10px; line-height:1.4; }
+.ocean-pay__submit { width:100%; min-height:49px; display:flex; align-items:center; justify-content:space-between; margin-top:15px; padding:0 15px; border:0; border-radius:11px; color:#f3fcfd; background:linear-gradient(100deg,#0b354a,#155e72); box-shadow:0 8px 17px rgba(17,75,95,.17); font:700 13px 'Manrope',sans-serif; cursor:pointer; transition:transform .18s,filter .18s; }
+.ocean-pay__submit:hover { filter:brightness(1.08); transform:translateY(-1px); }
+.ocean-pay__submit span:last-child { color:#90dce3; font-size:18px; }
+.ocean-pay__safety { display:flex; gap:8px; margin:13px 1px 0; color:#6a808a; font-size:10px; line-height:1.45; }
+.ocean-pay__safety svg { width:15px; height:15px; flex:none; stroke:#398b9b; }
+.ocean-pay__result { padding:20px 17px 17px; }
+.ocean-pay__result-head { text-align:center; }
+.ocean-pay__result-symbol { width:54px; height:54px; display:grid; place-items:center; margin:0 auto 12px; border:1px solid #b8e4e6; border-radius:18px; color:#13778a; background:linear-gradient(145deg,#e8f8f8,#d5eff1); box-shadow:0 7px 18px rgba(20,116,132,.1); }
+.ocean-pay__result-symbol svg { width:28px; height:28px; stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.ocean-pay__result-symbol--success { color:#14788a; }
+.ocean-pay__result-symbol--failure { color:#9a6a39; border-color:#ead8bd; background:#fbf5e9; }
+.ocean-pay__result-symbol--pending { color:#28798b; }
+.ocean-pay__result-kicker { margin:0; color:#607e89; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
+.ocean-pay__result h1 { margin:5px 0 6px; color:#11384c; font:800 24px/1.08 'Manrope',sans-serif; letter-spacing:-.045em; }
+.ocean-pay__result-lead { max-width:300px; margin:0 auto; color:#657e89; font-size:12px; line-height:1.5; }
+.ocean-pay__result-value { margin:16px 0 0; padding:13px 12px; border:1px solid #dce9eb; border-radius:12px; background:linear-gradient(120deg,#f4fafb,#fff); text-align:center; }
+.ocean-pay__result-value span { display:block; color:#728893; font-size:10px; }
+.ocean-pay__result-value strong { display:block; margin-top:4px; color:#143f53; font:800 23px/1 'Manrope',sans-serif; }
+.ocean-pay__receipt { margin-top:13px; padding:0 13px; border:1px solid #dce8ea; border-radius:12px; background:#fff; }
+.ocean-pay__receipt-row { min-height:43px; display:flex; align-items:center; justify-content:space-between; gap:10px; border-bottom:1px solid #edf2f2; font-size:11px; }
+.ocean-pay__receipt-row:last-child { border:0; }
+.ocean-pay__receipt-row span { color:#718690; }
+.ocean-pay__receipt-row strong { color:#27485a; font-size:11px; text-align:right; }
+.ocean-pay__receipt-row code { color:#23576b; font:700 10px 'DM Sans',sans-serif; }
+.ocean-pay__notice { margin-top:12px; padding:11px 12px; border-radius:11px; color:#476573; background:#eff7f8; font-size:10px; line-height:1.5; }
+.ocean-pay__notice--caution { color:#6c5638; background:#faf5ea; }
+.ocean-pay__actions { display:grid; gap:8px; margin-top:15px; }
+.ocean-pay__button { width:100%; min-height:47px; display:flex; align-items:center; justify-content:center; padding:10px 14px; border:1px solid #cbdfe2; border-radius:11px; color:#174257; background:#f5fafb; text-align:center; text-decoration:none; font:700 12px 'Manrope',sans-serif; transition:transform .18s,background .18s; }
+.ocean-pay__button:hover { transform:translateY(-1px); background:#eaf6f7; }
+.ocean-pay__button--primary { color:#f1fbfc; border-color:#0c3d52; background:#0c3d52; }
+.ocean-pay__button--primary:hover { background:#14566b; }
+.ocean-pay__button--quiet { min-height:39px; border-color:transparent; color:#557481; background:transparent; font-size:11px; }
+.ocean-pay__demo-paths { margin-top:13px; padding-top:11px; border-top:1px solid #e8eff0; }
+.ocean-pay__demo-label { margin:0 0 8px; color:#82939a; text-align:center; font-size:9px; letter-spacing:.04em; }
+.ocean-pay__demo-links { display:flex; justify-content:center; gap:7px; }
+.ocean-pay__demo-links a { padding:7px 9px; border:1px solid #e0e9ea; border-radius:8px; color:#5e7782; background:#fbfdfd; text-decoration:none; font-size:10px; }
+.ocean-pay__footer { padding-top:11px; color:#82979f; text-align:center; font-size:9px; letter-spacing:.035em; }
+.ocean-pay__status-badge { display:inline-flex; align-items:center; gap:6px; margin-bottom:10px; padding:6px 9px; border:1px solid #c8e5e7; border-radius:99px; color:#226c7d; background:#eef9f9; font-size:10px; font-weight:700; }
+.ocean-pay__status-badge i { width:6px; height:6px; border-radius:50%; background:#48b8c5; animation:ocean-pulse 1.8s ease-in-out infinite; }
+@keyframes ocean-arrive { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@keyframes ocean-pulse { 50% { opacity:.35; transform:scale(.8); } }
+@media (min-width: 560px) {
+  .ocean-pay { padding:24px 20px 34px; }
+  .ocean-pay__shell { max-width:430px; }
+  .ocean-pay__hero { height:168px; }
+  .ocean-pay__content { margin-top:15px; }
+}
+@media (max-width: 350px) {
+  .ocean-pay { padding:12px 10px 22px; }
+  .ocean-pay__hero { height:120px; }
+  .ocean-pay__form,.ocean-pay__result { padding:14px 12px; }
+  .ocean-pay__operator label { font-size:10px; }
+  .ocean-pay__country { padding:0 7px; }
+  .ocean-pay__result h1 { font-size:22px; }
+  .ocean-pay__locale,.ocean-pay__clock { display:none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ocean-pay *, .ocean-pay *::before, .ocean-pay *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+}
+
+/* Direction A fidelity pass: deep-water glass, not a pale checkout card. */
+.ocean-pay {
+  --ocean-ink: #eef9fb;
+  --ocean-muted: #a6c2cb;
+  --ocean-deep: #041724;
+  --ocean-mid: #0b3448;
+  --ocean-faint: #0c2b3b;
+  --ocean-line: rgba(133, 197, 207, .24);
+  color: var(--ocean-ink);
+  background:
+    radial-gradient(ellipse at 14% 4%, rgba(35, 153, 174, .22), transparent 34%),
+    radial-gradient(ellipse at 90% 74%, rgba(15, 87, 116, .18), transparent 40%),
+    linear-gradient(155deg, #061c2a 0%, #041521 53%, #082438 100%);
+}
+.ocean-pay__topline { color:#e8f6f8; }
+.ocean-pay__brand { flex-direction:column; align-items:flex-start; gap:0; }
+.ocean-pay__brand img { width:120px; height:43px; object-fit:contain; object-position:left center; }
+.ocean-pay__brand-copy { margin-top:-3px; }
+.ocean-pay__brand-caption { color:#8db2bd; font-size:8px; letter-spacing:.15em; }
+.ocean-pay__tools { gap:6px; }
+.ocean-pay__locale,.ocean-pay__clock { color:#c5e2e7; }
+.ocean-pay__locale { border-color:rgba(116,194,206,.3); background:rgba(16,57,73,.65); }
+.ocean-pay__demo { color:#c7e2e7; border-color:rgba(116,194,206,.27); background:rgba(11,44,59,.72); }
+.ocean-pay__hero { border:1px solid rgba(105,190,202,.24); box-shadow:0 16px 36px rgba(0,8,14,.36); }
+.ocean-pay__hero::after { background:linear-gradient(90deg,rgba(2,19,30,.79),rgba(3,25,37,.13) 72%),linear-gradient(0deg,rgba(2,18,29,.48),transparent 62%); }
+.ocean-pay__content {
+  border-color:rgba(106,179,192,.28);
+  background:linear-gradient(145deg,rgba(12,42,57,.92),rgba(7,30,44,.94));
+  box-shadow:0 20px 50px rgba(0,8,15,.38),inset 0 1px 0 rgba(193,239,243,.06);
+  backdrop-filter:blur(16px);
+}
+.ocean-pay__amount { background:linear-gradient(110deg,#0b3448,#0c5063); }
+.ocean-pay__section-label { color:#a7c7cf; }
+.ocean-pay__operator label {
+  color:#d8ebee;
+  border-color:rgba(132,183,193,.3);
+  background:rgba(4,25,37,.72);
+}
+.ocean-pay__operator input:checked + label {
+  color:#f1fdff;
+  border-color:#54c5d2;
+  background:rgba(28,117,134,.34);
+  box-shadow:inset 0 0 0 1px rgba(81,189,204,.2);
+}
+.ocean-pay__operator input:checked + label::before { background:#69d8e2; box-shadow:0 0 0 3px rgba(69,185,197,.19); }
+.ocean-pay__field { color:#e2f2f4; }
+.ocean-pay__phone-wrap { border-color:rgba(133,190,200,.37); background:#092536; }
+.ocean-pay__country { color:#d4edf0; border-right-color:rgba(130,186,196,.25); background:#103749; }
+.ocean-pay__phone-wrap input { color:#f4fcfd; }
+.ocean-pay input::placeholder { color:#8baab4; }
+.ocean-pay__phone-wrap:focus-within,.ocean-pay__otp-input:focus { border-color:#55c9d5; box-shadow:0 0 0 3px rgba(72,182,198,.17); }
+.ocean-pay__hint { color:#9bb6bf; }
+.ocean-pay__otp { border-color:rgba(120,187,198,.27); background:rgba(5,28,41,.72); }
+.ocean-pay__otp p { color:#a7c0c8; }
+.ocean-pay__otp input { border-color:rgba(133,190,200,.38); background:#0b2b3b; color:#f4fcfd; }
+.ocean-pay__otp input:focus { border-color:#55c9d5; box-shadow:0 0 0 3px rgba(72,182,198,.17); }
+.ocean-pay__ussd { color:#d1e9ed; background:rgba(20,75,91,.42); border:1px solid rgba(92,183,196,.22); }
+.ocean-pay__ussd-mark { color:#b5f1f5; background:rgba(54,155,170,.26); }
+.ocean-pay__ussd code { color:#f1fcfd; }
+.ocean-pay__ussd small { color:#aac4cb; }
+.ocean-pay__safety { color:#b7ccd2; }
+.ocean-pay__safety svg { stroke:#71d2dc; }
+.ocean-pay__result-symbol { border-color:rgba(100,208,216,.32); color:#8fe7ed; background:linear-gradient(145deg,rgba(25,108,123,.46),rgba(10,50,68,.7)); box-shadow:0 8px 22px rgba(0,9,17,.28); }
+.ocean-pay__result-symbol--success,.ocean-pay__result-symbol--pending { color:#9bedf0; }
+.ocean-pay__result-symbol--failure { color:#f0c98f; border-color:rgba(225,186,125,.33); background:linear-gradient(145deg,rgba(105,75,40,.35),rgba(48,38,29,.6)); }
+.ocean-pay__result-kicker { color:#9fc2cb; }
+.ocean-pay__result h1 { color:#f2fbfc; }
+.ocean-pay__result-lead { color:#b4cbd1; }
+.ocean-pay__result-value { border-color:rgba(119,184,194,.25); background:linear-gradient(120deg,rgba(12,54,69,.82),rgba(7,34,49,.9)); }
+.ocean-pay__result-value span { color:#a6c1c8; }
+.ocean-pay__result-value strong { color:#f2fbfc; }
+.ocean-pay__receipt { border-color:rgba(119,184,194,.23); background:rgba(3,24,36,.56); }
+.ocean-pay__receipt-row { border-bottom-color:rgba(137,184,192,.14); }
+.ocean-pay__receipt-row span { color:#a7c0c8; }
+.ocean-pay__receipt-row strong { color:#e2f1f3; }
+.ocean-pay__receipt-row code { color:#8fe1e7; }
+.ocean-pay__notice { color:#c0d9de; background:rgba(17,75,91,.44); border:1px solid rgba(87,178,191,.18); }
+.ocean-pay__notice--caution { color:#f1d9b3; background:rgba(88,62,33,.34); border-color:rgba(211,166,99,.24); }
+.ocean-pay__button { color:#d8edf0; border-color:rgba(126,184,194,.3); background:rgba(8,39,54,.83); }
+.ocean-pay__button:hover { background:rgba(18,68,83,.9); }
+.ocean-pay__button--primary { color:#f4feff; border-color:#13879a; background:linear-gradient(100deg,#0c6276,#0d8291); }
+.ocean-pay__button--primary:hover { background:linear-gradient(100deg,#0f7185,#1394a1); }
+.ocean-pay__button--quiet { color:#a7c5cd; background:transparent; }
+.ocean-pay__demo-paths { border-top-color:rgba(137,184,192,.18); }
+.ocean-pay__demo-label { color:#8eabb4; }
+.ocean-pay__demo-links a { color:#b9d5da; border-color:rgba(129,184,194,.22); background:rgba(5,29,42,.7); }
+.ocean-pay__status-badge { color:#b6f0f2; border-color:rgba(87,193,203,.34); background:rgba(19,90,104,.34); }
+.ocean-pay__status-badge i { background:#67d7df; }
+.ocean-pay__footer { color:#7898a3; }
+@media (max-width:350px) {
+  .ocean-pay__brand img { width:108px; height:39px; }
+}
