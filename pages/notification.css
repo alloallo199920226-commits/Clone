@@ -1,13 +1,13 @@
-/* SHINERAY platform notice — shared by the standalone route and its modal. */
+/* NARKE platform notice — shared by the standalone route and its modal. */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 body.notification-page {
   margin: 0;
   min-height: 100dvh;
-  background: #181818;
-  color: #171717;
+  background: radial-gradient(ellipse at 50% 15%, #00465c80, transparent 65%), #00131e;
+  color: #f5fbff;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -25,14 +25,17 @@ dialog:has([data-notification-card]) [data-notification-card],
   flex-direction: column;
   overflow: hidden;
   border-radius: 12px;
-  background: #f2f2f2;
-  color: #101010;
+  border: 1px solid #48cedd88;
+  box-shadow: 0 24px 70px #0009, inset 0 1px 0 #77eaff33;
+  background: linear-gradient(145deg, #07394b, #001725 80%);
+  color: #f5fbff;
   font-size: 13px;
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.5;
 }
 
 body.notification-page main.page {
+  background: transparent;
   box-sizing: border-box;
   min-height: 100dvh;
   padding: 24px 0;
@@ -48,7 +51,7 @@ body.notification-page .page-header {
 #notification-title {
   flex: none;
   margin: 13px 4px 14px;
-  color: #d20b18;
+  color: #00e8f5;
   text-align: center;
   font-size: 23px;
   line-height: 1.2;
@@ -81,7 +84,7 @@ body.notification-page .page-header {
 }
 
 .notification-disclaimer {
-  color: #4e4e4e;
+  color: #d2e7ef;
   font-size: 11px;
   line-height: 1.4;
 }
@@ -112,7 +115,7 @@ body.notification-page .page-header {
   padding: 7px 8px !important;
   border: 0;
   border-radius: 7px;
-  background: linear-gradient(110deg, #c9c9c9, #555);
+  background: linear-gradient(110deg, #00475a, #002536);
   color: #fff !important;
   text-align: center;
   text-decoration: none;
@@ -127,8 +130,8 @@ body.notification-page .page-header {
   padding: 9px 12px !important;
   border: 0 !important;
   border-radius: 7px !important;
-  background: linear-gradient(105deg, #080808, #353535) !important;
-  color: #fff !important;
+  background: linear-gradient(105deg, #00e8f5, #00bcd4) !important;
+  color: #00131e !important;
   font: inherit;
   cursor: pointer;
 }

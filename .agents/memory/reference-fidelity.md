@@ -62,16 +62,6 @@ pour ces écrans et impose de conserver l’orientation et les couleurs des visu
 **How to apply:** extraire uniquement les illustrations, sans texte ni contrôles
 intégrés ; ne jamais utiliser une capture complète comme fond de page.
 
-NARKE est la marque des écrans clients reconstruits. Les anciennes consignes
-IVECO restent historiques pour les parties non concernées par cette reconstruction.
-
-**Why:** l’utilisateur a ensuite fourni une identité NARKE et explicitement
-demandé une reconstruction fidèle, sans remplacement libre de marque.
-
-**How to apply:** utiliser NARKE dans les écrans de référence, sans renommer les
-identifiants historiques ni modifier les données ou les destinations de contact
-configurées pour faire correspondre un pseudonyme illustratif.
-
 Le parcours de paiement doit conserver la direction approuvée « C · Immersif
 NARKE » pour le formulaire, l’attente, la réussite et l’échec : scène marine
 immersive sombre et surface de paiement claire, et non une carte entièrement
@@ -98,6 +88,10 @@ par un simple débordement coupé.
 
 Verify brand identity in downloaded logos, not just the search result name.
 
+**Why:** searches for Moov Africa returned unrelated Moov Inc. assets, and MTN results mixed older multicolor marks with the requested black/yellow mark.
+
+**How to apply:** inspect each logo image before using it and retain its source URL. An administrator-supplied logo remains authoritative.
+
 La page « À propos de nous » doit avoir une identité visuelle distincte de celle
 des Règles, mais garder le fond bleu nuit et cyan du site, avec des textes clairs
 opaques. Ne pas utiliser de fond blanc pour cette page.
@@ -108,10 +102,6 @@ rejeté le fond clair et demandé de reprendre l’arrière-plan du site.
 **How to apply:** ne pas réutiliser la présentation du règlement à l’identique
 pour la présentation de la plateforme ; conserver un contenu fidèle au catalogue
 numérique, sans inventer une vente physique ou des faits sur l’entreprise.
-
-**Why:** searches for Moov Africa returned unrelated Moov Inc. assets, and MTN results mixed older multicolor marks with the requested black/yellow mark.
-
-**How to apply:** inspect each logo image before using it and retain its source URL. An administrator-supplied logo remains authoritative.
 
 The country selector must show its states one after another and follow the real Internet connection, not just run a fast fixed animation. The user describes the first indicator as resembling a pulley, not a circle.
 

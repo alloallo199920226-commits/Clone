@@ -1,4 +1,13 @@
-# SHINERAY — projet importé
+# NARKE — plateforme membre
+
+## Identité visuelle
+
+L’ensemble des pages servies utilise l’identité NARKE : univers marin, fond bleu
+nuit, accents cyan et textes contrastés. Les identifiants historiques de base de
+données, cookies, clés de stockage et références de paiement restent inchangés
+pour préserver les comptes, sessions et garanties contre les doubles opérations.
+Les destinations de contact existantes restent valables, même si leur pseudonyme
+historique comporte un ancien nom de marque.
 
 ## Lancement
 

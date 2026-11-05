@@ -1,4 +1,4 @@
-"""Serve the IVECO pages and a small, authenticated application API."""
+"""Serve the NARKE pages and an authenticated application API."""
 
 import json
 from http.cookies import SimpleCookie
@@ -12,7 +12,7 @@ import admin_api
 import sonarapay_payments
 import sonarapay_client
 import manual_deposits
-from platform_brand import with_iveco_brand
+from platform_brand import with_narke_brand
 
 ROOT = Path(__file__).resolve().parent
 SESSION_COOKIE = "shineray_session"
@@ -49,10 +49,13 @@ STATIC_FILES = {
     "/pages/narke-suite.js": ("pages/narke-suite.js", "text/javascript; charset=utf-8"),
     "/pages/missions.js": ("pages/missions.js", "text/javascript; charset=utf-8"),
     "/pages/missions.css": ("pages/missions.css", "text/css; charset=utf-8"),
-    "/favicon.ico": ("pages/assets/iveco-favicon.ico", "image/x-icon"),
-    "/apple-touch-icon.png": ("pages/assets/iveco-apple-touch-icon.png", "image/png"),
-    "/apple-touch-icon-precomposed.png": ("pages/assets/iveco-apple-touch-icon.png", "image/png"),
-    "/pages/iveco-brand.js": ("pages/iveco-brand.js", "text/javascript; charset=utf-8"),
+    "/favicon.ico": ("pages/assets/narke-favicon.ico", "image/x-icon"),
+    "/apple-touch-icon.png": ("pages/assets/narke-apple-touch-icon.png", "image/png"),
+    "/apple-touch-icon-precomposed.png": ("pages/assets/narke-apple-touch-icon.png", "image/png"),
+    "/manifest.webmanifest": ("pages/manifest.webmanifest", "application/manifest+json"),
+    "/pages/narke-brand.js": ("pages/narke-brand.js", "text/javascript; charset=utf-8"),
+    "/pages/iveco-brand.js": ("pages/narke-brand.js", "text/javascript; charset=utf-8"),
+    "/pages/narke-admin.css": ("pages/narke-admin.css", "text/css; charset=utf-8"),
     "/pages/gift-codes.js": ("pages/gift-codes.js", "text/javascript; charset=utf-8"),
     "/pages/gift-codes.css": ("pages/gift-codes.css", "text/css; charset=utf-8"),
     "/pages/form-controls.css": ("pages/form-controls.css", "text/css; charset=utf-8"),
@@ -103,7 +106,7 @@ def with_form_controls(body, content_type):
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "IVECO"
+    server_version = "NARKE"
     sys_version = ""
 
     def end_headers(self):
@@ -137,7 +140,7 @@ class Handler(BaseHTTPRequestHandler):
         if imported:
             body, content_type = imported
             body = with_form_controls(body, content_type)
-            body = with_iveco_brand(body, content_type)
+            body = with_narke_brand(body, content_type)
             self.send_response(200)
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(body)))
@@ -192,7 +195,7 @@ class Handler(BaseHTTPRequestHandler):
             )
             body = body.replace(b"<head>", b"<head>" + navigation_assets, 1)
         body = with_form_controls(body, content_type)
-        body = with_iveco_brand(body, content_type)
+        body = with_narke_brand(body, content_type)
         self.send_response(200)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
@@ -603,5 +606,5 @@ if __name__ == "__main__":
     sonarapay_payments.start_reconciliation()
     import product_income
     product_income.start()
-    print("IVECO listening on 0.0.0.0:5000", flush=True)
+    print("NARKE listening on 0.0.0.0:5000", flush=True)
     ThreadingHTTPServer(("0.0.0.0", 5000), Handler).serve_forever()

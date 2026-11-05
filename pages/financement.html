@@ -1,10 +1,20 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Détails du financement — IVECO</title><link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/member-reference.css"><script src="/pages/pages.js" defer></script></head>
-<body><main class="page">
-  <header class="page-header"><a class="back" href="/compte" aria-label="Retour au compte">‹</a><h1>Détails du financement</h1><span class="header-spacer"></span></header>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Consultez l’activité financière de votre compte membre NARKE."><meta name="theme-color" content="#00131e"><title>Détails du financement — NARKE</title><link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/member-reference.css"><link rel="stylesheet" href="/pages/narke-suite.css"><script src="/pages/pages.js" defer></script></head>
+<body class="narke-suite-page narke-record-page narke-financing-page"><main class="page">
+  <header class="page-header"><a class="back" href="/compte" aria-label="Retour au compte">‹</a><h1>Détails du financement</h1><img class="narke-header-mark" src="/pages/assets/narke-home-logo.png" alt="NARKE"></header>
    <div class="page-content reference-finance-content">
     <nav class="tab-row" aria-label="Sections financières"><a href="/recharger">Recharger</a><a href="/retrait">Retirer</a><a aria-current="page" href="/financement">Compte</a></nav>
-    <div data-activity-list data-activity-kind="all" aria-live="polite"></div>
-     <div class="empty-state finance-empty" data-activity-empty><span>Plus aucune donnée</span></div>
+     <section class="narke-record-intro">
+       <div class="narke-record-copy"><p class="narke-kicker">NARKE · ESPACE MEMBRE</p><h2>Le mouvement de votre compte</h2><p>Retrouvez ici les opérations enregistrées sur votre espace.</p></div>
+       <img src="/pages/assets/narke-scene-account.webp" alt="Jet-ski NARKE sur une eau calme au crépuscule">
+     </section>
+     <section class="narke-record-panel" aria-labelledby="ledger-title">
+       <header class="narke-panel-heading"><div><p class="narke-kicker">SUIVI DU COMPTE</p><h2 id="ledger-title">Historique des opérations</h2></div><span class="narke-live-mark">ACTIVITÉ</span></header>
+       <div data-activity-list data-activity-kind="all" aria-live="polite"></div>
+       <div class="empty-state finance-empty narke-ledger-empty" data-activity-empty>
+         <span class="narke-empty-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 15.5h32v24H8zM8 21h32M16 10h16M18 28h12"/></svg></span>
+         <strong>Votre historique est encore calme</strong><span>Les opérations apparaîtront ici dès qu’elles seront enregistrées.</span>
+       </div>
+     </section>
   </div>
 </main></body></html>

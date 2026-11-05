@@ -1,4 +1,17 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gestion de compte bancaire — IVECO</title><link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/member-reference.css"><script src="/pages/pages.js" defer></script></head>
-<body><main class="page"><header class="page-header"><a class="back" href="/compte" aria-label="Retour au compte">‹</a><h1>Gestion de compte bancaire</h1><span class="header-spacer"></span></header><div class="page-content">
-<div data-wallet-list></div><div class="empty-state wallet-empty" data-wallet-empty><img src="/pages/assets/empty-records.svg" alt="" aria-hidden="true"></div><a class="button-red button-wide wallet-add" href="/ajouter-compte-retrait">Ajouter</a><p class="status" data-status role="status" aria-live="polite"></p></div></main></body></html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Gérez les coordonnées de retrait enregistrées dans votre espace membre NARKE."><meta name="theme-color" content="#00131e"><title>Gestion de compte bancaire — NARKE</title><link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/member-reference.css"><link rel="stylesheet" href="/pages/narke-suite.css"><script src="/pages/pages.js" defer></script></head>
+<body class="narke-suite-page narke-record-page narke-wallet-page"><main class="page"><header class="page-header"><a class="back" href="/compte" aria-label="Retour au compte">‹</a><h1>Comptes de retrait</h1><img class="narke-header-mark" src="/pages/assets/narke-home-logo.png" alt="NARKE"></header><div class="page-content">
+<section class="narke-record-intro">
+  <div class="narke-record-copy"><p class="narke-kicker">NARKE · COORDONNÉES</p><h2>Vos comptes, prêts pour le départ.</h2><p>Consultez ou retirez un moyen de paiement associé à votre espace.</p></div>
+  <img src="/pages/assets/narke-scene-account.webp" alt="Jet-ski NARKE au large, sous la lumière du soir">
+</section>
+<section class="narke-record-panel narke-wallet-panel" aria-labelledby="wallet-title">
+  <header class="narke-panel-heading"><div><p class="narke-kicker">MOYENS ENREGISTRÉS</p><h2 id="wallet-title">Comptes de retrait</h2></div><span class="narke-live-mark">SÉCURISÉ</span></header>
+  <div data-wallet-list aria-label="Comptes de retrait enregistrés"></div>
+  <div class="empty-state wallet-empty narke-wallet-empty" data-wallet-empty>
+    <span class="narke-empty-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M7 13h34v26H7zM7 19h34M13 8h22M16 29h10"/></svg></span>
+    <strong>Aucun compte de retrait pour le moment</strong><span>Ajoutez un moyen de paiement pour le retrouver dans votre espace.</span>
+  </div>
+  <a class="button-red button-wide wallet-add" href="/ajouter-compte-retrait"><span class="narke-add-mark" aria-hidden="true"></span> Ajouter un compte</a>
+</section>
+<p class="status narke-record-status" data-status role="status" aria-live="polite"></p></div></main></body></html>

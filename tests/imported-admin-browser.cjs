@@ -31,7 +31,11 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
       assert.equal(state.withdrawClosedOverride, mode === "closed");
       assert(!await evaluate("document.querySelector('#admin-notice').textContent.includes('pas activés')"));
     }
-    await waitFor("document.querySelector('#admin-content').textContent.includes('10 h à 18 h, heure du Maroc')");
+    await waitFor("document.querySelector('#admin-content').textContent.includes('09 h à 18 h, heure du Maroc')");
+    assert.equal(await evaluate("document.documentElement.dataset.platformTheme"),"narke");
+    assert.equal(await evaluate("getComputedStyle(document.querySelector('.admin-header')).color"),"rgb(245, 251, 255)");
+    assert(!await evaluate("getComputedStyle(document.querySelector('.admin-stat-card')).backgroundImage.includes('silver')"),
+      "The signed-in console must no longer inherit the archived silver imagery");
     await navigate("/omarshark-junior-panam");
     await waitFor("document.querySelector('[data-withdraw-mode=scheduled]')?.disabled===true");
     await screenshot("iveco-admin-withdrawal-controls");
@@ -58,7 +62,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
     await waitFor("document.querySelector('.admin-list').textContent.includes('VIP1 test catalogue')");
     await navigate("/accueil");
     await waitFor("document.querySelector('[data-vip=VIP1]').dataset.price==='4100'");
-    assert.equal(await evaluate("document.querySelector('[data-vip=VIP1] h2').textContent"), "VIP1 test catalogue");
+    assert.equal(await evaluate("document.querySelector('[data-vip=VIP1]').dataset.name"), "VIP1 test catalogue");
     assert.equal(await evaluate("document.querySelector('[data-vip=VIP1]').dataset.daily"), "1100");
     assert.equal(await evaluate("document.querySelector('[data-vip=VIP1]').dataset.total"), "198000");
     await evaluate("document.querySelector('[data-notification-close]').click()");

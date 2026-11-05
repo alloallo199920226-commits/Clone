@@ -1,0 +1,15 @@
+{
+  "name": "NARKE Industries",
+  "short_name": "NARKE",
+  "description": "Catalogue VIP numérique et espace membre NARKE.",
+  "lang": "fr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#00131e",
+  "theme_color": "#00131e",
+  "icons": [
+    {"src": "/pages/assets/narke-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/pages/assets/narke-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}

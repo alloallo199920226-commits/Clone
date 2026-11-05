@@ -18,6 +18,16 @@ an explicit decision before activating additional financial services or changing
 When preserving an imported client exactly, verify its actual browser requests as well
 as direct API tests. A successful API test alone does not prove wire compatibility.
 
+Pour changer l’identité visuelle de la console, contrôler aussi les couleurs
+calculées et le rendu connecté après le chargement de toutes les feuilles importées.
+Un test fonctionnel réussi ne prouve pas que l’ancien thème a disparu.
+
+**Why:** un thème fourni par l’archive reprenait la priorité sur le nouvel habillage :
+les actions fonctionnaient, mais des surfaces anciennes rendaient le texte illisible.
+
+**How to apply:** conserver les scripts importés, isoler la présentation dans
+l’adaptateur et vérifier le contraste réel des en-têtes, onglets et montants.
+
 **Why:** the source bundle's history script sends HTML-escaped query separators, and
 its logout sends no JSON body. Rewriting that JavaScript would break the user's
 explicit source-preservation requirement.
