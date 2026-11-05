@@ -555,6 +555,11 @@ def resource_api(cur, actor, segment, ident, action, method, body):
 
 def dispatch(cur, user, route, method, body, query):
     actor = None  # Dedicated console principal, never a fabricated customer.
+    if route == "/api/admin/customer-reset/preview":
+        if method != "GET":
+            fail(405, "Méthode non autorisée.")
+        import customer_reset
+        return 200, customer_reset.preview(cur, configured_password())
     if route == "/api/admin/overview" and method == "GET":
         return 200, overview(cur, query.get("summary") == "true")
     if route == "/api/admin/transaction-history" and method == "GET":
@@ -631,6 +636,21 @@ def handle(handler, user, route):
             if handler.command != "POST":
                 fail(405, "Méthode non autorisée.")
             login(handler, user, body)
+            return
+        if route == "/api/admin/customer-reset":
+            if handler.command != "POST":
+                fail(405, "Méthode non autorisée.")
+            with db.connect() as conn, conn.cursor() as cur:
+                require_admin(cur, handler)
+            fields(body, {"preview_token", "password", "confirmation", "backup_confirmed"})
+            admin_console_auth.reauthenticate(
+                handler, body.get("password"), configured_password=configured_password,
+                audit=audit, fail=fail)
+            import customer_reset
+            with db.connect() as conn, conn.cursor() as cur:
+                require_admin(cur, handler)
+                result = customer_reset.execute(cur, body, configured_password(), audit)
+            handler._json(200, result)
             return
         # The supplied external history script retains HTML-escaped separators.
         # Normalize its wire format here instead of rewriting the original JS.

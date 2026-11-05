@@ -26,6 +26,41 @@ def require_console(cur, handler, token_hash, cookie_token, fail):
         fail(401, "Session administrateur expirée. Reconnectez-vous.")
 
 
+def reauthenticate(handler, password, *, configured_password, audit, fail):
+    """Fresh password check with the same persistent limiter as console login."""
+    if not isinstance(password, str) or len(password) > 256 or len(password.encode()) > 1024:
+        raise ValueError("Mot de passe invalide.")
+    expected = configured_password()
+    key = client_key(handler, expected)
+    denied = limited = False
+    with db.connect() as conn, conn.cursor() as cur:
+        cur.execute("SELECT pg_advisory_xact_lock(hashtextextended(%s,0))",
+                    ("console-login:" + key,))
+        cur.execute("SELECT * FROM shineray_console_login_attempts WHERE client_hash=%s", (key,))
+        attempt = cur.fetchone()
+        now = datetime.now(timezone.utc)
+        if attempt and attempt["locked_until"] and attempt["locked_until"] > now:
+            fail(429, "Trop de tentatives. Réessayez dans quinze minutes.")
+        denied = not hmac.compare_digest(hashlib.sha256(password.encode()).digest(),
+                                         hashlib.sha256(expected).digest())
+        if denied:
+            failures = (attempt["failures"] + 1 if attempt
+                        and now - attempt["window_start"] < timedelta(minutes=15) else 1)
+            limited = failures >= 5
+            cur.execute("""INSERT INTO shineray_console_login_attempts
+                (client_hash,failures,window_start,locked_until) VALUES (%s,%s,%s,%s)
+                ON CONFLICT(client_hash) DO UPDATE SET failures=EXCLUDED.failures,
+                window_start=EXCLUDED.window_start,locked_until=EXCLUDED.locked_until""",
+                (key, failures, attempt["window_start"] if attempt and failures > 1 else now,
+                 now + timedelta(minutes=15) if limited else None))
+            audit(cur, None, "reset_password_failed")
+        else:
+            cur.execute("DELETE FROM shineray_console_login_attempts WHERE client_hash=%s", (key,))
+    if denied:
+        fail(429 if limited else 401, "Trop de tentatives. Réessayez dans quinze minutes."
+             if limited else "Mot de passe administrateur incorrect.")
+
+
 def login(handler, body, *, configured_password, token_hash, cookie_token, cookie, audit, fail):
     if set(body) - {"path", "password"}:
         raise ValueError("Champs de requête inattendus.")

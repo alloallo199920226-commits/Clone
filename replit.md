@@ -109,8 +109,15 @@ Les fonctions sans service métier actif (paiements automatiques, ouverture des 
 pointage, diffusion des annonces côté client, utilisation des codes cadeaux, blogue et
 réception du support) ne sont pas activées par cette importation. Les actions concernées
 renvoient une erreur explicite ; aucune donnée de démonstration n’est injectée. Les
-paramètres financiers du site restent ceux de sa politique actuelle. La suppression
-massive de comptes est désactivée pour préserver les soldes et les historiques.
+paramètres financiers du site restent ceux de sa politique actuelle.
+
+L’option « Supprimer les anciens utilisateurs » permet au propriétaire de supprimer
+les comptes clients présents lors de l’aperçu et leurs activités liées. Elle conserve
+les identités administrateur, la console indépendante, les produits et les réglages.
+Elle exige la session administrateur, une nouvelle vérification du mot de passe, une
+confirmation de sauvegarde et la phrase « SUPPRIMER LES UTILISATEURS ».
+Une suppression n’annule ni ne rembourse aucun paiement externe. Aucun effacement
+ne se produit automatiquement au démarrage ou à la publication.
 
 ## Politique financière
 

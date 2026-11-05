@@ -15,6 +15,17 @@ replacing existing accounts or changing the previously requested financial rules
 Keep compatibility changes outside that script, preserve existing accounts, and obtain
 an explicit decision before activating additional financial services or changing policy.
 
+Exception expressément autorisée : le propriétaire peut supprimer les anciens
+comptes clients et leurs activités depuis une option de l’administration, tout en
+conservant l’administration, les produits et les réglages. Ne jamais déclencher
+cette suppression automatiquement ou à la publication.
+
+**Why:** l’utilisateur a explicitement demandé une option pour le faire lui-même,
+après avoir confirmé la suppression des comptes et de leurs données liées.
+
+**How to apply:** préserver la confirmation destructive et la réauthentification ;
+ne pas confondre l’ajout de cette option avec une instruction de l’exécuter.
+
 When preserving an imported client exactly, verify its actual browser requests as well
 as direct API tests. A successful API test alone does not prove wire compatibility.
 
