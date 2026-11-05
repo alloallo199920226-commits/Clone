@@ -19,7 +19,7 @@ from psycopg.types.json import Jsonb
 
 import auth_backend as db
 import admin_console_auth
-from financial_policy import MIN_DEPOSIT_FCFA, WELCOME_BONUS_FCFA
+from financial_policy import MIN_DEPOSIT_FCFA, WELCOME_BONUS_FCFA, MIN_WITHDRAWAL_FCFA
 from withdrawal_controls import flags as withdrawal_control_flags
 
 COOKIE = "shineray_admin"
@@ -40,10 +40,10 @@ USER_FIELDS = """u.id,u.phone,u.referral_code AS "referralCode",
     u.withdrawals_disabled AS "withdrawalsDisabled",
     CASE WHEN u.phone LIKE '+225%%' THEN 'CI' ELSE 'TG' END AS country"""
 CONFIG = {
-    "depositMin": MIN_DEPOSIT_FCFA, "withdrawalMin": 2300,
+    "depositMin": MIN_DEPOSIT_FCFA, "withdrawalMin": MIN_WITHDRAWAL_FCFA,
     # Manual withdrawals use the advertised fee; no check-in policy is enabled.
     "withdrawalFeePercent": 20, "dashboxDeposit": MIN_DEPOSIT_FCFA,
-    "dashboxWithdraw": 2300, "signupBonus": WELCOME_BONUS_FCFA,
+    "dashboxWithdraw": MIN_WITHDRAWAL_FCFA, "signupBonus": WELCOME_BONUS_FCFA,
     "checkinBonus": None, "maxWithdrawals": None,
 }
 
@@ -592,7 +592,7 @@ def dispatch(cur, user, route, method, body, query):
     if route == "/api/admin/popup-config":
         if method == "GET":
             return 200, {"config": CONFIG}
-        fail(409, f"Les règles actuelles sont conservées : bonus 2 300 FCFA, dépôt minimum {MIN_DEPOSIT_FCFA} FCFA et commissions 40 % / 2 % / 1 %. Les autres services financiers ne sont pas activés ; aucun paramètre n’a été modifié.")
+        fail(409, f"Les règles actuelles sont conservées : bonus {WELCOME_BONUS_FCFA} FCFA, dépôt minimum {MIN_DEPOSIT_FCFA} FCFA, retrait minimum {MIN_WITHDRAWAL_FCFA} FCFA, frais de retrait 20 %, nombre de demandes illimité et commissions 40 % / 2 % / 1 %. Aucun paramètre n’a été modifié.")
     if route == "/api/admin/payment-provider-controls":
         if method == "GET":
             return 200, {"saspayEnabled": False, "sonarapayAutomaticEnabled": False, "sonarapayConfigured": False}

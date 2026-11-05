@@ -102,7 +102,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
   await screenshot("shineray-original-admin-users-mobile");
   await evaluate("document.querySelector('.admin-user-panel .admin-panel-close')?.click()");
   await evaluate("document.querySelector('[data-tab=settings]').click()");
-  await waitFor("document.querySelector('[name=signupBonus]')?.value==='2300'");
+  await waitFor("document.querySelector('[name=signupBonus]')?.value==='1500'");
   assert.equal(await evaluate("document.querySelector('[name=depositMin]').value"), "300");
   assert.equal(await evaluate("document.documentElement.scrollWidth<=innerWidth"), true, "Settings must fit the mobile viewport");
   assert.equal(await evaluate("document.querySelector('.admin-runtime-nav').getBoundingClientRect().width<=innerWidth"), true);

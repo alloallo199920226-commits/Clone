@@ -7,8 +7,9 @@ from psycopg.types.json import Jsonb
 
 import auth_backend as db
 import withdrawal_controls
+from financial_policy import MIN_WITHDRAWAL_FCFA
 
-MINIMUM_FCFA = 2300
+MINIMUM_FCFA = MIN_WITHDRAWAL_FCFA
 FEE_PERCENT = 20
 MOROCCO = ZoneInfo("Africa/Casablanca")
 
@@ -70,7 +71,7 @@ def submit(user_id, body):
                 raise db.AuthError(409, "Cet identifiant correspond à une autre demande.")
             return {**public(prior), "balance_fcfa": available_balance(cur, user_id)}
         if amount < MINIMUM_FCFA:
-            raise ValueError("Le montant minimum de retrait est de 2 300 FCFA.")
+            raise ValueError("Le montant minimum de retrait est de 1 500 FCFA.")
         if user["withdrawals_disabled"]:
             raise db.AuthError(403, "Les retraits sont désactivés pour votre compte.")
         withdrawal_controls.enforce(cur)

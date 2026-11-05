@@ -43,7 +43,7 @@ async function main() {
         "os.environ['SONARAPAY_KEY']=''", // Legacy manual-flow checks must never call a live provider.
         "from server import Handler, ThreadingHTTPServer",
         "import admin_api",
-        ...(process.argv.includes("--withdrawal") ? ["import withdrawals", "withdrawals.withdrawal_window_open=lambda:True"] : []),
+        ...(process.argv.includes("--withdrawal") ? ["import withdrawals", "withdrawals.withdrawal_window_open=lambda:True", "withdrawals.withdrawal_cutoff_reached=lambda:False"] : []),
         "original_audit=admin_api.audit",
         `admin_api.audit=lambda cur,actor,event,details=None:original_audit(cur,actor,event,{**(details or {}),'test_fixture':${JSON.stringify(adminFixture)}})`,
         "server=ThreadingHTTPServer(('127.0.0.1',0),Handler)",
@@ -467,7 +467,7 @@ async function main() {
       assert.equal(await evaluate("document.documentElement.scrollWidth>innerWidth"), false);
       await screenshot("shineray-deposit-confirmation-small");
       assert.equal(await evaluate("fetch('/api/activity').then(r=>r.json()).then(data=>data.activities.length)"), 1);
-      assert.equal(await evaluate("fetch('/api/me').then(r=>r.json()).then(data=>data.balance_fcfa)"), 2300);
+      assert.equal(await evaluate("fetch('/api/me').then(r=>r.json()).then(data=>data.balance_fcfa)"), 1500);
       await evaluate("sessionStorage.removeItem('shineray-deposit-draft')");
       await navigate("/confirmation-depot");
       assert.equal(await evaluate("document.querySelector('[data-deposit-missing]').hidden"), false);
@@ -972,7 +972,7 @@ async function main() {
       }
       assert.deepEqual(errors, []);
       const currentUser = await evaluate("fetch('/api/me').then(r=>r.json())");
-      assert.equal(currentUser.balance_fcfa, 2300, "Reference actions must not change the welcome bonus");
+      assert.equal(currentUser.balance_fcfa, 1500, "Reference actions must not change the welcome bonus");
       console.log("PASS: reference home, purchase dialog cancel/insufficient balance, recharge presets, withdrawal real balance/fee preview, support photos, no overflow at472/390, no fake funds.");
       console.log("Screenshots: /tmp/shineray-{home,purchase,recharge,withdraw,support}-reference.png");
       return;

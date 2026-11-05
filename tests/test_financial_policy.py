@@ -87,11 +87,11 @@ class FinancialPolicyTests(unittest.TestCase):
     def test_welcome_once_no_referral_for_signup_and_no_self_promotion(self):
         chain = self.chain()
         for user, token in chain:
-            self.assertEqual(user["balance_fcfa"], 2300)
+            self.assertEqual(user["balance_fcfa"], 1500)
             self.assertEqual(len(self.ledger(user["id"], "bonus")), 1)
             self.assertEqual(self.ledger(user["id"], "commission"), [])
             auth_backend.login("+228", user["phone"], "financial-policy-test-password")
-            self.assertEqual(auth_backend.account_summary(user["id"])["balance_fcfa"], 2300)
+            self.assertEqual(auth_backend.account_summary(user["id"])["balance_fcfa"], 1500)
             self.assertEqual(self.request("/administration-depots", token)[0], 302)
             self.assertEqual(self.request("/api/admin/deposits", token, {
                 "phone": user["phone"], "amount_fcfa": 500, "provider_reference": "spoof",
@@ -102,7 +102,7 @@ class FinancialPolicyTests(unittest.TestCase):
         (admin, token), (level2, _), (level1, _), (child, _) = chain
         with auth_backend.connect() as conn, conn.cursor() as cur:
             cur.execute("UPDATE shineray_users SET is_admin=TRUE WHERE id=%s", (admin["id"],))
-        body = {"phone": child["phone"], "amount_fcfa": 499,
+        body = {"phone": child["phone"], "amount_fcfa": 299,
                 "provider_reference": "manual-" + secrets.token_hex(12), "receipt_verified": True}
         self.assertEqual(self.request("/api/admin/deposits", token, body)[0], 401)
         self.assertEqual(self.request("/administration-depots", token)[0], 302)
@@ -116,7 +116,7 @@ class FinancialPolicyTests(unittest.TestCase):
         self.assertEqual(status, 201, result)
         self.assertTrue(json.loads(result)["first_deposit"])
         for user, reward in [(admin, 5), (level2, 10), (level1, 200)]:
-            self.assertEqual(auth_backend.account_summary(user["id"])["balance_fcfa"], 2300 + reward)
+            self.assertEqual(auth_backend.account_summary(user["id"])["balance_fcfa"], 1500 + reward)
             self.assertEqual(self.ledger(user["id"], "commission")[0]["amount_fcfa"], reward)
         self.assertEqual(self.request("/api/admin/deposits", token, body)[0], 200)
         self.assertEqual(len(self.ledger(child["id"], "recharge")), 1)
@@ -128,7 +128,7 @@ class FinancialPolicyTests(unittest.TestCase):
             **body, "amount_fcfa": 1000, "provider_reference": "second-" + secrets.token_hex(12)})
         self.assertEqual(status, 201)
         self.assertFalse(json.loads(result)["first_deposit"])
-        self.assertEqual(auth_backend.account_summary(child["id"])["balance_fcfa"], 3800)
+        self.assertEqual(auth_backend.account_summary(child["id"])["balance_fcfa"], 3000)
         for ancestor, depth in ((admin, 3), (level2, 2), (level1, 1)):
             child_member = next(member for member in auth_backend.get_team(ancestor["id"])["members"]
                                 if member["level"] == depth)
@@ -162,7 +162,7 @@ class FinancialPolicyTests(unittest.TestCase):
             results = list(pool.map(lambda _: settle_approved_deposit(
                 other["id"], 500, ref, approval_method="automatic"), range(2)))
         self.assertEqual(sum(not result["already_approved"] for result in results), 1)
-        self.assertEqual(auth_backend.account_summary(other["id"])["balance_fcfa"], 2800)
+        self.assertEqual(auth_backend.account_summary(other["id"])["balance_fcfa"], 2000)
 
     def test_legacy_deposits_not_recommissioned_and_failed_settlement_rolls_back(self):
         parent, _ = self.user()

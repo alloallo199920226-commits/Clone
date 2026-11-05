@@ -75,7 +75,7 @@ class WithdrawalTests(unittest.TestCase):
         with db.connect() as conn, conn.cursor() as cur:
             cur.execute("""INSERT INTO shineray_transactions
                 (user_id,kind,label,amount_fcfa,provider_reference)
-                VALUES (%s,'bonus','Fixture',1000,%s)""", (self.uid, "fixture:"+str(uuid.uuid4())))
+                VALUES (%s,'bonus','Fixture',1800,%s)""", (self.uid, "fixture:"+str(uuid.uuid4())))
             cur.execute("""INSERT INTO shineray_wallets(user_id,provider,phone,holder_name)
                 VALUES (%s,'TOGOCEL',%s,'Fixture') RETURNING id""", (self.uid, self.user["phone"]))
             self.wallet = cur.fetchone()["id"]
@@ -118,8 +118,8 @@ class WithdrawalTests(unittest.TestCase):
             withdrawals.submit(self.uid, self.body)
         self.assertEqual(error.exception.status, 403)
         self.bought()
-        with self.assertRaisesRegex(ValueError, "2 300"):
-            withdrawals.submit(self.uid, {**self.body, "amount_fcfa": 2299})
+        with self.assertRaisesRegex(ValueError, "1 500"):
+            withdrawals.submit(self.uid, {**self.body, "amount_fcfa": 1499})
         body = self.body
         row = withdrawals.submit(self.uid, body)
         self.assertEqual(row["net_amount_fcfa"], 1840)
@@ -162,6 +162,27 @@ class WithdrawalTests(unittest.TestCase):
         with patch("admin_api.require_admin", return_value=None):
             withdrawals.review(self.handler, int(row["id"].split("-")[1]), "approved")
         assert_recipient("approved")
+
+    def test_unlimited_requests_minimum_fee_and_reserved_balance(self):
+        self.grant()
+        with db.connect() as conn, conn.cursor() as cur:
+            cur.execute("""INSERT INTO shineray_transactions
+                (user_id,kind,label,amount_fcfa,provider_reference)
+                VALUES (%s,'bonus','Fixture',10000,%s)""",
+                (self.uid, "fixture:"+str(uuid.uuid4())))
+        bodies = [{**self.body, "request_id": str(uuid.uuid4()), "amount_fcfa": 1500}
+                  for _ in range(8)]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+            rows = list(pool.map(lambda body: withdrawals.submit(self.uid, body), bodies))
+        self.assertEqual(len({row["id"] for row in rows}), 8)
+        for body, row in zip(bodies, rows):
+            self.assertEqual(row["fee_fcfa"], 300)
+            self.assertEqual(row["net_amount_fcfa"], 1200)
+            self.assertEqual(withdrawals.submit(self.uid, body)["id"], row["id"])
+        self.assertEqual(self.balance(), 1300)
+        self.assertEqual(db.account_summary(self.uid)["reserved_fcfa"], 12000)
+        with self.assertRaisesRegex(db.AuthError, "insuffisant"):
+            withdrawals.submit(self.uid, {**bodies[0], "request_id": str(uuid.uuid4())})
 
     def test_reservation_concurrent_retry_and_review_exactly_once(self):
         self.grant()

@@ -11,10 +11,10 @@ module.exports = async ({ userId, evaluate, navigate, waitFor, screenshot }) => 
       body:JSON.stringify({provider:'TOGOCEL',phone:'90000000',holder_name:'Fixture'})}).then(r=>r.json())`);
     await navigate("/retrait");
     await waitFor("document.querySelector('[data-wallet-options] button')");
-    assert.equal(await evaluate("document.querySelector('#amount').min"), "2300");
+    assert.equal(await evaluate("document.querySelector('#amount').min"), "1500");
     assert(await evaluate("document.body.innerText.includes('heure du Maroc') && document.body.innerText.includes('20 %')"));
     await evaluate(`document.querySelector('[data-wallet-options] button').click();
-      document.querySelector('#amount').value='2300';
+      document.querySelector('#amount').value='1500';
       document.querySelector('#amount').dispatchEvent(new Event('input'));
       document.querySelector('[data-payment-action]').click()`);
     await waitFor("document.querySelector('[data-payment-status]').textContent.includes('VIP actif')");
@@ -26,14 +26,14 @@ module.exports = async ({ userId, evaluate, navigate, waitFor, screenshot }) => 
     await navigate("/retrait");
     await waitFor("document.querySelector('[data-wallet-options] button') && document.querySelector('[data-account-balance]').dataset.available");
     await evaluate(`document.querySelector('[data-wallet-options] button').click();
-      document.querySelector('#amount').value='2300';
+      document.querySelector('#amount').value='1500';
       document.querySelector('#amount').dispatchEvent(new Event('input'));
       document.querySelector('[data-payment-action]').click();
       document.querySelector('[data-payment-action]').click()`);
     await waitFor("document.querySelector('[data-payment-action]').textContent === 'Demande enregistrée'");
     assert.equal(await evaluate("document.querySelector('[data-payment-status]').textContent"), "");
     assert.equal(await evaluate("document.querySelector('[data-payment-status] a')"), null);
-    assert(await evaluate("document.querySelector('[data-amount-received]').textContent.replace(/\\s/g,'').includes('1840')"));
+    assert(await evaluate("document.querySelector('[data-amount-received]').textContent.replace(/\\s/g,'').includes('1200')"));
     assert.equal(await evaluate("document.querySelector('[data-payment-action]').disabled"), true);
     assert.equal(Number(db(`with db.connect() as c,c.cursor() as cur:
  cur.execute("SELECT count(*) n FROM shineray_withdrawal_requests WHERE user_id=%s",(uid,))
@@ -41,10 +41,10 @@ module.exports = async ({ userId, evaluate, navigate, waitFor, screenshot }) => 
     assert(await evaluate("document.documentElement.scrollWidth <= innerWidth"));
     await screenshot("withdrawal-request-recorded");
     await navigate("/historique-retraits");
-    await waitFor("document.querySelector('[data-activity-list]').textContent.replace(/[\\s,.]/g,'').includes('2300')");
+    await waitFor("document.querySelector('[data-activity-list]').textContent.replace(/[\\s,.]/g,'').includes('1500')");
     assert(await evaluate("document.querySelector('[data-activity-list]').textContent.toLowerCase().includes('en cours')"));
     await screenshot("withdrawal-pending-history");
-    console.log("PASS: active VIP gate, minimum 2300, 20% fee/net 1840, displayed Morocco hours, actual request saved once, reserve, mobile history (isolated server in open hours).");
+    console.log("PASS: active VIP gate, minimum 1500, 20% fee/net 1200, displayed Morocco hours, actual request saved once, reserve, mobile history (isolated server in open hours).");
   } finally {
     db(`with db.connect() as c,c.cursor() as cur:
  cur.execute("DELETE FROM shineray_withdrawal_requests WHERE user_id=%s",(uid,))

@@ -114,9 +114,12 @@ massive de comptes est désactivée pour préserver les soldes et les historique
 
 ## Politique financière
 
-- Bonus de bienvenue : 2 300 FCFA, crédité une seule fois à la création d’un nouveau compte.
+- Bonus de bienvenue : 1 500 FCFA, crédité une seule fois à la création d’un nouveau compte.
   Pas de versement rétroactif aux comptes existants.
-- Dépôt minimum : 300 FCFA. Le seuil de retrait et les prix VIP ne sont pas modifiés.
+- Dépôt minimum : 300 FCFA. Les prix VIP ne sont pas modifiés.
+- Retrait minimum : 1 500 FCFA ; frais : 20 %, arrondis au FCFA inférieur.
+  Nombre de demandes illimité, sous réserve du solde disponible et des réservations
+  existantes. VIP actif requis ; horaires inchangés : 09 h à 18 h au Maroc.
 - Parrainage : 40 % / 2 % / 1 % sur trois niveaux, uniquement sur le premier dépôt
   effectivement approuvé de chaque filleul. Les dépôts suivants ne sont pas commissionnés.
 - Les commissions sont calculées en FCFA entiers, arrondies à l’entier inférieur.
