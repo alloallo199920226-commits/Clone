@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Page d'accueil - IVECO</title>
+  <link rel="stylesheet" href="/pages/notification.css">
+  <link rel="stylesheet" href="/pages/home-reference.css">
+  <script src="/pages/home-reference.js" defer></script>
+  <script src="/pages/notification.js" defer></script>
+</head>
+<body>
+  <header class="home-header" data-purpose="header">
+    <h1>Page d'accueil</h1>
+    <div class="shineray-logo" data-purpose="logo-container">
+      <img src="/pages/assets/iveco-auth-logo.png" alt="IVECO">
+    </div>
+  </header>
+  <section class="home-hero" data-purpose="hero-banner" aria-label="Camion IVECO en situation de travail">
+    <img src="/pages/assets/iveco-home.jpg" alt="Camion IVECO prêt à travailler">
+  </section>
+  <section class="quick-actions" data-purpose="quick-actions-bar" aria-label="Actions rapides">
+    <button type="button" class="quick-action" data-route="/recharger">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2zM7 15h3v2H7z"/></svg><span>Recharger</span>
+    </button>
+    <button type="button" class="quick-action" data-route="/retrait">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h9zm-9-2h10V8H12v8zm4-2.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg><span>Retirer</span>
+    </button>
+    <button type="button" class="quick-action" data-route="/service-client">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 2c-2.3 0-7 1.2-7 3.5V19h14v-2.5C15 14.2 10.3 13 8 13zm8 0c-.3 0-.6 0-1 .1 1.2.8 2 2 2 3.4V19h6v-2.5c0-2.3-4.7-3.5-7-3.5z"/></svg><span>Service client</span>
+    </button>
+  </section>
+  <main class="catalog" data-purpose="vip-investments-grid">
+    <div class="product-grid">
+      <article class="product-card" data-purpose="vip-card-1" data-vip="VIP1" data-image="/pages/assets/iveco-vip-1.jpg">
+        <h2>VIP1</h2><div class="vehicle-image"><img src="/pages/assets/iveco-vip-1.jpg" alt="Camion IVECO — offre VIP1"></div>
+        <div class="metrics"><strong>—</strong><span>Revenu quotidien</span><strong>—</strong><span>Revenu total</span></div><div class="product-footer"><b>—</b><button type="button" data-purpose="buy-btn" disabled>ACHETER</button></div>
+      </article>
+      <article class="product-card" data-purpose="vip-card-2" data-vip="VIP2" data-image="/pages/assets/iveco-vip-2.jpg">
+        <h2>VIP2</h2><div class="vehicle-image"><img src="/pages/assets/iveco-vip-2.jpg" alt="Camion IVECO — offre VIP2"></div>
+        <div class="metrics"><strong>—</strong><span>Revenu quotidien</span><strong>—</strong><span>Revenu total</span></div><div class="product-footer"><b>—</b><button type="button" data-purpose="buy-btn" disabled>ACHETER</button></div>
+      </article>
+      <article class="product-card" data-purpose="vip-card-3" data-vip="VIP3" data-image="/pages/assets/iveco-vip-3.jpg">
+        <h2>VIP3</h2><div class="vehicle-image"><img src="/pages/assets/iveco-vip-3.jpg" alt="Camion IVECO — offre VIP3"></div>
+        <div class="metrics"><strong>—</strong><span>Revenu quotidien</span><strong>—</strong><span>Revenu total</span></div><div class="product-footer"><b>—</b><button type="button" data-purpose="buy-btn" disabled>ACHETER</button></div>
+      </article>
+      <article class="product-card" data-purpose="vip-card-4" data-vip="VIP4" data-image="/pages/assets/iveco-vip-4.jpg">
+        <h2>VIP4</h2><div class="vehicle-image"><img src="/pages/assets/iveco-vip-4.jpg" alt="Camion IVECO — offre VIP4"></div>
+        <div class="metrics"><strong>—</strong><span>Revenu quotidien</span><strong>—</strong><span>Revenu total</span></div><div class="product-footer"><b>—</b><button type="button" data-purpose="buy-btn" disabled>ACHETER</button></div>
+      </article>
+      <article class="product-card" data-purpose="vip-card-5" data-vip="VIP5" data-image="/pages/assets/iveco-vip-5.jpg">
+        <h2>VIP5</h2><div class="vehicle-image"><img src="/pages/assets/iveco-vip-5.jpg" alt="Camion IVECO — offre VIP5"></div>
+        <div class="metrics"><strong>—</strong><span>Revenu quotidien</span><strong>—</strong><span>Revenu total</span></div><div class="product-footer"><b>—</b><button type="button" data-purpose="buy-btn" disabled>ACHETER</button></div>
+      </article>
+      <article class="product-card" data-purpose="vip-card-6" data-vip="VIP6" data-image="/pages/assets/iveco-vip-6.jpg">
+        <h2>VIP6</h2><div class="vehicle-image"><img src="/pages/assets/iveco-vip-6.jpg" alt="Camion IVECO — offre VIP6"></div>
+        <div class="metrics"><strong>—</strong><span>Revenu quotidien</span><strong>—</strong><span>Revenu total</span></div><div class="product-footer"><b>—</b><button type="button" data-purpose="buy-btn" disabled>ACHETER</button></div>
+      </article>
+    </div>
+    <p class="catalog-status" role="status" aria-live="polite">Chargement du catalogue…</p>
+    <noscript>Activez JavaScript pour consulter les tarifs et acheter un produit.</noscript>
+    <p class="catalog-footnote">Les achats sont débités de votre solde. Les revenus sont crédités sur votre solde toutes les 24 heures, dans la limite du montant total et de la durée du produit. Aucun versement ne précède l’activation du service.</p>
+  </main>
+  <nav class="bottom-navigation" data-purpose="bottom-navigation" aria-label="Navigation principale">
+    <a href="/accueil" aria-current="page" data-purpose="nav-tab-maison"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Maison</span></a>
+    <a href="/projet" data-purpose="nav-tab-projet"><svg viewBox="0 0 24 24"><path d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM1 2v2h2l3.6 7.6-1.4 2.4c-.2.3-.2.6-.2 1 0 1.1.9 2 2 2h12v-2H7.4c-.2 0-.3-.1-.3-.3l.9-1.7h7.5c.8 0 1.4-.4 1.8-1L21 5.5c.1-.2.1-.3.1-.5 0-.6-.4-1-1-1H5.2l-.9-2zM17 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg><span>Projet</span></a>
+    <a href="/equipe" data-purpose="nav-tab-equipe"><svg viewBox="0 0 24 24"><path d="m12 2 2.4 4.9 5.4.8-3.9 3.8.9 5.3-4.8-2.5-4.8 2.5.9-5.3-3.9-3.8 5.4-.8z"/></svg><span>Équipe</span></a>
+    <a href="/compte" data-purpose="nav-tab-profil"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/></svg><span>Le mien</span></a>
+  </nav>
+  <dialog class="purchase-dialog" aria-labelledby="dialog-title">
+    <form method="dialog" class="purchase-content">
+      <h2 id="dialog-title">VIP1</h2>
+      <p class="purchase-lead">Achat avec le solde du compte</p>
+      <div class="purchase-details"><img alt="" src="/pages/assets/iveco-vip-1.jpg"><div><p data-detail-price></p><p data-detail-daily></p><p data-detail-total></p><p data-detail-days></p></div></div>
+      <p class="purchase-emphasis">*Vous pouvez acheter plusieurs appareils pour augmenter vos revenus.</p>
+      <p class="purchase-disclosure">Confirmer débite le prix du produit de votre solde et enregistre votre achat. Le premier revenu est crédité 24 heures après l’achat, puis toutes les 24 heures, dans les limites du produit. Il s’agit de crédits sur le solde interne, pas de virements Mobile Money.</p>
+      <p class="purchase-error" role="status" aria-live="polite"></p>
+      <a href="/projet">Vérifier mes produits</a>
+      <div class="purchase-buttons"><button type="button" class="cancel-purchase">Annuler</button><button type="button" class="confirm-purchase" disabled>Confirmer</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

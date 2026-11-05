@@ -1,0 +1,173 @@
+.narke-home {
+  --home-marine: #001522;
+  --home-deep: #041b2b;
+  --home-surface: #03243a;
+  --home-cyan: #00e5ff;
+  --home-light: #6af4ff;
+  --home-white: #f5fbff;
+  --home-secondary: #afc4d2;
+  --home-muted: #819aa9;
+  width: 100%;
+  min-height: 100dvh;
+  padding-bottom: calc(74px + env(safe-area-inset-bottom));
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 38%, rgba(0, 106, 145, .12), transparent 48%),
+    linear-gradient(180deg, #001522, #031c2c 60%, #001522);
+  color: var(--home-white);
+  font-family: "DM Sans", "Avenir Next", sans-serif;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+.narke-home *, .narke-home *::before, .narke-home *::after { box-sizing: border-box; }
+.narke-home button, .narke-home a { font: inherit; }
+.narke-home button:focus-visible, .narke-home a:focus-visible { outline: 2px solid var(--home-light); outline-offset: 3px; }
+.narke-home-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  height: 70px;
+  grid-template-columns: 52px 1fr 52px;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(115, 220, 245, .35);
+  background: linear-gradient(100deg, rgba(0, 21, 34, .98), rgba(3, 36, 58, .97) 55%, rgba(0, 21, 34, .98));
+  box-shadow: inset 0 -1px 0 rgba(0, 229, 255, .05), 0 7px 24px rgba(0, 13, 23, .17);
+}
+.narke-home-icon { display: grid; width: 38px; height: 42px; place-items: center; border: 0; padding: 0; background: transparent; color: #e9f8fc; cursor: pointer; }
+.narke-home-icon svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.narke-home-bell { justify-self: end; }
+.narke-home-bell svg circle { fill: var(--home-cyan); stroke: var(--home-cyan); filter: drop-shadow(0 0 3px rgba(0, 229, 255, .7)); }
+.narke-home-logo { display: flex; width: 142px; height: 58px; align-items: center; justify-content: center; justify-self: center; }
+.narke-home-logo img { display: block; width: 142px; max-width: 100%; height: 58px; object-fit: contain; }
+.narke-home-main { width: 100%; margin: 0 auto; }
+.narke-home-hero { position: relative; isolation: isolate; height: 230px; overflow: hidden; touch-action: pan-y; background: radial-gradient(ellipse at 80% 19%, rgba(255, 193, 132, .24), transparent 36%), linear-gradient(180deg, #064365, #0b5473 49%, #052738); }
+.narke-home-hero::after { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgba(0, 21, 34, .32), transparent 73%), linear-gradient(0deg, rgba(0, 17, 29, .58), transparent 39%); content: ""; }
+.narke-home-hero-copy { position: absolute; z-index: 3; top: 30px; left: 22px; }
+.narke-home-hero-copy > p { margin: 0 0 4px; color: #82dae8; font-size: 9px; font-weight: 700; letter-spacing: .18em; line-height: 1.2; }
+.narke-home-hero-copy h1 { margin: 0; color: var(--home-white); font-family: "Manrope", sans-serif; font-size: clamp(18px, 4.5vw, 22px); font-weight: 800; letter-spacing: -.55px; line-height: 1.14; text-shadow: 0 2px 9px rgba(0, 14, 25, .48); }
+.narke-home-features { display: flex; gap: 18px; margin-top: 12px; }
+.narke-home-features span { display: flex; min-width: 38px; flex-direction: column; align-items: center; gap: 3px; color: #ecfbff; text-align: center; }
+.narke-home-features svg { width: 21px; height: 21px; fill: none; stroke: #e9fbff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.narke-home-features small { font-size: 7px; font-weight: 600; line-height: 1.05; }
+.narke-home-cta { display: inline-flex; height: 31px; align-items: center; gap: 10px; margin-top: 11px; border: 1px solid rgba(155,255,255,.8); border-radius: 999px; padding: 0 16px; background: linear-gradient(105deg, #00d7ec, #24f2f4); color: #002234; font-family: "Manrope", sans-serif; font-size: 12px; font-weight: 800; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 2px 13px rgba(0,229,255,.3); transition: transform .18s ease, filter .18s ease; }
+.narke-home-cta span { font-size: 17px; line-height: 1; }
+.narke-home-cta:active { transform: scale(.97); }
+.narke-home-art { position: absolute; z-index: 1; right: 0; bottom: 21px; width: min(62%, 500px); height: 132px; }
+.narke-home-art img { position: absolute; z-index: 1; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; object-position: right center; opacity: 0; transform: translateX(7px); transition: opacity .45s ease, transform .45s ease; -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 100%), linear-gradient(to bottom, transparent 0%, #000 25%, #000 100%); mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 100%), linear-gradient(to bottom, transparent 0%, #000 25%, #000 100%); -webkit-mask-composite: source-in; mask-composite: intersect; }
+.narke-home-art img.narke-home-sky { z-index: 0; inset: 0 0 auto auto; width: min(100%, 198px); height: 76px; object-fit: cover; opacity: 1; transform: none; -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 86%, transparent 100%), linear-gradient(to bottom, #000 0%, #000 62%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 86%, transparent 100%), linear-gradient(to bottom, #000 0%, #000 62%, transparent 100%); -webkit-mask-composite: source-in; mask-composite: intersect; }
+.narke-home-art img.is-active { opacity: 1; transform: translateX(0); }
+.narke-home-dots { position: absolute; z-index: 5; right: 0; bottom: 8px; left: 0; display: flex; justify-content: center; gap: 6px; }
+.narke-home-dots button { width: 8px; height: 8px; border: 0; border-radius: 99px; padding: 0; background: rgba(218,242,249,.55); cursor: pointer; transition: width .2s ease, background .2s ease; }
+.narke-home-dots button[aria-pressed="true"] { width: 12px; background: var(--home-cyan); box-shadow: 0 0 8px rgba(0,229,255,.55); }
+.narke-home-quick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; padding: 11px 16px 21px; background: linear-gradient(180deg, rgba(2,31,49,.42), rgba(0,21,34,.05)); }
+.narke-home-quick a { display: flex; height: 82px; min-width: 0; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border: 1px solid rgba(115,220,245,.56); border-radius: 15px; background: linear-gradient(150deg, rgba(17,69,91,.87), rgba(4,37,57,.94) 70%); color: var(--home-white); font-size: 12px; font-weight: 700; text-decoration: none; box-shadow: inset 0 1px 0 rgba(231,250,255,.12), inset 0 -10px 20px rgba(0,214,240,.035), 0 5px 13px rgba(0,7,15,.18); transition: transform .18s ease, border-color .18s ease; }
+.narke-home-quick a:active { transform: scale(.975); }
+.narke-home-quick svg { width: 28px; height: 28px; fill: none; stroke: var(--home-cyan); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 5px rgba(0,229,255,.3)); }
+.narke-home-catalog { padding: 0 14px 16px; }
+.narke-home-catalog-head { display: flex; min-height: 36px; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.narke-home-catalog-head h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -.45px; line-height: 1.3; }
+.narke-home-catalog-head button { display: inline-flex; align-items: center; gap: 7px; border: 0; padding: 4px 0; background: transparent; color: var(--home-cyan); font-size: 12px; font-weight: 700; cursor: pointer; }
+.narke-home-catalog-head button span { font-size: 18px; line-height: 1; }
+.narke-home-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 8px; }
+.narke-home-card { display: flex; min-width: 0; min-height: 190px; flex-direction: column; overflow: hidden; border: 1px solid rgba(104,204,226,.43); border-radius: 14px; padding: 9px 10px 8px; background: linear-gradient(180deg, rgba(9,49,70,.96), rgba(3,31,49,.97) 54%, rgba(2,32,47,.98)); box-shadow: inset 0 1px 0 rgba(239,253,255,.08), 0 6px 16px rgba(0,6,14,.17); transition: border-color .2s ease, transform .2s ease; }
+.narke-home-card:hover { border-color: rgba(0,229,255,.8); transform: translateY(-1px); }
+.narke-home-card-title { display: flex; min-height: 31px; align-items: flex-start; justify-content: space-between; gap: 4px; }
+.narke-home-card-title h3 { overflow: hidden; margin: 0; color: var(--home-white); font-family: "Manrope", sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -.3px; line-height: 1.12; text-overflow: ellipsis; white-space: nowrap; }
+.narke-home-card-title p { overflow: hidden; margin: 3px 0 0; color: var(--home-secondary); font-size: 9px; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
+.narke-home-badge { display: inline-flex; height: 17px; flex: 0 0 auto; align-items: center; gap: 3px; border: 1px solid rgba(89,238,255,.42); border-radius: 999px; padding: 0 6px; background: rgba(0,179,209,.2); color: #c8fbff; font-size: 8px; font-weight: 700; line-height: 1; }
+.narke-home-badge svg { width: 10px; height: 10px; fill: currentColor; stroke: currentColor; stroke-width: 1; }
+.narke-home-badge.elite { border-color: rgba(203,217,229,.33); background: rgba(184,206,220,.1); color: #d6e7ee; }
+.narke-home-badge.elite svg { fill: none; }
+.narke-home-model-image { display: flex; height: 85px; flex: 0 0 85px; align-items: center; justify-content: center; margin: 0 0 2px; overflow: hidden; }
+.narke-home-model-image img { display: block; width: 100%; height: 100%; object-fit: contain; transition: transform .32s ease; }
+.narke-home-card:hover .narke-home-model-image img { transform: scale(1.035); }
+.narke-home-metrics { display: block; margin: 0 0 3px; }
+.narke-home-metrics strong { display: block; overflow: visible; color: var(--home-light); font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 800; line-height: 19px; white-space: nowrap; }
+.narke-home-metrics strong:first-child::after { content: " / jour"; color: var(--home-secondary); font-family: "DM Sans", sans-serif; font-size: 9px; font-weight: 600; }
+.narke-home-metrics span { overflow: hidden; color: var(--home-muted); font-size: 8px; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.narke-home-metrics span:first-of-type { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.narke-home-metrics strong:nth-of-type(2), .narke-home-metrics span:nth-of-type(2) { display: none; }
+.narke-home-buy { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0 5px; margin-top: auto; padding-top: 4px; }
+.narke-home-buy > div { display: flex; min-width: 0; flex-direction: column; }
+.narke-home-buy b { overflow: hidden; color: var(--home-white); font-family: "Manrope", sans-serif; font-size: 11px; font-weight: 800; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
+.narke-home-buy small { color: var(--home-muted); font-size: 7px; line-height: 1.1; }
+.narke-home-buy button { display: inline-flex; min-width: 94px; height: 29px; align-items: center; justify-content: center; gap: 8px; border: 1px solid rgba(0,229,255,.83); border-radius: 999px; padding: 0 9px; background: linear-gradient(120deg, rgba(0,202,224,.24), rgba(0,106,143,.16)); color: var(--home-white); font-size: 10px; font-weight: 700; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 0 8px rgba(0,229,255,.12); }
+.narke-home-buy button span[aria-hidden="true"] { color: var(--home-cyan); font-size: 15px; }
+.narke-home-reference-note { margin: 12px 2px 0; color: var(--home-muted); font-size: 9px; line-height: 1.45; }
+.narke-home-bottom { position: fixed; z-index: 12; right: 0; bottom: 0; left: 0; display: grid; height: calc(74px + env(safe-area-inset-bottom)); grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; padding: 5px 0 env(safe-area-inset-bottom); border: 1px solid rgba(88,182,209,.5); border-bottom: 0; border-radius: 17px 17px 0 0; background: rgba(2,24,39,.96); box-shadow: 0 -7px 22px rgba(0,8,15,.32), inset 0 1px 0 rgba(223,249,255,.08); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.narke-home-bottom a { position: relative; display: flex; min-width: 0; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #b8c9d3; font-size: 10px; font-weight: 500; text-decoration: none; }
+.narke-home-bottom a svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+.narke-home-bottom a.active { color: var(--home-cyan); font-weight: 700; text-shadow: 0 0 11px rgba(0,229,255,.25); }
+.narke-home-bottom a.active::after { position: absolute; right: 22%; bottom: -1px; left: 22%; height: 2px; border-radius: 2px; background: var(--home-cyan); box-shadow: 0 0 7px rgba(0,229,255,.7); content: ""; }
+.narke-home-overlay { position: fixed; z-index: 30; inset: 0; display: flex; align-items: center; justify-content: center; padding: 14px; background: rgba(0,9,16,.76); backdrop-filter: blur(5px); }
+.narke-home-menu { position: absolute; top: 12px; bottom: 12px; left: 0; display: flex; width: min(350px, calc(100% - 24px)); flex-direction: column; border: 1px solid rgba(103,205,230,.56); border-radius: 0 20px 20px 0; padding: 0 20px; background: linear-gradient(150deg, #0a344c, #031c2e 60%, #001522); box-shadow: 0 18px 55px rgba(0,5,12,.62); }
+.narke-home-menu header { display: flex; height: 70px; flex: 0 0 70px; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(100,206,231,.34); font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 800; letter-spacing: .12em; }
+.narke-home-menu header small { display: block; margin-top: 2px; color: var(--home-muted); font-family: "DM Sans", sans-serif; font-size: 8px; letter-spacing: .42em; }
+.narke-home-menu header button, .narke-home-dialog-close { width: 36px; height: 36px; border: 1px solid rgba(100,206,231,.34); border-radius: 50%; background: rgba(255,255,255,.04); color: var(--home-white); font-size: 25px; cursor: pointer; }
+.narke-home-menu nav { display: grid; overflow-y: auto; padding: 12px 0; }
+.narke-home-menu nav a { display: flex; min-height: 52px; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(131,192,211,.16); color: var(--home-white); font-size: 14px; text-decoration: none; }
+.narke-home-menu nav a span { color: var(--home-cyan); font-family: "Manrope", sans-serif; font-size: 10px; }
+.narke-home-menu > p { margin-top: auto; color: var(--home-muted); font-size: 9px; letter-spacing: .2em; }
+.narke-home-dialog { position: relative; width: min(448px, 100%); max-height: calc(100dvh - 28px); overflow-y: auto; border: 1px solid rgba(103,205,230,.56); border-radius: 20px; padding: 23px 22px 20px; background: linear-gradient(150deg, #0a344c, #031c2e 60%, #001522); color: var(--home-white); box-shadow: 0 18px 55px rgba(0,5,12,.62), inset 0 1px 0 rgba(237,251,255,.1); }
+.narke-home-dialog-close { position: absolute; top: 15px; right: 15px; }
+.narke-home-dialog-kicker { margin: 0 40px 7px 0; color: var(--home-cyan); font-size: 9px; font-weight: 700; letter-spacing: .18em; }
+.narke-home-dialog h2 { margin: 0 40px 17px 0; font-family: "Manrope", sans-serif; font-size: 24px; font-weight: 800; }
+.narke-home-dialog-model { display: grid; grid-template-columns: 121px 1fr; gap: 18px; align-items: center; }
+.narke-home-dialog-model img { width: 121px; height: 91px; border: 1px solid rgba(100,206,231,.34); border-radius: 10px; background: #061e2c; object-fit: contain; }
+.narke-home-dialog-model > div { display: grid; gap: 8px; color: var(--home-secondary); font-size: 12px; }
+.narke-home-dialog-model b { color: var(--home-white); }
+.narke-home-dialog-note { margin: 20px 0; color: var(--home-muted); font-size: 11px; line-height: 1.5; }
+.narke-home-dialog-ok { width: 100%; height: 44px; border: 1px solid var(--home-cyan); border-radius: 999px; background: var(--home-cyan); color: #002234; font-size: 13px; font-weight: 700; cursor: pointer; }
+@media (max-width: 390px) {
+  .narke-home-header { height: 66px; padding-right: 12px; padding-left: 12px; }
+  .narke-home-hero { height: 225px; }
+  .narke-home-hero-copy { top: 27px; left: 18px; }
+  .narke-home-hero-copy h1 { font-size: 18px; }
+  .narke-home-features { gap: 12px; }
+  .narke-home-quick { gap: 7px; padding-right: 12px; padding-left: 12px; }
+  .narke-home-quick a { height: 78px; font-size: 11px; }
+  .narke-home-catalog { padding-right: 11px; padding-left: 11px; }
+  .narke-home-card { padding-right: 7px; padding-left: 7px; }
+  .narke-home-buy button { min-width: 80px; padding: 0 6px; }
+}
+@media (min-width: 700px) {
+  .narke-home { padding-bottom: 90px; }
+  .narke-home-header { height: 78px; grid-template-columns: 1fr 1fr 1fr; padding-right: max(32px, calc((100% - 1240px) / 2)); padding-left: max(32px, calc((100% - 1240px) / 2)); }
+  .narke-home-logo, .narke-home-logo img { width: 168px; height: 68px; }
+  .narke-home-main { max-width: 1280px; }
+  .narke-home-hero { height: clamp(280px, 34vw, 420px); }
+  .narke-home-hero-copy { top: 45px; left: max(42px, calc((100% - 1120px) / 2)); }
+  .narke-home-hero-copy h1 { font-size: clamp(27px, 3.2vw, 44px); }
+  .narke-home-hero-copy > p { font-size: 11px; }
+  .narke-home-features { gap: 26px; margin-top: 20px; }
+  .narke-home-features svg { width: 26px; height: 26px; }
+  .narke-home-features small { font-size: 9px; }
+  .narke-home-cta { height: 39px; margin-top: 17px; padding: 0 20px; font-size: 14px; }
+  .narke-home-art { right: 3%; bottom: 29px; width: 57%; height: 75%; }
+  .narke-home-dots { bottom: 12px; }
+  .narke-home-quick { width: min(100% - 64px, 1100px); gap: 18px; margin: 0 auto; padding: 18px 0 30px; }
+  .narke-home-quick a { height: 100px; border-radius: 17px; font-size: 14px; }
+  .narke-home-quick svg { width: 33px; height: 33px; }
+  .narke-home-catalog { padding: 0 32px 24px; }
+  .narke-home-catalog-head { min-height: 46px; margin-bottom: 9px; }
+  .narke-home-catalog-head h2 { font-size: 25px; }
+  .narke-home-catalog-head button { font-size: 14px; }
+  .narke-home-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .narke-home-card { min-height: 255px; border-radius: 17px; padding: 14px; }
+  .narke-home-card-title h3 { font-size: 17px; }
+  .narke-home-card-title p { font-size: 11px; }
+  .narke-home-model-image { height: 100px; flex-basis: 100px; margin-top: 5px; }
+  .narke-home-metrics { margin-bottom: 6px; }
+  .narke-home-metrics strong { font-size: 12px; }
+  .narke-home-metrics span { font-size: 9px; }
+  .narke-home-buy b { font-size: 13px; }
+  .narke-home-buy small { font-size: 8px; }
+  .narke-home-buy button { height: 33px; min-width: 112px; font-size: 11px; }
+  .narke-home-bottom { left: 50%; right: auto; width: min(100%, 1240px); height: 80px; transform: translateX(-50%); border-radius: 20px 20px 0 0; }
+  .narke-home-bottom a { font-size: 12px; }
+  .narke-home-bottom a svg { width: 28px; height: 28px; }
+}
+@media (min-width: 1200px) { .narke-home-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; } .narke-home-card { min-height: 290px; } .narke-home-model-image { height: 126px; flex-basis: 126px; } }
+@media (prefers-reduced-motion: reduce) { .narke-home *, .narke-home *::before, .narke-home *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }

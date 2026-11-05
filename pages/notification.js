@@ -33,5 +33,6 @@
       loading = false;
     }
   }
+  document.querySelector("[data-notification-open]")?.addEventListener("click", showNotification);
   window.addEventListener("pageshow", showNotification);
 })();

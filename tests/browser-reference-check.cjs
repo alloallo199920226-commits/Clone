@@ -271,6 +271,11 @@ async function main() {
     })()`);
     assert.equal(registration.status, 201, JSON.stringify(registration.body));
     userId = registration.body.user.id;
+    if (process.argv.includes("--narke-home")) {
+      await require("./narke-home-browser.cjs")({call,evaluate,waitFor,navigate,screenshot});
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--support-links")) {
       await require("./support-links-browser.cjs")({call, evaluate, navigate, waitFor, screenshot});
       assert.deepEqual(errors, []);
