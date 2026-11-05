@@ -293,6 +293,11 @@ async function main() {
       assert.deepEqual(errors, []);
       return;
     }
+    if (process.argv.includes("--narke-recharge")) {
+      await require("./narke-recharge-browser.cjs")({call,evaluate,waitFor,navigate,screenshot});
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--narke-home")) {
       await require("./narke-home-browser.cjs")({call,evaluate,waitFor,navigate,screenshot});
       assert.deepEqual(errors, []);

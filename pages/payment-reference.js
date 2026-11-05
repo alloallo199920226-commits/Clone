@@ -5,6 +5,10 @@
   document.querySelectorAll("[data-amount-choice]").forEach((button) => {
     button.addEventListener("click", () => {
       formAmount.value = button.dataset.amountChoice;
+      if (action?.dataset.paymentKind === "recharge") {
+        formAmount.removeAttribute("aria-invalid");
+        if (status) status.textContent = "";
+      }
       document.querySelectorAll("[data-amount-choice]").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
     });
   });
@@ -17,6 +21,13 @@
   let accountId = null;
   let withdrawalRecorded = false;
   if (action?.dataset.paymentKind === "recharge") {
+    const syncAmountSelection = () => {
+      document.querySelectorAll("[data-amount-choice]").forEach(button => {
+        button.setAttribute("aria-pressed", String(
+          formAmount.value !== "" && Number(formAmount.value) === Number(button.dataset.amountChoice)
+        ));
+      });
+    };
     try {
       const draft = JSON.parse(sessionStorage.getItem("shineray-deposit-draft"));
       if (draft && Number.isSafeInteger(draft.amount_fcfa) && draft.amount_fcfa >= 3500 &&
@@ -27,6 +38,12 @@
         });
       }
     } catch { /* No saved amount. */ }
+    syncAmountSelection();
+    formAmount.addEventListener("input", () => {
+      syncAmountSelection();
+      formAmount.removeAttribute("aria-invalid");
+      if (status) status.textContent = "";
+    });
   }
   action?.addEventListener("click", async () => {
     if (action.disabled || withdrawalRecorded) return;
@@ -37,6 +54,7 @@
       return;
     }
     if (!Number.isSafeInteger(amount) || amount < minimum) {
+      if (action.dataset.paymentKind === "recharge") formAmount.setAttribute("aria-invalid", "true");
       status.textContent = `Saisissez un montant valide${minimum > 1 ? ` (minimum ${format(minimum)} FCFA)` : ""}.`;
       return;
     }

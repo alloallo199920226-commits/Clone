@@ -1,0 +1,610 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+body.narke-recharge-page {
+  --ocean: #00131d;
+  --marine: #002638;
+  --cyan: #00e9ff;
+  --turquoise: #00bfd9;
+  --white: #f5fdff;
+  --glass: rgba(0, 43, 59, .8);
+  margin: 0;
+  min-width: 320px;
+  min-height: 100dvh;
+  padding: 0;
+  background: var(--ocean);
+  color: var(--white);
+  font-family: "DM Sans", "Trebuchet MS", sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.narke-recharge-page * { box-sizing: border-box; }
+body.narke-recharge-page button,
+body.narke-recharge-page input { font-family: inherit; }
+body.narke-recharge-page .recharge-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: min(100%, 472px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 0 0 64px;
+  background:
+    radial-gradient(ellipse at 50% 32%, rgba(0, 110, 139, .17), transparent 44%),
+    linear-gradient(180deg, #00131d 0%, #001722 65%, #00131d 100%);
+  box-shadow: 0 0 35px rgba(0, 0, 0, .34);
+}
+
+body.narke-recharge-page .recharge-brand-header {
+  position: relative;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #00131d;
+  border-bottom: 1px solid rgba(0, 233, 255, .62);
+}
+body.narke-recharge-page .recharge-brand-header::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(90deg, rgba(0, 19, 29, .12), rgba(0, 19, 29, .18) 44%, rgba(0, 19, 29, .02));
+  pointer-events: none;
+}
+body.narke-recharge-page .brand-header-sheen {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 150px;
+  height: 60px;
+  background: url("/pages/assets/narke-recharge-header-wave.jpg") left top / 150px 60px no-repeat;
+  mask-image: linear-gradient(90deg, #000 70%, transparent);
+  pointer-events: none;
+}
+body.narke-recharge-page .brand-header-back {
+  position: absolute;
+  z-index: 2;
+  left: 15px;
+  top: 8px;
+  color: #dffaff;
+  font-family: Georgia, serif;
+  font-size: 31px;
+  font-weight: 400;
+  line-height: 38px;
+  text-decoration: none;
+}
+body.narke-recharge-page .brand-header-logo {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 138px;
+  max-height: 50px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 5px rgba(0, 233, 255, .18));
+}
+body.narke-recharge-page .brand-header-vehicle {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  display: block;
+  width: 35%;
+  max-width: 164px;
+  height: 60px;
+  background: url("/pages/assets/narke-project-header.jpg") center / cover no-repeat;
+  mask-image: linear-gradient(90deg, transparent, #000 16%);
+  pointer-events: none;
+}
+
+body.narke-recharge-page .recharge-nav {
+  height: 44px;
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+  padding: 0 15px;
+  border-bottom: 1px solid rgba(53, 184, 204, .12);
+}
+body.narke-recharge-page .recharge-back {
+  display: inline-grid;
+  width: 28px;
+  height: 32px;
+  place-items: center;
+  color: #e6fbff;
+  text-decoration: none;
+}
+body.narke-recharge-page .recharge-back svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+body.narke-recharge-page .recharge-nav h1 {
+  margin: 0;
+  color: var(--white);
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -.35px;
+  line-height: 1;
+}
+body.narke-recharge-page .history-info {
+  display: inline-flex;
+  justify-self: end;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid #dcfaff;
+  border-radius: 50%;
+  color: #effdff;
+  font: italic 700 17px Georgia, serif;
+  text-decoration: none;
+}
+
+body.narke-recharge-page .finance-content.recharge-content {
+  position: relative;
+  z-index: 1;
+  padding: 0 15px 0;
+}
+body.narke-recharge-page .recharge-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  height: 112px;
+  border: 1px solid rgba(0, 233, 255, .54);
+  border-radius: 11px;
+  background:
+    linear-gradient(90deg, #002432 0%, #003c4d 50%, rgba(0, 30, 42, .12) 100%),
+    #002638;
+  box-shadow: 0 0 13px rgba(0, 233, 255, .12), inset 0 0 18px rgba(0, 233, 255, .08);
+}
+body.narke-recharge-page .recharge-hero::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(90deg, rgba(0, 20, 30, .16), transparent 62%, rgba(0, 19, 29, .05));
+  pointer-events: none;
+}
+body.narke-recharge-page .recharge-hero-copy {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 55%;
+  padding-left: 20px;
+  text-shadow: 0 1px 6px rgba(0, 15, 22, .65);
+}
+body.narke-recharge-page .hero-kicker {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--cyan);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .15px;
+}
+body.narke-recharge-page .recharge-hero h2 {
+  margin: 0;
+  color: #f3fcff;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.35px;
+  line-height: 1.02;
+}
+body.narke-recharge-page .recharge-hero p {
+  margin: 7px 0 0;
+  color: #baf7ff;
+  font-size: 12px;
+  font-weight: 500;
+}
+body.narke-recharge-page .recharge-hero-photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 58%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  mix-blend-mode: normal;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 30%);
+  mask-image: linear-gradient(90deg, transparent, #000 30%);
+}
+
+body.narke-recharge-page .amount-section { margin-top: 8px; }
+body.narke-recharge-page .finance-section-label {
+  display: flex;
+  min-height: 24px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+  margin: 0 2px 6px;
+  color: var(--white);
+}
+body.narke-recharge-page .finance-section-label h2,
+body.narke-recharge-page .channel-heading,
+body.narke-recharge-page .instructions-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -.15px;
+  line-height: 1.2;
+}
+body.narke-recharge-page .finance-section-label small {
+  color: #d6e4e8;
+  font-size: 12px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+body.narke-recharge-page .section-icon {
+  display: block;
+  flex: 0 0 24px;
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+body.narke-recharge-page .amount-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px 8px;
+  margin: 0 0 9px;
+}
+body.narke-recharge-page .amount-choice {
+  min-width: 0;
+  min-height: 34px;
+  border: 1px solid rgba(0, 207, 230, .43);
+  border-radius: 10px;
+  background: linear-gradient(150deg, rgba(0, 59, 76, .9), rgba(0, 32, 45, .9));
+  color: #f2fbff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .1px;
+  box-shadow: inset 0 0 8px rgba(0, 214, 239, .08), 0 2px 5px rgba(0, 0, 0, .2);
+  cursor: pointer;
+  transition: transform .18s ease, background-color .18s ease, border-color .18s ease;
+}
+body.narke-recharge-page .amount-choice[aria-pressed="true"] {
+  border-color: var(--cyan);
+  background: linear-gradient(105deg, #006d7e, #003d50);
+  color: #f6feff;
+  box-shadow: 0 0 11px rgba(0, 233, 255, .57), inset 0 1px 7px rgba(255, 255, 255, .22);
+}
+body.narke-recharge-page .amount-choice:active,
+body.narke-recharge-page .channel-choice:active,
+body.narke-recharge-page .payment-submit:active { transform: translateY(1px); }
+
+body.narke-recharge-page .recharge-amount {
+  display: flex;
+  width: 100%;
+  height: 43px;
+  align-items: center;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid rgba(0, 225, 246, .7);
+  border-radius: 11px;
+  padding: 0 12px 0 19px;
+  background: linear-gradient(100deg, rgba(0, 62, 78, .95), rgba(0, 36, 50, .95));
+  box-shadow: inset 0 0 11px rgba(0, 231, 255, .1), 0 0 9px rgba(0, 207, 230, .12);
+}
+body.narke-recharge-page .recharge-amount > span {
+  display: flex;
+  flex: 0 0 auto;
+  height: 24px;
+  align-items: center;
+  border-right: 1px solid rgba(0, 233, 255, .55);
+  margin-right: 12px;
+  padding-right: 12px;
+  color: #f1fcff;
+  font-size: 13px;
+  font-weight: 700;
+}
+body.narke-recharge-page .recharge-amount input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: none;
+  padding: 0;
+  background: transparent;
+  color: #f5fdff;
+  font-size: 16px;
+  font-weight: 500;
+  appearance: textfield;
+  -webkit-appearance: none;
+}
+body.narke-recharge-page .recharge-amount input::-webkit-inner-spin-button,
+body.narke-recharge-page .recharge-amount input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+body.narke-recharge-page .recharge-amount input::placeholder {
+  color: #bdd0d7;
+  opacity: .83;
+  font-size: 14px;
+  font-weight: 400;
+}
+body.narke-recharge-page .recharge-amount:focus-within {
+  border-color: rgba(255, 255, 255, .7);
+  box-shadow: none;
+}
+body.narke-recharge-page .recharge-amount:has(input[aria-invalid="true"]) {
+  border-color: #fff;
+  background: rgba(255, 255, 255, .06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18);
+}
+body.narke-recharge-page .recharge-amount input:disabled {
+  color: #88a1a8;
+  cursor: not-allowed;
+  -webkit-text-fill-color: #88a1a8;
+}
+body.narke-recharge-page .recharge-amount:has(input:disabled) { opacity: .58; }
+
+body.narke-recharge-page .channel-section { margin-top: 11px; }
+body.narke-recharge-page .channel-heading { margin: 0 3px 8px; }
+body.narke-recharge-page .wallet-section-icon { width: 23px; height: 23px; }
+body.narke-recharge-page .channel-list { display: grid; gap: 7px; }
+body.narke-recharge-page .channel-choice {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 38px;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(0, 193, 219, .44);
+  border-radius: 10px;
+  padding: 0 12px 0 29px;
+  background: linear-gradient(100deg, rgba(0, 53, 69, .96), rgba(0, 29, 42, .95));
+  color: #f3fbff;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: inset 0 0 12px rgba(0, 199, 220, .08);
+  cursor: pointer;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+body.narke-recharge-page .channel-choice > span:first-child {
+  position: relative;
+  z-index: 2;
+}
+body.narke-recharge-page .channel-choice img {
+  position: absolute;
+  right: 40px;
+  top: 0;
+  width: 108px;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: .72;
+  mix-blend-mode: screen;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 35%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 35%, #000 90%, transparent);
+}
+body.narke-recharge-page .channel-check {
+  position: absolute;
+  z-index: 2;
+  right: 9px;
+  top: 50%;
+  width: 19px;
+  height: 19px;
+  transform: translateY(-50%);
+  border: 1.5px solid #e9fbff;
+  border-radius: 50%;
+  background: rgba(0, 16, 25, .46);
+}
+body.narke-recharge-page .channel-check::after {
+  position: absolute;
+  left: 5px;
+  top: 3px;
+  width: 5px;
+  height: 8px;
+  border: solid #00313c;
+  border-width: 0 2px 2px 0;
+  content: "";
+  opacity: 0;
+  transform: rotate(45deg);
+}
+body.narke-recharge-page .channel-choice[aria-pressed="true"] {
+  border-color: var(--cyan);
+  background: linear-gradient(95deg, rgba(0, 118, 138, .8), rgba(0, 49, 63, .95) 66%);
+  box-shadow: 0 0 10px rgba(0, 233, 255, .32), inset 0 0 13px rgba(0, 233, 255, .17);
+}
+body.narke-recharge-page .channel-choice[aria-pressed="true"] .channel-check {
+  border-color: #e9ffff;
+  background: #efffff;
+}
+body.narke-recharge-page .channel-choice[aria-pressed="true"] .channel-check::after { opacity: 1; }
+
+body.narke-recharge-page .payment-submit {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 13px;
+  border: 1px solid rgba(87, 250, 255, .62);
+  border-radius: 10px;
+  background: linear-gradient(100deg, #00ddec, #00aebf 58%, #00d9e8);
+  color: #f7feff;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -.2px;
+  box-shadow: 0 0 13px rgba(0, 217, 232, .45), inset 0 1px 9px rgba(255, 255, 255, .26);
+  cursor: pointer;
+  transition: transform .18s ease, filter .18s ease, opacity .18s ease;
+}
+body.narke-recharge-page .payment-submit svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+body.narke-recharge-page .payment-submit:disabled { opacity: .66; cursor: wait; }
+body.narke-recharge-page .payment-status {
+  min-height: 0;
+  margin: 0;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+body.narke-recharge-page .payment-status:not(:empty) {
+  margin: 9px 3px 0;
+  border-left: 2px solid rgba(255, 255, 255, .7);
+  padding: 2px 0 2px 9px;
+}
+
+body.narke-recharge-page .instructions {
+  overflow: hidden;
+  margin: 15px 0 0;
+  border: 1px solid rgba(0, 217, 238, .48);
+  border-radius: 12px;
+  padding: 10px 11px 10px;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(0, 197, 222, .13), transparent 40%),
+    linear-gradient(145deg, rgba(0, 39, 53, .97), rgba(0, 23, 34, .98));
+  box-shadow: 0 0 11px rgba(0, 216, 236, .11), inset 0 0 17px rgba(0, 197, 222, .07);
+}
+body.narke-recharge-page .instructions-header {
+  display: flex;
+  min-height: 24px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin-bottom: 7px;
+}
+body.narke-recharge-page .instructions-header h2 {
+  flex: 0 0 auto;
+  gap: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+body.narke-recharge-page .document-icon { flex-basis: 21px; width: 21px; height: 22px; }
+body.narke-recharge-page .instructions-header img {
+  display: block;
+  width: 153px;
+  height: 25px;
+  object-fit: cover;
+  object-position: 50% 62%;
+  opacity: .9;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%);
+  mask-image: linear-gradient(90deg, transparent, #000 12%);
+}
+body.narke-recharge-page .instructions ol {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: recharge-instruction;
+}
+body.narke-recharge-page .instructions li {
+  position: relative;
+  min-height: 25px;
+  margin: 0;
+  padding-left: 30px;
+  color: #edf7fa;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.28;
+  counter-increment: recharge-instruction;
+}
+body.narke-recharge-page .instructions li::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  width: 21px;
+  height: 21px;
+  place-items: center;
+  border: 1.5px solid var(--cyan);
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgba(0, 191, 217, .55), rgba(0, 36, 52, .8));
+  color: #f4fdff;
+  content: counter(recharge-instruction);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 0 5px rgba(0, 233, 255, .4);
+  box-shadow: 0 0 5px rgba(0, 233, 255, .28), inset 0 0 4px rgba(0, 233, 255, .2);
+}
+body.narke-recharge-page .payment-disclosure {
+  display: inline-flex;
+  min-height: 23px;
+  align-items: center;
+  gap: 7px;
+  margin: 8px 0 0;
+  color: #31ebf7;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+body.narke-recharge-page .payment-disclosure svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+body.narke-recharge-page .recharge-waterline {
+  position: absolute;
+  z-index: 0;
+  right: 0;
+  bottom: -3px;
+  left: 0;
+  height: 58px;
+  background: url("/pages/assets/narke-waterline.webp") center bottom / 100% 100% no-repeat;
+  opacity: .95;
+  pointer-events: none;
+}
+
+@media (min-width: 700px) {
+  body.narke-recharge-page { padding: 0; background: #00131d; }
+  body.narke-recharge-page .recharge-page { min-height: 100dvh; }
+}
+@media (max-width: 390px) {
+  body.narke-recharge-page .finance-content.recharge-content { padding-right: 12px; padding-left: 12px; }
+  body.narke-recharge-page .amount-options { gap: 7px 6px; }
+  body.narke-recharge-page .amount-choice { font-size: 13px; }
+  body.narke-recharge-page .finance-section-label { gap: 6px; }
+  body.narke-recharge-page .finance-section-label h2 { gap: 6px; font-size: 14px; }
+  body.narke-recharge-page .finance-section-label small { font-size: 11px; }
+  body.narke-recharge-page .recharge-hero-copy { padding-left: 16px; }
+  body.narke-recharge-page .recharge-hero h2 { font-size: 19px; }
+  body.narke-recharge-page .instructions { padding-right: 9px; padding-left: 9px; }
+  body.narke-recharge-page .instructions-header h2 { gap: 6px; font-size: 13px; }
+  body.narke-recharge-page .instructions-header img { width: 126px; }
+  body.narke-recharge-page .instructions li { font-size: 12px; }
+}
+@media (max-width: 340px) {
+  body.narke-recharge-page .finance-section-label { flex-wrap: wrap; row-gap: 2px; }
+  body.narke-recharge-page .finance-section-label small { margin-left: 29px; }
+  body.narke-recharge-page .recharge-hero-copy { flex-basis: 62%; }
+  body.narke-recharge-page .recharge-hero-photo { width: 54%; }
+  body.narke-recharge-page .channel-choice { padding-left: 17px; font-size: 13px; }
+  body.narke-recharge-page .channel-choice img { right: 33px; width: 87px; }
+  body.narke-recharge-page .instructions-header img { width: 92px; }
+  body.narke-recharge-page .instructions li { font-size: 11.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.narke-recharge-page *,
+  body.narke-recharge-page *::before,
+  body.narke-recharge-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
