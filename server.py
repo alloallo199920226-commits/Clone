@@ -77,6 +77,7 @@ STATIC_FILES = {
     "/pages/home-reference.js": ("pages/home-reference.js", "text/javascript; charset=utf-8"),
     "/pages/payment-reference.css": ("pages/payment-reference.css", "text/css; charset=utf-8"),
     "/pages/narke-recharge.css": ("pages/narke-recharge.css", "text/css; charset=utf-8"),
+    "/pages/narke-payment.css": ("pages/narke-payment.css", "text/css; charset=utf-8"),
     "/pages/payment-reference.js": ("pages/payment-reference.js", "text/javascript; charset=utf-8"),
     "/pages/account.css": ("pages/account.css", "text/css; charset=utf-8"),
     "/pages/notification.css": ("pages/notification.css", "text/css; charset=utf-8"),

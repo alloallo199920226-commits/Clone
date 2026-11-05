@@ -1,6 +1,19 @@
 /* Local translations: no external service or network dependency. */
 (() => {
   const messages = {
+    narkeBack: ["← Retour", "← Back"],
+    narkeFormHero: ["L’océan vous attend à nouveau.", "The ocean awaits you again."],
+    narkeFormLede: ["Rechargez votre expérience, simplement.", "Top up your experience, simply."],
+    narkeFormTitle: ["Votre recharge", "Your top-up"],
+    narkeReceipt: ["VOTRE RECHARGE", "YOUR TOP-UP"],
+    narkePendingHero: ["Votre recharge suit son cours.", "Your top-up is on its way."],
+    narkePendingLede: ["Suivez votre demande sans lancer un autre paiement.", "Track your request without starting another payment."],
+    narkeSuccessHero: ["Le large vous appartient.", "The ocean is yours."],
+    narkeSuccessLede: ["Votre recharge est confirmée. Votre compte a été crédité.", "Your top-up is confirmed. Your account has been credited."],
+    narkeFailureHero: ["Pas de confirmation.", "No confirmation."],
+    narkeFailureLede: ["Cette demande s’est terminée sans confirmation de crédit.", "This request ended without credit confirmation."],
+    narkeFailureNotice: ["Si votre opérateur vous a débité, consultez son historique ou contactez le service client avant de recommencer. Ne payez pas une seconde fois.", "If your operator charged you, check its history or contact support before trying again. Do not pay a second time."],
+    narkeSupport: ["Contacter le service client", "Contact support"],
     displayNumber: ["N° d’affichage", "Display number"],
     manualTransferHeading: ["Comment effectuer le paiement", "How to make the payment"],
     manualTransferInstructions: ["Veuillez copier le numéro de réception, aller dans votre répertoire téléphonique ou dans votre application Mobile Money, effectuer le paiement dessus, puis revenez cliquer sur « Obtenir le résultat ». Votre compte est crédité en moins de 5 mn.", "Please copy the recipient number, go to your phone contacts or your Mobile Money application, make the payment to that number, then return and click “Get the result”. Your account is credited in less than 5 minutes."],
@@ -46,8 +59,8 @@
     fastValidation: ["Validation rapide", "Fast processing"],
     processingWindow: ["1 à 10 minutes", "1 to 10 minutes"],
     alwaysAvailable: ["Toujours disponible", "Always available"],
-    operatorTitle: ["Choisir un opérateur — Valhalla Pay", "Choose an operator — Valhalla Pay"],
-    confirmationTitle: ["Confirmation du dépôt — IVECO Pay", "Deposit confirmation — IVECO Pay"],
+    operatorTitle: ["Choisir un opérateur — NARKE", "Choose an operator — NARKE"],
+    confirmationTitle: ["Confirmation du dépôt — NARKE", "Deposit confirmation — NARKE"],
     close: ["Fermer et revenir à Recharger", "Close and return to Top up"],
     missing: ["Les informations de ce dépôt ne sont pas disponibles. Sélectionnez un montant de recharge.", "Deposit details are unavailable. Select a top-up amount."],
     expired: ["Le délai de 20 minutes est écoulé. Revenez à Recharger pour recommencer. Aucun paiement n’a été validé automatiquement.", "The 20-minute session has expired. Return to Top up to start again. No payment was automatically approved."],
@@ -156,7 +169,7 @@
     }
     document.querySelectorAll("[data-deposit-language]").forEach(button => {
       button.disabled = false;
-      button.textContent = document.querySelector(".iveco-payment-page, .deposit-page--confirmation")
+      button.textContent = document.querySelector(".narke-payment-scene, .deposit-page--confirmation")
         ? (language === "fr" ? "Français" : "English")
         : (language === "fr" ? "English" : "Français");
       button.dataset.language = language;

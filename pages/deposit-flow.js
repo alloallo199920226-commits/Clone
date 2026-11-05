@@ -12,8 +12,8 @@
   const money = value => `FCFA ${new Intl.NumberFormat("en-US").format(value)}`;
   const updateTitle = () => {
     document.title = document.documentElement.lang === "en"
-      ? `IVECO Pay — ${form ? "Choose an operator" : "Deposit instructions"}`
-      : `IVECO Pay — ${form ? "Choisir un opérateur" : "Instructions du dépôt"}`;
+      ? `NARKE — ${form ? "Choose an operator" : "Payment status"}`
+      : `NARKE — ${form ? "Choisir un opérateur" : "Suivi du paiement"}`;
   };
   updateTitle();
   document.addEventListener("deposit-language-change", updateTitle);

@@ -103,6 +103,16 @@
           lastState = currentState;
         }
         panel.dataset.paymentStatus = credited ? "successful" : String(payment.status || "pending");
+        // Presentation only: only the server's credited flag can show success.
+        const visualState = credited ? "successful" : payment.status === "failed" ? "failed" : "pending";
+        document.body.dataset.paymentState = visualState;
+        const visualKey = credited ? "Success" : visualState === "failed" ? "Failure" : "Pending";
+        set(document.querySelector("[data-narke-title]"), `narke${visualKey}Hero`);
+        set(document.querySelector("[data-narke-lede]"), `narke${visualKey}Lede`);
+        const symbol = document.querySelector("[data-narke-symbol]");
+        if (symbol) symbol.textContent = credited ? "✓" : visualState === "failed" ? "×" : "↻";
+        const failureNotice = document.querySelector("[data-narke-failure]");
+        if (failureNotice) failureNotice.hidden = visualState !== "failed";
         panel.querySelector("[data-payment-display-number]").textContent =
           window.paymentDisplayNumber(payment.reference || payment.id);
         panel.querySelectorAll("[data-sonara-amount]").forEach(node => { node.textContent = amount; });

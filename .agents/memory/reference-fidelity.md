@@ -72,6 +72,18 @@ demandé une reconstruction fidèle, sans remplacement libre de marque.
 identifiants historiques ni modifier les données ou les destinations de contact
 configurées pour faire correspondre un pseudonyme illustratif.
 
+Le parcours de paiement doit conserver la direction approuvée « C · Immersif
+NARKE » pour le formulaire, l’attente, la réussite et l’échec : scène marine
+immersive sombre et surface de paiement claire, et non une carte entièrement
+sombre.
+
+**Why:** l’utilisateur a choisi explicitement ce même modèle pour les quatre
+étapes, après comparaison des trois directions sur le canevas.
+
+**How to apply:** garder cette direction lors des évolutions du paiement ;
+les variantes de démonstration ne remplacent jamais les états réels confirmés
+par le serveur.
+
 Verify brand identity in downloaded logos, not just the search result name.
 
 **Why:** searches for Moov Africa returned unrelated Moov Inc. assets, and MTN results mixed older multicolor marks with the requested black/yellow mark.

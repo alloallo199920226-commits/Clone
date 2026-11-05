@@ -3,6 +3,18 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   const operatorCount = prefix === "+226" ? 3 : 2;
   const balance = () => evaluate("(async () => (await (await fetch('/api/me')).json()).balance_fcfa)()");
   const noProviderBrand = async () => assert(!await evaluate("/sonarapay/i.test(document.body.innerText + ' ' + Array.from(document.querySelectorAll('[aria-label]'), node => node.getAttribute('aria-label')).join(' '))"), "Provider name must not be displayed");
+  const premiumLayout = async () => {
+    assert.equal(await evaluate("!!document.querySelector('link[href=\"/pages/narke-payment.css\"]')"), true);
+    assert(!await evaluate("/IVECO|Valhalla|MAQUETTE|DEMO-NA/.test(document.title+' '+document.body.innerText)"));
+    assert(await evaluate("getComputedStyle(document.querySelector('.narke-payment-scene')).backgroundImage.includes('narke-recharge-hero.jpg')"));
+    assert(await evaluate("[...document.images].every(image=>image.complete&&image.naturalWidth>0)"), "All visible payment assets must load");
+    for (const width of [320, 390, 472, 768, 1280]) {
+      await call("Emulation.setDeviceMetricsOverride", { width, height: 844, deviceScaleFactor: 1, mobile: true });
+      assert(await evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), `Premium payment overflow at ${width}`);
+      assert(await evaluate("[...document.querySelectorAll('input')].filter(node=>node.getBoundingClientRect().height>0).every(node=>parseFloat(getComputedStyle(node).fontSize)>=16)"), "No mobile input zoom");
+    }
+    await call("Emulation.setDeviceMetricsOverride", { width:390, height:844, deviceScaleFactor:1, mobile:true });
+  };
   await call("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   await navigate("/recharger");
   await evaluate(`sessionStorage.setItem('shineray-deposit-draft', JSON.stringify({
@@ -11,6 +23,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await navigate("/choisir-operateur");
   await waitFor(`document.querySelectorAll('[data-operator]').length === ${operatorCount}`);
   await noProviderBrand();
+  await premiumLayout();
   assert.equal(await evaluate("document.querySelector('[data-deposit-prefix]').textContent"), prefix);
   if (prefix === "+228") {
     assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-operator]')].map(node=>node.dataset.operator)"),
@@ -21,7 +34,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
       ["orange_bf", "moov_bf", "telecel_bf"]);
     assert.equal(await evaluate("document.querySelector('[data-orange-otp]').hidden"), false);
     assert(await evaluate("document.querySelector('[data-i18n=\"orangeOtpHelp\"]').textContent.includes('*144*4*6*3500#')"));
-    assert(await evaluate("parseFloat(getComputedStyle(document.querySelector('#deposit-orange-otp')).borderTopWidth)>=1"));
+    assert(await evaluate("parseFloat(getComputedStyle(document.querySelector('#deposit-orange-otp').parentElement).borderTopWidth)>=1"));
     assert(await evaluate("document.documentElement.scrollWidth<=innerWidth"));
     await evaluate(`document.querySelector('#deposit-orange-otp').value='123456';
       document.querySelector('[data-operator="moov_bf"]').click()`);
@@ -43,6 +56,13 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
       console.log("PASS: Orange BF dynamic USSD for3500/75000/7000, visible OTP border, operator toggle clearing; no payment submitted.");
       return;
     }
+  }
+  // The OTP amount examples above end at 7,000; the financial scenario below
+  // deliberately credits one 3,500 top-up, not that last visual example.
+  if (prefix === "+226") {
+    await evaluate("sessionStorage.setItem('shineray-deposit-draft',JSON.stringify({amount_fcfa:3500,channel:1,created_at:Date.now()}))");
+    await navigate("/choisir-operateur");
+    await waitFor("document.querySelectorAll('[data-operator]').length === 3");
   }
   assert.equal(await evaluate("document.querySelector('.deposit-notice')"), null);
   await screenshot(prefix === "+226" ? "sonarapay-burkina-operators" : prefix === "+228" ? "sonarapay-togo-operators" : "sonarapay-operators");
@@ -69,7 +89,8 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   assert.equal(await evaluate("window.paymentPosts"), 1, "Retry after a lost response must be GET-only");
   await screenshot("sonarapay-connection-lost");
   // Reload with connectivity restored: persisted request ID recovers automatically.
-  await navigate("/choisir-operateur");
+  // Recovery can redirect before the source document reaches readyState complete.
+  await call("Page.navigate", { url: await evaluate("location.origin + '/choisir-operateur'") });
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'pending'");
   assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), true);
   await noProviderBrand();
@@ -79,6 +100,8 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   const paymentPath = await evaluate("location.pathname + location.search");
   assert.match(paymentPath, /confirmation-depot\?payment=/);
   assert.equal(await evaluate("document.querySelector('[data-sonara-redirect]').hidden"), true);
+  assert.equal(await evaluate("document.body.dataset.paymentState"), "pending");
+  await premiumLayout();
   await new Promise(resolve => setTimeout(resolve, 11000));
   assert.equal(await evaluate("location.pathname + location.search"), paymentPath, "Pending payments must not redirect");
   await screenshot("sonarapay-pending");
@@ -97,6 +120,9 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await noProviderBrand();
   assert.equal(await balance(), 5800);
   assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), false);
+  assert.equal(await evaluate("document.body.dataset.paymentState"), "successful");
+  assert.match(await evaluate("document.querySelector('[data-narke-title]').textContent"), /large/);
+  await premiumLayout();
   assert.equal(await evaluate("document.querySelector('[data-sonara-success] h1').textContent"), "Paiement effectué avec succès");
   assert.match(await evaluate("document.querySelector('[data-deposit-clock]').textContent"), /^\d{2}:\d{2}$/);
   assert.equal(await evaluate("document.querySelector('[data-sonara-reference]')"), null);
@@ -110,7 +136,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await call("Emulation.setDeviceMetricsOverride", { width: 472, height: 802, deviceScaleFactor: 1, mobile: true });
   await screenshot("sonarapay-success");
   console.log("Success geometry:", await evaluate(`JSON.stringify(Object.fromEntries(
-    ['.iveco-signature-hero','.deposit-card','.deposit-confirmation-header','.sonara-success','.deposit-payer-card'].map(selector => {
+    ['.narke-payment-intro','.deposit-card','.deposit-confirmation-header','.sonara-success','.deposit-payer-card'].map(selector => {
       const r=document.querySelector(selector).getBoundingClientRect();return [selector,{x:r.x,y:r.y,width:r.width,height:r.height}];
     })))`));
   await waitFor("location.pathname === '/accueil'");
@@ -164,6 +190,9 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), true);
   assert.equal(await evaluate("document.querySelector('[data-sonara-result-title]').textContent"), "Échec du paiement");
   assert.equal(await evaluate("document.querySelector('[data-sonara-status]').getAttribute('role')"), "alert");
+  assert.equal(await evaluate("document.body.dataset.paymentState"), "failed");
+  assert.equal(await evaluate("document.querySelector('[data-narke-failure]').hidden"), false);
+  await premiumLayout();
   assert.equal(await evaluate("document.querySelector('[data-sonara-redirect]').hidden"), false);
   await noProviderBrand();
   assert.equal(await balance(), 5800);
