@@ -42,3 +42,17 @@ mtime_ms = 1792647918941
 storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:2b24cd28-b44f-4cff-bacf-135c732fa24d/09efc8eb-bec8-4c5b-8896-eda06830756b/f59c86d5-04ae-487a-8dc0-a678017a96dc"
 storage_version_token = "1792648088255656"
 content_type = "application/octet-stream"
+
+[[outputs]]
+id = "LVEcCZYpUY9iB8tABcKwJ"
+uri = "file://reports/security-audit-2026-11-05.md"
+type = "text"
+title = "Rapport de sécurité NARKE"
+description = "Constats classés par gravité, corrections apportées, 66 tests réussis, contrôles de production en lecture seule et risques résiduels."
+logical_id = "9e458395-971f-454a-9559-5c42ad430dd9"
+content_hash = "sha256:17fc03c31fa7f6ca5cc802558973a8ad18367b9e32c190d5adecba128dd039a3"
+size = 14575
+mtime_ms = 1793916156903
+storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:2b24cd28-b44f-4cff-bacf-135c732fa24d/9e458395-971f-454a-9559-5c42ad430dd9/911793ff-aaef-47a0-8d43-337541fa2653"
+storage_version_token = "1793916187200776"
+content_type = "text/markdown"

@@ -121,6 +121,11 @@ ne se produit automatiquement au démarrage ou à la publication.
 
 ## Politique financière
 
+Les limites anti-abus sont des limites de fréquence, pas un quota quotidien de
+retraits. Elles sont persistantes et partagées entre les instances. Ne jamais
+utiliser des en-têtes réseau arbitraires comme identité fiable d’un utilisateur.
+Les tests de suppression doivent rester isolés des données clients réelles.
+
 - Bonus de bienvenue : 1 500 FCFA, crédité une seule fois à la création d’un nouveau compte.
   Pas de versement rétroactif aux comptes existants.
 - Dépôt minimum : 300 FCFA. Les prix VIP ne sont pas modifiés.

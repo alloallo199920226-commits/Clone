@@ -1,4 +1,5 @@
 /generated-artifacts/
+/artifacts/mockup-sandbox/dist/
 .env
 .env.*
 *.pem

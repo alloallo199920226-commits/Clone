@@ -114,7 +114,7 @@ class FinancialSecurityTests(unittest.TestCase):
         self.assertEqual(self.request("/api/admin/overview", token=token)[0], 401)
         self.assertEqual(self.request("/api/missions/claim", {"mission_id": "invite-3"}, token, origin=False)[0], 403)
         self.assertEqual(self.request("/api/missions/claim", {"mission_id": "invite-3"})[0], 401)
-        self.assertEqual(db.account_summary(user["id"])["balance_fcfa"], 2300)
+        self.assertEqual(db.account_summary(user["id"])["balance_fcfa"], 1500)
         self.assertEqual(len(db.get_activity(user["id"])), 1)
 
     def test_cannot_read_or_confirm_another_users_payment(self):
@@ -130,7 +130,7 @@ class FinancialSecurityTests(unittest.TestCase):
         self.assertEqual(self.request(route, {"status": "successful", "credited": True}, token)[0], 405)
         self.assertEqual(self.request(route + "/retry", {"status": "successful", "credited": True}, token)[0], 400)
         for uid in self.ids:
-            self.assertEqual(db.account_summary(uid)["balance_fcfa"], 2300)
+            self.assertEqual(db.account_summary(uid)["balance_fcfa"], 1500)
 
     def test_login_limit_is_committed_and_checked_before_password(self):
         phone = self.phones[0]

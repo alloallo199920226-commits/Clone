@@ -179,9 +179,20 @@ class PaymentTests(unittest.TestCase):
         self.assertEqual(payments.load(self.user["id"], order["id"])["amount_fcfa"], 500)
         result = payments.advance(order, initiate=True)
         self.assertEqual(result["status"], "pending")
-        self.assertEqual(self.balance(), 2300)
+        self.assertEqual(self.balance(), 1500)
         self.assertEqual(self.create.call_count, 1)
         self.assertEqual(self.check.call_count, 1)
+
+    def test_minimum_300_persists_and_settles_exactly_once(self):
+        order = payments.prepare(self.user, {**self.body(), "amount": 300})
+        result = payments.advance(order, initiate=True)
+        reference = result["provider_reference"]
+        self.references[reference]["transaction"]["status"] = "successful"
+        result = payments.advance(self.allow_check(result))
+        self.assertIsNotNone(result["credited_at"])
+        self.assertEqual(self.balance(), 1800)
+        payments.advance(self.allow_check(result))
+        self.assertEqual(self.balance(), 1800)
 
     def test_ci_cm_operators_and_currency_are_scoped_and_settle_once(self):
         for prefix, operators in [("+225", ("orange_ci", "mtn_ci", "moov_ci")),
@@ -205,9 +216,9 @@ class PaymentTests(unittest.TestCase):
                     self.assertTrue(payments.verified(order, proof))
                     order = payments.advance(self.allow_check(order))
                     self.assertTrue(order["credited_at"])
-                    self.assertEqual(self.balance(), 2800)
+                    self.assertEqual(self.balance(), 2000)
                     payments.advance(order)
-                    self.assertEqual(self.balance(), 2800)
+                    self.assertEqual(self.balance(), 2000)
 
     def test_togo_operators_are_country_scoped_and_settle_once(self):
         for operator in ("tmoney_tg", "moov_tg"):
@@ -220,7 +231,7 @@ class PaymentTests(unittest.TestCase):
                     payments.prepare(self.user, {**body, "phone": "+2290100000000"})
                 order = payments.advance(payments.prepare(self.user, body), initiate=True)
                 self.assertEqual(payments.public(order)["countryCode"], "+228")
-                self.assertEqual(self.balance(), 2300)
+                self.assertEqual(self.balance(), 1500)
                 proof = self.references[order["provider_reference"]]
                 proof["transaction"]["status"] = "successful"
                 proof["transaction"]["countryCode"] = "BJ"
@@ -229,9 +240,9 @@ class PaymentTests(unittest.TestCase):
                 self.assertTrue(payments.verified(order, proof))
                 order = payments.advance(self.allow_check(order))
                 self.assertTrue(order["credited_at"])
-                self.assertEqual(self.balance(), 2800)
+                self.assertEqual(self.balance(), 2000)
                 payments.advance(order)
-                self.assertEqual(self.balance(), 2800)
+                self.assertEqual(self.balance(), 2000)
 
     def test_burkina_automatic_operators_are_country_scoped_and_settle_once(self):
         for operator in ("orange_bf", "moov_bf", "telecel_bf"):
@@ -244,7 +255,7 @@ class PaymentTests(unittest.TestCase):
                     payments.prepare(self.user, {**body, "phone": "+2290100000000"})
                 order = payments.advance(payments.prepare(self.user, body), initiate=True)
                 self.assertEqual(payments.public(order)["countryCode"], "+226")
-                self.assertEqual(self.balance(), 2300)
+                self.assertEqual(self.balance(), 1500)
                 proof = self.references[order["provider_reference"]]
                 proof["transaction"]["status"] = "successful"
                 proof["transaction"]["countryCode"] = "BJ"
@@ -253,9 +264,9 @@ class PaymentTests(unittest.TestCase):
                 self.assertTrue(payments.verified(order, proof))
                 result = payments.advance(self.allow_check(order))
                 self.assertTrue(result["credited_at"])
-                self.assertEqual(self.balance(), 2800)
+                self.assertEqual(self.balance(), 2000)
                 payments.advance(result)
-                self.assertEqual(self.balance(), 2800)
+                self.assertEqual(self.balance(), 2000)
 
     def test_disabling_country_keeps_existing_order_tracking(self):
         self.user, self.token = self.member("+226")
@@ -277,9 +288,9 @@ class PaymentTests(unittest.TestCase):
             result = payments.advance(self.allow_check(order))
             self.assertTrue(result["credited_at"])
             self.assertEqual(payments.public(result)["countryCode"], "+226")
-            self.assertEqual(self.balance(), 2800)
+            self.assertEqual(self.balance(), 2000)
             payments.advance(result)
-            self.assertEqual(self.balance(), 2800)
+            self.assertEqual(self.balance(), 2000)
 
     def test_exactly_once_credit_and_commissions_under_concurrency(self):
         sponsor = self.user
@@ -290,13 +301,13 @@ class PaymentTests(unittest.TestCase):
         order = self.allow_check(order)
         with concurrent.futures.ThreadPoolExecutor(max_workers=6) as workers:
             list(workers.map(lambda _: payments.advance(order), range(6)))
-        self.assertEqual(self.balance(), 2800)
-        self.assertEqual(self.balance(sponsor), 2500)
+        self.assertEqual(self.balance(), 2000)
+        self.assertEqual(self.balance(sponsor), 1700)
         self.assertEqual(self.create.call_count, 1)
         result = payments.advance(payments.load(self.user["id"], order["id"]))
         self.assertTrue(result["credited_at"])
         self.assertEqual(result["status"], "successful")
-        self.assertEqual(self.balance(), 2800)
+        self.assertEqual(self.balance(), 2000)
 
     def test_retries_and_new_drafts_cannot_duplicate_an_open_payment(self):
         body = self.body()
@@ -312,26 +323,26 @@ class PaymentTests(unittest.TestCase):
         self.create.side_effect = client.ProviderError("unavailable")
         result = payments.advance(order, initiate=True)
         self.assertIsNone(result["provider_reference"])
-        self.assertEqual(self.balance(), 2300)
+        self.assertEqual(self.balance(), 1500)
         self.assertNotEqual(result["status"], "failed")
         self.create.side_effect = self.fake_create
         retried = payments.advance(self.allow_check(result), initiate=True)
         self.assertEqual(order["id"], retried["id"])
         self.assertEqual(self.create.call_args.args[0]["id"], order["id"])
-        self.assertEqual(self.balance(), 2300)
+        self.assertEqual(self.balance(), 1500)
 
     def test_amount_mismatch_is_review_not_credit(self):
         order = payments.advance(payments.prepare(self.user, self.body()), initiate=True)
         self.references[order["provider_reference"]]["transaction"].update(status="successful", amount=501)
         result = payments.advance(self.allow_check(order))
         self.assertEqual(result["status"], "review")
-        self.assertEqual(self.balance(), 2300)
+        self.assertEqual(self.balance(), 1500)
 
     def test_failed_does_not_credit(self):
         order = payments.advance(payments.prepare(self.user, self.body()), initiate=True)
         self.references[order["provider_reference"]]["transaction"]["status"] = "failed"
         self.assertEqual(payments.advance(self.allow_check(order))["status"], "failed")
-        self.assertEqual(self.balance(), 2300)
+        self.assertEqual(self.balance(), 1500)
 
     def test_rotated_key_cannot_reinitiate_ambiguous_payment(self):
         order = payments.prepare(self.user, self.body())
@@ -339,13 +350,13 @@ class PaymentTests(unittest.TestCase):
             result = payments.advance(order, initiate=True)
         self.assertEqual(result["last_error"], "credentials_changed")
         self.create.assert_not_called()
-        self.assertEqual(self.balance(), 2300)
+        self.assertEqual(self.balance(), 1500)
 
     def test_other_countries_and_invalid_values_are_rejected(self):
         other, _ = self.member("+227")
         with self.assertRaises(auth_backend.AuthError):
             payments.prepare(other, self.body())
-        for changes in [{"amount": True}, {"amount": 499}, {"amount": 500000001},
+        for changes in [{"amount": True}, {"amount": 299}, {"amount": 500000001},
                         {"operatorId": "mtn_cm"}, {"phone": "12345678"}, {"requestId": "bad"},
                         {"status": "successful"}, {"phone": "+2299912345678"}]:
             with self.subTest(changes=changes), self.assertRaises((ValueError, auth_backend.AuthError)):
@@ -375,7 +386,7 @@ class PaymentTests(unittest.TestCase):
             self.assertEqual(status, 200)
             self.assertEqual(self.create.call_args.args[1], "123456")
             self.assertNotIn("123456", json.dumps(result))
-            self.assertEqual(self.balance(), 2300)
+            self.assertEqual(self.balance(), 1500)
             self.assertEqual(post(body)[0], 409)
             self.assertEqual(self.create.call_count, 1)
         finally:

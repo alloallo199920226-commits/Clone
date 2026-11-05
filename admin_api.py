@@ -690,6 +690,10 @@ def handle(handler, user, route):
             return
         with db.connect() as conn, conn.cursor() as cur:
             require_admin(cur, handler, user)
+            if handler.command not in {"GET", "HEAD"}:
+                import api_limits
+                api_limits.consume("admin-write", admin_token_hash(cookie_token(handler)),
+                                   limit=120, seconds=60)
             if route == "/api/admin/logout":
                 if handler.command != "POST":
                     fail(405, "Méthode non autorisée.")

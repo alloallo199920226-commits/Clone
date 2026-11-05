@@ -254,7 +254,9 @@ class WithdrawalTests(unittest.TestCase):
             self.assertEqual(status, 201, payload)
             route = "/api/admin/withdrawals/"+payload["withdrawal"]["id"]
             self.assertEqual(request("PATCH", route, {"status": "completed"})[0], 401)
-            with patch("admin_api.require_admin", return_value=None):
+            with patch("admin_api.require_admin", return_value=None), \
+                 patch("api_limits.consume", return_value=None), \
+                 patch("admin_api.admin_token_hash", return_value="isolated-fixture-hash"):
                 self.assertEqual(request("PATCH", route, {"status": "completed"})[0], 200)
                 with patch("withdrawal_controls.update", return_value={"ok": True, "mode": "open"}) as update:
                     self.assertEqual(request("PATCH", "/api/admin/withdraw-override", {"mode": "open"})[0], 200)

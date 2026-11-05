@@ -160,7 +160,7 @@ def login(country_code: str, phone: str, password: str, remember: bool = False) 
 
 
 def get_user_for_session(token: str | None) -> dict | None:
-    if not token or len(token) > 128:
+    if not isinstance(token, str) or not re.fullmatch(r"[A-Za-z0-9_-]{32,128}", token):
         return None
     with connect() as connection, connection.cursor() as cursor:
         cursor.execute(
@@ -177,7 +177,7 @@ def get_user_for_session(token: str | None) -> dict | None:
 
 
 def revoke_session(token: str | None) -> None:
-    if not token or len(token) > 128:
+    if not isinstance(token, str) or not re.fullmatch(r"[A-Za-z0-9_-]{32,128}", token):
         return
     with connect() as connection, connection.cursor() as cursor:
         cursor.execute("DELETE FROM shineray_sessions WHERE token_hash = %s", (_token_hash(token),))

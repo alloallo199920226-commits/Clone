@@ -1,8 +1,9 @@
 """Serve the NARKE pages and an authenticated application API."""
 
 import json
+import threading
 from http.cookies import SimpleCookie
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer as BaseThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlsplit
 
@@ -12,10 +13,58 @@ import admin_api
 import sonarapay_payments
 import sonarapay_client
 import manual_deposits
+import api_limits
 from platform_brand import with_narke_brand
 
 ROOT = Path(__file__).resolve().parent
 SESSION_COOKIE = "shineray_session"
+
+
+class ThreadingHTTPServer(BaseThreadingHTTPServer):
+    """Bound socket/thread consumption, including slow unauthenticated clients."""
+    request_queue_size = 64
+
+    def __init__(self, *args, **kwargs):
+        self._slots = threading.BoundedSemaphore(48)
+        super().__init__(*args, **kwargs)
+
+    def process_request(self, request, client_address):
+        if not self._slots.acquire(blocking=False):
+            try:
+                request.settimeout(1)
+                request.sendall(b"HTTP/1.1 503 Service Unavailable\r\n"
+                                b"Connection: close\r\nContent-Length: 0\r\nRetry-After: 1\r\n\r\n")
+            except OSError:
+                pass
+            finally:
+                self.shutdown_request(request)
+            return
+        try:
+            super().process_request(request, client_address)
+        except Exception:
+            self._slots.release()
+            raise
+
+    def process_request_thread(self, request, client_address):
+        try:
+            super().process_request_thread(request, client_address)
+        finally:
+            self._slots.release()
+
+
+def strict_json_object(pairs):
+    value = {}
+    for key, item in pairs:
+        if key in value:
+            raise ValueError("Duplicate JSON field")
+        value[key] = item
+    return value
+
+
+def reject_json_constant(_value):
+    raise ValueError("Non-finite JSON number")
+
+
 PAGES = {
     "/": "connexion",
     "/accueil": "page_d_accueil_shineray",
@@ -111,8 +160,14 @@ class Handler(BaseHTTPRequestHandler):
     server_version = "NARKE"
     sys_version = ""
 
+    def setup(self):
+        super().setup()
+        self.connection.settimeout(15)
+
     def end_headers(self):
-        self.send_header("Content-Security-Policy", "base-uri 'self'; object-src 'none'")
+        self.send_header("Content-Security-Policy",
+                         "base-uri 'self'; object-src 'none'; form-action 'self'; "
+                         "frame-ancestors 'self' https://replit.com https://*.replit.com")
         self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
         self.send_header("Strict-Transport-Security", "max-age=31536000")
         self.send_header("X-Content-Type-Options", "nosniff")
@@ -277,6 +332,10 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(400, {"error": "Champs de requête inattendus."})
                 return
             try:
+                # The peer is the actual socket peer, never spoofable forwarded headers.
+                api_limits.consume("register" if route.endswith("/register") else "login-peer",
+                                   self.client_address[0],
+                                   limit=120 if route.endswith("/register") else 180, seconds=900)
                 if route.endswith("/register"):
                     token, user, session_days = auth_backend.register(
                         payload.get("country_code"),
@@ -336,6 +395,25 @@ class Handler(BaseHTTPRequestHandler):
         if not user:
             self._json(401, {"error": "Connexion requise."})
             return
+
+        if self.command not in {"GET", "HEAD"}:
+            try:
+                api_limits.consume("member-write", user["id"], limit=60, seconds=60)
+            except auth_backend.AuthError as exc:
+                self._json(exc.status, {"error": exc.message})
+                return
+            except Exception:
+                self._json(503, {"error": "Vérification de sécurité temporairement indisponible."})
+                return
+        elif route.startswith("/api/sonarapay/"):
+            try:
+                api_limits.consume("payment-read", user["id"], limit=120, seconds=60)
+            except auth_backend.AuthError as exc:
+                self._json(exc.status, {"error": exc.message})
+                return
+            except Exception:
+                self._json(503, {"error": "Suivi temporairement indisponible."})
+                return
 
         if route == "/api/me" and self.command == "GET":
             try:
@@ -553,8 +631,9 @@ class Handler(BaseHTTPRequestHandler):
             self._json(413 if length > 16_384 else 400, {"error": "Taille de requête invalide."})
             return None
         try:
-            payload = json.loads(self.rfile.read(length))
-        except (json.JSONDecodeError, UnicodeDecodeError):
+            payload = json.loads(self.rfile.read(length), object_pairs_hook=strict_json_object,
+                                 parse_constant=reject_json_constant)
+        except (ValueError, UnicodeDecodeError, RecursionError):
             self._json(400, {"error": "Requête invalide."})
             return None
         if not isinstance(payload, dict):
