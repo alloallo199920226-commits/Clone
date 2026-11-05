@@ -8,6 +8,22 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot }) => {
   await evaluate(`document.querySelector('#admin-password').value='isolated-browser-console-password';
     document.querySelector('#admin-login').requestSubmit()`);
   await waitFor("document.querySelector('#narke-customer-reset-trigger').checkVisibility()");
+  for (const width of [320, 390, 472, 760, 1280]) {
+    await call("Emulation.setDeviceMetricsOverride", {
+      width, height: 844, deviceScaleFactor: 1, mobile: width < 900,
+    });
+    assert(await evaluate(`(()=>{
+      const button=document.querySelector('#narke-customer-reset-trigger');
+      const b=button.getBoundingClientRect();
+      const h=document.querySelector('.admin-header').getBoundingClientRect();
+      const text=document.createRange();text.selectNodeContents(button);
+      const t=text.getBoundingClientRect();
+      return b.width>150 && b.height<=80 && b.top>=h.top && b.bottom<=h.bottom+1 &&
+        t.left>=b.left && t.right<=b.right+1 && t.bottom<=b.bottom &&
+        document.documentElement.scrollWidth<=innerWidth;
+    })()`), `Reset button must remain readable inside header at ${width}px`);
+    if (width===390) await screenshot("narke-admin-header-mobile");
+  }
   await evaluate(`window.resetPosts=0;window.resetPreviews=0;
     const originalFetch=window.fetch.bind(window);
     window.fetch=async (url,options={})=>{

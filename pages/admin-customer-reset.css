@@ -13,6 +13,40 @@
 }
 #narke-customer-reset-trigger:hover { background: #713a3c !important; border-color: #ef8879 !important; }
 #narke-customer-reset-trigger:active { transform: translateY(1px); }
+#admin-root #dashboard-view .admin-header-actions #narke-customer-reset-trigger {
+  width: auto !important;
+  height: auto !important;
+  max-width: 100%;
+  min-width: 0;
+  flex: 0 1 auto;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+  line-height: 1.35;
+}
+@media (max-width: 760px) {
+  #admin-root #dashboard-view .admin-header {
+    flex-wrap: wrap !important;
+    padding-block: 12px !important;
+  }
+  #admin-root #dashboard-view .admin-header-actions {
+    display: flex !important;
+    width: 100%;
+    gap: 8px;
+    align-items: stretch;
+    flex-wrap: nowrap;
+  }
+  #admin-root #dashboard-view .admin-header-actions #narke-customer-reset-trigger {
+    flex: 1 1 auto;
+    max-width: none;
+    min-height: 40px;
+    padding: 9px 12px;
+  }
+  #admin-root #dashboard-view .admin-header-actions button:not(#narke-customer-reset-trigger) {
+    flex: 0 0 40px;
+    min-width: 40px;
+  }
+}
 #narke-customer-reset-trigger:focus-visible,
 #narke-customer-reset-dialog :focus-visible {
   outline: 3px solid #00e8f5;

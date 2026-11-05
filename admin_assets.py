@@ -78,6 +78,6 @@ def browser_asset(route):
             # Add a separate layout adapter, leaving every original asset intact.
             body = body.replace(b"</head>", COMPAT_LINK + b"</head>", 1)
             body = body.replace(b"</body>", b'<script src="/admin-ui/today-withdrawals.js?v=1"></script></body>', 1)
-            body = body.replace(b"</head>", b'<link rel="stylesheet" href="/admin-ui/customer-reset.css?v=1"></head>', 1)
+            body = body.replace(b"</head>", b'<link rel="stylesheet" href="/admin-ui/customer-reset.css?v=2"></head>', 1)
             body = body.replace(b"</body>", b'<script src="/admin-ui/customer-reset.js?v=1" defer></script></body>', 1)
         return body, content_type
