@@ -682,6 +682,16 @@ def handle(handler, user, route):
             fields(body, {"phone", "amount_fcfa", "provider_reference", "receipt_verified"})
             if body.get("receipt_verified") is not True:
                 raise ValueError("Confirmez la réception réelle des fonds avant toute approbation.")
+            reference = str(body.get("provider_reference") or "").strip()
+            if reference.startswith("PAY-"):
+                import api_limits
+                api_limits.consume("admin-payment-recovery", admin_token_hash(cookie_token(handler)),
+                                   limit=20, seconds=60)
+                import sonarapay_payments
+                result = sonarapay_payments.recover_reference(
+                    handler, body.get("phone"), body.get("amount_fcfa"), reference)
+                handler._json(200 if result["already_approved"] else 201, result)
+                return
             import deposit_settlement
             result = deposit_settlement.approve_manual_deposit(
                 None, body.get("phone"), body.get("amount_fcfa"),

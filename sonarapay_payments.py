@@ -151,6 +151,67 @@ def verified(order, result):
     return all(key not in tx or tx[key] == value for key, value in expected.items())
 
 
+def recover_reference(handler, phone, amount, reference):
+    """Admin-only attachment of a lost provider response; GET proof, never POST."""
+    import admin_api
+    if not isinstance(reference, str) or not re.fullmatch(
+            r"PAY-[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", reference):
+        raise ValueError("Référence automatique invalide.")
+    if type(amount) is not int or amount <= 0:
+        raise ValueError("Montant invalide.")
+    with auth_backend.connect() as conn, conn.cursor() as cur:
+        admin_api.require_admin(cur, handler)
+    try:
+        proof = provider.check(reference)
+    except provider.ProviderError:
+        raise auth_backend.AuthError(503, "Vérification du paiement indisponible. Aucun crédit effectué.") from None
+    tx = _transaction(proof)
+    description = tx.get("description")
+    match = re.fullmatch(r"IVECO:([0-9a-fA-F-]{36})", description or "")
+    if not match:
+        raise ValueError("Ce paiement ne contient pas la référence vérifiable d’une recharge du site.")
+    order_id = identifier(match[1])
+    with auth_backend.connect() as conn, conn.cursor() as cur:
+        admin_api.require_admin(cur, handler)
+        cur.execute("""SELECT o.*,u.phone AS account_phone FROM shineray_sonarapay_orders o
+            JOIN shineray_users u ON u.id=o.user_id WHERE o.id=%s FOR UPDATE OF o""", (order_id,))
+        order = cur.fetchone()
+        if not order or order["account_phone"] != str(phone or "").strip() or order["amount_fcfa"] != amount:
+            raise ValueError("Le compte ou le montant ne correspond pas à cette recharge.")
+        if order["provider_reference"] not in (None, reference):
+            raise ValueError("Cette recharge est déjà liée à une autre référence.")
+        candidate = {**order, "provider_reference": reference}
+        required = {"description": "IVECO:" + str(order["id"]),
+                    "countryCode": provider.COUNTRY_CODES.get(provider.country_prefix(order["payer_phone"])),
+                    "operatorId": order["operator_id"], "customerPhone": order["payer_phone"]}
+        if (not provider.configured() or provider.fingerprint() != order["key_fingerprint"]
+                or not verified(candidate, proof)
+                or any(tx.get(key) != value for key, value in required.items())):
+            raise ValueError("La réussite et la correspondance exacte du paiement ne sont pas confirmées.")
+        # A legacy manual approval may have used the raw provider reference.
+        # Do not give the same receipt a second, automatic namespace.
+        cur.execute("SELECT id FROM shineray_deposit_approvals WHERE provider_reference=%s", (reference,))
+        if cur.fetchone():
+            raise ValueError("Cette référence a déjà été enregistrée manuellement. Aucun nouveau crédit.")
+        cur.execute("""SELECT id FROM shineray_sonarapay_orders
+            WHERE provider_reference=%s AND id<>%s""", (reference, order_id))
+        if cur.fetchone():
+            raise ValueError("Cette référence est déjà liée à une autre recharge.")
+        cur.execute("UPDATE shineray_sonarapay_orders SET provider_reference=%s WHERE id=%s",
+                    (reference, order_id))
+        result = settle_approved_deposit(
+            order["user_id"], amount, "sonarapay:" + reference,
+            approval_method="automatic", existing_order_id=order["id"], connection=conn,
+            receipt_details={"provider": "sonarapay",
+                             "channel": provider.OPERATORS[order["operator_id"]]["operatorName"],
+                             "payer_number": order["payer_phone"]})
+        cur.execute("""UPDATE shineray_sonarapay_orders SET status='successful',
+            credited_at=COALESCE(credited_at,now()),last_error=NULL,lease_until=NULL
+            WHERE id=%s""", (order_id,))
+        admin_api.audit(cur, None, "recover_payment_reference", {"order_id": order_id})
+        return result
+
+
 def advance(order, *, initiate=False, otp=None):
     if initiate and not provider.deposit_operators(order["payer_phone"]):
         raise auth_backend.AuthError(403, "Ce pays utilise désormais le paiement manuel. Les demandes existantes restent consultables.")

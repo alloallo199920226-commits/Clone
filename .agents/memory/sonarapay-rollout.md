@@ -80,6 +80,16 @@ l’application. Un refus de passerelle avait été présenté à tort comme une
 les refus HTML de la passerelle des erreurs JSON d’authentification du prestataire.
 Vérifier uniquement par GET lors du diagnostic, sans créer un paiement réel.
 
+Le changement de marque ne doit pas renommer les identifiants techniques des
+demandes historiques auprès du prestataire.
+
+**Why:** la récupération d’un dépôt confirmé mais sans référence locale a pu être
+vérifiée grâce à la description historique du prestataire, qui lie le reçu à la
+demande d’origine. Renommer cette identité empêcherait cette correspondance.
+
+**How to apply:** conserver la description et la clé d’idempotence d’origine lors
+du suivi ou d’une récupération ; moderniser uniquement les libellés visibles.
+
 Un message « informations de dépôt non disponibles » peut signaler un choix
 de recharge perdu, et non des opérateurs désactivés. Certains parcours de
 réouverture ou changements de contexte navigateur perdent le stockage de session.

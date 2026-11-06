@@ -213,6 +213,71 @@ class PaymentTests(unittest.TestCase):
         # A creation response claiming success must never be enough.
         return {"reference": ref, "status": "successful"}
 
+    def recovery_fixture(self):
+        order = payments.prepare(self.user, self.body())
+        ref = "PAY-" + str(uuid.uuid4())
+        self.fake_create(order)
+        proof = self.references.pop("test-" + str(order["id"]))
+        proof["reference"] = ref
+        proof["transaction"]["status"] = "successful"
+        self.references[ref] = proof
+        return order, ref, proof
+
+    def test_lost_reference_recovery_credits_once_without_new_payment(self):
+        import admin_api
+        sponsor = self.user
+        self.user, self.token = self.member(referral=sponsor["referral_code"])
+        order, ref, proof = self.recovery_fixture()
+        before = self.balance()
+        with patch.object(admin_api, "require_admin"), patch.object(admin_api, "audit"):
+            first = payments.recover_reference(object(), self.user["phone"], 500, ref)
+            second = payments.recover_reference(object(), self.user["phone"], 500, ref)
+        self.assertFalse(first["already_approved"])
+        self.assertTrue(second["already_approved"])
+        self.assertEqual(self.balance(), before + 500)
+        self.assertEqual(self.balance(sponsor), 1700)
+        saved = payments.load(self.user["id"], order["id"])
+        self.assertEqual(saved["provider_reference"], ref)
+        self.assertEqual(saved["status"], "successful")
+        self.assertTrue(saved["credited_at"])
+        self.create.assert_not_called()
+
+    def test_recovery_rejects_unverified_or_mismatching_receipts(self):
+        import admin_api
+        order, ref, proof = self.recovery_fixture()
+        before = self.balance()
+        for field, bad in [
+            ("status", "pending"), ("amount", 501), ("currency", "XAF"),
+            ("operatorId", "mtn_bj"), ("countryCode", "TG"),
+            ("customerPhone", "+2290100000000"), ("description", None),
+        ]:
+            old = proof["transaction"][field]
+            proof["transaction"][field] = bad
+            try:
+                with self.subTest(field=field), patch.object(admin_api, "require_admin"), \
+                        patch.object(admin_api, "audit"):
+                    with self.assertRaises(ValueError):
+                        payments.recover_reference(object(), self.user["phone"], 500, ref)
+            finally:
+                proof["transaction"][field] = old
+        with patch.object(admin_api, "require_admin"), patch.object(admin_api, "audit"):
+            for phone, amount in [(self.user["phone"], 501), ("+2290100000000", 500)]:
+                with self.assertRaises(ValueError):
+                    payments.recover_reference(object(), phone, amount, ref)
+        self.assertEqual(self.balance(), before)
+        self.assertIsNone(payments.load(self.user["id"], order["id"])["provider_reference"])
+        self.create.assert_not_called()
+
+    def test_recovery_requires_admin_before_provider_lookup(self):
+        import admin_api
+        order, ref, proof = self.recovery_fixture()
+        with patch.object(admin_api, "require_admin",
+                          side_effect=auth_backend.AuthError(403, "Réservé")):
+            with self.assertRaises(auth_backend.AuthError):
+                payments.recover_reference(object(), self.user["phone"], 500, ref)
+        self.check.assert_not_called()
+        self.create.assert_not_called()
+
     def allow_check(self, order):
         with auth_backend.connect() as conn, conn.cursor() as cur:
             cur.execute("""UPDATE shineray_sonarapay_orders SET checked_at=now()-interval '1 minute',
