@@ -81,6 +81,7 @@ class ImportedAdminTests(unittest.TestCase):
                 cur.execute("DELETE FROM shineray_first_deposits WHERE user_id=ANY(%s)", (self.users,))
                 cur.execute("DELETE FROM shineray_deposit_approvals WHERE user_id=ANY(%s)", (self.users,))
                 cur.execute("DELETE FROM shineray_withdrawal_requests WHERE user_id=ANY(%s)", (self.users,))
+                cur.execute("DELETE FROM shineray_sonarapay_orders WHERE user_id=ANY(%s)", (self.users,))
                 cur.execute("DELETE FROM shineray_transactions WHERE user_id=ANY(%s)", (self.users,))
                 cur.execute("DELETE FROM shineray_admin_resources WHERE id=ANY(%s)", (self.resources,))
                 for uid in reversed(self.users):
@@ -139,7 +140,17 @@ class ImportedAdminTests(unittest.TestCase):
         with auth_backend.connect() as conn, conn.cursor() as cur:
             cur.execute("UPDATE shineray_users SET referred_by=%s WHERE id=%s",
                         (parent["id"], child["id"]))
-        reference = "trace-fixture-" + self.fixture_key
+        order_id = uuid.uuid4()
+        payment_reference = "PAY-" + str(uuid.uuid4())
+        reference = "sonarapay:" + payment_reference
+        # A real order row matters: PostgreSQL UUID values were missed by the
+        # original fixture, whose joined payment_order_id was always NULL.
+        with auth_backend.connect() as conn, conn.cursor() as cur:
+            cur.execute("""INSERT INTO shineray_sonarapay_orders
+                (id,user_id,request_id,amount_fcfa,operator_id,payer_phone,
+                 key_fingerprint,provider_reference,status,initiated_at,checked_at,credited_at)
+                VALUES (%s,%s,%s,2500,'tmoney_tg',%s,%s,%s,'successful',now(),now(),now())""",
+                (order_id, child["id"], uuid.uuid4(), child["phone"], "0" * 64, payment_reference))
         approval = settle_approved_deposit(child["id"], 2500, reference, approval_method="automatic")
         self.assertEqual(self.request("GET", "/api/admin/transaction-trace", cookie="")[0], 401)
         self.assertEqual(self.request("GET", "/api/admin/transaction-trace", cookie=self.member_cookie)[0], 401)
@@ -155,6 +166,9 @@ class ImportedAdminTests(unittest.TestCase):
         self.assertEqual(row["deposit_amount"], 2500)
         self.assertEqual(row["deposit_reference"], reference)
         self.assertEqual(row["deposit_id"], approval["id"])
+        self.assertEqual(row["payment_order_id"], str(order_id))
+        self.assertEqual(row["provider_status"], "successful")
+        self.assertEqual(row["payer_phone"], child["phone"])
         self.assertEqual(row["approval_method"], "automatic")
         self.assertEqual(row["details"]["rate_percent"], 40)
         self.assertEqual(row["details"]["level"], 1)
@@ -162,6 +176,8 @@ class ImportedAdminTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertEqual(result["total"], 2)  # Source recharge plus its referral commission.
         self.assertEqual({r["kind"] for r in result["transactions"]}, {"recharge", "commission"})
+        for entry in result["transactions"]:
+            self.assertEqual(entry["payment_order_id"], str(order_id))
         for query in ("kind=invalid", "user=-1", "user=1%20OR%201=1", "cursor=-1"):
             self.assertEqual(self.request("GET", "/api/admin/transaction-trace?" + query)[0], 400)
         with auth_backend.connect() as conn, conn.cursor() as cur:

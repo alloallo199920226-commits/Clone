@@ -50,7 +50,7 @@ def history(cur, query):
         d.id AS deposit_id,d.user_id AS source_user_id,s.phone AS source_phone,
         d.amount_fcfa AS deposit_amount,d.provider_reference AS deposit_reference,
         d.approval_method,d.approved_by,d.approved_console,d.created_at AS approved_at,
-        o.id AS payment_order_id,o.operator_id,o.payer_phone,o.status AS provider_status,
+        o.id::text AS payment_order_id,o.operator_id,o.payer_phone,o.status AS provider_status,
         o.initiated_at,o.checked_at,o.credited_at,
         p.id AS purchase_id,p.label AS purchase_name,p.created_at AS purchased_at,
         w.status AS withdrawal_status,w.created_at AS requested_at,w.reviewed_at

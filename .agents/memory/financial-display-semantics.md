@@ -129,3 +129,13 @@ Il a ensuite montré que la liste « commission · completed · montant » resta
 **How to apply:** exposer la provenance vérifiable des mouvements financiers dans
 la console protégée. Distinguer les faits enregistrés des vérifications en direct,
 les bonus des dépôts réels et l’approbation d’un retrait de son versement effectif.
+
+Les tests de traçabilité doivent inclure des paiements automatiques réellement
+liés en base, pas seulement des reçus simulés ou des validations sans ordre associé.
+
+**Why:** des jointures toujours nulles dans les fixtures ont masqué une erreur de
+conversion JSON des identifiants PostgreSQL UUID ; la liste ne cassait qu’avec des
+paiements automatiques existants.
+
+**How to apply:** vérifier la réponse HTTP authentifiée avec les types natifs de
+la base, en plus des tests de rendu à partir de données JSON déjà converties.
