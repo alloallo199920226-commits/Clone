@@ -53,6 +53,62 @@ body:has(#admin-root), body:has([data-admin-deposit-form]) {
   font-size: 16px !important;
 }
 #admin-root :is(input,textarea)::placeholder { color: #c4dce6 !important; opacity: 1; }
+/* User drawers are appended to body, outside #admin-root by the imported JS. */
+body:has(#admin-root) .admin-overlay {
+  color: #f5fbff;
+  --line: #34bfce66;
+}
+body:has(#admin-root) .admin-user-panel {
+  background: linear-gradient(150deg, #07394b, #001725 75%) !important;
+  color: #f5fbff !important;
+}
+body:has(#admin-root) .admin-user-panel > header {
+  background: #002332 !important;
+  color: #f5fbff !important;
+}
+body:has(#admin-root) .admin-user-panel :is(h3, strong) {
+  color: #f5fbff !important;
+}
+body:has(#admin-root) .admin-user-panel :is(small, .admin-empty, .admin-summary-grid span) {
+  color: #c4dce6 !important;
+}
+body:has(#admin-root) .admin-user-panel .admin-balance {
+  background: linear-gradient(135deg, #00536a, #002838) !important;
+  color: #f5fbff !important;
+}
+body:has(#admin-root) .admin-user-panel :is(input, select) {
+  box-sizing: border-box;
+  background: #002838 !important;
+  color: #f5fbff !important;
+  -webkit-text-fill-color: #f5fbff !important;
+  caret-color: #00e8f5;
+  opacity: 1 !important;
+  border: 1px solid #54bacc99 !important;
+  min-height: 44px;
+  font-size: 16px !important;
+}
+body:has(#admin-root) .admin-user-panel input::placeholder {
+  color: #c4dce6 !important;
+  -webkit-text-fill-color: #c4dce6 !important;
+  opacity: 1 !important;
+}
+body:has(#admin-root) .admin-user-panel :is(input, select):focus-visible {
+  outline: 2px solid #00e8f5;
+  outline-offset: 2px;
+}
+body:has(#admin-root) .admin-user-panel button {
+  min-height: 40px;
+  background: #00394b !important;
+  color: #f5fbff !important;
+  border: 1px solid #54bacc66;
+}
+body:has(#admin-root) .admin-user-panel [data-balance="credit"] {
+  background: linear-gradient(135deg, #00e8f5, #00bcd4) !important;
+  color: #00131e !important;
+}
+body:has(#admin-root) .admin-user-panel :is(.danger, .reject) {
+  background: #762d3d !important;
+}
 #admin-root :is(th,td) { border-color: #54bacc44 !important; color: #f5fbff !important; }
 #admin-root :is(thead,thead tr,th) { background: #003347 !important; }
 #admin-root :is(tbody,tr,td) { background-color: #001d2b !important; }

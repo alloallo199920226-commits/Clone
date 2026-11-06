@@ -149,7 +149,7 @@ def with_narke_brand(body, content_type):
         '<meta property="og:description" content="' + escape(description, quote=True) + '">'
     ).encode()
     if 'id="admin-root"' in html or "data-admin-deposit-form" in html:
-        additions += b'<link rel="stylesheet" href="/pages/narke-admin.css">'
+        additions += b'<link rel="stylesheet" href="/pages/narke-admin.css?v=drawer2">'
     return html.replace("</head>", additions.decode() + "</head>", 1).encode()
 
 

@@ -35,7 +35,7 @@ async function main() {
         "print(json.dumps(ids))",
       ].join("\n")], {encoding:"utf8"}));
     }
-    if (process.argv.includes("--admin-customer-reset") || process.argv.includes("--today-withdrawals") || process.argv.includes("--imported-admin") || process.argv.includes("--sonarapay") || process.argv.includes("--deposit-channels") || process.argv.includes("--withdrawal")) {
+    if (process.argv.includes("--admin-user-drawer") || process.argv.includes("--admin-customer-reset") || process.argv.includes("--today-withdrawals") || process.argv.includes("--imported-admin") || process.argv.includes("--sonarapay") || process.argv.includes("--deposit-channels") || process.argv.includes("--withdrawal")) {
       // Isolated test server only: never read or replace the real admin secret.
       fixtureServer = spawn("python3", process.argv.includes("--sonarapay") ? ["-u", "tests/sonarapay_fixture.py"] : ["-u", "-c", [
         "import os",
@@ -317,6 +317,12 @@ async function main() {
     if (process.argv.includes("--support-links")) {
       await require("./support-links-browser.cjs")({call, evaluate, navigate, waitFor, screenshot});
       assert.deepEqual(errors, []);
+      return;
+    }
+    if (process.argv.includes("--admin-user-drawer")) {
+      await require("./admin-user-drawer-browser.cjs")({
+        call, evaluate, navigate, waitFor, screenshot, owner: registration.body.user,
+      });
       return;
     }
     if (process.argv.includes("--gift-codes")) {
