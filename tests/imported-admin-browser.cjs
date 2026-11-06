@@ -42,6 +42,10 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, owner }
   } finally {
     assert.equal((await api("/api/admin/withdraw-override", "PATCH", {mode: previousMode})).status, 200);
   }
+  if (process.argv.includes("--schedule-only")) {
+    console.log("PASS: authenticated console buttons open/closed/scheduled persist across reload; previous mode restored; no payment or withdrawal submitted.");
+    return;
+  }
   await call("Emulation.setDeviceMetricsOverride", { width: 1360, height: 900, deviceScaleFactor: 1, mobile: false });
   await screenshot("shineray-original-admin-desktop");
   await evaluate("document.querySelector('[data-tab=products]').click()");
