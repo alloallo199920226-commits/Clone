@@ -36,5 +36,39 @@ module.exports = async ({call, evaluate, navigate, waitFor, screenshot, owner}) 
     await evaluate("document.querySelector('.admin-user-panel').scrollTop=0;document.activeElement.blur()");
     if (width === 390) await screenshot("narke-admin-user-drawer");
   }
+  await call("Emulation.setDeviceMetricsOverride", {width:390,height:844,deviceScaleFactor:1,mobile:true});
+  await evaluate("document.querySelector('[data-user-trace]').click()");
+  await waitFor("document.querySelector('.admin-trace-dialog [data-trace-results] .trace-card')");
+  assert.equal(await evaluate("document.querySelector('.admin-trace-dialog input[name=user]').value"), String(owner.id));
+  assert(await evaluate("document.querySelector('.admin-trace-dialog').textContent.includes('Bonus de bienvenue')"));
+  assert(await evaluate("document.querySelector('.admin-trace-dialog').textContent.includes('ce n’est pas un dépôt réel')"));
+  await screenshot("narke-admin-transaction-trace");
+  await evaluate("document.querySelector('.admin-trace-dialog select').value='commission';document.querySelector('.admin-trace-dialog form').requestSubmit()");
+  await waitFor("document.querySelector('.admin-trace-dialog [data-trace-results]').textContent.includes('Aucune écriture')");
+  await evaluate(`window.traceOriginalFetch = window.fetch;
+    window.fetch = async (url, options) => {
+      if(String(url).startsWith('/api/admin/transaction-trace?')) return new Response(JSON.stringify({
+        total:1,nextCursor:null,transactions:[{
+          id:987654,user_id:${owner.id},phone:${JSON.stringify(owner.phone)},kind:'commission',
+          label:'Commission niveau 1',amount_fcfa:1000,provider_reference:'first-deposit:777:level:1',
+          created_at:'2026-11-06T10:44:40Z',source_phone:'+22890000000 <script>bad()</script>',
+          source_user_id:777,deposit_amount:2500,deposit_id:777,deposit_reference:'trace-test-reference',
+          approval_method:'automatic',approved_at:'2026-11-06T10:44:40Z',
+          details:{level:1,rate_percent:40,base_amount_fcfa:2500}
+        }]
+      }),{status:200,headers:{'Content-Type':'application/json'}});
+      return window.traceOriginalFetch(url,options);
+    };
+    document.querySelector('.admin-trace-dialog form').requestSubmit();`);
+  await waitFor("document.querySelector('.admin-trace-dialog [data-trace-results]').textContent.includes('trace-test-reference')");
+  for (const text of ["Filleul à l’origine du dépôt", "2 500 FCFA", "40 %", "Premier dépôt approuvé du filleul"]) {
+    assert(await evaluate(`document.querySelector('.admin-trace-dialog').textContent.includes(${JSON.stringify(text)})`), text);
+  }
+  assert.equal(await evaluate("document.querySelectorAll('.admin-trace-dialog [data-trace-results] script').length"), 0);
+  assert(await evaluate("document.querySelector('.admin-trace-dialog').textContent.includes('<script>bad()</script>')"));
+  await screenshot("narke-admin-commission-trace");
+  await evaluate("window.fetch=window.traceOriginalFetch;delete window.traceOriginalFetch");
+  await evaluate("document.querySelector('[data-trace-close]').click();document.querySelector('.admin-user-panel button')?.focus()");
   console.log("PASS: actual user drawer readable at 320/390/472/1280px; credit/debit text, placeholders and NARKE surfaces; no financial operation submitted.");
+  console.log("PASS: authenticated user-specific trace, welcome-bonus origin, commission filter and empty state.");
 };

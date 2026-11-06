@@ -2,7 +2,6 @@
 name: Financial display semantics
 description: Preserve the difference between settled funds, pending requests, purchases, and actual earnings.
 ---
-
 Masquer les références de paiement dans les historiques et confirmations clients,
 sans créer de fausses références ni supprimer les identifiants réels côté serveur
 ou dans l’administration. Afficher uniquement un numéro numérique de présentation,
@@ -116,3 +115,14 @@ l’administration ne constituent pas cet achat. Chaque récompense est un bonus
 
 **How to apply:** compter les filleuls distincts et les achats réels ; garder les
 récompenses de missions séparées des commissions sur les premiers dépôts.
+
+L’administration doit permettre de retracer les commissions jusqu’au filleul,
+au montant de son dépôt, au taux appliqué et à la référence et validation du dépôt.
+Un simple total des transactions ne suffit pas au propriétaire.
+
+**Why:** l’utilisateur ne pouvait pas expliquer les commissions reçues sans
+demander une vérification de production et a explicitement demandé cette traçabilité.
+
+**How to apply:** exposer la provenance vérifiable des mouvements financiers dans
+la console protégée. Distinguer les faits enregistrés des vérifications en direct,
+les bonus des dépôts réels et l’approbation d’un retrait de son versement effectif.

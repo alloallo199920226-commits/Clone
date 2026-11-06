@@ -564,6 +564,9 @@ def dispatch(cur, user, route, method, body, query):
         return 200, overview(cur, query.get("summary") == "true")
     if route == "/api/admin/transaction-history" and method == "GET":
         return 200, transaction_rows(cur, query)
+    if route == "/api/admin/transaction-trace" and method == "GET":
+        import admin_transaction_trace
+        return 200, admin_transaction_trace.history(cur, query)
     if route == "/api/admin/today-withdrawals" and method == "GET":
         return 200, transaction_rows(cur, {**query, "type": "withdrawal",
                                          "status": "pending", "assistance": "all"},

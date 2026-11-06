@@ -18,6 +18,7 @@ from psycopg.types.json import Jsonb
 import auth_backend
 import admin_assets
 import admin_api
+from financial_policy import WELCOME_BONUS_FCFA
 from server import Handler
 
 
@@ -130,6 +131,56 @@ class ImportedAdminTests(unittest.TestCase):
         result = data[result_key]
         self.resources.append(result["id"])
         return result
+
+    def test_transaction_trace_provenance_filters_pagination_and_auth(self):
+        from deposit_settlement import settle_approved_deposit
+        parent = self.member_user
+        child, _ = self.member()
+        with auth_backend.connect() as conn, conn.cursor() as cur:
+            cur.execute("UPDATE shineray_users SET referred_by=%s WHERE id=%s",
+                        (parent["id"], child["id"]))
+        reference = "trace-fixture-" + self.fixture_key
+        approval = settle_approved_deposit(child["id"], 2500, reference, approval_method="automatic")
+        self.assertEqual(self.request("GET", "/api/admin/transaction-trace", cookie="")[0], 401)
+        self.assertEqual(self.request("GET", "/api/admin/transaction-trace", cookie=self.member_cookie)[0], 401)
+        self.login()
+        status, result, _ = self.request("GET",
+            f"/api/admin/transaction-trace?user={parent['id']}&kind=commission")
+        self.assertEqual(status, 200, result)
+        self.assertEqual(result["total"], 1)
+        row = result["transactions"][0]
+        self.assertEqual(row["amount_fcfa"], 1000)
+        self.assertEqual(row["source_phone"], child["phone"])
+        self.assertEqual(row["source_user_id"], child["id"])
+        self.assertEqual(row["deposit_amount"], 2500)
+        self.assertEqual(row["deposit_reference"], reference)
+        self.assertEqual(row["deposit_id"], approval["id"])
+        self.assertEqual(row["approval_method"], "automatic")
+        self.assertEqual(row["details"]["rate_percent"], 40)
+        self.assertEqual(row["details"]["level"], 1)
+        status, result, _ = self.request("GET", f"/api/admin/transaction-trace?search={reference}")
+        self.assertEqual(status, 200)
+        self.assertEqual(result["total"], 2)  # Source recharge plus its referral commission.
+        self.assertEqual({r["kind"] for r in result["transactions"]}, {"recharge", "commission"})
+        for query in ("kind=invalid", "user=-1", "user=1%20OR%201=1", "cursor=-1"):
+            self.assertEqual(self.request("GET", "/api/admin/transaction-trace?" + query)[0], 400)
+        with auth_backend.connect() as conn, conn.cursor() as cur:
+            for index in range(35):
+                cur.execute("""INSERT INTO shineray_transactions
+                    (user_id,kind,label,amount_fcfa,provider_reference,details)
+                    VALUES (%s,'bonus','Trace fixture',1,%s,%s)""",
+                    (parent["id"], f"trace-page-{self.fixture_key}-{index}",
+                     Jsonb({"policy": "fixture", "secret": "must-not-be-returned"})))
+        route = f"/api/admin/transaction-trace?user={parent['id']}&kind=bonus"
+        status, first, _ = self.request("GET", route)
+        self.assertEqual(status, 200)
+        self.assertEqual(len(first["transactions"]), 30)
+        self.assertEqual(first["nextCursor"], "30")
+        status, second, _ = self.request("GET", route + "&cursor=" + first["nextCursor"])
+        self.assertEqual(status, 200)
+        self.assertFalse(second["nextCursor"])
+        self.assertFalse({r["id"] for r in first["transactions"]} & {r["id"] for r in second["transactions"]})
+        self.assertNotIn("must-not-be-returned", json.dumps(first))
 
     def test_today_withdrawals_use_morocco_activity_and_do_not_duplicate(self):
         self.login()
@@ -309,11 +360,22 @@ class ImportedAdminTests(unittest.TestCase):
                     self.assertIn(admin_assets.COMPAT_LINK, data)
                     data = data.replace(admin_assets.COMPAT_LINK, b"", 1)
                     data = data.replace(b'<script src="/admin-ui/today-withdrawals.js?v=1"></script>', b"", 1)
-                    data = data.replace(b'<link rel="stylesheet" href="/pages/form-controls.css?v=3">', b"", 1)
-                    from platform_brand import BRAND_SCRIPT, FAVICON_LINKS
-                    data = data.replace(BRAND_SCRIPT, b"", 1).replace(FAVICON_LINKS, b"", 1)
+                    for adapter in (
+                        b'<link rel="stylesheet" href="/admin-ui/customer-reset.css?v=2">',
+                        b'<script src="/admin-ui/customer-reset.js?v=1" defer></script>',
+                        b'<link rel="stylesheet" href="/admin-ui/transaction-trace.css?v=1">',
+                        b'<script src="/admin-ui/transaction-trace.js?v=1" defer></script>',
+                    ):
+                        self.assertIn(adapter, data)
+                        data = data.replace(adapter, b"", 1)
+                    from server import with_form_controls, with_narke_brand
+                    expected = with_narke_brand(with_form_controls(
+                        archive.read(admin_assets.PREFIX + member), "text/html; charset=utf-8"),
+                        "text/html; charset=utf-8")
+                else:
+                    expected = archive.read(admin_assets.PREFIX + member)
                 self.assertEqual(hashlib.sha256(data).digest(),
-                                 hashlib.sha256(archive.read(admin_assets.PREFIX + member)).digest())
+                                 hashlib.sha256(expected).digest())
         self.assertEqual(self.request("GET", admin_assets.ADMIN_ROUTE + "/", raw=True)[0], 200)
         for route in ("/administration", "/administration/", "/server.js", "/admin_api.py", "/schema.sql", "/administration/index.html",
                       "/administration/admin.js", "/payments/routes.js",
@@ -375,7 +437,7 @@ class ImportedAdminTests(unittest.TestCase):
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as workers:
             results = list(workers.map(lambda _: self.request("POST", base + "/credit", body)[0], range(2)))
         self.assertEqual(results, [200, 200])
-        self.assertEqual(auth_backend.account_summary(uid)["balance_fcfa"], 2400)
+        self.assertEqual(auth_backend.account_summary(uid)["balance_fcfa"], WELCOME_BONUS_FCFA + 100)
         self.assertEqual(self.request("POST", base + "/credit", {**body, "amount": 101})[0], 409)
         self.assertEqual(self.request("POST", base + "/credit", body, cookie=self.member_cookie)[0], 401)
         self.assertEqual(self.request("POST", base + "/credit", {**body, "is_admin": True})[0], 400)
@@ -385,14 +447,14 @@ class ImportedAdminTests(unittest.TestCase):
             debits = list(workers.map(lambda _: self.request("POST", base + "/debit",
                 {"amount": 1500, "requestId": "test-debit-" + secrets.token_hex(8)})[0], range(2)))
         self.assertEqual(sorted(debits), [200, 409])
-        self.assertEqual(auth_backend.account_summary(uid)["balance_fcfa"], 900)
+        self.assertEqual(auth_backend.account_summary(uid)["balance_fcfa"], WELCOME_BONUS_FCFA + 100 - 1500)
         self.assertEqual(self.request("GET", base)[1]["wallet"]["totalAdminCredits"], 100)
         status, found, _ = self.request("GET", "/api/admin/users/search?search=" + str(uid))
         self.assertEqual(status, 200)
         self.assertIn(uid, [user["id"] for user in found["users"]])
         self.assertEqual(self.request("GET", "/api/admin/transaction-history?cursor=bad")[0], 400)
         self.assertEqual(self.request("GET", "/api/admin/transaction-history?status=pending")[1]["total"], 0)
-        self.assertEqual(self.request("GET", "/api/admin/popup-config")[1]["config"]["signupBonus"], 2300)
+        self.assertEqual(self.request("GET", "/api/admin/popup-config")[1]["config"]["signupBonus"], WELCOME_BONUS_FCFA)
         self.assertEqual(self.request("PATCH", "/api/admin/popup-config", {"depositMin": 3000})[0], 409)
         self.assertEqual(self.request("PATCH", "/api/admin/payment-provider-controls", {"saspayEnabled": True})[0], 503)
         self.assertEqual(self.request("GET", "/api/admin/users-purge-preview")[0], 403)
@@ -415,7 +477,7 @@ class ImportedAdminTests(unittest.TestCase):
         owned = auth_backend.get_products(self.member_user["id"])
         self.assertEqual(owned["products"][0]["amount_fcfa"], 0)
         self.assertEqual(owned["products"][0]["income_fcfa"], 0)
-        self.assertEqual(auth_backend.account_summary(self.member_user["id"])["balance_fcfa"], 2300)
+        self.assertEqual(auth_backend.account_summary(self.member_user["id"])["balance_fcfa"], WELCOME_BONUS_FCFA)
         self.assertEqual(self.request("POST", f"/api/admin/orders/{grant[1]['purchaseId']}/revoke-vip", {})[0], 200)
         self.assertEqual(auth_backend.get_products(self.member_user["id"])["quantity"], 0)
         gift = self.create("gift-codes", {"code": "", "amount": 500, "maxRedemptions": 1, "expiresInDays": 30}, "code")
@@ -462,7 +524,7 @@ class ImportedAdminTests(unittest.TestCase):
         self.request("PATCH", f"/api/admin/payment-channels/{benin['id']}", {"isActive": False})
         data = self.request("GET", "/api/payment-channels/me", cookie=cookie)[1]
         self.assertNotIn(benin["id"], [item["id"] for item in data["channels"]])
-        self.assertEqual(auth_backend.account_summary(user["id"])["balance_fcfa"], 2300)
+        self.assertEqual(auth_backend.account_summary(user["id"])["balance_fcfa"], WELCOME_BONUS_FCFA)
 
     def test_original_history_escaped_query_filters_and_pagination(self):
         self.login()
