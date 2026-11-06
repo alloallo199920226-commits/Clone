@@ -132,7 +132,9 @@ Les tests de suppression doivent rester isolés des données clients réelles.
 - Les contraintes SQL conservent leur plancher historique pour préserver les anciennes opérations ; le seuil courant des nouvelles demandes est imposé côté serveur. Les anciennes demandes persistées restent réglables après vérification de leur montant et référence réels.
 - Retrait minimum : 1 500 FCFA ; frais : 20 %, arrondis au FCFA inférieur.
   Nombre de demandes illimité, sous réserve du solde disponible et des réservations
-  existantes. VIP actif requis ; horaires inchangés : 09 h à 18 h au Maroc.
+  existantes. VIP actif requis ; horaire normal : 09 h à 18 h au Maroc.
+  L’ouverture manuelle administrateur autorise les demandes à toute heure, y compris après 18 h,
+  jusqu’à une fermeture manuelle ou au retour à l’horaire normal.
 - Parrainage : 40 % / 2 % / 1 % sur trois niveaux, uniquement sur le premier dépôt
   effectivement approuvé de chaque filleul. Les dépôts suivants ne sont pas commissionnés.
 - Les commissions sont calculées en FCFA entiers, arrondies à l’entier inférieur.

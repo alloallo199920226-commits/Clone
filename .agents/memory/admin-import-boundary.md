@@ -84,11 +84,14 @@ Les commandes administratives « Ouvrir », « Fermer » et « Horaire normal »
 contrôlent les nouvelles demandes de retrait, pas les versements. L’ouverture
 manuelle ignore uniquement l’horaire ; elle conserve le VIP actif, le minimum,
 les frais, le solde disponible et les restrictions individuelles.
-L’horaire normal est de 09 h à 18 h, heure du Maroc. La fermeture à 18 h
-est impérative, y compris en mode d’ouverture manuelle.
+L’horaire normal est de 09 h à 18 h, heure du Maroc. L’utilisateur demande
+désormais de permettre l’ouverture manuelle à n’importe quel moment, y compris
+après 18 h. Ce mode reste actif jusqu’à une fermeture manuelle ou au retour
+à l’horaire normal ; il n’ouvre pas automatiquement le service en permanence.
 
 **Why:** l’utilisateur a signalé que l’ouverture manuelle depuis la console était
-bloquée ; il veut utiliser cette commande sans changer la politique financière.
+bloquée ; il autorise maintenant l’ouverture à toute heure sans changer les
+autres conditions financières.
 
 **How to apply:** conserver l’état entre redémarrages et répliques, protéger chaque
 changement par la session administrateur et ne jamais approuver ou envoyer un

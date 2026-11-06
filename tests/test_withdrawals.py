@@ -44,20 +44,23 @@ class WithdrawalWindowTests(unittest.TestCase):
                 self.assertEqual(withdrawals.withdrawal_cutoff_reached(
                     local.astimezone(timezone.utc)), closed)
 
-    def test_manual_open_cannot_bypass_cutoff(self):
-        for mode in ("scheduled", "open"):
-            with patch("withdrawal_controls.current_mode", return_value=mode), \
-                 patch("withdrawals.withdrawal_cutoff_reached", return_value=True), \
-                 patch("withdrawals.withdrawal_window_open", return_value=True):
-                with self.assertRaisesRegex(db.AuthError, "18 h"):
-                    withdrawal_controls.enforce(MagicMock())
-                flags = withdrawal_controls.flags(MagicMock())
-                self.assertFalse(flags["withdrawOpenOverride"])
-                self.assertTrue(flags["withdrawClosedOverride"])
-        with patch("withdrawal_controls.current_mode", return_value="open"), \
-             patch("withdrawals.withdrawal_cutoff_reached", return_value=False), \
-             patch("withdrawals.withdrawal_window_open", return_value=False):
-            withdrawal_controls.enforce(MagicMock())
+    def test_manual_open_at_any_hour_and_scheduled_boundaries(self):
+        for month, day in ((10, 20), (2, 25)):
+            for hour in (0, 8, 9, 17, 18, 23):
+                local = datetime(2026, month, day, hour, tzinfo=withdrawals.MOROCCO)
+                in_window = withdrawals.withdrawal_window_open(local)
+                for mode in ("open", "closed", "scheduled"):
+                    with self.subTest(hour=hour, mode=mode, month=month), \
+                         patch("withdrawal_controls.current_mode", return_value=mode), \
+                         patch("withdrawals.withdrawal_window_open", return_value=in_window):
+                        if mode == "open" or (mode == "scheduled" and in_window):
+                            withdrawal_controls.enforce(MagicMock())
+                        else:
+                            with self.assertRaises(db.AuthError):
+                                withdrawal_controls.enforce(MagicMock())
+                        flags = withdrawal_controls.flags(MagicMock())
+                        self.assertEqual(flags["withdrawOpenOverride"], mode == "open")
+                        self.assertEqual(flags["withdrawClosedOverride"], mode == "closed")
 
 
 @unittest.skipUnless(os.environ.get("RUN_ACCOUNT_INTEGRATION_TESTS") == "1", "Development DB opt-in")

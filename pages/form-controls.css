@@ -8,6 +8,16 @@ html body :is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio
   border: 0 !important;
   outline: none !important;
   box-shadow: none !important;
+  background-color: #002838 !important;
+  color: #f5fbff !important;
+  -webkit-text-fill-color: #f5fbff !important;
+  caret-color: #00e8f5;
+}
+
+html body :is(input, textarea)::placeholder {
+  color: #c4dce6 !important;
+  -webkit-text-fill-color: #c4dce6 !important;
+  opacity: 1 !important;
 }
 
 /* Some forms put the focus decoration on the surrounding field instead. */
@@ -21,6 +31,18 @@ html body :is(.phone-field, .deposit-phone-wrap, .input-wrap, .field-inline):foc
 /* Preserve a keyboard focus cue without drawing a contour around the field.
    Buttons, links, checkboxes and radio controls retain their focus indicators. */
 html body :is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea, [contenteditable="true"]):focus-visible {
-  background-color: #e9eef3 !important;
+  background-color: #00394b !important;
+}
+
+/* Safari/Chrome may impose a light autofill background. Pair it with dark
+   text instead of retaining the dark theme's white text on that surface. */
+html body :is(input, textarea):is(:autofill, :-webkit-autofill) {
+  color: #00131e !important;
+  -webkit-text-fill-color: #00131e !important;
+  caret-color: #00131e;
+}
+
+html body :is(input, select, textarea):disabled {
+  -webkit-text-fill-color: #c4dce6 !important;
 }
 }

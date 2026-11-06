@@ -43,6 +43,11 @@ async function main() {
         "os.environ['SONARAPAY_KEY']=''", // Legacy manual-flow checks must never call a live provider.
         "from server import Handler, ThreadingHTTPServer",
         "import admin_api",
+        ...(process.argv.includes("--schedule-only") ? [
+          "import withdrawals",
+          "withdrawals.withdrawal_window_open=lambda:False",
+          "withdrawals.withdrawal_cutoff_reached=lambda:True",
+        ] : []),
         ...(process.argv.includes("--withdrawal") ? ["import withdrawals", "withdrawals.withdrawal_window_open=lambda:True", "withdrawals.withdrawal_cutoff_reached=lambda:False"] : []),
         "original_audit=admin_api.audit",
         `admin_api.audit=lambda cur,actor,event,details=None:original_audit(cur,actor,event,{**(details or {}),'test_fixture':${JSON.stringify(adminFixture)}})`,
@@ -169,7 +174,7 @@ async function main() {
       return;
     }
     if (process.argv.includes("--form-controls")) {
-      await require("./form-controls-browser.cjs")({ call, evaluate, navigate, publicOnly: true });
+      await require("./form-controls-browser.cjs")({ call, evaluate, navigate, screenshot, publicOnly: true });
       await navigate("/connexion");
     }
     if (process.argv.includes("--auth-progress")) {
@@ -350,7 +355,7 @@ async function main() {
       return;
     }
     if (process.argv.includes("--form-controls")) {
-      await require("./form-controls-browser.cjs")({ call, evaluate, navigate, publicOnly: false });
+      await require("./form-controls-browser.cjs")({ call, evaluate, navigate, screenshot, publicOnly: false });
       assert.deepEqual(errors, []);
       return;
     }
