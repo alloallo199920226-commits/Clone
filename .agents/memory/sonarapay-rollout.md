@@ -22,6 +22,19 @@ Après une réponse réseau perdue lors du lancement, retrouver la demande exist
 
 **How to apply:** conserver l’identifiant de demande avant transmission ; en cas de résultat incertain, proposer le suivi et non un nouveau paiement, y compris après rechargement. Ne jamais créditer sur la seule déclaration d’un débit.
 
+Les références manquantes doivent être récupérées automatiquement en lecture
+seule, sans approbation administrative requise pour un reçu exactement vérifié.
+
+**Why:** l’utilisateur a insisté sur le crédit automatique après un dépôt Moov
+réussi dont la réponse initiale avait été perdue.
+
+**How to apply:** le guide actuel du prestataire documente GET /api/public/v1/payments :
+la réponse est un tableau des 200 derniers paiements de la clé, et non un objet.
+Faire correspondre l’identité immuable, le montant, la devise, le pays,
+l’opérateur et le payeur, puis consulter le statut individuel avant crédit.
+Une absence dans cette liste bornée ou une erreur de lecture ne prouve jamais
+un échec et n’autorise pas à relancer un encaissement.
+
 Les paiements automatiques concernent le Bénin hors MTN, le Burkina Faso, le Togo,
 la Côte d’Ivoire hors Wave et le Cameroun.
 

@@ -27,6 +27,7 @@
     sonaraRecoverNotice: ["Ce bouton vérifie uniquement votre demande existante, sans lancer de nouveau paiement. Si vous avez été débité, ne payez pas une seconde fois.", "This button only checks your existing request; it does not start another payment. If you were charged, do not pay again."],
     sonaraPending: ["Paiement en attente. Validez la demande auprès de votre opérateur. Le solde sera crédité uniquement après confirmation du paiement.", "Payment pending. Approve the request with your operator. Your balance will only be credited after payment confirmation."],
     sonaraUnknown: ["Vérification différée. Reprenez le suivi depuis votre historique, sans lancer un autre paiement.", "Verification delayed. Resume tracking from your history; do not start another payment."],
+    sonaraRecoveringReference: ["Vérification automatique en cours. Votre dépôt sera crédité après confirmation du paiement. Ne lancez pas un autre paiement.", "Automatic verification in progress. Your deposit will be credited after payment confirmation. Do not start another payment."],
     sonaraSuccessful: ["Paiement confirmé. Votre compte a été crédité.", "Payment confirmed. Your account has been credited."],
     sonaraFailed: ["Paiement refusé. Aucun crédit n’a été ajouté pour cette demande.", "Payment declined. No credit was added for this request."],
     sonaraFailedTitle: ["Échec du paiement", "Payment failed"],

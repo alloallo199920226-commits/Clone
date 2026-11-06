@@ -2,6 +2,8 @@
 import hashlib
 import json
 import os
+import threading
+import time
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote
 from urllib.request import Request, build_opener, HTTPRedirectHandler
@@ -74,7 +76,7 @@ def fingerprint():
     return hashlib.sha256(os.environ.get("SONARAPAY_KEY", "").strip().encode()).hexdigest()
 
 
-def request(method, path, payload=None, idempotency_key=None):
+def request(method, path, payload=None, idempotency_key=None, *, allow_list=False):
     key = os.environ.get("SONARAPAY_KEY", "").strip()
     if not key:
         raise ProviderError("not_configured")
@@ -86,9 +88,10 @@ def request(method, path, payload=None, idempotency_key=None):
     if idempotency_key:
         headers["Idempotency-Key"] = idempotency_key
     req = Request(BASE_URL + path, data=data, headers=headers, method=method)
+    limit = 1_048_576 if allow_list else 131_072
     try:
         with build_opener(NoRedirects()).open(req, timeout=20) as response:
-            raw = response.read(131_073)
+            raw = response.read(limit + 1)
     except HTTPError as error:
         # OTP-required responses may be returned with HTTP 400.
         try:
@@ -105,13 +108,13 @@ def request(method, path, payload=None, idempotency_key=None):
     except (URLError, TimeoutError, OSError):
         # The POST may have reached SonaraPay. Retry ONLY this same order/key.
         raise ProviderError("unavailable") from None
-    if len(raw) > 131_072:
+    if len(raw) > limit:
         raise ProviderError("invalid_response")
     try:
         value = json.loads(raw)
     except (ValueError, UnicodeError):
         raise ProviderError("invalid_response") from None
-    if not isinstance(value, dict):
+    if not isinstance(value, dict) and not (allow_list and isinstance(value, list)):
         raise ProviderError("invalid_response")
     return value
 
@@ -132,3 +135,25 @@ def create(order, otp=None):
 
 def check(reference):
     return request("GET", "/api/public/v1/payments/" + quote(reference, safe=""))
+
+
+_recent_lock = threading.Lock()
+_recent_cache = None
+
+
+def recent_payments():
+    """Documented read-only reconciliation endpoint, bounded to 200 receipts."""
+    global _recent_cache
+    key = fingerprint()
+    with _recent_lock:
+        if _recent_cache and _recent_cache[0] == key and time.monotonic() < _recent_cache[1]:
+            return _recent_cache[2]
+        rows = request("GET", "/api/public/v1/payments", allow_list=True)
+        if not isinstance(rows, list) or len(rows) > 200 or any(not isinstance(row, dict) for row in rows):
+            raise ProviderError("invalid_response")
+        # Do not retain provider raw responses, metadata, or unrelated personal data.
+        fields = ("reference", "status", "amount", "currency", "description",
+                  "countryCode", "operatorId", "customerPhone", "idempotencyKey")
+        receipts = [{field: row.get(field) for field in fields} for row in rows]
+        _recent_cache = (key, time.monotonic() + 10, receipts)
+        return receipts

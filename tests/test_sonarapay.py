@@ -20,6 +20,32 @@ from server import Handler
 
 
 class VerificationTests(unittest.TestCase):
+    def test_reconciliation_endpoint_is_read_only_bounded_and_cached(self):
+        row = {"reference": "PAY-" + str(uuid.uuid4()), "description": "example",
+               "rawApiResponse": {"private": "discard"}, "customerEmail": "discard"}
+        with patch.object(client, "_recent_cache", None), \
+                patch.object(client, "request", return_value=[row]) as request:
+            first = client.recent_payments()
+            second = client.recent_payments()
+            request.assert_called_once_with("GET", "/api/public/v1/payments", allow_list=True)
+            self.assertEqual(first, second)
+            self.assertNotIn("rawApiResponse", first[0])
+            self.assertNotIn("customerEmail", first[0])
+        for payload in [{}, [None], [{}] * 201]:
+            with self.subTest(payload_type=type(payload).__name__), \
+                    patch.object(client, "_recent_cache", None), \
+                    patch.object(client, "request", return_value=payload):
+                with self.assertRaises(client.ProviderError):
+                    client.recent_payments()
+
+    def test_transport_accepts_list_only_for_reconciliation(self):
+        with patch.dict(os.environ, {"SONARAPAY_KEY": "isolated-test-key-not-live"}), \
+                patch.object(client, "build_opener") as opener:
+            opener.return_value.open.return_value.__enter__.return_value.read.return_value = b"[]"
+            self.assertEqual(client.request("GET", "/api/public/v1/payments", allow_list=True), [])
+            with self.assertRaises(client.ProviderError):
+                client.check("reference")
+
     def test_ci_cm_payload_currency_and_operator_catalog(self):
         for phone, operator, currency, country in [
                 ("+2250700000000", "mtn_ci", "XOF", "CI"),
@@ -156,6 +182,9 @@ class PaymentTests(unittest.TestCase):
         self.check_patch = patch.object(client, "check", side_effect=lambda ref: self.references[ref])
         self.create = self.create_patch.start()
         self.check = self.check_patch.start()
+        recent = patch.object(client, "recent_payments", return_value=[])
+        self.recent = recent.start()
+        self.addCleanup(recent.stop)
         self.addCleanup(self.env.stop)
         self.addCleanup(self.create_patch.stop)
         self.addCleanup(self.check_patch.stop)
@@ -448,7 +477,7 @@ class PaymentTests(unittest.TestCase):
         with self.assertRaises(auth_backend.AuthError):
             payments.prepare(self.user, body)
 
-    def test_timeout_retains_order_and_retries_original_idempotency_key(self):
+    def test_timeout_retains_order_and_never_reposts_unknown_payment(self):
         order = payments.prepare(self.user, self.body())
         self.create.side_effect = client.ProviderError("unavailable")
         result = payments.advance(order, initiate=True)
@@ -459,7 +488,140 @@ class PaymentTests(unittest.TestCase):
         retried = payments.advance(self.allow_check(result), initiate=True)
         self.assertEqual(order["id"], retried["id"])
         self.assertEqual(self.create.call_args.args[0]["id"], order["id"])
+        self.assertEqual(self.create.call_count, 1)
+        self.assertTrue(payments.public(retried)["recoveringReference"])
         self.assertEqual(self.balance(), 1500)
+
+    def lost_response(self, order, otp=None):
+        ref = "PAY-" + str(uuid.uuid4())
+        self.fake_create(order)
+        proof = self.references.pop("test-" + str(order["id"]))
+        proof["reference"] = ref
+        proof["transaction"]["status"] = "successful"
+        self.references[ref] = proof
+        self.recent.return_value = [{**proof["transaction"], "reference": ref,
+                                     "idempotencyKey": "iveco-" + str(order["id"])}]
+        raise client.ProviderError("unavailable")
+
+    def test_worker_recovers_lost_reference_and_credits_commissions_once(self):
+        sponsor = self.user
+        self.user, self.token = self.member(referral=sponsor["referral_code"])
+        self.create.side_effect = self.lost_response
+        order = payments.advance(payments.prepare(self.user, self.body()), initiate=True)
+        self.assertIsNone(order["provider_reference"])
+        self.assertEqual(self.balance(), 1500)
+        self.allow_check(order)
+        payments.reconcile_once()
+        result = payments.load(self.user["id"], order["id"])
+        self.assertEqual(result["status"], "successful")
+        self.assertTrue(result["credited_at"])
+        self.assertEqual(self.balance(), 2000)
+        self.assertEqual(self.balance(sponsor), 1700)
+        payments.reconcile_once()
+        payments.advance(result)
+        self.assertEqual(self.balance(), 2000)
+        self.assertEqual(self.balance(sponsor), 1700)
+        self.assertEqual(self.create.call_count, 1)
+        self.check.assert_called()
+
+    def test_automatic_recovery_requires_exact_identity_and_verified_status(self):
+        self.create.side_effect = self.lost_response
+        order = payments.advance(payments.prepare(self.user, self.body()), initiate=True)
+        receipt = self.recent.return_value[0]
+        for field, value in [
+            ("amount", 501), ("currency", "XAF"), ("countryCode", "TG"),
+            ("customerPhone", "+2290100000000"), ("operatorId", "mtn_bj"),
+            ("description", "IVECO:" + str(uuid.uuid4())),
+            ("idempotencyKey", "iveco-" + str(uuid.uuid4())),
+            ("reference", "not-a-provider-reference"),
+        ]:
+            old = receipt[field]
+            receipt[field] = value
+            try:
+                with self.subTest(field=field):
+                    result = payments.advance(self.allow_check(order))
+                    self.assertIsNone(result["provider_reference"])
+                    self.assertIsNone(result["credited_at"])
+                    self.assertEqual(self.balance(), 1500)
+            finally:
+                receipt[field] = old
+        proof = self.references[receipt["reference"]]["transaction"]
+        proof["status"] = "pending"
+        result = payments.advance(self.allow_check(order))
+        self.assertEqual(result["provider_reference"], receipt["reference"])
+        self.assertFalse(result["credited_at"])
+        proof["status"] = "successful"
+        result = payments.advance(self.allow_check(result))
+        self.assertTrue(result["credited_at"])
+        self.assertEqual(self.create.call_count, 1)
+
+    def test_recovery_unavailable_or_ambiguous_never_credits_or_reposts(self):
+        self.create.side_effect = self.lost_response
+        order = payments.advance(payments.prepare(self.user, self.body()), initiate=True)
+        receipt = self.recent.return_value[0]
+        self.recent.return_value = [receipt, {**receipt, "reference": "PAY-" + str(uuid.uuid4())}]
+        result = payments.advance(self.allow_check(order))
+        self.assertEqual(result["last_error"], "reference_mismatch")
+        self.assertIsNone(result["provider_reference"])
+        self.recent.side_effect = client.ProviderError("unavailable")
+        result = payments.advance(self.allow_check(order), initiate=True)
+        self.assertEqual(result["last_error"], "unavailable")
+        self.assertIsNone(result["credited_at"])
+        self.assertEqual(self.balance(), 1500)
+        self.assertEqual(self.create.call_count, 1)
+        self.recent.side_effect = client.ProviderError("credentials")
+        result = payments.advance(self.allow_check(result))
+        self.assertNotEqual(result["status"], "failed", "A failed read is not a rejected debit")
+        self.assertEqual(self.balance(), 1500)
+
+    def test_automated_recovery_does_not_double_a_legacy_manual_credit(self):
+        import admin_api
+        from deposit_settlement import settle_approved_deposit
+        self.create.side_effect = self.lost_response
+        order = payments.advance(payments.prepare(self.user, {**self.body(), "amount": 2500}), initiate=True)
+        ref = self.recent.return_value[0]["reference"]
+        with patch.object(admin_api, "require_admin"), patch.object(admin_api, "audit"):
+            settle_approved_deposit(self.user["id"], 2500, ref,
+                                    approval_method="manual", console_handler=object())
+        result = payments.advance(self.allow_check(order))
+        self.assertIsNone(result["credited_at"])
+        self.assertEqual(result["last_error"], "verification")
+        self.assertEqual(self.balance(), 4000)
+
+    def test_recovery_does_not_create_uninitiated_or_repeat_otp_payment(self):
+        order = payments.prepare(self.user, self.body())
+        payments.advance(order)
+        self.recent.assert_not_called()
+        self.create.assert_not_called()
+
+    def test_automatic_reference_recovery_across_automatic_countries(self):
+        self.create.side_effect = self.lost_response
+        for prefix, operator in [
+            ("+229", "moov_bj"), ("+226", "moov_bf"), ("+228", "moov_tg"),
+            ("+225", "mtn_ci"), ("+237", "orange_cm"),
+        ]:
+            with self.subTest(country=prefix):
+                self.user, self.token = self.member(prefix)
+                order = payments.advance(payments.prepare(self.user, {
+                    **self.body(), "operatorId": operator}), initiate=True)
+                result = payments.advance(self.allow_check(order))
+                self.assertTrue(result["credited_at"])
+                self.assertEqual(self.balance(), 2000)
+                self.assertEqual(result["operator_id"], operator)
+        self.assertEqual(self.create.call_count, 5)
+
+    def test_lost_otp_submission_can_be_recovered_without_repeating_otp(self):
+        self.user, self.token = self.member("+226")
+        order = payments.prepare(self.user, {**self.body(), "operatorId": "orange_bf"})
+        self.create.side_effect = lambda order, otp=None: {"requiresOtp": True}
+        order = payments.advance(order, initiate=True)
+        self.assertEqual(order["status"], "otp_required")
+        self.create.side_effect = self.lost_response
+        order = payments.advance(self.allow_check(order), initiate=True, otp="123456")
+        self.assertEqual(order["status"], "unknown")
+        order = payments.advance(self.allow_check(order))
+        self.assertTrue(order["credited_at"])
+        self.assertEqual(self.create.call_count, 2)
 
     def test_amount_mismatch_is_review_not_credit(self):
         order = payments.advance(payments.prepare(self.user, self.body()), initiate=True)

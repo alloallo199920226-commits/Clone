@@ -3,6 +3,6 @@
 - [Financial display semantics](financial-display-semantics.md) — Separate pending requests from settled funds; purchase cost is not income, and missing financial facts stay unknown.
 - [Administration import boundary](admin-import-boundary.md) — Keep supplied administration JavaScript unchanged; do not replace customer accounts or financial policy with imported defaults.
 - [Published constraint verification](published-constraint-verification.md) — Verify changed CHECK constraints in production; successful publishing alone did not synchronize them.
-- [SonaraPay rollout](sonarapay-rollout.md) — Automatic BJ/BF/TG/CI/CM; CI Wave stays manual; preserve historical tracking and hide provider branding.
+- [SonaraPay rollout](sonarapay-rollout.md) — MTN BJ/Wave CI manual; lost references recovered read-only; preserve historical tracking and hide provider branding.
 - [Purchased-product income](product-income-policy.md) — Every 24h; existing purchases start at activation without earlier catchup; frozen terms and original expiry.
 - [Mockup screenshot routing](mockup-screenshot-routing.md) — Screenshot tools bypass the development-domain path proxy; use the sandbox workflow’s port.

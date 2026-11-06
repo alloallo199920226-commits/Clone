@@ -17,7 +17,7 @@ mode = "pending"
 
 
 def create(order, otp=None):
-    ref = "fixture-" + str(order["id"])
+    ref = "PAY-" + str(order["id"])
     calls.append(str(order["id"]))
     records.setdefault(ref, {"reference": ref, "transaction": {
         "status": "pending", "amount": order["amount_fcfa"], "currency": "XOF",
@@ -29,11 +29,16 @@ def create(order, otp=None):
         return {"reference": ref, "requiresOtp": True, "ussdCode": "*123#"}
     if otp:
         records[ref]["transaction"]["status"] = "pending"
+    records[ref]["transaction"]["idempotencyKey"] = "iveco-" + str(order["id"])
+    if mode == "lost":
+        raise client.ProviderError("unavailable")
     return {"reference": ref, "status": "pending"}
 
 
 client.create = create
 client.check = lambda reference: records[reference]
+client.recent_payments = lambda: [] if mode == "lost" else [
+    {**record["transaction"], "reference": ref} for ref, record in records.items()]
 
 
 class FixtureHandler(Handler):
@@ -48,8 +53,9 @@ class FixtureHandler(Handler):
                 record["transaction"]["status"] = mode
             with auth_backend.connect() as conn, conn.cursor() as cur:
                 cur.execute("""UPDATE shineray_sonarapay_orders SET checked_at=now()-interval '1 minute',
-                               initiated_at=now()-interval '1 minute' WHERE provider_reference=ANY(%s)""",
-                            (list(records),))
+                               initiated_at=now()-interval '1 minute' WHERE provider_reference=ANY(%s)
+                               OR 'PAY-' || id::text=ANY(%s)""",
+                            (list(records), list(records)))
             self._json(200, {"calls": len(calls), "unique_orders": len(set(calls))})
             return
         super().handle_api()

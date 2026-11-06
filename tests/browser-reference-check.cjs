@@ -354,7 +354,9 @@ async function main() {
       return;
     }
     if (process.argv.includes("--sonarapay")) {
-      await require("./sonarapay-browser.cjs")({ call, evaluate, navigate, waitFor, screenshot, phone, prefix: payload.country_code });
+      const scenario = process.argv.includes("--recovery-only")
+        ? "./sonarapay-recovery-browser.cjs" : "./sonarapay-browser.cjs";
+      await require(scenario)({ call, evaluate, navigate, waitFor, screenshot, phone, prefix: payload.country_code });
       assert.deepEqual(errors, []);
       return;
     }

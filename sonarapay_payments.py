@@ -20,6 +20,9 @@ def public(order):
         "currency": provider.currency(order["payer_phone"]), "countryCode": provider.country_prefix(order["payer_phone"]), "operator": provider.OPERATORS[order["operator_id"]],
         "phone": order["payer_phone"], "status": order["status"],
         "reference": order["provider_reference"], "credited": order["credited_at"] is not None,
+        "recoveringReference": bool(order["initiated_at"] and not order["provider_reference"]
+                                    and not order["credited_at"]
+                                    and order["status"] not in FINAL | {"otp_required"}),
         "ussdCode": order["ussd_code"], "errorCode": order["last_error"],
         "created_at": order["created_at"].isoformat(),
     }
@@ -151,6 +154,31 @@ def verified(order, result):
     return all(key not in tx or tx[key] == value for key, value in expected.items())
 
 
+def missing_reference(order):
+    """Find an existing debit by its immutable identity; never initiate one."""
+    identity = {"description": "IVECO:" + str(order["id"]),
+                "idempotencyKey": "iveco-" + str(order["id"])}
+    expected = {**identity,
+                "countryCode": provider.COUNTRY_CODES.get(provider.country_prefix(order["payer_phone"])),
+                "operatorId": order["operator_id"], "customerPhone": order["payer_phone"],
+                "currency": provider.currency(order["payer_phone"])}
+    references = set()
+    for receipt in provider.recent_payments():
+        if not any(receipt.get(key) == value for key, value in identity.items()):
+            continue
+        if (any(receipt.get(key) != value for key, value in expected.items())
+                or not _amount_matches(receipt.get("amount"), order["amount_fcfa"])):
+            raise provider.ProviderError("verification")
+        ref = receipt.get("reference")
+        if not isinstance(ref, str) or not re.fullmatch(
+                r"PAY-[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", ref):
+            raise provider.ProviderError("invalid_response")
+        references.add(ref)
+    if len(references) > 1:
+        raise provider.ProviderError("reference_mismatch")
+    return next(iter(references), None)
+
+
 def recover_reference(handler, phone, amount, reference):
     """Admin-only attachment of a lost provider response; GET proof, never POST."""
     import admin_api
@@ -223,14 +251,31 @@ def advance(order, *, initiate=False, otp=None):
             raise auth_backend.AuthError(429, "Une demande est déjà en cours ou la limite de tentatives est atteinte. Patientez au moins 5 secondes avant de réessayer.")
         return load(order["user_id"], order["id"])
     order = claimed
+    creation_attempted = False
     try:
         if not provider.configured() or provider.fingerprint() != order["key_fingerprint"]:
             raise provider.ProviderError("credentials_changed")
+        if (not order["provider_reference"] and order["initiated_at"]
+                and (not initiate or order["attempts"] > 1)
+                and order["status"] != "otp_required"):
+            ref = missing_reference(order)
+            if not ref:
+                _update(order["id"], error="reference_pending")
+                return load(order["user_id"], order["id"])
+            with auth_backend.connect() as conn, conn.cursor() as cur:
+                cur.execute("SELECT id FROM shineray_deposit_approvals WHERE provider_reference=%s", (ref,))
+                if cur.fetchone():
+                    # Legacy manually credited receipts must not be credited
+                    # again under the automatic reference namespace.
+                    raise provider.ProviderError("verification")
+            _update(order["id"], reference=ref, release=False)
+            order = load(order["user_id"], order["id"])
         if not order["provider_reference"] or (otp and order["status"] == "otp_required"):
             if not initiate:
-                # Unknown POSTs are retried explicitly with their original stable key.
+                # Never turn a status read into a new debit.
                 _update(order["id"], error=order["last_error"])
                 return load(order["user_id"], order["id"])
+            creation_attempted = True
             result = provider.create(order, otp)
             ref = _reference(result)
             if ref is not None and (not isinstance(ref, str) or not 1 <= len(ref) <= 110
@@ -274,9 +319,12 @@ def advance(order, *, initiate=False, otp=None):
     except provider.ProviderError as error:
         # An explicit initial 400/401/403 did not create a payable operation.
         # Timeouts/503s remain unresolved; never mark them failed or use a new key.
-        rejected = (not order["provider_reference"] and not otp
+        rejected = (creation_attempted and not order["provider_reference"] and not otp
                     and error.code in {"rejected", "credentials"})
-        _update(order["id"], status="failed" if rejected else None, error=error.code)
+        uncertain_otp = (otp and not order["provider_reference"]
+                         and error.code in {"unavailable", "invalid_response", "access_blocked"})
+        _update(order["id"], status="failed" if rejected else "unknown" if uncertain_otp else None,
+                error=error.code)
     except Exception:
         # Do not log SQL, provider bodies, phone numbers, PINs, OTPs or credentials.
         _update(order["id"], error="verification")
@@ -337,21 +385,28 @@ def handle(handler, user, route):
     return True
 
 
+def reconcile_once():
+    """Also scan initiated orders whose initial response lost its reference."""
+    with auth_backend.connect() as conn, conn.cursor() as cur:
+        cur.execute("""SELECT * FROM shineray_sonarapay_orders WHERE credited_at IS NULL
+                       AND status<>'failed'
+                       AND (provider_reference IS NOT NULL OR
+                            (initiated_at IS NOT NULL AND status<>'otp_required'))
+                       AND key_fingerprint=%s
+                       AND (checked_at IS NULL OR checked_at<now()-interval '15 seconds')
+                       ORDER BY checked_at NULLS FIRST LIMIT 20""", (provider.fingerprint(),))
+        orders = cur.fetchall()
+    for order in orders:
+        advance(order)
+
+
 def start_reconciliation():
     if not provider.configured():
         return
     def run():
         while True:
             try:
-                with auth_backend.connect() as conn, conn.cursor() as cur:
-                    cur.execute("""SELECT * FROM shineray_sonarapay_orders WHERE credited_at IS NULL
-                                   AND status<>'failed' AND provider_reference IS NOT NULL
-                                   AND key_fingerprint=%s
-                                   AND (checked_at IS NULL OR checked_at<now()-interval '15 seconds')
-                                   ORDER BY checked_at NULLS FIRST LIMIT 20""", (provider.fingerprint(),))
-                    orders = cur.fetchall()
-                for order in orders:
-                    advance(order)
+                reconcile_once()
             except Exception:
                 logging.warning("Suivi SonaraPay temporairement indisponible.")
             threading.Event().wait(15)

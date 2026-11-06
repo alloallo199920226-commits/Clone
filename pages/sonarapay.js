@@ -82,6 +82,7 @@
         : ["credentials", "credentials_changed"].includes(payment?.errorCode) ? "sonaraCredentials"
         : payment?.status === "review" ? "sonaraReview"
         : payment?.status === "otp_required" ? "sonaraOtp"
+        : payment?.recoveringReference ? "sonaraRecoveringReference"
         : payment?.errorCode ? "sonaraUnknown" : "sonaraPending";
       const updateClock = () => {
         if (!clock) return;
@@ -129,7 +130,7 @@
         otpForm.hidden = payment.status !== "otp_required" || credited;
         panel.querySelector("[data-sonara-ussd]").textContent = payment.ussdCode || "";
         retry.hidden = credited || payment.status === "failed" || !!payment.reference
-          || !payment.errorCode || payment.status === "otp_required";
+          || !payment.errorCode || payment.status === "otp_required" || payment.recoveringReference;
         if (credited || payment.status === "failed") {
           clearInterval(pollTimer);
           check.hidden = true;
