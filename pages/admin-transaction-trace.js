@@ -57,6 +57,92 @@
       <p>${escape(t.label)} · Écriture #${escape(t.id)}</p><dl>${fields}</dl>
       ${t.kind === "commission" ? '<p class="trace-note">L’inscription, les bonus et l’achat VIP ne déclenchent pas cette commission.</p>' : ""}</article>`;
   };
+  const inlineCard = t => {
+    const d = t.details || {};
+    const title = t.kind === "bonus" ? (d.admin_type === "admin_credit" ? "Crédit administrateur"
+      : d.admin_type === "admin_debit" ? "Débit administrateur"
+      : d.policy === "welcome" ? "Bonus de bienvenue" : t.label)
+      : names[t.kind] || t.label;
+    let explanation = "";
+    if (t.kind === "commission") {
+      explanation = `<p class="trace-origin"><b>Filleul :</b> ${escape(t.source_phone || "Source historique non retrouvée")}
+        ${t.source_user_id ? ` · Compte #${escape(t.source_user_id)}` : ""} · Niveau ${escape(d.level)}</p>
+        <p class="trace-calculation"><b>Dépôt du filleul :</b> ${escape(money(t.deposit_amount))}
+        × ${escape(d.rate_percent == null ? "Taux non renseigné" : `${d.rate_percent} %`)}
+        = <strong>${escape(money(t.amount_fcfa))} de commission</strong></p>
+        <p>${t.approval_method === "automatic" ? "Dépôt validé automatiquement" : t.approval_method === "manual"
+          ? "Dépôt validé manuellement par l’administration" : "Validation du dépôt non renseignée"}</p>`;
+    } else if (t.kind === "withdrawal") {
+      explanation = `<p><b>Réception :</b> ${escape(d.channel)} · ${escape(d.destination)}</p>
+        <p><b>Frais :</b> ${escape(money(d.fee_fcfa))} · <b>Net :</b> ${escape(money(d.net_amount_fcfa))}</p>
+        <p>Retrait approuvé ; le versement effectif n’est pas prouvé par cette écriture.</p>`;
+    } else if (t.kind === "recharge") {
+      explanation = `<p>${t.approval_method === "automatic" ? "Validation automatique" : t.approval_method === "manual"
+        ? "Validation administrative" : "Validation non renseignée"} · ${escape(t.operator_id || d.channel || "Opérateur non renseigné")}</p>
+        <p><b>Payeur :</b> ${escape(t.payer_phone || d.payer_number)}</p>`;
+    } else if (t.kind === "purchase") {
+      explanation = `<p><b>Produit :</b> ${escape(d.product_name || t.label)} · Quantité : ${escape(d.quantity)}</p>
+        <p><b>Revenu quotidien :</b> ${escape(money(d.daily_income_fcfa))} · ${escape(d.validity_days)} jours</p>`;
+    } else if (t.kind === "income") {
+      explanation = `<p><b>Achat source :</b> ${escape(t.purchase_name || "Non retrouvé")}
+        ${t.purchase_id ? ` · #${escape(t.purchase_id)}` : ""} · Période ${escape(d.period)}</p>
+        <p><b>Échéance :</b> ${escape(date(d.due_at))} (Maroc)</p>`;
+    } else if (t.kind === "bonus") {
+      explanation = `<p>${d.admin_type ? "Ajustement effectué par l’administration."
+        : d.policy === "welcome" ? "Bonus d’inscription. Ce montant n’est pas un dépôt réel."
+        : escape(t.label)}</p>`;
+    }
+    return `<article class="trace-card trace-inline-card" data-trace-entry="${escape(t.id)}">
+      <h4>${escape(title)} <strong>${t.amount_fcfa > 0 ? "+" : ""}${escape(money(t.amount_fcfa))}</strong></h4>
+      <p class="trace-entry-date">${escape(date(t.created_at))} (Maroc) · Écriture #${escape(t.id)}</p>
+      ${explanation}<details><summary>Références et détails de cette opération</summary>${card(t)}</details></article>`;
+  };
+  const mountInline = (panel, uid, heading) => {
+    // Replace only the old transaction rows, never wallet actions or VIP history.
+    let next = heading.nextElementSibling;
+    while (next && next.tagName !== "H3") {
+      const old = next;
+      next = next.nextElementSibling;
+      old.remove();
+    }
+    heading.textContent = "Transactions détaillées";
+    const section = document.createElement("section");
+    section.className = "admin-user-ledger";
+    section.dataset.userLedger = uid;
+    section.setAttribute("aria-label", "Transactions détaillées du compte");
+    section.innerHTML = '<p>Origine et montants des mouvements comptables · heures du Maroc.</p><p role="status" data-ledger-status></p><div data-ledger-entries></div><div class="trace-inline-pagination"><button type="button" data-ledger-prev>Précédent</button><button type="button" data-ledger-next>Suivant</button><button type="button" data-ledger-retry hidden>Réessayer</button></div>';
+    heading.after(section);
+    const prev = section.querySelector("[data-ledger-prev]"), nextButton = section.querySelector("[data-ledger-next]");
+    const retry = section.querySelector("[data-ledger-retry]"), status = section.querySelector("[data-ledger-status]");
+    let offset = 0, nextCursor = null, version = 0;
+    const load = async () => {
+      const request = ++version;
+      prev.disabled = nextButton.disabled = true;
+      retry.hidden = true;
+      status.textContent = "Chargement des opérations détaillées…";
+      section.querySelector("[data-ledger-entries]").replaceChildren();
+      try {
+        const response = await fetch(`/api/admin/transaction-trace?user=${encodeURIComponent(uid)}&cursor=${offset}`,
+          {credentials:"same-origin",cache:"no-store"});
+        const data = await response.json();
+        if (request !== version || !section.isConnected) return;
+        if (!response.ok) throw Error(data.error || data.message || "Lecture des opérations impossible.");
+        nextCursor = data.nextCursor;
+        status.textContent = data.total ? `${offset + 1}–${offset + data.transactions.length} sur ${data.total} opération(s)`
+          : "Aucune transaction enregistrée pour ce compte.";
+        section.querySelector("[data-ledger-entries]").innerHTML = data.transactions.map(inlineCard).join("");
+        prev.disabled = offset === 0; nextButton.disabled = !nextCursor;
+      } catch (error) {
+        if (request !== version || !section.isConnected) return;
+        status.textContent = error.message;
+        retry.hidden = false;
+      }
+    };
+    prev.onclick = () => { offset = Math.max(0, offset - 30); load(); };
+    nextButton.onclick = () => { if (nextCursor) { offset = Number(nextCursor); load(); } };
+    retry.onclick = load;
+    load();
+  };
   let activeDialog;
   const open = uid => {
     if (activeDialog) { activeDialog.close(); activeDialog.remove(); }
@@ -106,20 +192,19 @@
   button.type = "button"; button.dataset.transactionTrace = "all"; button.textContent = "Traçabilité";
   button.onclick = () => open();
   nav.append(button);
-  let selectedUser;
-  document.addEventListener("click", event => {
-    const row = event.target.closest("[data-user]");
-    if (row) selectedUser = row.dataset.user;
-  }, true);
   new MutationObserver(() => {
     const panel = document.querySelector(".admin-user-panel");
-    if (!panel || panel.querySelector("[data-user-trace]") || !selectedUser) return;
-    const uid = selectedUser;
+    if (!panel || panel.querySelector("[data-user-ledger]")) return;
+    // Use the account actually rendered, not the last clicked search result.
+    const uid = panel.querySelector("header small")?.textContent.match(/Utilisateur #(\d+)/)?.[1];
+    const heading = [...panel.querySelectorAll(".admin-user-body > h3")].find(node => node.textContent === "Transactions");
+    if (!uid || !heading) return;
     const detail = document.createElement("button");
     detail.type = "button"; detail.dataset.userTrace = uid;
     detail.textContent = "Voir toute la traçabilité de ce compte";
     detail.onclick = () => open(uid);
-    panel.prepend(detail);
+    mountInline(panel, uid, heading);
+    panel.querySelector("[data-user-ledger]").append(detail);
   }).observe(document.body, {childList:true,subtree:true});
   document.querySelector("#logout")?.addEventListener("click", () => activeDialog?.close());
 })();

@@ -13,6 +13,10 @@ module.exports = async ({call, evaluate, navigate, waitFor, screenshot, owner}) 
   await waitFor(`document.querySelector('[data-user="${owner.id}"]')`);
   await evaluate(`document.querySelector('[data-user="${owner.id}"]').click()`);
   await waitFor("document.querySelector('.admin-user-panel')");
+  await waitFor("document.querySelector('.admin-user-panel [data-ledger-entries] .trace-inline-card')");
+  assert(await evaluate("document.querySelector('.admin-user-panel [data-user-ledger]').textContent.includes('Bonus de bienvenue')"));
+  assert.equal(await evaluate("document.querySelectorAll('.admin-user-panel [data-user-ledger] .admin-mini-row').length"), 0);
+  assert(await evaluate("[...document.querySelectorAll('.admin-user-panel h3')].some(h=>h.textContent==='Historique VIP')"));
   for (const width of [320, 390, 472, 1280]) {
     await call("Emulation.setDeviceMetricsOverride", {width,height:844,deviceScaleFactor:1,mobile:width<900});
     for (const field of ["credit", "debit"]) {
@@ -67,8 +71,28 @@ module.exports = async ({call, evaluate, navigate, waitFor, screenshot, owner}) 
   assert.equal(await evaluate("document.querySelectorAll('.admin-trace-dialog [data-trace-results] script').length"), 0);
   assert(await evaluate("document.querySelector('.admin-trace-dialog').textContent.includes('<script>bad()</script>')"));
   await screenshot("narke-admin-commission-trace");
+  await evaluate(`document.querySelector('[data-trace-close]').click();
+    document.querySelector('[data-user-close]').click();
+    document.querySelector('[data-user="${owner.id}"]').click();`);
+  await waitFor("document.querySelector('.admin-user-panel .trace-inline-card .trace-origin')");
+  for (const text of ["Filleul :", "2 500 FCFA", "40 %", "1 000 FCFA de commission", "Dépôt validé automatiquement"]) {
+    assert(await evaluate(`document.querySelector('.admin-user-panel [data-user-ledger]').textContent.includes(${JSON.stringify(text)})`), text);
+  }
+  assert.equal(await evaluate("document.querySelectorAll('.admin-user-panel [data-user-ledger] script').length"), 0);
+  assert.equal(await evaluate("document.querySelector('.admin-user-panel [data-user-ledger]').textContent.includes('completed')"), false);
+  for (const width of [320, 390, 472, 1280]) {
+    await call("Emulation.setDeviceMetricsOverride", {width,height:844,deviceScaleFactor:1,mobile:width<900});
+    assert(await evaluate("(()=>{const e=document.querySelector('.trace-inline-card');return e.scrollWidth<=e.clientWidth+1})()"), `trace card fits at ${width}px`);
+  }
+  await call("Emulation.setDeviceMetricsOverride", {width:390,height:844,deviceScaleFactor:1,mobile:true});
+  await evaluate("document.querySelector('.trace-inline-card').scrollIntoView({block:'start'})");
+  await screenshot("narke-admin-inline-commission");
+  await evaluate("document.querySelector('.trace-inline-card summary').click()");
+  assert(await evaluate("document.querySelector('.trace-inline-card details').open"));
+  assert(await evaluate("document.querySelector('.trace-inline-card details').textContent.includes('trace-test-reference')"));
+  assert(await evaluate("Boolean(document.querySelector('[data-vip-grant]'))"));
   await evaluate("window.fetch=window.traceOriginalFetch;delete window.traceOriginalFetch");
-  await evaluate("document.querySelector('[data-trace-close]').click();document.querySelector('.admin-user-panel button')?.focus()");
   console.log("PASS: actual user drawer readable at 320/390/472/1280px; credit/debit text, placeholders and NARKE surfaces; no financial operation submitted.");
   console.log("PASS: authenticated user-specific trace, welcome-bonus origin, commission filter and empty state.");
+  console.log("PASS: inline French commission, source phone, deposit, rate, dates, expandable references, XSS escaping; VIP controls preserved.");
 };

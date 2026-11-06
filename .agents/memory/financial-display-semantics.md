@@ -118,10 +118,13 @@ récompenses de missions séparées des commissions sur les premiers dépôts.
 
 L’administration doit permettre de retracer les commissions jusqu’au filleul,
 au montant de son dépôt, au taux appliqué et à la référence et validation du dépôt.
-Un simple total des transactions ne suffit pas au propriétaire.
+Un simple total des transactions ne suffit pas au propriétaire. Les informations
+essentielles doivent apparaître directement dans la liste « Transactions » de la
+fiche utilisateur, pas seulement dans une vue de traçabilité séparée.
 
 **Why:** l’utilisateur ne pouvait pas expliquer les commissions reçues sans
 demander une vérification de production et a explicitement demandé cette traçabilité.
+Il a ensuite montré que la liste « commission · completed · montant » restait vague.
 
 **How to apply:** exposer la provenance vérifiable des mouvements financiers dans
 la console protégée. Distinguer les faits enregistrés des vérifications en direct,
