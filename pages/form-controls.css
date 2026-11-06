@@ -2,6 +2,7 @@
    Do not restrict the viewport: manual pinch zoom must remain available. */
 /* Layered important declarations also beat the imported admin theme's
    unlayered important rules, without modifying its original assets. */
+@layer payment-fields, form-controls;
 @layer form-controls {
 html body :is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea, [contenteditable="true"]) {
   font-size: 16px !important;
@@ -44,5 +45,26 @@ html body :is(input, textarea):is(:autofill, :-webkit-autofill) {
 
 html body :is(input, select, textarea):disabled {
   -webkit-text-fill-color: #c4dce6 !important;
+}
+
+}
+
+@layer payment-fields {
+/* Payment cards deliberately use light surfaces. Keep native autofill,
+   entered text and placeholders readable in both phone and OTP fields. */
+html body.deposit-page .deposit-card input,
+html body.deposit-page .deposit-card input:focus-visible,
+html body.deposit-page .deposit-card input:is(:autofill, :-webkit-autofill) {
+  background-color: #f1f7f6 !important;
+  color: #0d2639 !important;
+  -webkit-text-fill-color: #0d2639 !important;
+  caret-color: #0d2639;
+  opacity: 1;
+}
+
+html body.deposit-page .deposit-card input::placeholder {
+  color: #526878 !important;
+  -webkit-text-fill-color: #526878 !important;
+  opacity: 1 !important;
 }
 }

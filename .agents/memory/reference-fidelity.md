@@ -159,3 +159,12 @@ a produit des cartes démesurées alors que les assertions de texte réussissaie
 **How to apply:** garder la grille sur un conteneur ordinaire et le contrôle
 natif à l’intérieur ; mesurer les cartes et les lignes visibles, puis examiner
 une capture authentifiée avant de valider une reconstruction.
+
+Les tests du formulaire de paiement doivent fournir un brouillon de recharge
+valide et exiger au moins un champ visible avant de mesurer son contraste.
+
+**Why:** une visite sans brouillon affichait seulement l’état « informations
+indisponibles » ; le test de lisibilité réussissait sans examiner le téléphone.
+
+**How to apply:** préparer les données de navigation sans initier de paiement,
+puis contrôler le texte réellement saisi et sa couleur de remplissage.

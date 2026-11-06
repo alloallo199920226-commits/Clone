@@ -150,7 +150,7 @@ def with_form_controls(body, content_type):
     if content_type.startswith("text/html"):
         return body.replace(
             b"</head>",
-            b'<link rel="stylesheet" href="/pages/form-controls.css?v=2"></head>',
+            b'<link rel="stylesheet" href="/pages/form-controls.css?v=3"></head>',
             1,
         )
     return body

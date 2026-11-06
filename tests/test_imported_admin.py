@@ -309,7 +309,7 @@ class ImportedAdminTests(unittest.TestCase):
                     self.assertIn(admin_assets.COMPAT_LINK, data)
                     data = data.replace(admin_assets.COMPAT_LINK, b"", 1)
                     data = data.replace(b'<script src="/admin-ui/today-withdrawals.js?v=1"></script>', b"", 1)
-                    data = data.replace(b'<link rel="stylesheet" href="/pages/form-controls.css?v=2">', b"", 1)
+                    data = data.replace(b'<link rel="stylesheet" href="/pages/form-controls.css?v=3">', b"", 1)
                     from platform_brand import BRAND_SCRIPT, FAVICON_LINKS
                     data = data.replace(BRAND_SCRIPT, b"", 1).replace(FAVICON_LINKS, b"", 1)
                 self.assertEqual(hashlib.sha256(data).digest(),
