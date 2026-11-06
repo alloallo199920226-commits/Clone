@@ -24,7 +24,7 @@ module.exports = async ({call, evaluate, navigate, waitFor, screenshot}) => {
     assert(!popup.text.includes("Chaîne Telegram"));
     assert.deepEqual(popup.links.map(a=>a.href), [whatsapp, group, popupSupport]);
     assert.equal(popup.links[0].text, "Groupe WhatsApp");
-    assert.equal(popup.links[2].text, "Service client · WhatsApp");
+    assert.equal(popup.links[2].text, "Chaîne WhatsApp");
     assert(popup.links.every(a=>a.target==="_blank" && a.rel.includes("noopener")));
     assert(popup.fits, "Popup fits screen");
     if (width === 390) await screenshot("iveco-notification-contacts");
