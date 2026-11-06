@@ -468,7 +468,7 @@ class Handler(BaseHTTPRequestHandler):
                     {**channel, "provider": "sonarapay"}
                     for channel in sonarapay_client.deposit_operators(prefix).values()
                 ] if sonarapay_client.configured() else []
-                if automatic_channels and prefix != "+225":
+                if automatic_channels and prefix not in {"+225", "+229"}:
                     self._json(200, {"countryCode": prefix, "phoneLength": auth_backend.PHONE_LENGTHS[prefix],
                                      "provider": "sonarapay",
                                      "channels": automatic_channels})
@@ -490,7 +490,8 @@ class Handler(BaseHTTPRequestHandler):
                                  "provider": "mixed" if automatic_channels else "manual",
                                  "channels": automatic_channels + [
                                      {**channel, "provider": "manual"} for channel in channels
-                                     if not automatic_channels or "wave" in channel["operatorName"].casefold()
+                                     if not automatic_channels or sonarapay_client.manual_channel_allowed(
+                                         prefix, channel["operatorName"])
                                  ]})
             except Exception:
                 self._json(503, {"error": "Impossible de charger les moyens de paiement."})

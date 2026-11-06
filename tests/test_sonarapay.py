@@ -42,7 +42,7 @@ class VerificationTests(unittest.TestCase):
         self.assertIsNone(auth_backend.payment_display_text(None))
 
     def test_celtiis_disabled_for_new_deposits_but_history_preserved(self):
-        self.assertEqual(set(client.deposit_operators("+229")), {"mtn_bj", "moov_bj"})
+        self.assertEqual(set(client.deposit_operators("+229")), {"moov_bj"})
         self.assertEqual(set(client.deposit_operators("+226")), {"orange_bf", "moov_bf", "telecel_bf"})
         self.assertEqual(set(client.deposit_operators("+228")), {"tmoney_tg", "moov_tg"})
         with patch.object(client, "configured", return_value=True), \
@@ -54,6 +54,25 @@ class VerificationTests(unittest.TestCase):
                 })
             connect.assert_not_called()
         self.assertEqual(client.OPERATORS["celtiis_bj"]["operatorName"], "Celtiis Cash")
+
+    def test_benin_mtn_manual_and_old_automatic_orders_preserved(self):
+        self.assertTrue(client.manual_channel_allowed("+229", "MTN Mobile Money"))
+        self.assertFalse(client.manual_channel_allowed("+229", "Moov"))
+        self.assertFalse(client.manual_channel_allowed("+229", "Celtiis"))
+        self.assertTrue(client.manual_channel_allowed("+225", "Wave"))
+        self.assertFalse(client.manual_channel_allowed("+225", "MTN"))
+        self.assertFalse(client.manual_channel_allowed("+237", "MTN"))
+        with patch.object(client, "configured", return_value=True), \
+                patch.object(auth_backend, "connect") as connect:
+            with self.assertRaisesRegex(ValueError, "Opérateur invalide pour le pays"):
+                payments.prepare({"phone": "+2290100000000"}, {
+                    "amount": 2500, "operatorId": "mtn_bj",
+                    "phone": "0100000000", "requestId": str(uuid.uuid4()),
+                })
+            connect.assert_not_called()
+        with patch.object(client, "request") as request:
+            client.create(self.order)
+            self.assertEqual(request.call_args.args[2]["operatorId"], "mtn_bj")
 
     def setUp(self):
         self.order = {"id": uuid.uuid4(), "amount_fcfa": 500, "provider_reference": "test-reference",
@@ -157,8 +176,32 @@ class PaymentTests(unittest.TestCase):
             cur.execute("DELETE FROM shineray_users WHERE id=ANY(%s)", (self.ids,))
 
     def body(self):
-        return {"amount": 500, "phone": self.user["phone"], "operatorId": "mtn_bj",
+        return {"amount": 500, "phone": self.user["phone"], "operatorId": "moov_bj",
                 "requestId": str(uuid.uuid4())}
+
+    def test_benin_mtn_manual_submission_waits_for_admin(self):
+        import manual_deposits
+        with auth_backend.connect() as conn, conn.cursor() as cur:
+            cur.execute("""INSERT INTO shineray_admin_resources(kind,value)
+                VALUES ('channel',%s::jsonb) RETURNING id""", (json.dumps({
+                    "countryCode": "+229", "operatorName": "MTN",
+                    "isActive": True, "receiverName": "Test fixture",
+                    "receiverNumber": "0100000000",
+                }),))
+            channel_id = cur.fetchone()["id"]
+        try:
+            before = self.balance()
+            result = manual_deposits.submit(self.user, {
+                "request_id": str(uuid.uuid4()), "channel_id": channel_id,
+                "amount_fcfa": 2500, "phone": self.user["phone"][4:],
+            })
+            self.assertEqual(result["status"], "pending")
+            self.assertEqual(self.balance(), before)
+            self.create.assert_not_called()
+        finally:
+            with auth_backend.connect() as conn, conn.cursor() as cur:
+                cur.execute("DELETE FROM shineray_manual_deposits WHERE channel_id=%s", (channel_id,))
+                cur.execute("DELETE FROM shineray_admin_resources WHERE id=%s", (channel_id,))
 
     def fake_create(self, order, otp=None):
         ref = "test-" + str(order["id"])
@@ -443,8 +486,8 @@ class PaymentTests(unittest.TestCase):
             self.assertEqual(get("/api/sonarapay/payments/" + str(order["id"]), other_token)[0], 404)
             status, result = get("/api/payment-channels/me", self.token)
             self.assertEqual(status, 200)
-            self.assertEqual(result["provider"], "sonarapay")
-            self.assertEqual({row["id"] for row in result["channels"]}, {"mtn_bj", "moov_bj"})
+            self.assertEqual(result["provider"], "mixed")
+            self.assertEqual({row["id"] for row in result["channels"] if row["provider"] == "sonarapay"}, {"moov_bj"})
             status, result = get("/api/payment-channels/me", other_token)
             self.assertEqual(status, 200)
             self.assertEqual(result["provider"], "sonarapay")

@@ -40,7 +40,7 @@ def submit(user, body):
         channel = row["value"] if row else {}
         automatic = bool(sonarapay_client.configured() and sonarapay_client.deposit_operators(prefix))
         if (channel.get("isActive") is not True or channel.get("countryCode") != prefix
-                or (automatic and (prefix != "+225" or "wave" not in channel.get("operatorName", "").casefold()))
+                or (automatic and not sonarapay_client.manual_channel_allowed(prefix, channel.get("operatorName")))
                 or not channel.get("receiverNumber") or not channel.get("receiverName")):
             raise ValueError("Ce moyen de paiement manuel n’est pas disponible.")
         cur.execute("SELECT count(*) AS total FROM shineray_manual_deposits WHERE user_id=%s AND status='pending'", (user["id"],))

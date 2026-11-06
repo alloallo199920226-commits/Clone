@@ -22,7 +22,7 @@ Après une réponse réseau perdue lors du lancement, retrouver la demande exist
 
 **How to apply:** conserver l’identifiant de demande avant transmission ; en cas de résultat incertain, proposer le suivi et non un nouveau paiement, y compris après rechargement. Ne jamais créditer sur la seule déclaration d’un débit.
 
-Les paiements automatiques concernent le Bénin, le Burkina Faso, le Togo,
+Les paiements automatiques concernent le Bénin hors MTN, le Burkina Faso, le Togo,
 la Côte d’Ivoire hors Wave et le Cameroun.
 
 **Why:** après avoir réactivé le Burkina Faso, l’utilisateur a demandé de mettre
@@ -35,6 +35,13 @@ d’Ivoire, proposer Orange/MTN/Moov en automatique et conserver les coordonnée
 actives de l’administration en manuel. Au Cameroun, utiliser MTN et Orange,
 avec XAF dans les demandes et les contrôles de confirmation. Préserver le suivi
 des anciennes demandes et les autres pays ; toute extension exige une nouvelle demande.
+
+MTN Bénin doit suivre le flux manuel ; Moov Bénin reste automatique.
+
+**Why:** l’utilisateur a demandé « Met le dépôt mtn bénin sur le flux manuel ».
+
+**How to apply:** utiliser les coordonnées MTN actives configurées dans l’administration
+et la validation manuelle, sans interrompre le suivi des anciennes demandes automatiques.
 
 Pour les dépôts au Bénin, proposer uniquement MTN et Moov, sans Celtiis.
 
