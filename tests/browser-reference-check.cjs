@@ -324,6 +324,11 @@ async function main() {
       assert.deepEqual(errors, []);
       return;
     }
+    if (process.argv.includes("--manual-ussd")) {
+      await require("./manual-ussd-browser.cjs")({call, evaluate, navigate, waitFor, screenshot});
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--admin-user-drawer")) {
       await require("./admin-user-drawer-browser.cjs")({
         call, evaluate, navigate, waitFor, screenshot, owner: registration.body.user,

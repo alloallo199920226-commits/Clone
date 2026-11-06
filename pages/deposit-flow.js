@@ -213,12 +213,19 @@
       displayValue("[data-merchant-account]", channel.receiverNumber);
       copyValues.merchant_name = channel.receiverName;
       copyValues.merchant_account = channel.receiverNumber;
-      const ussd = String(channel.ussdTemplate || "")
-        .replaceAll("{amount}", String(draft.amount_fcfa))
-        .replaceAll("{account}", channel.receiverNumber)
-        .replaceAll("{number}", channel.receiverNumber)
-        .replaceAll("{receiverNumber}", channel.receiverNumber)
-        .replaceAll("{phone}", draft.phone);
+      // Imported administration templates also use bare account/amount tokens.
+      // Replace recognized whole tokens only; never guess an operator's code.
+      const ussdValues = {
+        amount: String(draft.amount_fcfa),
+        account: channel.receiverNumber,
+        number: channel.receiverNumber,
+        receivernumber: channel.receiverNumber,
+        phone: draft.phone,
+      };
+      const ussd = String(channel.ussdTemplate || "").trim().replace(
+        /\{(amount|account|number|receiverNumber|phone)\}|\b(amount|account|number|receiverNumber|phone)\b/gi,
+        (_match, braced, bare) => String(ussdValues[(braced || bare).toLowerCase()] || ""),
+      );
       if (/^[*#\d+]{3,100}$/.test(ussd)) {
         displayValue("[data-ussd-code]", ussd);
         copyValues.ussd = ussd;
