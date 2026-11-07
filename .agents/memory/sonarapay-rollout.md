@@ -35,7 +35,7 @@ l’opérateur et le payeur, puis consulter le statut individuel avant crédit.
 Une absence dans cette liste bornée ou une erreur de lecture ne prouve jamais
 un échec et n’autorise pas à relancer un encaissement.
 
-Les paiements automatiques concernent le Bénin hors MTN, le Burkina Faso, le Togo,
+Les paiements automatiques concernent le Bénin (MTN et Moov), le Burkina Faso, le Togo,
 la Côte d’Ivoire hors Wave et le Cameroun.
 
 **Why:** après avoir réactivé le Burkina Faso, l’utilisateur a demandé de mettre
@@ -49,12 +49,12 @@ actives de l’administration en manuel. Au Cameroun, utiliser MTN et Orange,
 avec XAF dans les demandes et les contrôles de confirmation. Préserver le suivi
 des anciennes demandes et les autres pays ; toute extension exige une nouvelle demande.
 
-MTN Bénin doit suivre le flux manuel ; Moov Bénin reste automatique.
+MTN Bénin et Moov Bénin doivent suivre le flux automatique.
 
-**Why:** l’utilisateur a demandé « Met le dépôt mtn bénin sur le flux manuel ».
+**Why:** l’utilisateur a demandé « Remet mtn bénin sur automatique », remplaçant son choix manuel précédent.
 
-**How to apply:** utiliser les coordonnées MTN actives configurées dans l’administration
-et la validation manuelle, sans interrompre le suivi des anciennes demandes automatiques.
+**How to apply:** proposer MTN et Moov en automatique pour les nouveaux dépôts,
+sans interrompre le suivi ni la validation des anciennes demandes manuelles.
 
 Pour les dépôts au Bénin, proposer uniquement MTN et Moov, sans Celtiis.
 
