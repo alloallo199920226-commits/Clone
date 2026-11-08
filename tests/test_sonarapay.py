@@ -69,7 +69,7 @@ class VerificationTests(unittest.TestCase):
 
     def test_celtiis_disabled_for_new_deposits_but_history_preserved(self):
         self.assertEqual(set(client.deposit_operators("+229")), {"mtn_bj", "moov_bj"})
-        self.assertEqual(set(client.deposit_operators("+226")), {"orange_bf", "moov_bf", "telecel_bf"})
+        self.assertEqual(client.deposit_operators("+226"), {})
         self.assertEqual(set(client.deposit_operators("+228")), {"tmoney_tg", "moov_tg"})
         with patch.object(client, "configured", return_value=True), \
                 patch.object(auth_backend, "connect") as connect:
@@ -411,7 +411,42 @@ class PaymentTests(unittest.TestCase):
                 payments.advance(order)
                 self.assertEqual(self.balance(), 2000)
 
-    def test_burkina_automatic_operators_are_country_scoped_and_settle_once(self):
+    def test_burkina_new_deposits_manual_and_pending_until_admin_review(self):
+        import manual_deposits
+        self.user, self.token = self.member("+226")
+        before = self.balance()
+        for operator, name in (("orange_bf", "Orange Money"),
+                               ("moov_bf", "Moov Money"), ("telecel_bf", "Telecel Cash")):
+            with self.subTest(operator=operator):
+                with self.assertRaises(auth_backend.AuthError) as denied:
+                    payments.prepare(self.user, {**self.body(), "operatorId": operator})
+                self.assertEqual(denied.exception.status, 403)
+                with auth_backend.connect() as conn, conn.cursor() as cur:
+                    cur.execute("""INSERT INTO shineray_admin_resources(kind,value)
+                        VALUES ('channel',%s::jsonb) RETURNING id""", (json.dumps({
+                            "countryCode": "+226", "operatorName": name,
+                            "isActive": True, "receiverName": "Test fixture",
+                            "receiverNumber": "70000000", "ussdTemplate": "*123#",
+                        }),))
+                    channel_id = cur.fetchone()["id"]
+                try:
+                    body = {"request_id": str(uuid.uuid4()), "channel_id": channel_id,
+                            "amount_fcfa": 2500, "phone": self.user["phone"][4:]}
+                    result = manual_deposits.submit(self.user, body)
+                    self.assertEqual(result["status"], "pending")
+                    self.assertEqual(manual_deposits.submit(self.user, body)["id"], result["id"])
+                    self.assertEqual(self.balance(), before)
+                    self.create.assert_not_called()
+                    self.check.assert_not_called()
+                finally:
+                    with auth_backend.connect() as conn, conn.cursor() as cur:
+                        cur.execute("DELETE FROM shineray_manual_deposits WHERE channel_id=%s", (channel_id,))
+                        cur.execute("DELETE FROM shineray_admin_resources WHERE id=%s", (channel_id,))
+
+    @patch.dict(client.DEPOSIT_OPERATORS, {
+        key: client.OPERATORS[key] for key in ("orange_bf", "moov_bf", "telecel_bf")
+    })
+    def test_legacy_burkina_automatic_operators_are_country_scoped_and_settle_once(self):
         for operator in ("orange_bf", "moov_bf", "telecel_bf"):
             with self.subTest(operator=operator):
                 self.user, self.token = self.member("+226")
@@ -435,11 +470,12 @@ class PaymentTests(unittest.TestCase):
                 payments.advance(result)
                 self.assertEqual(self.balance(), 2000)
 
+    @patch.dict(client.DEPOSIT_OPERATORS, {"orange_bf": client.OPERATORS["orange_bf"]})
     def test_disabling_country_keeps_existing_order_tracking(self):
         self.user, self.token = self.member("+226")
         body = {**self.body(), "operatorId": "orange_bf"}
         order = payments.prepare(self.user, body)
-        # Simulate a future switch back to manual without changing rollout defaults.
+        # Simulate an order prepared before the switch to manual.
         enabled = {key: value for key, value in client.DEPOSIT_OPERATORS.items()
                    if not key.endswith("_bf")}
         with patch.dict(client.DEPOSIT_OPERATORS, enabled, clear=True):
@@ -602,6 +638,7 @@ class PaymentTests(unittest.TestCase):
         self.recent.assert_not_called()
         self.create.assert_not_called()
 
+    @patch.dict(client.DEPOSIT_OPERATORS, {"moov_bf": client.OPERATORS["moov_bf"]})
     def test_automatic_reference_recovery_across_automatic_countries(self):
         self.create.side_effect = self.lost_response
         for prefix, operator in [
@@ -618,6 +655,7 @@ class PaymentTests(unittest.TestCase):
                 self.assertEqual(result["operator_id"], operator)
         self.assertEqual(self.create.call_count, 5)
 
+    @patch.dict(client.DEPOSIT_OPERATORS, {"orange_bf": client.OPERATORS["orange_bf"]})
     def test_lost_otp_submission_can_be_recovered_without_repeating_otp(self):
         self.user, self.token = self.member("+226")
         order = payments.prepare(self.user, {**self.body(), "operatorId": "orange_bf"})
@@ -662,6 +700,7 @@ class PaymentTests(unittest.TestCase):
             with self.subTest(changes=changes), self.assertRaises((ValueError, auth_backend.AuthError)):
                 payments.prepare(self.user, {**self.body(), **changes})
 
+    @patch.dict(client.DEPOSIT_OPERATORS, {"orange_bf": client.OPERATORS["orange_bf"]})
     def test_orange_initial_otp_api_is_validated_and_not_persisted(self):
         self.user, self.token = self.member("+226")
         server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
@@ -725,11 +764,10 @@ class PaymentTests(unittest.TestCase):
             self.assertEqual({row["id"] for row in result["channels"] if row["provider"] == "sonarapay"}, {"mtn_bj", "moov_bj"})
             status, result = get("/api/payment-channels/me", other_token)
             self.assertEqual(status, 200)
-            self.assertEqual(result["provider"], "sonarapay")
+            self.assertEqual(result["provider"], "manual")
             self.assertEqual(result["countryCode"], "+226")
             self.assertEqual(result["phoneLength"], 8)
-            self.assertEqual({row["id"] for row in result["channels"]},
-                             {"orange_bf", "moov_bf", "telecel_bf"})
+            self.assertTrue(all(row["provider"] == "manual" for row in result["channels"]))
             self.assertNotIn("key_fingerprint", json.dumps(get("/api/sonarapay/payments", self.token)[1]))
             self.assertEqual(other["phone"][:4], "+226")
             togo, togo_token = self.member("+228")

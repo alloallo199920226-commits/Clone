@@ -27,7 +27,7 @@ OPERATORS = {
 # Keep the full catalog for existing orders, but allow only these for new deposits.
 COUNTRY_CODES = {"+229": "BJ", "+226": "BF", "+228": "TG", "+225": "CI", "+237": "CM"}
 DEPOSIT_OPERATORS = {key: OPERATORS[key] for key in
-                     ("mtn_bj", "moov_bj", "orange_bf", "moov_bf", "telecel_bf",
+                     ("mtn_bj", "moov_bj",
                       "tmoney_tg", "moov_tg", "orange_ci", "mtn_ci", "moov_ci",
                       "mtn_cm", "orange_cm")}
 

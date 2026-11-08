@@ -35,19 +35,27 @@ l’opérateur et le payeur, puis consulter le statut individuel avant crédit.
 Une absence dans cette liste bornée ou une erreur de lecture ne prouve jamais
 un échec et n’autorise pas à relancer un encaissement.
 
-Les paiements automatiques concernent le Bénin (MTN et Moov), le Burkina Faso, le Togo,
+Les paiements automatiques concernent le Bénin (MTN et Moov), le Togo,
 la Côte d’Ivoire hors Wave et le Cameroun.
 
 **Why:** après avoir réactivé le Burkina Faso, l’utilisateur a demandé de mettre
 la Côte d’Ivoire en automatique en laissant Wave manuel, et tous les opérateurs
 camerounais en automatique.
 
-**How to apply:** proposer Orange Money, Moov Money et Telecel Cash au Burkina Faso,
-avec les validations et codes temporaires demandés par l’opérateur. En Côte
+**How to apply:** en Côte
 d’Ivoire, proposer Orange/MTN/Moov en automatique et conserver les coordonnées Wave
 actives de l’administration en manuel. Au Cameroun, utiliser MTN et Orange,
 avec XAF dans les demandes et les contrôles de confirmation. Préserver le suivi
 des anciennes demandes et les autres pays ; toute extension exige une nouvelle demande.
+
+Les nouveaux dépôts du Burkina Faso doivent passer en manuel.
+
+**Why:** l’utilisateur a demandé « Met moi le Burkina sur manuel », remplaçant
+son choix automatique précédent.
+
+**How to apply:** utiliser les canaux actifs configurés dans l’administration,
+avec validation manuelle ; conserver le suivi et le règlement des demandes
+automatiques déjà initiées, sans lancer de nouveaux paiements automatiques.
 
 MTN Bénin et Moov Bénin doivent suivre le flux automatique.
 
