@@ -6,6 +6,10 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
   assert(!/data-(?:price|daily|total|days)=/.test(html), "No static financial fallback");
   assert.equal((html.match(/data-purpose="buy-btn" disabled/g) || []).length, 6);
   const path = "/api/products/catalog";
+  // Older Android browsers support fetch but not AbortSignal.timeout.
+  const compatibility = await call("Page.addScriptToEvaluateOnNewDocument", {
+    source: "Object.defineProperty(AbortSignal, 'timeout', {value: undefined, configurable: true});",
+  });
   await call("Fetch.enable", { patterns: [{ urlPattern: "*api/products/catalog*", requestStage: "Request" }] });
   const ready = async () => {
     for (let i = 0; i < 100; i++) {
@@ -43,7 +47,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
   await blank();
   await screenshot("catalog-error");
 
-  await navigate("/accueil");
+  await evaluate(`document.querySelector("[data-catalog-retry]").click()`);
   await answer(200, { products: [product] });
   await waitFor(`document.querySelector(".product-card").dataset.price === "3500"`);
   assert(await evaluate(`!document.querySelector('[data-purpose="buy-btn"]').disabled`));
@@ -64,5 +68,6 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
   await waitFor(`document.querySelector(".catalog-status").textContent === ""`);
   await blank();
   await call("Fetch.disable");
+  await call("Page.removeScriptToEvaluateOnNewDocument", { identifier: compatibility.identifier });
   console.log("PASS: no static prices, loading/error safe, current server terms and dialog, missing/invalid product unavailable, restored tab refresh.");
 };

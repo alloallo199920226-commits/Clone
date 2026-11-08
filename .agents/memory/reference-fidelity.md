@@ -168,3 +168,14 @@ indisponibles » ; le test de lisibilité réussissait sans examiner le téléph
 
 **How to apply:** préparer les données de navigation sans initier de paiement,
 puis contrôler le texte réellement saisi et sa couleur de remplissage.
+
+Le catalogue doit fonctionner sans les API récentes facultatives du navigateur,
+notamment AbortSignal.timeout.
+
+**Why:** son absence sur certains navigateurs empêche même le départ du GET et
+laisse tous les prix vides avec les achats désactivés ; cela a été reproduit en
+retirant cette API dans un test navigateur, sans panne du serveur.
+
+**How to apply:** utiliser une annulation compatible, tester les API manquantes
+et la reprise après erreur réseau. Ne jamais remplacer des tarifs indisponibles
+par des valeurs financières inventées ou anciennes.

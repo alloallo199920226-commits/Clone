@@ -168,6 +168,12 @@
   });
   const buyButtons = document.querySelectorAll('[data-purpose="buy-btn"]');
   const catalogStatus = document.querySelector(".catalog-status");
+  const catalogRetry = document.createElement("button");
+  catalogRetry.type = "button";
+  catalogRetry.textContent = "Réessayer";
+  catalogRetry.dataset.catalogRetry = "";
+  catalogRetry.hidden = true;
+  catalogStatus.after(catalogRetry);
   let loadVersion = 0;
   const clearCatalog = () => {
     catalogReady = false;
@@ -184,12 +190,18 @@
   };
   const loadCatalog = async () => {
     const version = ++loadVersion;
+    // AbortSignal.timeout is absent from older Android/Safari browsers.
+    // Do not let an optional timeout prevent the request from being sent.
+    const controller = typeof AbortController === "function" ? new AbortController() : null;
+    const timeout = controller ? window.setTimeout(() => controller.abort(), 15000) : null;
     clearCatalog();
+    catalogRetry.hidden = true;
     if (dialog.open) dialog.close();
     catalogStatus.textContent = "Chargement du catalogue…";
     try {
     const response = await fetch("/api/products/catalog", {
-      credentials: "include", cache: "no-store", signal: AbortSignal.timeout(15000),
+      credentials: "include", cache: "no-store",
+      ...(controller ? { signal: controller.signal } : {}),
     });
     if (version !== loadVersion) return;
     if (response.status === 401) { location.replace("/connexion"); return; }
@@ -227,9 +239,16 @@
     } catch {
       if (version !== loadVersion) return;
       clearCatalog();
-      catalogStatus.textContent = "Catalogue indisponible. Rechargez la page pour consulter les tarifs.";
+      catalogStatus.textContent = "Catalogue indisponible. Vérifiez votre connexion puis réessayez pour consulter les tarifs.";
+      catalogRetry.hidden = false;
+    } finally {
+      if (timeout !== null) window.clearTimeout(timeout);
     }
   };
+  catalogRetry.addEventListener("click", loadCatalog);
+  window.addEventListener("online", () => {
+    if (!catalogReady && !catalogRetry.hidden) loadCatalog();
+  });
   loadCatalog();
   window.addEventListener("pageshow", event => {
     if (event.persisted) loadCatalog();
