@@ -19,6 +19,30 @@ import sonarapay_payments as payments
 from server import Handler
 
 
+# Explicit pre-switch configuration for historical automatic-payment regressions.
+LEGACY_AUTOMATIC = {key: value for key, value in client.OPERATORS.items()
+                    if not key.endswith("_bf") and key != "celtiis_bj"}
+
+
+class ManualPolicyTests(unittest.TestCase):
+    def test_every_country_rejects_new_automatic_deposits_before_database_or_provider(self):
+        self.assertEqual(client.DEPOSIT_OPERATORS, {})
+        with patch.object(client, "configured", return_value=True), \
+                patch.object(auth_backend, "connect") as connect, \
+                patch.object(client, "create") as create:
+            for prefix in client.COUNTRY_CODES:
+                self.assertEqual(client.deposit_operators(prefix), {})
+                for operator in client.OPERATORS:
+                    with self.assertRaises(auth_backend.AuthError) as denied:
+                        payments.prepare({"phone": prefix + "70000000"}, {
+                            "amount": 2500, "operatorId": operator,
+                            "phone": "70000000", "requestId": str(uuid.uuid4()),
+                        })
+                    self.assertEqual(denied.exception.status, 403)
+            connect.assert_not_called()
+            create.assert_not_called()
+
+
 class VerificationTests(unittest.TestCase):
     def test_reconciliation_endpoint_is_read_only_bounded_and_cached(self):
         row = {"reference": "PAY-" + str(uuid.uuid4()), "description": "example",
@@ -94,6 +118,9 @@ class VerificationTests(unittest.TestCase):
             self.assertEqual(request.call_args.args[2]["operatorId"], "mtn_bj")
 
     def setUp(self):
+        legacy = patch.dict(client.DEPOSIT_OPERATORS, LEGACY_AUTOMATIC, clear=True)
+        legacy.start()
+        self.addCleanup(legacy.stop)
         self.order = {"id": uuid.uuid4(), "amount_fcfa": 500, "provider_reference": "test-reference",
                       "operator_id": "mtn_bj", "payer_phone": "+2290100000000"}
         self.proof = {"reference": "test-reference", "transaction": {
@@ -162,6 +189,10 @@ class VerificationTests(unittest.TestCase):
 @unittest.skipUnless(os.environ.get("RUN_ACCOUNT_INTEGRATION_TESTS") == "1", "Development DB opt-in")
 class PaymentTests(unittest.TestCase):
     def setUp(self):
+        # Recreate pre-switch orders without enabling automatic payments in the app.
+        legacy = patch.dict(client.DEPOSIT_OPERATORS, LEGACY_AUTOMATIC, clear=True)
+        legacy.start()
+        self.addCleanup(legacy.stop)
         # Fixed provider fixtures exercise legacy 500-FCFA orders independently
         # of today's admission policy, covered by test_deposit_minimum.
         admission = patch.object(payments, "MIN_DEPOSIT_FCFA", 500)
@@ -411,20 +442,24 @@ class PaymentTests(unittest.TestCase):
                 payments.advance(order)
                 self.assertEqual(self.balance(), 2000)
 
-    def test_burkina_new_deposits_manual_and_pending_until_admin_review(self):
+    @patch.dict(client.DEPOSIT_OPERATORS, {}, clear=True)
+    def test_all_countries_manual_deposits_pending_until_admin_review(self):
         import manual_deposits
-        self.user, self.token = self.member("+226")
-        before = self.balance()
-        for operator, name in (("orange_bf", "Orange Money"),
-                               ("moov_bf", "Moov Money"), ("telecel_bf", "Telecel Cash")):
+        operators = [(operator, value["operatorName"])
+                     for operator, value in client.OPERATORS.items() if operator != "celtiis_bj"]
+        for operator, name in operators:
             with self.subTest(operator=operator):
+                prefix = next(prefix for prefix, code in client.COUNTRY_CODES.items()
+                              if operator.endswith("_" + code.lower()))
+                self.user, self.token = self.member(prefix)
+                before = self.balance()
                 with self.assertRaises(auth_backend.AuthError) as denied:
                     payments.prepare(self.user, {**self.body(), "operatorId": operator})
                 self.assertEqual(denied.exception.status, 403)
                 with auth_backend.connect() as conn, conn.cursor() as cur:
                     cur.execute("""INSERT INTO shineray_admin_resources(kind,value)
                         VALUES ('channel',%s::jsonb) RETURNING id""", (json.dumps({
-                            "countryCode": "+226", "operatorName": name,
+                            "countryCode": prefix, "operatorName": name,
                             "isActive": True, "receiverName": "Test fixture",
                             "receiverNumber": "70000000", "ussdTemplate": "*123#",
                         }),))
@@ -442,6 +477,25 @@ class PaymentTests(unittest.TestCase):
                     with auth_backend.connect() as conn, conn.cursor() as cur:
                         cur.execute("DELETE FROM shineray_manual_deposits WHERE channel_id=%s", (channel_id,))
                         cur.execute("DELETE FROM shineray_admin_resources WHERE id=%s", (channel_id,))
+
+    @patch.dict(client.DEPOSIT_OPERATORS, {"moov_bf": client.OPERATORS["moov_bf"]})
+    def test_all_manual_keeps_initiated_automatic_orders_settling_once(self):
+        for prefix, operator in (("+229", "moov_bj"), ("+226", "moov_bf"),
+                                 ("+228", "moov_tg"), ("+225", "orange_ci"),
+                                 ("+237", "mtn_cm")):
+            with self.subTest(country=prefix):
+                self.user, self.token = self.member(prefix)
+                order = payments.advance(payments.prepare(self.user, {
+                    **self.body(), "operatorId": operator}), initiate=True)
+                self.references[order["provider_reference"]]["transaction"]["status"] = "successful"
+                with patch.dict(client.DEPOSIT_OPERATORS, {}, clear=True):
+                    result = payments.advance(self.allow_check(order))
+                    self.assertTrue(result["credited_at"])
+                    self.assertEqual(self.balance(), 2000)
+                    payments.advance(result)
+                    self.assertEqual(self.balance(), 2000)
+                    self.assertEqual(payments.public(result)["countryCode"], prefix)
+        self.assertEqual(self.create.call_count, 5)
 
     @patch.dict(client.DEPOSIT_OPERATORS, {
         key: client.OPERATORS[key] for key in ("orange_bf", "moov_bf", "telecel_bf")
@@ -745,6 +799,9 @@ class PaymentTests(unittest.TestCase):
     def test_api_ownership_authentication_and_country_routing(self):
         other, other_token = self.member("+226")
         order = payments.prepare(self.user, self.body())
+        manual_only = patch.dict(client.DEPOSIT_OPERATORS, {}, clear=True)
+        manual_only.start()
+        self.addCleanup(manual_only.stop)
         server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
@@ -760,8 +817,8 @@ class PaymentTests(unittest.TestCase):
             self.assertEqual(get("/api/sonarapay/payments/" + str(order["id"]), other_token)[0], 404)
             status, result = get("/api/payment-channels/me", self.token)
             self.assertEqual(status, 200)
-            self.assertEqual(result["provider"], "mixed")
-            self.assertEqual({row["id"] for row in result["channels"] if row["provider"] == "sonarapay"}, {"mtn_bj", "moov_bj"})
+            self.assertEqual(result["provider"], "manual")
+            self.assertTrue(all(row["provider"] == "manual" for row in result["channels"]))
             status, result = get("/api/payment-channels/me", other_token)
             self.assertEqual(status, 200)
             self.assertEqual(result["provider"], "manual")
@@ -773,17 +830,17 @@ class PaymentTests(unittest.TestCase):
             togo, togo_token = self.member("+228")
             status, result = get("/api/payment-channels/me", togo_token)
             self.assertEqual(status, 200)
-            self.assertEqual(result["provider"], "sonarapay")
+            self.assertEqual(result["provider"], "manual")
             self.assertEqual(result["countryCode"], "+228")
             self.assertEqual(result["phoneLength"], 8)
-            self.assertEqual({row["id"] for row in result["channels"]},
-                             {"tmoney_tg", "moov_tg"})
+            self.assertTrue(all(row["provider"] == "manual" for row in result["channels"]))
             ci, ci_token = self.member("+225")
             cm, cm_token = self.member("+237")
             status, result = get("/api/payment-channels/me", cm_token)
             self.assertEqual(status, 200)
             self.assertEqual(result["phoneLength"], 9)
-            self.assertEqual({row["id"] for row in result["channels"]}, {"mtn_cm", "orange_cm"})
+            self.assertEqual(result["provider"], "manual")
+            self.assertTrue(all(row["provider"] == "manual" for row in result["channels"]))
             resource_id = None
             try:
                 with auth_backend.connect() as conn, conn.cursor() as cur:
@@ -795,9 +852,9 @@ class PaymentTests(unittest.TestCase):
                     resource_id = cur.fetchone()["id"]
                 status, result = get("/api/payment-channels/me", ci_token)
                 self.assertEqual(status, 200)
-                self.assertEqual(result["provider"], "mixed")
+                self.assertEqual(result["provider"], "manual")
                 automatic = {row["id"] for row in result["channels"] if row["provider"] == "sonarapay"}
-                self.assertEqual(automatic, {"orange_ci", "mtn_ci", "moov_ci"})
+                self.assertEqual(automatic, set())
                 wave = next(row for row in result["channels"] if row["id"] == resource_id)
                 self.assertEqual(wave["provider"], "manual")
                 self.assertEqual(wave["receiverNumber"], "0700000000")

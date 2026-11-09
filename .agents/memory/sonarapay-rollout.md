@@ -35,34 +35,15 @@ l’opérateur et le payeur, puis consulter le statut individuel avant crédit.
 Une absence dans cette liste bornée ou une erreur de lecture ne prouve jamais
 un échec et n’autorise pas à relancer un encaissement.
 
-Les paiements automatiques concernent le Bénin (MTN et Moov), le Togo,
-la Côte d’Ivoire hors Wave et le Cameroun.
+Les nouveaux dépôts de tous les pays doivent passer en manuel.
 
-**Why:** après avoir réactivé le Burkina Faso, l’utilisateur a demandé de mettre
-la Côte d’Ivoire en automatique en laissant Wave manuel, et tous les opérateurs
-camerounais en automatique.
+**Why:** l’utilisateur a demandé « Met moi tout les pays sur manuel »,
+remplaçant les choix automatiques précédents.
 
-**How to apply:** en Côte
-d’Ivoire, proposer Orange/MTN/Moov en automatique et conserver les coordonnées Wave
-actives de l’administration en manuel. Au Cameroun, utiliser MTN et Orange,
-avec XAF dans les demandes et les contrôles de confirmation. Préserver le suivi
-des anciennes demandes et les autres pays ; toute extension exige une nouvelle demande.
-
-Les nouveaux dépôts du Burkina Faso doivent passer en manuel.
-
-**Why:** l’utilisateur a demandé « Met moi le Burkina sur manuel », remplaçant
-son choix automatique précédent.
-
-**How to apply:** utiliser les canaux actifs configurés dans l’administration,
-avec validation manuelle ; conserver le suivi et le règlement des demandes
-automatiques déjà initiées, sans lancer de nouveaux paiements automatiques.
-
-MTN Bénin et Moov Bénin doivent suivre le flux automatique.
-
-**Why:** l’utilisateur a demandé « Remet mtn bénin sur automatique », remplaçant son choix manuel précédent.
-
-**How to apply:** proposer MTN et Moov en automatique pour les nouveaux dépôts,
-sans interrompre le suivi ni la validation des anciennes demandes manuelles.
+**How to apply:** utiliser uniquement les canaux actifs configurés dans
+l’administration, avec validation manuelle ; conserver le suivi et le règlement
+des demandes automatiques déjà initiées, sans lancer de nouveaux paiements
+automatiques. Ne pas inventer des coordonnées de réception manquantes.
 
 Pour les dépôts au Bénin, proposer uniquement MTN et Moov, sans Celtiis.
 
