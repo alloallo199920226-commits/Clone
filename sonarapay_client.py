@@ -24,9 +24,12 @@ OPERATORS = {
     "mtn_cm": {"id": "mtn_cm", "operatorName": "MTN Mobile Money", "logoText": "MTN", "logoColor": "#ffdd00"},
     "orange_cm": {"id": "orange_cm", "operatorName": "Orange Money", "logoText": "Orange", "logoColor": "#f97316"},
 }
-# Keep the full catalog for existing orders. All new deposits are manual.
+# Keep the full catalog for existing orders; Celtiis is disabled for new deposits.
 COUNTRY_CODES = {"+229": "BJ", "+226": "BF", "+228": "TG", "+225": "CI", "+237": "CM"}
-DEPOSIT_OPERATORS = {}
+DEPOSIT_OPERATORS = {key: OPERATORS[key] for key in
+                     ("mtn_bj", "moov_bj", "orange_bf", "moov_bf", "telecel_bf",
+                      "tmoney_tg", "moov_tg", "orange_ci", "mtn_ci", "moov_ci",
+                      "mtn_cm", "orange_cm")}
 
 
 def currency(phone):
