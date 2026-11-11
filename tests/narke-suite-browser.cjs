@@ -138,7 +138,7 @@ with auth_backend.connect() as conn, conn.cursor() as cur:
   assert.equal((await get("/api/me")).balance_fcfa, me.balance_fcfa);
   await open("/service-client");
   const destinations = await evaluate("[...document.querySelectorAll('[data-contact]')].map(a=>a.href)");
-  assert.deepEqual(destinations, ["https://t.me/Narkeyatch", "https://chat.whatsapp.com/LkpOgjNReS5DIhLPV48Sgz?s=cl&p=i&mlu=4&ilr=4&iam=2", "https://t.me/+uZ-9XZeYk35lOWU0"]);
+  assert.deepEqual(destinations, ["https://t.me/Narkeyatch", "https://chat.whatsapp.com/FsLLzRGELbHDBefDY3JLQp?s=cl&p=i&mlu=4&ilr=4&iam=2", "https://t.me/+uZ-9XZeYk35lOWU0"]);
   assert(await evaluate("[...document.querySelectorAll('[data-contact]')].every(a=>a.rel.includes('noopener'))"));
   await open("/historique-recharges");
   const activities = (await get("/api/activity?kind=recharge")).activities;

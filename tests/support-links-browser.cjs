@@ -1,7 +1,7 @@
 const assert = require("node:assert/strict");
 
 module.exports = async ({call, evaluate, navigate, waitFor, screenshot}) => {
-  const whatsapp = "https://chat.whatsapp.com/LkpOgjNReS5DIhLPV48Sgz?s=cl&p=i&mlu=4&ilr=4&iam=2";
+  const whatsapp = "https://chat.whatsapp.com/FsLLzRGELbHDBefDY3JLQp?s=cl&p=i&mlu=4&ilr=4&iam=2";
   const group = "https://t.me/+uZ-9XZeYk35lOWU0";
   const support = "https://t.me/Narkeyatch";
   const popupSupport = "https://whatsapp.com/channel/0029VbEIGFwCXC3P9ltlHF02";
