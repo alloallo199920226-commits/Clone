@@ -20,10 +20,10 @@ from server import Handler
 
 
 class ManualPolicyTests(unittest.TestCase):
-    def test_current_automatic_policy_covers_all_five_countries(self):
+    def test_current_policy_keeps_burkina_manual_and_other_countries_automatic(self):
         expected = {
             "+229": {"mtn_bj", "moov_bj"},
-            "+226": {"orange_bf", "moov_bf", "telecel_bf"},
+            "+226": set(),
             "+228": {"tmoney_tg", "moov_tg"},
             "+225": {"orange_ci", "mtn_ci", "moov_ci"},
             "+237": {"mtn_cm", "orange_cm"},
@@ -32,6 +32,20 @@ class ManualPolicyTests(unittest.TestCase):
             self.assertEqual(set(client.deposit_operators(prefix)), operators)
         self.assertNotIn("celtiis_bj", client.DEPOSIT_OPERATORS)
         self.assertTrue(client.manual_channel_allowed("+225", "Wave"))
+
+    def test_burkina_rejects_new_automatic_deposits_before_database_or_provider(self):
+        with patch.object(client, "configured", return_value=True), \
+                patch.object(auth_backend, "connect") as connect, \
+                patch.object(client, "create") as create:
+            for operator in ("orange_bf", "moov_bf", "telecel_bf"):
+                with self.assertRaises(auth_backend.AuthError) as denied:
+                    payments.prepare({"phone": "+22670000000"}, {
+                        "amount": 2500, "operatorId": operator,
+                        "phone": "70000000", "requestId": str(uuid.uuid4()),
+                    })
+                self.assertEqual(denied.exception.status, 403)
+            connect.assert_not_called()
+            create.assert_not_called()
 
     @patch.dict(client.DEPOSIT_OPERATORS, {}, clear=True)
     def test_every_country_rejects_new_automatic_deposits_before_database_or_provider(self):
@@ -102,7 +116,7 @@ class VerificationTests(unittest.TestCase):
 
     def test_celtiis_disabled_for_new_deposits_but_history_preserved(self):
         self.assertEqual(set(client.deposit_operators("+229")), {"mtn_bj", "moov_bj"})
-        self.assertEqual(set(client.deposit_operators("+226")), {"orange_bf", "moov_bf", "telecel_bf"})
+        self.assertEqual(client.deposit_operators("+226"), {})
         self.assertEqual(set(client.deposit_operators("+228")), {"tmoney_tg", "moov_tg"})
         with patch.object(client, "configured", return_value=True), \
                 patch.object(auth_backend, "connect") as connect:
@@ -821,11 +835,10 @@ class PaymentTests(unittest.TestCase):
                              {"mtn_bj", "moov_bj"})
             status, result = get("/api/payment-channels/me", other_token)
             self.assertEqual(status, 200)
-            self.assertEqual(result["provider"], "sonarapay")
+            self.assertEqual(result["provider"], "manual")
             self.assertEqual(result["countryCode"], "+226")
             self.assertEqual(result["phoneLength"], 8)
-            self.assertEqual({row["id"] for row in result["channels"]},
-                             {"orange_bf", "moov_bf", "telecel_bf"})
+            self.assertFalse(any(row.get("provider") == "sonarapay" for row in result["channels"]))
             self.assertNotIn("key_fingerprint", json.dumps(get("/api/sonarapay/payments", self.token)[1]))
             self.assertEqual(other["phone"][:4], "+226")
             togo, togo_token = self.member("+228")

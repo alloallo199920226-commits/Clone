@@ -35,13 +35,15 @@ l’opérateur et le payeur, puis consulter le statut individuel avant crédit.
 Une absence dans cette liste bornée ou une erreur de lecture ne prouve jamais
 un échec et n’autorise pas à relancer un encaissement.
 
-Les nouveaux dépôts du Bénin, Burkina Faso, Togo, Côte d’Ivoire et Cameroun
-doivent suivre le flux automatique, sauf Wave Côte d’Ivoire qui reste manuel.
+Les nouveaux dépôts du Burkina Faso suivent le flux manuel. Les dépôts du
+Bénin, Togo, Côte d’Ivoire et Cameroun suivent le flux automatique, sauf
+Wave Côte d’Ivoire qui reste manuel.
 
-**Why:** l’utilisateur a demandé « Remet moi tout les pays sur le flux
-automatique comme avant », remplaçant la désactivation globale précédente.
+**Why:** après avoir rétabli tous les pays en automatique, l’utilisateur a
+demandé « Met moi le Burkina sur le flux manuel ».
 
-**How to apply:** proposer MTN/Moov au Bénin, Orange/Moov/Telecel au Burkina,
+**How to apply:** utiliser les canaux manuels administratifs au Burkina ;
+proposer MTN/Moov au Bénin,
 T-Money/Moov au Togo, Orange/MTN/Moov en Côte d’Ivoire et MTN/Orange au Cameroun.
 Conserver XAF au Cameroun, XOF ailleurs, le suivi des anciennes demandes et
 la validation des dépôts manuels déjà soumis. Celtiis reste désactivé.
