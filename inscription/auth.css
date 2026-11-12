@@ -1,74 +1,156 @@
 @import url("/connexion/auth.css");
 
-/* The registration page shares NARKE's login system; these overrides let the
-   longer form flow naturally without changing the login screen. */
+/* Signup keeps the approved Zoomc login scene and component language, with room
+   for the additional fields and a naturally scrolling registration layout. */
 .auth-page {
+  grid-template-rows: minmax(760px, 1fr) auto;
   min-height: 100vh;
   min-height: 100dvh;
   overflow: visible;
-  background:
-    linear-gradient(180deg, rgba(0, 19, 33, 0) 0%, #001321 100%) bottom / 100% 142px no-repeat,
-    url("/pages/assets/narke-water-reference.png") center bottom / 100% 114px no-repeat,
-    radial-gradient(ellipse at 50% 57%, rgba(0, 164, 209, .14), transparent 50%),
-    #001321;
 }
-.hero-art {
-  width: 100%;
-  aspect-ratio: 498 / 316;
-  overflow: hidden;
-  background: #031f35;
-}
-.hero-image { display: block; width: 100%; height: 100%; object-fit: cover; }
+
 .auth-card {
-  min-height: 0;
-  margin-bottom: 0;
-  padding-bottom: 34px;
+  width: min(calc(100% - 48px), 460px);
+  margin: 30px 4vw 38px 0;
 }
-.auth-card h1 {
-  font-size: 22px;
-  line-height: 1.3;
-}
-.auth-subtitle { margin-bottom: 16px; }
+
+.card-heading { margin-bottom: 18px; }
+.auth-card h1 { max-width: 460px; }
+.auth-subtitle { margin-top: 9px; }
+.auth-panel { padding: 30px 28px 26px; }
 .auth-card form { gap: 12px; }
+
 .phone-field .field-icon {
   width: 42px;
   flex-basis: 42px;
-  border-right: 1px solid rgba(169, 210, 230, .48);
+  border-right: 1px solid rgba(214, 215, 230, .37);
 }
+
 .phone-field { padding-left: 14px; }
-.phone-input, .password-field input, .auth-card form > .field {
-  font-size: 16px;
-}
-.auth-card form > .field {
-  height: 45px;
-  min-height: 45px;
-}
-.auth-card .primary-button { margin-top: 2px; }
-.form-divider { margin-bottom: 4px; }
-.switch-copy { margin-top: 0; }
-.password-toggle { touch-action: manipulation; }
+.phone-input,
+.password-field input,
+.referral-input { font-size: 16px; }
+
 .referral-input {
+  display: block;
   width: 100%;
   min-width: 0;
   height: 100%;
   border: 0;
+  border-radius: 0;
+  outline: 0;
+  box-shadow: none;
   padding: 0;
   background: transparent;
-  color: var(--white);
-  font: inherit;
-  font-size: 16px;
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 400;
 }
-.referral-input::placeholder { color: #d1e0e9; opacity: 1; }
+
+.referral-input::placeholder {
+  color: #d0d0da;
+  opacity: 1;
+}
+
 .referral-field:focus-within {
-  border-color: var(--cyan);
-  box-shadow: inset 0 0 0 1px rgba(0, 223, 255, .36), 0 0 0 2px rgba(0, 223, 255, .16);
+  border-color: rgba(225, 226, 239, .62);
 }
-.auth-page .auth-card input:focus-visible {
-  outline: 2px solid var(--cyan-soft);
-  outline-offset: 2px;
+
+@layer login-fields {
+  .auth-page .referral-field .referral-input,
+  .auth-page .referral-field .referral-input:focus-visible {
+    background-color: transparent !important;
+    color: var(--text) !important;
+    -webkit-text-fill-color: var(--text) !important;
+    caret-color: #ff5261 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+  .auth-page .referral-field .referral-input::placeholder {
+    color: #d0d0da !important;
+    -webkit-text-fill-color: #d0d0da !important;
+  }
 }
+
+.primary-button { margin-top: 2px; }
+.form-divider { margin-bottom: 1px; }
+.password-toggle { touch-action: manipulation; }
+
+@media (max-width: 900px) and (min-width: 701px) {
+  .auth-page {
+    grid-template-columns: minmax(270px, .72fr) minmax(410px, 1.28fr);
+    grid-template-rows: minmax(760px, 1fr) auto;
+  }
+
+  .auth-card {
+    width: min(calc(100% - 24px), 450px);
+    margin-right: 14px;
+  }
+
+  .auth-panel { padding: 27px 24px 24px; }
+  .brand-lockup { margin-left: 5vw; }
+  .brand-lockup img { width: min(29vw, 300px); }
+  .benefits { gap: 18px; }
+  .benefit { gap: 8px; }
+  .benefit p { font-size: 11px; }
+}
+
+@media (max-width: 700px) {
+  .auth-page {
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .auth-card {
+    width: calc(100% - 34px);
+    max-width: 460px;
+    margin: clamp(116px, 31vw, 198px) 0 0;
+  }
+
+  .card-heading { margin-bottom: 15px; }
+  .auth-card h1 { max-width: 350px; font-size: clamp(24px, 6.5vw, 30px); }
+  .auth-panel { padding: 20px 18px 21px; }
+  .auth-card form { gap: 12px; }
+  .field { height: 55px; min-height: 55px; border-radius: 14px; }
+  .primary-button { min-height: 57px; font-size: 18px; }
+  .submit-arrow { top: 5px; width: 45px; height: 45px; }
+
+  .benefits {
+    z-index: 1;
+    display: flex;
+    width: calc(100% - 38px);
+    max-width: 460px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 13px 12px;
+    margin: 19px auto 0;
+    padding: 15px 4px 2px;
+    border-top-color: rgba(235, 239, 255, .18);
+    background: transparent;
+    backdrop-filter: none;
+  }
+
+  .benefit { flex: 1 1 calc(50% - 16px); gap: 8px; }
+  .benefit:last-child { flex-basis: 100%; justify-content: center; }
+  .benefit-rule { display: none; }
+  .benefit-symbol { width: 25px; height: 28px; flex-basis: 25px; }
+  .benefit-symbol.bolt { font-size: 31px; }
+  .benefit p { font-size: 11px; }
+  .country-sheet { height: min(64dvh, 560px); }
+}
+
 @media (max-width: 380px) {
-  .auth-page { padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+  .auth-card { width: calc(100% - 28px); }
+  .auth-panel { padding-right: 14px; padding-left: 14px; }
   .auth-card form { gap: 11px; }
-  .auth-card h1 { font-size: 20px; }
+  .field { padding-right: 12px; padding-left: 12px; }
+  .phone-field { padding-right: 11px; padding-left: 12px; }
+  .password-field::before { left: 51px; }
+  .benefits { width: calc(100% - 32px); }
+}
+
+@media (max-height: 760px) and (min-width: 701px) {
+  .auth-page { grid-template-rows: minmax(760px, 1fr) auto; }
+  .auth-card { margin-top: 18px; margin-bottom: 24px; }
 }
