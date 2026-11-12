@@ -5,17 +5,6 @@ description: User expectations for faithful screen reproduction and meaningful v
 
 Reproduce the user’s supplied screen composition and text closely rather than substituting a different interface.
 
-Les nouvelles références de connexion et d’inscription utilisent Zoomc E-Bike,
-son vélo et son ambiance rouge/bleu, uniquement pour ces deux pages.
-
-**Why:** l’utilisateur a demandé de refaire la connexion selon sa capture Zoomc,
-puis de faire pareil pour l’inscription ; cette demande ne remplace pas la marque
-ni les écrans NARKE du reste de la plateforme.
-
-**How to apply:** conserver les parcours réels téléphone/pays/mot de passe,
-confirmation et parrainage facultatif, sans inventer des profils de connexion
-à partir du libellé de la maquette.
-
 La reconstruction NARKE concerne la connexion, l’inscription, l’accueil et les
 écrans clients de retrait, service, historique, compte, missions et équipe,
 sans modifier l’administration ni les règles financières existantes.
