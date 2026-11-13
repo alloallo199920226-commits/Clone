@@ -56,3 +56,17 @@ mtime_ms = 1793916156903
 storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:2b24cd28-b44f-4cff-bacf-135c732fa24d/9e458395-971f-454a-9559-5c42ad430dd9/911793ff-aaef-47a0-8d43-337541fa2653"
 storage_version_token = "1793916187200776"
 content_type = "text/markdown"
+
+[[outputs]]
+id = "HO9dze9pRiQ_Dwo36Fg8F"
+uri = "file://generated-artifacts/narke-administration-complete.zip"
+type = "unspecified"
+title = "Administration NARKE — ZIP complet"
+description = "Administration actuelle, interface, API, modules partagés et instructions. Sans clés secrètes ni données utilisateurs. Archive vérifiée, environ 28 Mo."
+logical_id = "6d1793fa-3eec-4d3d-be56-60d293b08a9b"
+content_hash = "sha256:824f386c89644e1150dccb26b3fb3046012c847674d48a1b66babca02ebea558"
+size = 27890151
+mtime_ms = 1794543389361
+storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:2b24cd28-b44f-4cff-bacf-135c732fa24d/6d1793fa-3eec-4d3d-be56-60d293b08a9b/d17be428-f616-4159-8957-44760f1cbcb9"
+storage_version_token = "1794543396454358"
+content_type = "application/octet-stream"
