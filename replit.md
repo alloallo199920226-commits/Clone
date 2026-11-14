@@ -13,7 +13,8 @@ historique comporte un ancien nom de marque.
 
 - Cliquez sur Run pour démarrer le workflow `Start application`.
 - Commande : `uv run python server.py`.
-- `uv` sélectionne un interpréteur compatible avec Python ≥ 3.13 et installe les dépendances verrouillées dans `uv.lock`. Ne pas lancer directement le Python 3.12 du module Replit.
+- Python 3.13 est fourni par le module Replit `python-base-3.13` et sélectionné par `.python-version`. `uv` installe les dépendances verrouillées dans `uv.lock`.
+- Publication : `uv sync --frozen --no-python-downloads` prépare les dépendances ; `uv run --no-sync python server.py` lance ensuite le serveur sans installation au démarrage.
 - Le serveur écoute sur `0.0.0.0:5000`.
 - La dépendance PostgreSQL du serveur est déclarée dans `pyproject.toml`.
 - Sur une base de développement vide, appliquer `schema.sql` avant le premier lancement ; le serveur ne crée pas les tables au démarrage.

@@ -1,4 +1,4 @@
-modules = ["web", "nodejs-20", "python-3.12", "postgresql-16"]
+modules = ["web", "nodejs-20", "postgresql-16", "python-base-3.13"]
 run = "uv run python server.py"
 [nix]
 channel = "stable-25_05"
@@ -37,5 +37,6 @@ localPort = 23636
 externalPort = 3000
 
 [deployment]
-deploymentTarget = "cloudrun"
-run = "uv run python server.py"
+deploymentTarget = "autoscale"
+run = ["uv", "run", "--no-sync", "python", "server.py"]
+build = ["uv", "sync", "--frozen", "--no-python-downloads"]
