@@ -1,5 +1,5 @@
-modules = ["web", "nodejs-20", "python-3.12"]
-run = "python3 server.py"
+modules = ["web", "nodejs-20", "python-3.12", "postgresql-16"]
+run = "uv run python server.py"
 [nix]
 channel = "stable-25_05"
 packages = ["postgresql", "unzip"]
@@ -20,13 +20,13 @@ args = "Start application"
 name = "Start application"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 server.py"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "uv run python server.py"
+waitForPort = 5000
 
 [[ports]]
 localPort = 5000
@@ -38,4 +38,4 @@ externalPort = 3000
 
 [deployment]
 deploymentTarget = "cloudrun"
-run = "python3 server.py"
+run = "uv run python server.py"

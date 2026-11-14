@@ -12,9 +12,13 @@ historique comporte un ancien nom de marque.
 ## Lancement
 
 - Cliquez sur Run pour démarrer le workflow `Start application`.
-- Commande : `python3 server.py`.
+- Commande : `uv run python server.py`.
+- `uv` sélectionne un interpréteur compatible avec Python ≥ 3.13 et installe les dépendances verrouillées dans `uv.lock`. Ne pas lancer directement le Python 3.12 du module Replit.
 - Le serveur écoute sur `0.0.0.0:5000`.
 - La dépendance PostgreSQL du serveur est déclarée dans `pyproject.toml`.
+- Sur une base de développement vide, appliquer `schema.sql` avant le premier lancement ; le serveur ne crée pas les tables au démarrage.
+- L’espace de maquettes utilise `pnpm install --frozen-lockfile` à la racine, puis son workflow existant.
+- Sans le secret `SONARAPAY_KEY`, les paiements automatiques restent indisponibles ; l’inscription et la connexion n’en dépendent pas.
 - Le serveur utilise la base PostgreSQL Replit configurée dans l'environnement ; il ne journalise pas sa chaîne de connexion.
 - `schema.sql` est la source du schéma des comptes, sessions, parrainages, portefeuilles et transactions. Les anciennes simulations restent conservées séparément et ne sont jamais utilisées dans les soldes ou historiques.
 

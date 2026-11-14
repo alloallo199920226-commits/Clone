@@ -6,3 +6,4 @@
 - [SonaraPay rollout](sonarapay-rollout.md) — MTN BJ/Wave CI manual; lost references recovered read-only; preserve historical tracking and hide provider branding.
 - [Purchased-product income](product-income-policy.md) — Every 24h; existing purchases start at activation without earlier catchup; frozen terms and original expiry.
 - [Mockup screenshot routing](mockup-screenshot-routing.md) — Screenshot tools bypass the development-domain path proxy; use the sandbox workflow’s port.
+- [Python runtime](python-runtime.md) — Use uv to select a compatible Python; the imported Replit module is older than the project's minimum.
