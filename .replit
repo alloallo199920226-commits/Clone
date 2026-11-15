@@ -1,4 +1,4 @@
-modules = ["web", "nodejs-20", "postgresql-16", "python-base-3.13"]
+modules = ["web", "nodejs-20", "python-base-3.13", "postgresql-16"]
 run = "uv run python server.py"
 [nix]
 channel = "stable-25_05"
