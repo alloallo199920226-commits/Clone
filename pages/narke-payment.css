@@ -56,7 +56,7 @@ input { font-size: 16px; }
   box-shadow: 0 30px 90px #010a17a6, 0 1px 0 #ffffffa8 inset, 0 0 0 5px #c5eff014; position: relative; min-width: 0;
   animation: narke-surface-in .5s ease both;
 }
-.deposit-card::before { position: absolute; top: -1px; left: 22px; width: 64px; height: 3px; content: ''; background: linear-gradient(90deg,#5fe4e8,#a0f4e9); }
+.deposit-card::before { position: absolute; top: -1px; left: 22px; width: 64px; height: 3px; content: ''; background: #df1e2b; }
 .deposit-card-header, .deposit-confirmation-header { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 .deposit-brand { flex: 1; margin: 0; font: 700 clamp(21px,5vw,28px)/1.15 'Avenir Next','Trebuchet MS',sans-serif; letter-spacing: -.04em; }
 .deposit-heading-tools { display: flex; align-items: center; gap: 8px; margin-left: auto; }

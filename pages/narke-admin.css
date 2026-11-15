@@ -1,122 +1,266 @@
 /* Presentation-only layer: the imported console's JavaScript remains untouched. */
 body:has(#admin-root), body:has([data-admin-deposit-form]) {
-  color-scheme: dark;
-  background: #00131e;
-  color: #f5fbff;
-  font-family: "DM Sans", Arial, sans-serif;
+  color-scheme: light;
+  background: #f1f4f9;
+  color: #152743;
+  font-family: "DM Sans", sans-serif;
 }
 #admin-root :is(.admin-login-page, .admin-state-page, .admin-page) {
-  --panel: #002b3d;
-  --line: #34bfce55;
-  --text: #f5fbff;
-  --muted: #d2e7ef;
-  --red: #00e8f5;
-  --red2: #00bcd4;
-  background: radial-gradient(ellipse at 70% 0, #00415770, transparent 65%), #00131e !important;
-  color: #f5fbff !important;
+  --panel: #fff;
+  --line: #dce4f1;
+  --text: #152743;
+  --muted: #64728a;
+  --red: #df1e2b;
+  --red2: #c91422;
+  background: #f1f4f9 !important;
+  color: #152743 !important;
 }
 #admin-root :is(.admin-login-page,.admin-page)::before {
-  background-image: linear-gradient(90deg,#00131edd,#00131e88),
-    url("/pages/assets/narke-scene-account.webp") !important;
-  background-position: center !important;
-  background-size: cover !important;
-  opacity: .2 !important;
-  mix-blend-mode: normal !important;
+  display: none !important;
+  background-image: none !important;
 }
 #admin-root :is(.admin-login-card,.admin-panel,.admin-stat-card,.admin-list-card,.admin-header,
   .admin-runtime-nav,.admin-detail-grid > div,.admin-card,.admin-modal,.admin-modal-card) {
-  background: linear-gradient(140deg, #07394b, #001725 80%) !important;
-  color: #f5fbff !important;
-  border-color: #34bfce55 !important;
-  box-shadow: 0 12px 32px #0005 !important;
+  background: #fff !important;
+  color: #152743 !important;
+  border-color: #dce4f1 !important;
+  box-shadow: 0 8px 28px rgb(17 46 89 / 8%) !important;
 }
-#admin-root :is(h1,h2,h3,h4,label,strong,.admin-stat-value,.admin-detail-value) { color: #f5fbff !important; }
-#admin-root :is(p,small,.admin-muted,.admin-detail-label,.admin-stat-label,.admin-login-help) { color: #d2e7ef !important; }
-#admin-root :is(.admin-kicker,.admin-eyebrow,.admin-login-heading em) { color: #00e8f5 !important; }
+#admin-root :is(h1,h2,h3,h4,label,strong,.admin-stat-value,.admin-detail-value) { color: #152743 !important; }
+#admin-root :is(p,small,.admin-muted,.admin-detail-label,.admin-stat-label,.admin-login-help) { color: #53627a !important; }
+#admin-root :is(.admin-kicker,.admin-eyebrow,.admin-login-heading em) { color: #df1e2b !important; }
 #admin-root .admin-login-brand img { display: block; width: 180px; max-width: 100%; height: auto; }
 #admin-root :is(.admin-primary-button,.admin-runtime-nav button.active,.admin-runtime-nav a.active) {
-  background: linear-gradient(135deg, #00e8f5, #00bcd4) !important;
-  border-color: #00e8f5 !important;
-  color: #00131e !important;
+  background: #df1e2b !important;
+  border-color: #df1e2b !important;
+  color: #fff !important;
 }
-#admin-root .admin-runtime-nav button:not(.active) { color: #e1f1f7 !important; }
-#admin-root .admin-stat-card > span { background: #004256 !important; color: #00e8f5 !important; }
+#admin-root .admin-runtime-nav button:not(.active) { color: #123d79 !important; }
+#admin-root .admin-stat-card > span { background: #eaf0f8 !important; color: #123d79 !important; }
 #admin-root :is(.admin-setting-row button,.admin-header-actions button,
   .admin-list-card button:not(.admin-danger-button),.admin-card-actions button:not(.admin-danger-button)) {
-  background: #00394b !important;
-  color: #f5fbff !important;
-  border-color: #34bfce66 !important;
+  background: #f5f7fb !important;
+  color: #123d79 !important;
+  border-color: #d3deed !important;
 }
 #admin-root :is(input,select,textarea) {
-  background: #002838 !important;
-  color: #f5fbff !important;
+  background: #fff !important;
+  color: #152743 !important;
   font-size: 16px !important;
 }
-#admin-root :is(input,textarea)::placeholder { color: #c4dce6 !important; opacity: 1; }
+#admin-root :is(input,textarea)::placeholder { color: #64728a !important; opacity: 1; }
 /* User drawers are appended to body, outside #admin-root by the imported JS. */
 body:has(#admin-root) .admin-overlay {
-  color: #f5fbff;
-  --line: #34bfce66;
+  color: #152743;
+  --line: #dce4f1;
 }
-body:has(#admin-root) .admin-user-panel {
-  background: linear-gradient(150deg, #07394b, #001725 75%) !important;
-  color: #f5fbff !important;
-}
-body:has(#admin-root) .admin-user-panel > header {
-  background: #002332 !important;
-  color: #f5fbff !important;
-}
+body:has(#admin-root) .admin-user-panel { background: #fff !important; color: #152743 !important; }
+body:has(#admin-root) .admin-user-panel > header { background: #123d79 !important; color: #fff !important; }
 body:has(#admin-root) .admin-user-panel :is(h3, strong) {
-  color: #f5fbff !important;
+  color: #152743 !important;
 }
 body:has(#admin-root) .admin-user-panel :is(small, .admin-empty, .admin-summary-grid span) {
-  color: #c4dce6 !important;
+  color: #64728a !important;
 }
 body:has(#admin-root) .admin-user-panel .admin-balance {
-  background: linear-gradient(135deg, #00536a, #002838) !important;
-  color: #f5fbff !important;
+  background: #eaf0f8 !important;
+  color: #123d79 !important;
 }
 body:has(#admin-root) .admin-user-panel :is(input, select) {
   box-sizing: border-box;
-  background: #002838 !important;
-  color: #f5fbff !important;
-  -webkit-text-fill-color: #f5fbff !important;
-  caret-color: #00e8f5;
+  background: #fff !important;
+  color: #152743 !important;
+  -webkit-text-fill-color: #152743 !important;
+  caret-color: #152743;
   opacity: 1 !important;
-  border: 1px solid #54bacc99 !important;
+  border: 1px solid #cfd9e7 !important;
   min-height: 44px;
   font-size: 16px !important;
 }
 body:has(#admin-root) .admin-user-panel input::placeholder {
-  color: #c4dce6 !important;
-  -webkit-text-fill-color: #c4dce6 !important;
+  color: #64728a !important;
+  -webkit-text-fill-color: #64728a !important;
   opacity: 1 !important;
 }
 body:has(#admin-root) .admin-user-panel :is(input, select):focus-visible {
-  outline: 2px solid #00e8f5;
-  outline-offset: 2px;
+  outline: none;
+  background: #f1f4f9 !important;
+  box-shadow: inset 0 -2px #123d79;
 }
 body:has(#admin-root) .admin-user-panel button {
   min-height: 40px;
-  background: #00394b !important;
-  color: #f5fbff !important;
-  border: 1px solid #54bacc66;
+  background: #f5f7fb !important;
+  color: #123d79 !important;
+  border: 1px solid #d3deed;
 }
 body:has(#admin-root) .admin-user-panel [data-balance="credit"] {
-  background: linear-gradient(135deg, #00e8f5, #00bcd4) !important;
-  color: #00131e !important;
+  background: #df1e2b !important;
+  color: #fff !important;
 }
 body:has(#admin-root) .admin-user-panel :is(.danger, .reject) {
   background: #762d3d !important;
 }
-#admin-root :is(th,td) { border-color: #54bacc44 !important; color: #f5fbff !important; }
-#admin-root :is(thead,thead tr,th) { background: #003347 !important; }
-#admin-root :is(tbody,tr,td) { background-color: #001d2b !important; }
+#admin-root :is(th,td) { border-color: #dce4f1 !important; color: #32445f !important; }
+#admin-root :is(thead,thead tr,th) { background: #edf2f8 !important; }
+#admin-root :is(tbody,tr,td) { background-color: #fff !important; }
 body:has([data-admin-deposit-form]) .page {
-  background: linear-gradient(145deg, #003346, #00131e 60%);
-  color: #f5fbff;
+  background: #f1f4f9;
+  color: #152743;
   min-height: 100dvh;
 }
-body:has([data-admin-deposit-form]) :is(.page-header,.page-content) { background: transparent; color: #f5fbff; }
-body:has([data-admin-deposit-form]) :is(p,label,h1) { color: #f5fbff; }
-body:has([data-admin-deposit-form]) .button-red { background: #00e8f5; color: #00131e; }
+body:has([data-admin-deposit-form]) :is(.page-header,.page-content) { background: transparent; color: #152743; }
+body:has([data-admin-deposit-form]) :is(p,label,h1) { color: #152743; }
+body:has([data-admin-deposit-form]) .button-red { background: #df1e2b; color: #fff; }
+
+/* E-BIKE Pro administration: presentation layer only; imported console JS stays intact. */
+body.ebike-admin,
+body:has(#admin-root) {
+  color-scheme: light;
+  min-height: 100dvh;
+  background: #f1f4f9 !important;
+  color: #152743 !important;
+  font-family: "DM Sans", sans-serif !important;
+}
+body.ebike-admin #admin-root :is(.admin-login-page,.admin-state-page,.admin-page) {
+  --panel: #fff;
+  --line: #dce4f1;
+  --text: #152743;
+  --muted: #64728a;
+  --red: #df1e2b;
+  --red2: #c91422;
+  background: #f1f4f9 !important;
+  color: #152743 !important;
+}
+body.ebike-admin #admin-root :is(.admin-login-page,.admin-page)::before {
+  display: none !important;
+  background-image: none !important;
+}
+body.ebike-admin #admin-root :is(.admin-login-card,.admin-panel,.admin-stat-card,.admin-list-card,
+  .admin-header,.admin-runtime-nav,.admin-detail-grid > div,.admin-card,.admin-modal,.admin-modal-card) {
+  border-color: #dce4f1 !important;
+  border-radius: 17px !important;
+  background: #fff !important;
+  color: #152743 !important;
+  box-shadow: 0 8px 28px rgb(17 46 89 / 8%) !important;
+}
+body.ebike-admin #admin-root :is(h1,h2,h3,h4,label,strong,.admin-stat-value,.admin-detail-value) {
+  color: #152743 !important;
+}
+body.ebike-admin #admin-root :is(p,small,.admin-muted,.admin-detail-label,.admin-stat-label,.admin-login-help) {
+  color: #53627a !important;
+}
+body.ebike-admin #admin-root :is(.admin-kicker,.admin-eyebrow,.admin-login-heading em) {
+  color: #df1e2b !important;
+}
+body.ebike-admin #admin-root :is(.admin-primary-button,.admin-runtime-nav button.active,
+  .admin-runtime-nav a.active) {
+  border-color: #df1e2b !important;
+  background: #df1e2b !important;
+  color: #fff !important;
+}
+body.ebike-admin #admin-root .admin-runtime-nav button:not(.active) { color: #123d79 !important; }
+body.ebike-admin #admin-root .admin-stat-card > span { background: #eaf0f8 !important; color: #123d79 !important; }
+body.ebike-admin #admin-root :is(.admin-setting-row button,.admin-header-actions button,
+  .admin-list-card button:not(.admin-danger-button),.admin-card-actions button:not(.admin-danger-button)) {
+  border-color: #d3deed !important;
+  background: #f5f7fb !important;
+  color: #123d79 !important;
+}
+body.ebike-admin #admin-root :is(input,select,textarea) {
+  border-color: #cfd9e7 !important;
+  background: #fff !important;
+  color: #152743 !important;
+}
+body.ebike-admin #admin-root :is(input,textarea)::placeholder { color: #7b8799 !important; }
+body.ebike-admin #admin-root #dashboard-view :is(.admin-stat-card,.admin-panel,.admin-list-card,
+  .admin-detail-grid > div,.admin-mini-row,.admin-announcement-card,.admin-transaction-card,
+  .admin-product-card,.admin-state-page) {
+  border-color: #dce4f1 !important;
+  background: #fff !important;
+  color: #152743 !important;
+  box-shadow: 0 6px 20px rgb(17 46 89 / 6%) !important;
+}
+body.ebike-admin #admin-root #dashboard-view :is(.admin-stat-card,.admin-panel,.admin-list-card,
+  .admin-detail-grid > div,.admin-mini-row,.admin-announcement-card,.admin-transaction-card,
+  .admin-product-card) :is(h1,h2,h3,h4,p,span,strong,small,label,em,b,td,th) {
+  color: #152743 !important;
+  -webkit-text-fill-color: #152743 !important;
+}
+body.ebike-admin #admin-root #dashboard-view :is(.admin-stat-card,.admin-mini-row) small,
+body.ebike-admin #admin-root #dashboard-view :is(.admin-muted,.admin-stat-label,.admin-detail-label) {
+  color: #64728a !important;
+  -webkit-text-fill-color: #64728a !important;
+}
+body.ebike-admin #admin-root #dashboard-view .admin-status {
+  border: 1px solid #dce4f1 !important;
+  background: #edf2f8 !important;
+  color: #123d79 !important;
+  -webkit-text-fill-color: #123d79 !important;
+}
+body.ebike-admin #admin-root #dashboard-view :is(.admin-status.pending,.admin-status.pending_review,
+  .admin-status.rejected,.admin-status.failed) {
+  border-color: #f0c8cc !important;
+  background: #fff1f2 !important;
+  color: #9e1c29 !important;
+  -webkit-text-fill-color: #9e1c29 !important;
+}
+body.ebike-admin #admin-root .admin-runtime-nav {
+  border-color: #123d79 !important;
+  background: #123d79 !important;
+  color: #fff !important;
+}
+body.ebike-admin #admin-root .admin-runtime-nav :is(button,a) { color: #fff !important; }
+body.ebike-admin #admin-root .admin-runtime-nav :is(button.active,a.active) {
+  border-color: #df1e2b !important;
+  background: #df1e2b !important;
+  color: #fff !important;
+}
+body.ebike-admin #admin-root .admin-runtime-nav::before {
+  width: 148px !important;
+  height: 54px !important;
+  border-radius: 8px;
+  background: #fff url("/pages/assets/ebike-logo.png") center / contain no-repeat !important;
+  content: "" !important;
+}
+body.ebike-admin #admin-root .admin-login-mark {
+  background: url("/pages/assets/ebike-logo.png") center / contain no-repeat !important;
+  color: transparent !important;
+  font-size: 0 !important;
+}
+body.ebike-admin #admin-root :is(input,select,textarea):focus-visible {
+  outline: none !important;
+  background: #f1f4f9 !important;
+  box-shadow: inset 0 -2px #123d79 !important;
+}
+body.ebike-admin .admin-user-panel {
+  border-color: #dce4f1 !important;
+  background: #fff !important;
+  color: #152743 !important;
+}
+body.ebike-admin .admin-user-panel > header { background: #123d79 !important; color: #fff !important; }
+body.ebike-admin .admin-user-panel :is(h3,strong) { color: #152743 !important; }
+body.ebike-admin .admin-user-panel :is(small,.admin-empty,.admin-summary-grid span) { color: #64728a !important; }
+body.ebike-admin .admin-user-panel .admin-balance { background: #eaf0f8 !important; color: #123d79 !important; }
+body.ebike-admin :is([data-admin-deposit-form],.page) {
+  background: #f1f4f9 !important;
+  color: #152743 !important;
+}
+body.ebike-admin :is([data-admin-deposit-form] .page-header,.page-header) {
+  border-color: #dce4f1 !important;
+  background: #fff !important;
+  color: #123d79 !important;
+}
+body.ebike-admin .button-red {
+  border-color: #df1e2b !important;
+  background: #df1e2b !important;
+  color: #fff !important;
+}
+body.ebike-admin #admin-root .admin-alert-grid article {
+  border: 1px solid #dce4f1 !important;
+  border-radius: 14px !important;
+  background: #eef3fa !important;
+  color: #103b78 !important;
+}
+body.ebike-admin #admin-root .admin-alert-grid article :is(strong,span) {
+  color: #103b78 !important;
+}

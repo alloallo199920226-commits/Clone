@@ -7,9 +7,9 @@ html, body { margin: 0; min-width: 320px; }
   min-height: 100dvh;
   margin: 0 auto;
   padding: 0 5px 76px;
-  background: #fff;
-  color: #181818;
-  font-family: Arial, Helvetica, sans-serif;
+  background: #f1f4f9;
+  color: #152743;
+  font-family: "DM Sans", sans-serif;
 }
 .team-brandbar {
   display: flex;
@@ -24,9 +24,9 @@ html, body { margin: 0; min-width: 320px; }
   height: 37px;
   align-items: center;
   width: 169px;
-  background: transparent;
+  background: #fff;
   padding: 0;
-  color: #fff;
+  color: #123d79;
   font-size: 26px;
   font-weight: 700;
   letter-spacing: -1.5px;
@@ -52,7 +52,7 @@ html, body { margin: 0; min-width: 320px; }
   padding: 0 20px;
   background: var(--team-red);
   color: #fff;
-  font: 14px Arial, Helvetica, sans-serif;
+  font: 600 14px "DM Sans", sans-serif;
   text-decoration: none;
   cursor: pointer;
 }
@@ -68,16 +68,16 @@ html, body { margin: 0; min-width: 320px; }
   padding: 0 13px;
   background: #fff;
   color: #c90c20;
-  font: 12px Arial, Helvetica, sans-serif;
+  font: 600 12px "DM Sans", sans-serif;
   text-decoration: none;
 }
-.team-missions-link:focus-visible { outline: 2px solid #161616; outline-offset: 2px; }
+.team-missions-link:focus-visible { outline: none; box-shadow: inset 0 -2px #123d79; }
 .team-invite {
   min-height: 155px;
   margin: 0 0 21px;
   border-radius: 6px;
   padding: 19px 11px 14px 21px;
-  background: #f1f1f1;
+  background: #fff;
 }
 .team-invite-row {
   display: grid;
@@ -88,10 +88,11 @@ html, body { margin: 0; min-width: 320px; }
 }
 .team-invite-value { overflow: hidden; color: #222; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; }
 .team-invite-label { display: block; margin-top: 3px; color: #b81b29; font-size: 13px; }
-.team-table-wrap { overflow-x: auto; background: linear-gradient(100deg, #050505, #333); color: #fff; }
+.team-table-wrap { overflow-x: auto; border: 1px solid #dce4f1; border-radius: 12px; background: #fff; color: #152743; }
 .team-commission-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
 .team-commission-table th,
-.team-commission-table td { height: 38px; border-bottom: 1px solid #ffffff26; padding: 5px 4px; text-align: center; font-weight: 400; }
+.team-commission-table td { height: 38px; border-bottom: 1px solid #e1e8f1; padding: 5px 4px; color: #32445f; text-align: center; font-weight: 400; }
+.team-commission-table th { background: #edf2f8; color: #123d79; }
 .team-commission-table th:first-child,
 .team-commission-table td:first-child { width: 51%; }
 .team-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin: 15px 0; }
@@ -101,8 +102,9 @@ html, body { margin: 0; min-width: 320px; }
   align-content: center;
   gap: 5px;
   border-radius: 5px;
-  background: linear-gradient(100deg, #050505, #333);
-  color: #fff;
+  border: 1px solid #dce4f1;
+  background: #fff;
+  color: #152743;
   text-align: center;
   font-size: 15px;
 }
@@ -110,48 +112,54 @@ html, body { margin: 0; min-width: 320px; }
   margin: 0;
   border-radius: 5px;
   padding: 16px 14px 17px;
-  background: linear-gradient(100deg, #050505, #333);
-  color: #eee;
+  border: 1px solid #dce4f1;
+  background: #fff;
+  color: #40516b;
   font-size: 13px;
   line-height: 1.43;
 }
-.team-terms h2 { margin: 0 0 10px; border-left: 3px solid #8b8b8b; padding-left: 9px; font-size: 15px; font-weight: 400; }
+.team-terms h2 { margin: 0 0 10px; border-left: 3px solid #df1e2b; padding-left: 9px; color: #152743; font-size: 15px; font-weight: 700; }
 .team-terms p { margin: 0 0 14px; }
 .team-terms p:last-of-type { margin-bottom: 10px; }
-.team-disclosure { color: #bbb; font-size: 11px; line-height: 1.4; }
+.team-disclosure { color: #64728a; font-size: 11px; line-height: 1.4; }
 .team-bottom-nav {
   position: fixed;
   z-index: 5;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  bottom: 8px;
+  right: 12px;
+  left: 12px;
   display: grid;
-  width: min(100%, 480px);
-  height: 63px;
+  width: min(calc(100% - 24px), 560px);
+  height: 70px;
   grid-template-columns: repeat(4, 1fr);
   margin: 0 auto;
-  background: linear-gradient(100deg, #050505, #252525);
+  border: 1px solid #123d79;
+  border-radius: 21px;
+  background: #123d79;
+  box-shadow: 0 9px 27px rgb(17 46 89 / 20%);
 }
 .team-bottom-nav a {
   display: grid;
   align-content: center;
   justify-items: center;
   gap: 2px;
-  color: #c9c9c9;
-  font: 12px Georgia, serif;
+  position: relative;
+  color: #fff;
+  font: 12px "DM Sans", sans-serif;
   text-decoration: none;
 }
-.team-bottom-nav a[aria-current="page"] { color: #ffd84d; }
-.team-nav-symbol { font: 21px Arial, sans-serif; line-height: 1; }
+.team-bottom-nav a[aria-current="page"] { color: #fff; }
+.team-bottom-nav a[aria-current="page"]::after { position:absolute; right:28%; bottom:0; left:28%; height:2px; border-radius:2px 2px 0 0; background:#df1e2b; content:""; }
+.team-nav-symbol { font: 21px "DM Sans", sans-serif; line-height: 1; }
 .team-status { min-height: 17px; margin: 8px 3px; color: #8b222b; font-size: 12px; }
 .team-invite .team-status:empty { display: none; }
 .team-invite .team-status { font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
 .team-status[data-state="success"] { color: #155b35; font-weight: 700; }
 .team-copy[data-copied="true"] { background: #155b35; }
 .team-detail-page { padding: 0; }
-.team-detail-page .page-header { height: 55px; background: #f1f1f1; }
+.team-detail-page .page-header { height: 55px; background: #fff; }
 .team-detail-page .page-header h1 { font-size: 15px; }
-.team-level-tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #222; }
+.team-level-tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #dce4f1; background: #fff; }
 .team-level-tab {
   display: grid;
   min-height: 77px;
@@ -162,12 +170,12 @@ html, body { margin: 0; min-width: 320px; }
   border-bottom: 1px solid transparent;
   padding: 0 2px;
   background: #fff;
-  color: #121212;
-  font: 14px Arial, Helvetica, sans-serif;
+  color: #152743;
+  font: 14px "DM Sans", sans-serif;
   cursor: pointer;
 }
-.team-level-tab[aria-selected="true"] { border-bottom-color: #111; }
-.team-level-revenue { font-size: 15px; }
+.team-level-tab[aria-selected="true"] { border-color: #123d79; background: #eaf0f8; box-shadow: inset 0 -2px #df1e2b; }
+.team-level-revenue { color: #123d79; font-size: 15px; font-weight: 700; }
 .team-detail-empty {
   display: flex;
   min-height: 385px;

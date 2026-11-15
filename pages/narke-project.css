@@ -40,6 +40,7 @@
   height: auto;
   pointer-events: none;
   mask-image: linear-gradient(90deg, transparent, #000 12%);
+  display: none;
 }
 .narke-project-page .owned-product-origin:not(.is-grant) { display: none; }
 .narke-project-page .owned-product:has(.owned-product-details:not([open])) .owned-product-image { height: 60px; }
@@ -61,42 +62,32 @@
 }
 
 body.narke-project-body {
-  --project-abyss: #00131d;
-  --project-navy: #00283b;
-  --project-petrol: #003d55;
-  --project-cyan: #00e5ff;
-  --project-cyan-dim: #00bbd8;
-  --project-white: #f5fbff;
-  --project-silver: #aabbc6;
+  --project-abyss: #f1f4f9;
+  --project-navy: #123d79;
+  --project-petrol: #e8eef7;
+  --project-cyan: #df1e2b;
+  --project-cyan-dim: #c91422;
+  --project-white: #152743;
+  --project-silver: #64728a;
   min-width: 320px;
   min-height: 100dvh;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  background:
-    radial-gradient(ellipse at 49% 29%, rgb(0 91 122 / 17%), transparent 45rem),
-    var(--project-abyss);
+  background: #f1f4f9;
   color: var(--project-white);
   font-family: "DM Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-html:has(body.narke-project-body) { background: var(--project-abyss); }
+html:has(body.narke-project-body) { background: #f1f4f9; }
 body.narke-project-body::before {
-  position: fixed;
-  z-index: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 62px;
-  background: url("/pages/assets/narke-waterline.webp") center / 100% 100% no-repeat;
-  opacity: .38;
-  pointer-events: none;
-  content: "";
+  display: none;
+  content: none;
 }
 body.narke-project-body :is(a, button, summary) { -webkit-tap-highlight-color: transparent; }
 body.narke-project-body :is(a, button, summary):focus-visible {
-  outline: 2px solid var(--project-cyan);
-  outline-offset: 3px;
+  outline: none;
+  box-shadow: inset 0 -2px #123d79;
 }
 .narke-project-page {
   position: relative;
@@ -107,12 +98,10 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   margin: 0 auto;
   overflow: hidden;
   padding: 0 0 calc(88px + env(safe-area-inset-bottom));
-  background:
-    radial-gradient(ellipse at 55% 48%, rgb(0 105 130 / 11%), transparent 34rem),
-    linear-gradient(180deg, #00131d 0%, #001a28 55%, #00131d 100%);
+  background: #f1f4f9;
   color: var(--project-white);
   font-family: "DM Sans", sans-serif;
-  box-shadow: 0 0 55px rgb(0 0 0 / 30%);
+  box-shadow: 0 12px 42px rgb(17 46 89 / 8%);
 }
 .project-brandbar {
   position: relative;
@@ -121,19 +110,17 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   height: 60px;
   grid-template-columns: 48px 1fr 84px;
   align-items: center;
-  border-bottom: 1px solid rgb(0 229 255 / 43%);
+  border-bottom: 1px solid #dce4f1;
   padding: 0 12px;
-  background:
-    linear-gradient(130deg, transparent 0 16%, rgb(0 229 255 / 15%) 16.3%, transparent 17% 74%, rgb(0 187 216 / 14%) 74.3%, transparent 75%),
-    linear-gradient(180deg, #002538, #00131d);
-  box-shadow: 0 5px 17px rgb(0 0 0 / 25%), inset 0 -1px rgb(0 229 255 / 17%);
+  background: #fff;
+  box-shadow: 0 4px 16px rgb(17 46 89 / 7%);
 }
 .project-back {
   display: grid;
   width: 40px;
   height: 40px;
   place-items: center;
-  color: var(--project-white);
+  color: var(--project-navy);
   text-decoration: none;
 }
 .project-back svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
@@ -150,15 +137,13 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   height: 209px;
   overflow: hidden;
   isolation: isolate;
-  background: #00131d;
+  background: #123d79;
 }
 .project-hero::after {
   position: absolute;
   z-index: 2;
   inset: 0;
-  background:
-    linear-gradient(90deg, transparent 26%, rgb(0 19 29 / 8%) 52%, #00131d 100%),
-    linear-gradient(0deg, rgb(0 19 29 / 15%), transparent 44%, rgb(0 19 29 / 14%));
+  display: none;
   content: "";
   pointer-events: none;
 }
@@ -168,8 +153,8 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   top: 0;
   right: 0;
   bottom: 0;
-  width: 36%;
-  background: linear-gradient(90deg, transparent 0%, #00131d 14%, #00131d 100%);
+  width: 38%;
+  background: #123d79;
   content: "";
   pointer-events: none;
 }
@@ -187,17 +172,21 @@ body.narke-project-body :is(a, button, summary):focus-visible {
 .project-hero-copy {
   position: absolute;
   z-index: 3;
-  top: 17px;
-  right: 2%;
+  top: 0;
+  right: 0;
+  bottom: 0;
   display: grid;
-  width: 29%;
+  width: 38%;
+  align-content: center;
   justify-items: center;
-  gap: 2px;
+  gap: 7px;
+  padding: 14px 10px;
+  background: #123d79;
   text-align: center;
 }
-.project-hero-copy img { width: min(100%, 132px); max-height: 43px; object-fit: contain; }
-.project-hero-copy p { margin: 7px 0 0; font-size: clamp(9px, 2.7vw, 12px); font-weight: 700; letter-spacing: .12em; }
-.project-hero-copy h1 { margin: 0; color: var(--project-cyan); font: 800 clamp(17px, 5vw, 24px)/1.1 "Manrope", sans-serif; letter-spacing: .04em; }
+.project-hero-copy img { display: none; }
+.project-hero-copy p { margin: 0; color: #ffc9cd; font-size: clamp(9px, 2.7vw, 12px); font-weight: 700; letter-spacing: .12em; }
+.project-hero-copy h1 { margin: 0; color: #fff; font: 800 clamp(17px, 5vw, 24px)/1.1 "Manrope", sans-serif; letter-spacing: .02em; }
 .owned-stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -215,12 +204,12 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   align-items: center;
   gap: 0 8px;
   overflow: hidden;
-  border: 1px solid rgb(0 229 255 / 76%);
+  border: 1px solid #dce4f1;
   border-radius: 13px;
   padding: 8px 10px;
-  background: linear-gradient(120deg, rgb(0 61 85 / 89%), rgb(0 27 43 / 96%) 63%, rgb(0 20 32 / 98%));
-  color: var(--project-white);
-  box-shadow: inset 0 0 17px rgb(0 229 255 / 12%), 0 0 11px rgb(0 187 216 / 22%), 0 6px 17px rgb(0 0 0 / 20%);
+  background: #fff;
+  color: #152743;
+  box-shadow: 0 6px 20px rgb(17 46 89 / 7%);
   animation: project-rise .5s both;
 }
 .owned-stat:nth-child(2) { animation-delay: .08s; }
@@ -230,13 +219,13 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   height: 32px;
   grid-row: span 2;
   fill: none;
-  stroke: var(--project-cyan);
+  stroke: var(--project-navy);
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.65;
-  filter: drop-shadow(0 0 4px rgb(0 229 255 / 38%));
+  filter: none;
 }
-.owned-stat-label { min-width: 0; color: #e6f7fc; font-size: 12px; line-height: 1.25; overflow-wrap: anywhere; }
+.owned-stat-label { min-width: 0; color: #53627a; font-size: 12px; line-height: 1.25; overflow-wrap: anywhere; }
 .owned-stat-value { min-width: 0; color: var(--project-cyan); font: 800 clamp(13px, 3.6vw, 20px)/1.2 "Manrope", sans-serif; overflow-wrap: anywhere; }
 .owned-product-list {
   display: grid;
@@ -250,13 +239,11 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   grid-template-columns: 111px minmax(0, 1fr);
   column-gap: 10px;
   overflow: hidden;
-  border: 1px solid rgb(0 229 255 / 75%);
+  border: 1px solid #dce4f1;
   border-radius: 14px;
   padding: 9px 10px;
-  background:
-    radial-gradient(ellipse at 12% 56%, rgb(0 182 214 / 14%), transparent 45%),
-    linear-gradient(130deg, rgb(0 51 72 / 91%), rgb(0 27 42 / 97%) 63%, #001722);
-  box-shadow: inset 0 0 17px rgb(0 229 255 / 8%), 0 0 12px rgb(0 187 216 / 19%), 0 6px 17px rgb(0 0 0 / 19%);
+  background: #fff;
+  box-shadow: 0 7px 22px rgb(17 46 89 / 7%);
   animation: project-rise .48s both;
   animation-delay: calc(var(--card-order, 0) * 70ms);
 }
@@ -266,9 +253,9 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   height: 170px;
   grid-column: 1;
   align-self: center;
-  border: 1px solid rgb(0 229 255 / 25%);
+  border: 1px solid #dce4f1;
   border-radius: 10px;
-  background: #002638;
+  background: #e8eef7;
   object-fit: cover;
   object-position: center 52%;
 }
@@ -294,14 +281,14 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   min-width: 91px;
   min-height: 29px;
   place-items: center;
-  border: 1px solid rgb(0 229 255 / 91%);
+  border: 1px solid #f2c6ca;
   border-radius: 19px;
   padding: 3px 10px;
-  background: linear-gradient(110deg, rgb(0 71 93 / 88%), rgb(0 28 43 / 92%));
+  background: #fff5f5;
   color: var(--project-cyan);
   font: 800 14px/1.2 "Manrope", sans-serif;
   white-space: nowrap;
-  box-shadow: inset 0 0 8px rgb(0 229 255 / 10%), 0 0 8px rgb(0 229 255 / 13%);
+  box-shadow: none;
 }
 .owned-product-chevron { color: var(--project-white); font: 300 27px/.8 "DM Sans", sans-serif; transition: transform .2s ease; }
 .owned-product[open] .owned-product-chevron { transform: rotate(90deg); }
@@ -325,7 +312,7 @@ body.narke-project-body :is(a, button, summary):focus-visible {
 .owned-product-row:last-child { border-bottom: 0; }
 .owned-product-row-icon { display: grid; width: 16px; height: 18px; place-items: center; color: var(--project-cyan); }
 .owned-product-row-icon svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.75; }
-.owned-product-row-label { min-width: 0; color: #dceaf0; font-size: 10.5px; line-height: 1.15; overflow-wrap: anywhere; }
+.owned-product-row-label { min-width: 0; color: #53627a; font-size: 10.5px; line-height: 1.15; overflow-wrap: anywhere; }
 .owned-product-row-value { min-width: 0; color: var(--project-white); font-size: 10.5px; font-weight: 600; line-height: 1.15; text-align: right; overflow-wrap: anywhere; }
 .owned-product-details:not([open]) .owned-product-copy { display: none; }
 .owned-empty {
@@ -333,14 +320,14 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   align-content: center;
   gap: 7px;
   margin: 4px 12px 10px;
-  border: 1px solid rgb(0 229 255 / 38%);
+  border: 1px solid #dce4f1;
   border-radius: 14px;
   padding: 19px;
-  background: linear-gradient(145deg, rgb(0 61 85 / 65%), rgb(0 24 37 / 87%));
-  color: var(--project-silver);
+  background: #fff;
+  color: #64728a;
   font-size: 12px;
 }
-.owned-empty strong { color: var(--project-white); font: 700 16px "Manrope", sans-serif; }
+.owned-empty strong { color: #152743; font: 700 16px "Manrope", sans-serif; }
 .empty-state-mark { display: grid; width: 39px; height: 39px; place-items: center; border: 1px solid var(--project-cyan-dim); border-radius: 50%; color: var(--project-cyan); font-size: 20px; }
 .project-fleet {
   position: relative;
@@ -348,13 +335,13 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   overflow: hidden;
   margin: 11px 0 -1px;
 }
-.project-fleet::after { position: absolute; inset: 0; background: linear-gradient(0deg, #00131d 0%, transparent 38%), linear-gradient(90deg, #00131d 0%, transparent 12% 88%, #00131d 100%); pointer-events: none; content: ""; }
+.project-fleet::after { display: none; content: none; }
 .project-fleet img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 57%; }
 .project-skeleton {
   min-height: 191px;
-  border: 1px solid rgb(0 229 255 / 24%);
+  border: 1px solid #dce4f1;
   border-radius: 14px;
-  background: linear-gradient(100deg, #002638 15%, #06455a 48%, #002638 80%);
+  background: linear-gradient(100deg, #e8eef7 15%, #fff 48%, #e8eef7 80%);
   background-size: 210% 100%;
   animation: project-skeleton .9s ease-in-out infinite alternate;
 }
@@ -367,22 +354,23 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   border-radius: 11px;
   margin: 13px 12px;
   padding: 12px;
-  background: #002536;
+  background: #fff5f5;
   color: var(--project-white);
   font-size: 12px;
 }
-.project-retry { min-height: 34px; flex: 0 0 auto; border: 1px solid var(--project-cyan); border-radius: 20px; padding: 0 12px; background: #00384b; color: var(--project-white); cursor: pointer; }
+.project-retry { min-height: 34px; flex: 0 0 auto; border: 1px solid #123d79; border-radius: 20px; padding: 0 12px; background: #123d79; color: #fff; cursor: pointer; }
 .owned-bottom-nav {
   position: fixed;
   z-index: 8;
   right: 0;
-  bottom: max(0px, env(safe-area-inset-bottom));
-  left: 0;
-  height: 75px;
-  border: 1px solid rgb(0 229 255 / 40%);
-  border-radius: 17px 17px 0 0;
-  background: rgb(0 28 43 / 95%);
-  box-shadow: 0 -5px 21px rgb(0 187 216 / 14%), inset 0 1px rgb(255 255 255 / 6%);
+  bottom: max(8px, env(safe-area-inset-bottom));
+  left: 12px;
+  right: 12px;
+  height: 70px;
+  border: 1px solid #123d79;
+  border-radius: 21px;
+  background: #123d79;
+  box-shadow: 0 9px 27px rgb(17 46 89 / 20%);
   backdrop-filter: blur(14px);
 }
 .owned-bottom-inner {
@@ -398,11 +386,11 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   align-content: center;
   justify-items: center;
   gap: 2px;
-  color: #e3edf2;
+  color: #fff;
   font: 500 11px "DM Sans", sans-serif;
   text-decoration: none;
 }
-.owned-bottom-inner a[aria-current="page"] { color: var(--project-cyan); }
+.owned-bottom-inner a[aria-current="page"] { color: #fff; }
 .owned-bottom-inner a[aria-current="page"]::after {
   position: absolute;
   right: 27%;
@@ -410,8 +398,7 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   left: 27%;
   height: 2px;
   border-radius: 2px 2px 0 0;
-  background: var(--project-cyan);
-  box-shadow: 0 0 10px var(--project-cyan);
+  background: #df1e2b;
   content: "";
 }
 .owned-bottom-inner svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.75; }
@@ -440,7 +427,7 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   .project-wordmark { width: 152px; max-height: 52px; }
   .project-header-craft { width: 112px; height: 58px; }
   .project-hero { height: clamp(270px, 34vw, 380px); }
-  .project-hero-copy { top: 35px; right: 4%; width: 28%; }
+  .project-hero-copy { top: 0; right: 0; bottom: 0; width: 38%; align-content: center; padding: 20px; background: #123d79; }
   .project-hero-copy img { max-height: 68px; }
   .project-hero-copy p { margin-top: 12px; font-size: 15px; }
   .project-hero-copy h1 { font-size: 32px; }
@@ -455,7 +442,7 @@ body.narke-project-body :is(a, button, summary):focus-visible {
   .owned-product-row { grid-template-columns: 17px minmax(0, 1fr) minmax(0, 1.08fr); }
   .owned-product-row-label, .owned-product-row-value { font-size: 10px; }
   .project-fleet { height: 94px; margin-top: 18px; }
-  .owned-bottom-nav { left: 50%; width: min(100%, 560px); transform: translateX(-50%); border-radius: 17px 17px 0 0; }
+  .owned-bottom-nav { right: auto; left: 50%; width: min(calc(100% - 24px), 560px); transform: translateX(-50%); border-radius: 21px; }
   .owned-bottom-inner { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {

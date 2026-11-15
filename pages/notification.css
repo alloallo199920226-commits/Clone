@@ -194,3 +194,42 @@ dialog.platform-notification-dialog::backdrop {
     margin-bottom: 9px;
   }
 }
+
+/* Shared E-BIKE Pro notice surface (standalone notification and homepage dialog). */
+:root { color-scheme: light; }
+body.notification-page {
+  background: #f1f4f9;
+  color: #152743;
+  font-family: "DM Sans", sans-serif;
+}
+.notification-card,
+dialog:has([data-notification-card]) [data-notification-card],
+.platform-notification-dialog [data-notification-card] {
+  border: 1px solid #dce4f1;
+  border-radius: 20px;
+  background: #fff;
+  color: #152743;
+  box-shadow: 0 24px 70px rgb(18 44 84 / 22%);
+  font-family: "DM Sans", sans-serif;
+}
+#notification-title { color: #123d79; font-family: "Outfit", sans-serif; }
+.notification-disclaimer { color: #52627b; }
+.notification-caveat { color: #52627b; }
+.notification-telegram a {
+  border: 1px solid #dce4f1;
+  border-radius: 11px;
+  background: #edf2f8;
+  color: #123d79 !important;
+  font-weight: 700;
+}
+.notification-actions [data-notification-close] {
+  border-radius: 11px !important;
+  background: #df1e2b !important;
+  color: #fff !important;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 700;
+}
+dialog:has([data-notification-card])::backdrop,
+dialog.platform-notification-dialog::backdrop { background: rgb(16 37 69 / 48%); }
+dialog:has([data-notification-card]),
+dialog.platform-notification-dialog { border-radius: 20px !important; }

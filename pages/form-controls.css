@@ -6,18 +6,18 @@
 @layer form-controls {
 html body :is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea, [contenteditable="true"]) {
   font-size: 16px !important;
-  border: 0 !important;
+  border: 1px solid #cfd9e7 !important;
   outline: none !important;
   box-shadow: none !important;
-  background-color: #002838 !important;
-  color: #f5fbff !important;
-  -webkit-text-fill-color: #f5fbff !important;
-  caret-color: #00e8f5;
+  background-color: #fff !important;
+  color: #152743 !important;
+  -webkit-text-fill-color: #152743 !important;
+  caret-color: #152743;
 }
 
 html body :is(input, textarea)::placeholder {
-  color: #c4dce6 !important;
-  -webkit-text-fill-color: #c4dce6 !important;
+  color: #64728a !important;
+  -webkit-text-fill-color: #64728a !important;
   opacity: 1 !important;
 }
 
@@ -32,19 +32,33 @@ html body :is(.phone-field, .deposit-phone-wrap, .input-wrap, .field-inline):foc
 /* Preserve a keyboard focus cue without drawing a contour around the field.
    Buttons, links, checkboxes and radio controls retain their focus indicators. */
 html body :is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea, [contenteditable="true"]):focus-visible {
-  background-color: #00394b !important;
+  background-color: #f1f4f9 !important;
 }
 
 /* Safari/Chrome may impose a light autofill background. Pair it with dark
    text instead of retaining the dark theme's white text on that surface. */
 html body :is(input, textarea):is(:autofill, :-webkit-autofill) {
-  color: #00131e !important;
-  -webkit-text-fill-color: #00131e !important;
-  caret-color: #00131e;
+  color: #152743 !important;
+  -webkit-text-fill-color: #152743 !important;
+  caret-color: #152743;
 }
 
 html body :is(input, select, textarea):disabled {
-  -webkit-text-fill-color: #c4dce6 !important;
+  -webkit-text-fill-color: #64728a !important;
+}
+
+html body.narke-recharge-page .recharge-amount input {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html body.narke-recharge-page .recharge-amount input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]) {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Focus remains unmistakable without a bright contour or halo. */
+html body :is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea, [contenteditable="true"]):focus-visible {
+  box-shadow: inset 0 -2px #123d79 !important;
 }
 
 }
@@ -55,11 +69,17 @@ html body :is(input, select, textarea):disabled {
 html body.deposit-page .deposit-card input,
 html body.deposit-page .deposit-card input:focus-visible,
 html body.deposit-page .deposit-card input:is(:autofill, :-webkit-autofill) {
-  background-color: #f1f7f6 !important;
-  color: #0d2639 !important;
-  -webkit-text-fill-color: #0d2639 !important;
-  caret-color: #0d2639;
+  background-color: #fff !important;
+  color: #152743 !important;
+  -webkit-text-fill-color: #152743 !important;
+  caret-color: #152743;
   opacity: 1;
+}
+
+html body.deposit-page .deposit-card input:focus-visible {
+  background-color: #f1f4f9 !important;
+  outline: none !important;
+  box-shadow: inset 0 -2px #123d79 !important;
 }
 
 html body.deposit-page .deposit-card input::placeholder {
