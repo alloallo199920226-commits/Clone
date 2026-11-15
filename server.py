@@ -291,6 +291,8 @@ class Handler(BaseHTTPRequestHandler):
                     "auth.css": "text/css; charset=utf-8",
                     "auth.js": "text/javascript; charset=utf-8",
                 })
+            if folder == "connexion":
+                allowed_files["login.css"] = "text/css; charset=utf-8"
             for filename, media_type in allowed_files.items():
                 if route == f"/{folder}/{filename}":
                     return ROOT / folder / filename, media_type

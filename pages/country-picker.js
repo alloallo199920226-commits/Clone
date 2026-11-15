@@ -7,6 +7,8 @@ window.setupCountryPicker = () => {
   const trigger = document.querySelector(".country-trigger");
   const countryInput = document.querySelector('input[name="country"]');
   const label = document.querySelector("[data-country-label]");
+  const countryCodeLabel = document.querySelector("[data-country-code-label]");
+  const countryFlag = document.querySelector("[data-country-flag]");
   const prefix = document.querySelector("[data-phone-prefix]");
   const options = overlay.querySelector(".country-options");
   const closeButton = overlay.querySelector("[data-country-close]");
@@ -132,7 +134,14 @@ window.setupCountryPicker = () => {
     if (option && overlay.dataset.stage === "ready") {
       countryInput.value = option.dataset.countryCode;
       label.textContent = `${option.dataset.countryName} (${option.dataset.countryCode})`;
-      prefix.textContent = `${option.dataset.countryCode} `;
+      if (countryCodeLabel) countryCodeLabel.textContent = option.dataset.countryCode;
+      if (countryFlag) {
+        countryFlag.textContent = ({
+          "+225": "🇨🇮", "+226": "🇧🇫", "+227": "🇳🇪",
+          "+228": "🇹🇬", "+229": "🇧🇯", "+237": "🇨🇲",
+        })[option.dataset.countryCode] || "🌍";
+      }
+      if (prefix) prefix.textContent = `${option.dataset.countryCode} `;
       countryInput.dispatchEvent(new Event("change", { bubbles: true }));
       closeCountryPicker();
       return;

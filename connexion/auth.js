@@ -2,7 +2,19 @@
   const { countryInput, trigger } = window.setupCountryPicker();
   const form = document.querySelector("[data-auth-form]");
   const passwordToggle = document.querySelector("[data-password-toggle]");
+  const phoneInput = form.elements.phone;
+  const compactViewport = window.matchMedia("(max-width: 340px)");
+  const updatePhonePlaceholder = () => {
+    phoneInput.placeholder = compactViewport.matches ? "Téléphone" : "Numéro de téléphone";
+  };
+  updatePhonePlaceholder();
+  compactViewport.addEventListener("change", updatePhonePlaceholder);
   const passwordInput = form.elements.password;
+  const passwordHelp = document.querySelector("[data-password-help]");
+  passwordHelp?.addEventListener("click", () => {
+    document.querySelector(".demo-notice").textContent =
+      "La récupération du mot de passe n’est pas disponible pour le moment.";
+  });
   passwordToggle?.addEventListener("click", () => {
     const visible = passwordInput.type === "password";
     passwordInput.type = visible ? "text" : "password";
