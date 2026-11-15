@@ -18,8 +18,10 @@
       dialog.className = "platform-notification-dialog";
       dialog.setAttribute("aria-labelledby", "notification-title");
       const close = card.querySelector("[data-notification-close]");
-      close.setAttribute("aria-label", "Fermer la notification pour cette visite");
-      close.addEventListener("click", () => dialog.close());
+      card.querySelectorAll("[data-notification-close]").forEach(button => {
+        button.setAttribute("aria-label", "Fermer la notification pour cette visite");
+        button.addEventListener("click", () => dialog.close());
+      });
       dialog.append(card);
       document.body.append(dialog);
       dialog.showModal();

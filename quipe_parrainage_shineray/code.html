@@ -9,30 +9,30 @@
   <script src="/pages/narke-suite.js" defer></script>
   <script src="/pages/team.js" defer></script>
 </head>
-<body class="narke-suite-page narke-team-page">
-  <main class="team-portal" data-team-page>
-    <header class="team-brandbar">
-      <div class="team-wordmark"><img src="/pages/assets/narke-home-logo.png" alt="E-BIKE Pro"></div>
-    </header>
-    <section class="team-page-heading">
-      <h1><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 20v-2a4 4 0 0 0-3-3.9M16 2.1a4 4 0 0 1 0 7.8"/></svg>Mon équipe</h1>
+<body class="narke-suite-page narke-team-page ebike-redesigned">
+  <main class="team-portal ebike-team-portal" data-team-page>
+    <section class="team-page-heading ebike-team-heading">
+      <h1><img src="/pages/assets/ebike-icon-users-round.png" alt="" aria-hidden="true">Mon équipe</h1>
       <a class="team-view-link" href="/mon-equipe">Voir mes filleuls <span aria-hidden="true">›</span></a>
       <a class="team-missions-link" href="/missions">Missions <span aria-hidden="true">›</span></a>
     </section>
-    <section class="team-invite team-invite-code" aria-label="Code d’invitation">
+    <div class="ebike-invitation-grid">
+    <section class="team-invite team-invite-code ebike-invite-card" aria-label="Code d’invitation">
       <div class="team-invite-row">
         <div><div class="team-invite-value" data-referral-code>Chargement…</div><span class="team-invite-label">Code d’invitation</span></div>
         <button class="team-copy" type="button" data-copy-value="code">Copier le code</button>
       </div>
       <p class="team-status" data-team-status role="status" aria-live="polite" aria-atomic="true"></p>
     </section>
-    <section class="team-invite team-invite-link" aria-label="Lien d’invitation">
+    <section class="team-invite team-invite-link ebike-invite-card" aria-label="Lien d’invitation">
       <div class="team-invite-row">
         <div><div class="team-invite-value team-link-value" data-referral-link>Chargement…</div><span class="team-invite-label">Lien d’invitation</span></div>
         <button class="team-copy" type="button" data-copy-value="link">Copier le lien</button>
       </div>
     </section>
-    <div class="team-table-wrap">
+    </div>
+    <section class="ebike-network-overview" aria-label="Vue d’ensemble du réseau">
+    <div class="team-table-wrap ebike-commission-wrap">
       <table class="team-commission-table">
         <thead><tr><th>Taux de commission</th><th>Nombre d’invités</th><th>Revenu</th></tr></thead>
         <tbody data-team-levels><tr><td colspan="3">Chargement…</td></tr></tbody>
@@ -43,7 +43,8 @@
       <div class="team-metric"><span class="font-mono">—</span><span>Nombre d’invités</span></div>
       <div class="team-metric"><span class="font-mono">FCFA —</span><span>Revenus sur invitation</span></div>
     </section>
-    <section class="team-members-inline" aria-labelledby="team-members-title">
+    </section>
+    <section class="team-members-inline ebike-members-panel" aria-labelledby="team-members-title">
       <div class="team-members-heading">
         <div><span class="team-members-kicker">Réseau</span><h2 id="team-members-title">Mes filleuls</h2></div>
         <a class="team-inline-detail-link" href="/mon-equipe">Voir la page détaillée <span aria-hidden="true">›</span></a>
@@ -58,8 +59,8 @@
       <div class="team-detail-empty" data-team-detail-empty hidden><img src="/pages/assets/empty-records.svg" alt="" aria-hidden="true"><span>Plus aucune donnée</span></div>
       <p class="team-detail-status" data-team-detail-error hidden role="status"></p>
     </section>
-    <section class="team-terms">
-      <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h18v4H3zM5 13v8h14v-8M12 9v12m0-12H8a3 3 0 1 1 3-3l1 3Zm0 0h4a3 3 0 1 0-3-3l-1 3Z"></path></svg>Bonus d’invitation</h2>
+    <section class="team-terms ebike-terms-panel">
+      <h2><img src="/pages/assets/ebike-icon-gift.png" alt="" aria-hidden="true">Bonus d’invitation</h2>
       <p><strong class="team-term-level">Niveau 1</strong> Vous recevez 40 % du premier dépôt approuvé de votre filleul direct.</p>
       <p><strong class="team-term-level">Niveau 2</strong> Vous recevez 2 % du premier dépôt approuvé du membre.</p>
       <p><strong class="team-term-level">Niveau 3</strong> Vous recevez 1 % du premier dépôt approuvé du membre.</p>
@@ -67,11 +68,5 @@
       <div class="team-disclosure">Les montants affichés proviennent du registre réel. Les fractions de FCFA sont arrondies à l’entier inférieur.</div>
     </section>
   </main>
-  <nav class="team-bottom-nav" aria-label="Navigation principale">
-    <a href="/accueil"><svg class="team-nav-symbol" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Accueil</a>
-    <a href="/projet"><svg class="team-nav-symbol" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM1 2v2h2l3.6 7.6-1.4 2.4c-.2.3-.2.6-.2 1 0 1.1.9 2 2 2h12v-2H7.4l.9-2h7.5c.8 0 1.4-.4 1.8-1L21 5.5V4H5.2l-.9-2zM17 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>Mes produits</a>
-    <a href="/equipe" aria-current="page"><svg class="team-nav-symbol" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 1 2.4 4.9 5.4.8-3.9 3.8.9 5.3-4.8-2.5-4.8 2.5.9-5.3-3.9-3.8 5.4-.8zM5 15l1.3 2.7 3 .4-2.2 2.1.5 3-2.6-1.4-2.6 1.4.5-3L.7 18l3-.4zM19 15l1.3 2.7 3 .4-2.2 2.1.5 3-2.6-1.4-2.6 1.4.5-3-2.2-2.1 3-.4z"/></svg>Équipe</a>
-    <a href="/compte"><svg class="team-nav-symbol" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/></svg>Moi</a>
-  </nav>
 </body>
 </html>

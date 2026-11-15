@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Administration des dépôts — NARKE</title><link rel="stylesheet" href="/pages/pages.css">
+<title>Administration des dépôts — E-BIKE Pro</title><link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/reference.css">
 <script src="/pages/admin-deposits.js" defer></script></head>
-<body><main class="page"><header class="page-header"><a class="back" href="/compte" aria-label="Retour au compte">‹</a><h1>Approuver un dépôt</h1><span class="header-spacer"></span></header>
-<div class="page-content">
+<body class="ebike-redesigned ebike-admin-deposit"><main class="page"><header class="page-header"><h1>Approuver un dépôt</h1></header>
+<div class="page-content ebike-admin-content">
 <p>Réservé à l’administration. Vérifiez la réception effective des fonds auprès de l’opérateur avant de créditer un compte.</p>
 <p><strong>Recharge automatique bloquée :</strong> saisissez le numéro complet du compte, le montant et la référence <strong>PAY-…</strong> du paiement. Le serveur vérifie la réussite auprès du prestataire et rattache le paiement à sa demande d’origine, sans relancer de débit. Un paiement non confirmé ou ne correspondant pas au compte sera refusé.</p>
 <p>Minimum : <strong>2 500 FCFA</strong>. Seul le premier dépôt approuvé déclenche les commissions : <strong>40 % / 2 % / 1 %</strong>. Les fractions de FCFA sont arrondies à l’entier inférieur.</p>
-<form data-admin-deposit-form>
+<form class="ebike-admin-form" data-admin-deposit-form>
 <label class="field-label" for="deposit-account">Numéro du compte bénéficiaire</label>
 <input class="input" id="deposit-account" name="phone" type="tel" placeholder="Numéro complet avec indicatif du pays" autocomplete="off" required>
 <label class="field-label" for="deposit-amount">Montant réellement reçu (FCFA)</label>

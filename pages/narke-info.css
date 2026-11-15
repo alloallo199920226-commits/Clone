@@ -1,94 +1,58 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap");
-
-/* E-BIKE Pro information pages: readable editorial content, no legacy theme. */
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body.narke-info-body {
-  margin: 0;
-  min-width: 320px;
-  background: #f2f5fb;
-  color: #152743;
-  font: 15px/1.65 "DM Sans", sans-serif;
-}
-body.ebike-interface .narke-info-page { width: min(100%, 1120px); margin: 0 auto; }
-body.ebike-interface .info-brandbar {
-  display: grid;
-  grid-template-columns: 44px 1fr 44px;
-  align-items: center;
-  min-height: 72px;
-  padding: 10px 18px;
-  border-radius: 0 0 22px 22px;
-  background: #fff;
-}
-body.ebike-interface .info-back { font-size: 31px; text-decoration: none; }
-body.ebike-interface .info-wordmark {
-  justify-self: center;
-  color: #103b78;
-  font: italic 800 25px/1 "Outfit", sans-serif;
-  text-decoration: none;
-}
-body.ebike-interface .info-wordmark span { padding: 1px 6px; border-radius: 4px; color: #fff; background: #103b78; }
-.info-nav-mark { width: 24px; height: 5px; background: #e51c2a; border-radius: 6px; }
-.info-content { padding: 20px 16px 30px; }
-body.ebike-interface .info-hero {
-  position: relative;
-  display: grid;
-  overflow: hidden;
-  grid-template-columns: minmax(0, 1fr);
-  border: 0;
-  border-radius: 26px;
-  background: #103b78;
-}
-.info-hero > img { width: 100%; height: 260px; object-fit: cover; object-position: center 36%; }
-body.ebike-interface .info-hero-copy { position: relative; padding: 26px 23px 30px; color: #fff; background: #103b78; }
-body.ebike-interface .info-eyebrow { margin: 0 0 12px; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .1em; }
-body.ebike-interface .info-hero h1 { margin: 0 0 15px; color: #fff; font: 700 clamp(30px, 7.8vw, 48px)/1.08 "Outfit", sans-serif; letter-spacing: -.7px; }
-body.ebike-interface .info-hero h1 em { color: #fff; font-style: normal; text-decoration: underline; text-decoration-color: #e51c2a; text-underline-offset: 8px; text-decoration-thickness: 4px; }
-body.ebike-interface .info-hero-copy > p:last-child { margin: 0; color: #ecf2fa; font-size: 14px; line-height: 1.65; }
-.about-hero-index { position: absolute; top: 16px; right: 16px; max-width: calc(100% - 32px); padding: 4px 8px; border-radius: 9px; background: #103b78; color: #fff; font-size: 8px; letter-spacing: .09em; }
-body.ebike-interface .info-jumpbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
-body.ebike-interface .info-jumpbar a { padding: 7px 12px; border: 1px solid #dce4f1; border-radius: 999px; background: #fff; color: #103b78; font-size: 12px; font-weight: 700; text-decoration: none; }
-body.ebike-interface .info-section {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
-  margin: 16px 0;
-  padding: 25px 22px;
-  border: 1px solid #dce4f1;
-  border-radius: 22px;
-  background: #fff;
-  scroll-margin-top: 18px;
-}
-body.ebike-interface :is(.about-overline,.info-number) { color: #b7172b; font-size: 11px; font-weight: 700; letter-spacing: .08em; }
-body.ebike-interface .info-section h2 { margin: 8px 0 0; color: #103b78; font: 700 26px/1.15 "Outfit", sans-serif; letter-spacing: -.3px; }
-body.ebike-interface .info-section-copy { color: #40526c; font-size: 14px; line-height: 1.75; }
-body.ebike-interface .info-section-copy :is(p,li) { color: #40526c; }
-body.ebike-interface .info-section-copy strong { color: #103b78; }
-.info-section-copy > p:first-child { margin-top: 0; }
-.info-section-copy > :last-child { margin-bottom: 0; }
-body.ebike-interface :is(.about-callout,.about-account-note,.about-disclaimer,.info-note) { display: flex; align-items: flex-start; gap: 14px; margin: 20px 0 0; border: 0; border-left: 4px solid #e51c2a; border-radius: 0 12px 12px 0; padding: 16px; color: #40526c; background: #f2f5fb; font-size: 13px; }
-body.ebike-interface .about-callout-mark { color: #b7172b; font: italic 800 28px/1 "Outfit", sans-serif; }
-.about-account-rule { display: none; }
-.about-account-note p { margin: 0; }
-.about-image-spread { overflow: hidden; margin: 20px 0; border: 1px solid #dce4f1; border-radius: 22px; background: #fff; }
-.about-image-spread img { display: block; width: 100%; height: 250px; object-fit: contain; background: #fff; }
-.about-image-spread p { margin: 0; padding: 14px 20px; color: #40526c; font-size: 12px; }
-.about-image-spread p span { display: block; margin-bottom: 4px; color: #b7172b; font-weight: 700; }
-.about-flow { display: grid; gap: 12px; }
-.about-flow article { display: grid; grid-template-columns: 32px 1fr; align-items: start; gap: 12px; padding: 13px 0; border-bottom: 1px solid #dce4f1; }
-.about-flow article > span { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; background: #103b78; color: #fff; font-size: 11px; }
-.about-flow article p { margin: 0; }
-.about-flow article strong { display: block; }
-body.ebike-interface .info-bottom { margin: 20px 0; padding: 25px; border: 0; border-radius: 22px; color: #fff; background: #103b78; }
-body.ebike-interface .info-bottom p { margin: 0 0 16px; color: #fff; font-size: 14px; }
-body.ebike-interface .info-cta { display: inline-flex; align-items: center; gap: 18px; border: 0; border-radius: 999px; padding: 12px 20px; background: #e51c2a; color: #fff; font-weight: 700; text-decoration: none; }
-body.ebike-interface :is(.info-footer,.about-colophon) { padding: 14px 6px; color: #58667d; text-align: center; font-size: 11px; }
-.narke-info-page a:focus-visible { outline: 2px solid #103b78; outline-offset: 3px; }
-@media (min-width: 760px) {
-  .info-content { padding: 28px; }
-  body.ebike-interface .info-hero { grid-template-columns: 1fr 1fr; }
-  .info-hero > img { height: 100%; min-height: 430px; }
-  body.ebike-interface .info-hero-copy { display: flex; flex-direction: column; justify-content: center; padding: 48px 32px; }
-  body.ebike-interface .info-section { grid-template-columns: .85fr 1.15fr; gap: 38px; padding: 36px; }
-}
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
+body.ebike-redesigned.narke-info-body{--ink:#162b49;--muted:#61738a;--line:#dbe3ec;--paper:#f2f5f8;--blue:#174c86;--red:#d8323c;margin:0;min-width:320px;background:var(--paper);color:var(--ink);font:15px/1.6 "DM Sans",sans-serif}
+body.ebike-redesigned.narke-info-body *{box-sizing:border-box}
+.narke-info-page{width:min(100%,1160px)!important;min-height:100dvh;margin:0 auto!important;padding:0 clamp(15px,4vw,50px) 50px!important;background:transparent!important;box-shadow:none!important}
+.info-brandbar{position:relative!important;min-height:76px!important;display:flex!important;justify-content:space-between!important;padding:0!important;background:transparent!important;border-bottom:1px solid var(--line)}
+.info-back{display:grid!important;place-items:center;width:42px;height:42px;border:1px solid var(--line);border-radius:12px;color:var(--blue)!important;font:600 25px "Outfit",sans-serif!important;text-decoration:none}
+.info-wordmark{position:absolute;left:50%;transform:translateX(-50%);color:var(--blue);font:800 20px "Outfit",sans-serif;letter-spacing:.04em;text-decoration:none}
+.info-wordmark span{color:var(--red);font-size:12px}
+.info-nav-mark{width:42px}
+.info-content{padding:0!important}
+.info-hero{position:relative;display:flex;align-items:flex-end;min-height:390px;margin:26px 0 0;overflow:hidden;border-radius:24px;background:#153e70;color:white}
+.info-hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.54}
+.info-hero::after{position:absolute;inset:0;content:"";background:linear-gradient(90deg,#12345e 0%,rgb(18 52 94 / .84) 44%,rgb(18 52 94 / .12) 100%)}
+.info-hero-copy{position:relative;z-index:1;max-width:700px;padding:clamp(27px,6vw,67px)}
+.info-eyebrow{margin:0 0 14px;color:#f1a3a5;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.info-hero h1{margin:0;font:700 clamp(44px,7vw,78px)/.93 "Outfit",sans-serif;letter-spacing:-2px}
+.info-hero h1 em{font:italic 400 1em "Instrument Serif",serif;color:#d8e5f1}
+.info-hero-copy>p:last-child{max-width:520px;margin:18px 0 0;color:#e4edf5;font-size:16px}
+.about-hero{min-height:440px}
+.about-hero-index{position:absolute;right:24px;bottom:24px;z-index:2;color:#fff;font-size:10px;font-weight:700;letter-spacing:.15em}
+.about-hero-index i{display:inline-block;width:24px;height:1px;margin:0 9px 3px;background:#ef9da0}
+.info-jumpbar{position:sticky;z-index:3;top:8px;display:flex;gap:7px;overflow:auto;margin:16px 0 25px;padding:7px;border:1px solid var(--line);border-radius:14px;background:#f8fafbf2;backdrop-filter:blur(8px)}
+.info-jumpbar a{flex:none;padding:9px 14px;border-radius:9px;color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}
+.info-jumpbar a:hover{background:#e8eff6}
+.info-section{display:grid;grid-template-columns:minmax(220px,.76fr) minmax(0,1.24fr);gap:30px;padding:32px 0;border-bottom:1px solid var(--line);scroll-margin-top:84px}
+.info-section-heading{position:relative}
+.info-number,.about-overline{display:block;margin-bottom:10px;color:var(--red);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.info-section-heading h2{max-width:400px;margin:0;font:700 clamp(25px,3.3vw,37px)/1.08 "Outfit",sans-serif;letter-spacing:-.6px}
+.info-section-copy{max-width:650px;color:#42566f}
+.info-section-copy p{margin:0 0 14px}
+.info-section-copy strong{color:var(--ink)}
+.info-note,.about-callout,.about-account-note,.about-disclaimer{display:flex;gap:13px;margin:20px 0 0;padding:16px;border-left:3px solid var(--red);border-radius:0 12px 12px 0;background:#fff;color:#485b71}
+.about-callout-mark{display:grid;place-items:center;width:30px;height:30px;flex:none;border-radius:9px;background:var(--blue);color:white;font:700 15px "Outfit",sans-serif}
+.about-image-spread{display:grid;grid-template-columns:1.4fr .6fr;align-items:center;gap:24px;margin:32px 0;padding:20px;border-radius:20px;background:#153e70;color:white}
+.about-image-spread img{width:100%;height:210px;object-fit:cover;border-radius:12px}
+.about-image-spread p{margin:0;padding:15px;font:500 22px/1.25 "Instrument Serif",serif}
+.about-image-spread p span{display:block;margin-bottom:13px;color:#ef9da0;font:700 10px "DM Sans",sans-serif;letter-spacing:.14em}
+.about-account-note{align-items:flex-start;border-left-color:var(--blue);background:#edf3f8}
+.about-account-rule{width:4px;min-height:36px;flex:none;border-radius:99px;background:var(--blue)}
+.about-account-note p{margin:0}
+.about-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.about-flow article{min-height:130px;padding:15px;border:1px solid var(--line);border-radius:13px;background:white}
+.about-flow article>span{color:var(--red);font:700 12px "DM Sans",sans-serif}
+.about-flow article p{margin:12px 0 0;font-size:13px}
+.about-flow article strong{display:block;margin-bottom:4px;color:var(--ink);font:700 16px "Outfit",sans-serif}
+.about-final{margin-top:23px}
+.info-bottom{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:24px;padding:24px;border-radius:18px;background:#153e70;color:white}
+.info-bottom p{max-width:530px;margin:0;color:#dce6f0}
+.info-cta{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;padding:0 17px;border-radius:10px;background:var(--red);color:white;font-weight:700;text-decoration:none;white-space:nowrap}
+.info-footer{margin:20px 0 0;color:var(--muted);font-size:12px}
+.about-colophon{text-align:center}
+.rules-page .info-hero{min-height:330px}
+.rules-page .info-section{padding:29px 0}
+.rules-page .info-section-copy{font-size:14px}
+.rules-page .info-number{margin-bottom:11px}
+.rules-page .info-section-heading h2{font-size:clamp(23px,3vw,32px)}
+@media(max-width:700px){.narke-info-page{padding:0 15px 35px!important}.info-brandbar{min-height:66px!important}.info-hero{min-height:340px;margin-top:17px;border-radius:18px}.about-hero{min-height:365px}.info-hero-copy{padding:27px}.info-hero h1{font-size:54px}.info-hero-copy>p:last-child{font-size:14px}.info-section{grid-template-columns:1fr;gap:9px;padding:24px 0}.info-section-heading h2{max-width:600px}.about-image-spread{grid-template-columns:1fr;gap:12px;margin:22px 0;padding:14px}.about-image-spread img{height:190px}.about-image-spread p{font-size:20px}.about-flow{grid-template-columns:1fr}.about-flow article{min-height:0}.info-bottom{align-items:flex-start;flex-direction:column;padding:20px}.info-cta{width:100%}.info-jumpbar{margin:12px 0 18px}}
+@media(max-width:360px){.narke-info-page{padding-right:11px!important;padding-left:11px!important}.info-hero{min-height:310px}.info-hero-copy{padding:21px}.info-hero h1{font-size:46px}.info-hero-index{right:13px;bottom:12px;font-size:8px}.info-section{padding:20px 0}.info-section-heading h2{font-size:25px}.info-section-copy{font-size:14px}}

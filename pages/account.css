@@ -1,340 +1,134 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap");
+
 :root {
-  --account-ink: #171719;
-  --account-muted: #747478;
-  --account-panel: #f0f0f1;
-  --account-accent: #f5cb4e;
-  --account-red: #d21324;
-  --account-night: #141416;
+  --account-ink: #17283e;
+  --account-muted: #748195;
+  --account-paper: #f2f5f8;
+  --account-card: #fff;
+  --account-line: #dce4ed;
+  --account-red: #d92e3c;
+  --account-blue: #225b98;
 }
-
-* {
-  box-sizing: border-box;
+* { box-sizing: border-box; }
+html:has(body.ebike-redesigned) { min-height: 100%; background: var(--account-paper); }
+body.account-page.ebike-redesigned {
+  min-height: 100dvh; margin: 0; color: var(--account-ink); background: var(--account-paper);
+  font-family: "DM Sans", sans-serif; -webkit-font-smoothing: antialiased;
 }
-
-html {
-  min-height: 100%;
-  background: #fff;
+.ebike-account-shell {
+  width: min(100%, 1120px); min-height: 100dvh; margin: 0 auto; padding: 28px 38px 120px;
+  overflow: visible; background: transparent;
 }
-
-body.account-page {
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  background: #fff;
-  color: var(--account-ink);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-tap-highlight-color: transparent;
+.ebike-account-overview {
+  position: relative; height: auto; min-height: 0; overflow: hidden; isolation: isolate;
+  border-radius: 0; padding: 0; color: #17283e; background:transparent;
 }
-
-.account-shell {
-  position: relative;
-  width: 100%;
-  max-width: 480px;
-  min-height: 100dvh;
-  padding-bottom: 76px;
-  background: #fff;
-  overflow: hidden;
+.ebike-account-overview::before {
+  position: absolute; z-index: -1; top: -104px; right: 4%; width: 370px; height: 370px;
+  border: 1px solid rgb(255 255 255 / 12%); border-radius: 50%; content: "";
+  box-shadow: 0 0 0 30px rgb(255 255 255 / 3%), 0 0 0 72px rgb(255 255 255 / 2%);
 }
-
-.account-hero {
-  position: relative;
-  height: clamp(245px, 56vw, 264px);
-  min-height: 245px;
-  overflow: hidden;
-  background: #393632;
-  color: #fff;
+.ebike-account-overview::after {
+  position: absolute; z-index: -1; right: -3%; bottom: -94px; width: 68%; height: 150px;
+  border-top: 1px solid rgb(255 255 255 / 15%); transform: rotate(-11deg); content: "";
 }
-
-.hero-vehicle,
-.hero-shade {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+.ebike-account-heading { display: flex; justify-content: space-between; align-items: center; }
+.ebike-account-overview::before,.ebike-account-overview::after { display:none; }
+.ebike-account-overview .ebike-account-heading { margin-bottom:12px; }
+.ebike-account-overview .ebike-member-mark { border-color:#dce4ef; background:#fff; }
+.ebike-account-overview .ebike-member-mark img { filter:none; }
+.ebike-account-overview .ebike-account-identity { padding:0; gap:16px; align-items:stretch; }
+.ebike-account-overview .ebike-account-identity > div:first-child { padding:20px; border:1px solid #dce4ef; border-radius:18px; background:#fff; }
+.ebike-account-overview .ebike-account-identity > div:first-child .hero-label { color:#60718a; }
+.ebike-account-overview .ebike-account-identity > div:first-child .hero-phone { color:#103b78; font-size:23px; }
+.ebike-account-overview .ebike-account-identity > div:first-child .hero-phone-copy { background:#eef3fa; }
+.ebike-account-overview .ebike-account-identity > div:first-child .hero-phone-copy img { filter:none; }
+.ebike-account-overview .ebike-account-identity .ebike-balance-card { order:-1; margin:0; padding:22px; border:0; border-radius:22px 22px 5px 22px; background:#103b78; }
+.ebike-kicker { color: #849bb2; font-size: 10px; font-weight: 700; letter-spacing: .16em; }
+.ebike-member-mark { display: grid; width: 36px; height: 36px; place-items: center; border: 1px solid rgb(255 255 255 / 22%); border-radius: 50%; }
+.ebike-member-mark img { width: 18px; height: 18px; filter: brightness(0) invert(1); }
+.ebike-account-identity { display: grid; height: auto; grid-template-columns: minmax(0,1fr) minmax(255px,.72fr); align-items: end; gap: 35px; padding: 40px 0 0; }
+.ebike-account-identity > div:first-child { min-width: 0; }
+.ebike-account-overview .hero-label { color: #b8c7d5; font-size: 12px; letter-spacing: .04em; }
+.ebike-account-overview .hero-phone { margin: 9px 0 0; color: #fff; font: 700 clamp(22px,3.2vw,34px)/1.1 "Manrope",sans-serif; letter-spacing: .02em; }
+.ebike-account-overview .hero-phone-row { display: flex; align-items: center; gap: 10px; margin-top: 9px; }
+.ebike-account-overview .hero-phone-copy { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; margin: 0; border: 0; border-radius: 50%; padding: 0; background: rgb(255 255 255 / 10%); cursor: pointer; }
+.ebike-account-overview .hero-phone-copy img { width: 15px; height: 15px; filter: brightness(0) invert(1); }
+.ebike-account-overview .hero-copy-status { color: #dce8f3; font-size: 12px; }
+.ebike-account-overview .hero-copy-status:empty { display: none; }
+.ebike-account-overview .hero-phone-copy:disabled { opacity: .5; cursor: default; }
+.ebike-account-overview .hero-phone-copy:focus-visible { outline: 2px solid white; outline-offset: 2px; }
+.ebike-balance-card { margin: 0; padding: 18px 21px; border: 1px solid rgb(255 255 255 / 18%); border-radius: 4px 18px 4px 4px; background: rgb(255 255 255 / 8%); }
+.ebike-balance-card .hero-label { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
+.ebike-balance-card .balance-line { display: flex; align-items: baseline; gap: 9px; margin-top: 9px; }
+.ebike-balance-card .balance-currency { color: #f4a1a6; font-size: 12px; letter-spacing: .08em; }
+.ebike-balance-card .balance-amount { color: white; font: 800 clamp(25px,3vw,35px)/1 "Manrope",sans-serif; letter-spacing: -.04em; }
+.ebike-account-content { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(330px,.9fr); align-items: start; gap: 24px; margin: 24px 0 0; padding: 0; }
+.ebike-wallet-actions { display: grid; grid-column: 1; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ebike-wallet-actions .wallet-button {
+  display: flex; min-height: 76px; align-items: center; justify-content: flex-start; gap: 14px; padding: 0 20px;
+  border: 1px solid var(--account-line); border-radius: 4px 17px 4px 4px; color: var(--account-ink);
+  background: var(--account-card); font: 700 15px "Manrope",sans-serif; box-shadow: 0 5px 16px rgb(26 48 76 / 4%);
 }
-
-.hero-vehicle {
-  object-fit: cover;
-  object-position: center 54%;
+.ebike-wallet-actions .wallet-button:first-child { border-left: 4px solid var(--account-red); }
+.ebike-wallet-actions .wallet-button:last-child { border-left: 4px solid var(--account-blue); }
+.ebike-wallet-actions .wallet-button img { width: 23px; height: 23px; }
+.ebike-wallet-actions .wallet-button:active { transform: translateY(1px); }
+.ebike-section-heading { display: flex; grid-column: 1; align-items: baseline; justify-content: space-between; margin: 6px 0 -9px; }
+.ebike-section-heading span:first-child { color: var(--account-ink); font: 700 19px "Manrope",sans-serif; }
+.ebike-section-heading span:last-child { color: #9aa6b4; font-size: 9px; font-weight: 700; letter-spacing: .14em; }
+.ebike-menu-group { grid-column: 1; overflow: hidden; border: 1px solid var(--account-line); border-radius: 4px 18px 4px 4px; background: var(--account-card); }
+.ebike-menu-group ul { list-style: none; margin: 0; padding: 0; }
+.ebike-menu-group li { margin: 0; padding: 0; border: 0; }
+.ebike-menu-group li + li { border-top: 1px solid #edf1f5; }
+.ebike-menu-group .menu-row {
+  display: flex; width: 100%; min-height: 65px; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 0 20px; border: 0; color: var(--account-ink); background: transparent; text-align: left; text-decoration: none;
+  font: inherit; cursor: pointer; transition: background .16s ease;
 }
-
-.hero-shade {
-  background: linear-gradient(90deg, rgb(0 0 0 / 61%), rgb(0 0 0 / 15%) 74%), linear-gradient(0deg, rgb(0 0 0 / 29%), transparent 65%);
+.ebike-menu-group .menu-row:hover { background: #f6f8fa; }
+.ebike-menu-group .menu-row > div:first-child,.ebike-menu-group .menu-leading { display: flex; min-width: 0; align-items: center; gap: 15px; }
+.ebike-menu-group .menu-row > div:first-child > div:first-child,.ebike-menu-group .menu-icon { display: grid; width: 38px; height: 38px; flex: none; place-items: center; border-radius: 3px 12px 3px 3px; background-color: #f0f4f8; background-position: center; background-repeat: no-repeat; background-size: 19px; }
+.ebike-menu-group .menu-row > div:first-child > div:first-child svg,.ebike-menu-group .menu-icon svg { display: none; }
+.ebike-menu-group a[href="/financement"] > div:first-child > div:first-child { background-image: url("/pages/assets/ebike-icon-landmark.png"); }
+.ebike-menu-group a[href="/historique-recharges"] > div:first-child > div:first-child { background-image: url("/pages/assets/ebike-icon-arrow-down-left.png"); }
+.ebike-menu-group a[href="/historique-retraits"] > div:first-child > div:first-child { background-image: url("/pages/assets/ebike-icon-history.png"); }
+.ebike-menu-group a[href="/gestion-compte-bancaire"] > div:first-child > div:first-child { background-image: url("/pages/assets/ebike-icon-wallet-cards.png"); }
+.ebike-menu-group a[href="/a-propos"] > div:first-child > div:first-child { background-image: url("/pages/assets/ebike-icon-info.png"); }
+.ebike-menu-group a[href="/regles"] > div:first-child > div:first-child { background-image: url("/pages/assets/ebike-icon-shield-check.png"); }
+.ebike-menu-group a[href="/service-client"] > div:first-child > div:first-child { background-image: url("/pages/assets/ebike-icon-headset.png"); }
+.ebike-menu-group .menu-row > div:first-child > span,.ebike-menu-group .menu-label { color: var(--account-ink); font-size: 14px; font-weight: 600; }
+.ebike-menu-group .menu-row > svg:last-child,.ebike-menu-group .row-chevron { width: 17px; height: 17px; color: #9aa8b8; stroke-width: 2; }
+.ebike-menu-group .menu-row > svg:last-child,.ebike-menu-group .row-chevron { display: none; }
+.ebike-menu-group .menu-row::after { width: 14px; height: 14px; flex: none; background: url("/pages/assets/ebike-icon-chevron-right.png") center/contain no-repeat; content: ""; opacity: .55; }
+.ebike-gift-card { grid-column: 2; grid-row: 1 / span 2; min-height: 74px; margin: 0; align-self: start; border: 1px solid var(--account-line); border-radius: 4px 18px 4px 4px; background: var(--account-card); }
+.ebike-gift-card .gift-code-toggle { display: flex; min-height: 74px; width: 100%; align-items: center; gap: 13px; padding: 0 20px; border: 0; color: var(--account-ink); background: transparent; font: 700 15px "Manrope",sans-serif; cursor: pointer; }
+.ebike-gift-card .gift-code-toggle img { width: 22px; height: 22px; }
+.ebike-gift-card .gift-code-chevron { margin-left: auto; color: #8f9bab; }
+.ebike-gift-card .gift-code-form { display: grid; gap: 10px; padding: 0 20px 20px; }
+.ebike-gift-card .gift-code-form label { color: var(--account-muted); font-size: 12px; }
+.ebike-gift-card .gift-code-form input { width: 100%; min-height: 45px; border: 1px solid var(--account-line); border-radius: 4px 12px 4px 4px; padding: 0 12px; color: var(--account-ink); background: #fafbfd; font: inherit; }
+.ebike-gift-card .gift-code-form button { min-height: 45px; border: 0; border-radius: 3px 12px 3px 3px; color: white; background: var(--account-red); font: 700 13px "Manrope",sans-serif; cursor: pointer; }
+.ebike-account-shell .ebike-support-group { grid-column: 2; grid-row: 3 / span 3; }
+.ebike-account-shell .logout-row:disabled { opacity: .6; cursor: wait; }
+.ebike-account-shell .logout-row .menu-icon { background-image: url("/pages/assets/ebike-icon-log-out.png"); }
+.ebike-account-shell .logout-row .menu-icon svg { display: none; }
+.ebike-account-shell .menu-group [data-purpose="finance-menu-group"] { min-width: 0; }
+.ebike-account-shell .ebike-menu-group [data-purpose="finance-menu-group"] a.menu-row { min-height: 58px; }
+.ebike-account-shell [hidden] { display: none !important; }
+@media (max-width: 760px) {
+  .ebike-account-shell { padding: 16px 16px 110px; }
+  .ebike-account-overview { min-height: 275px; padding: 22px 22px 24px; border-radius: 4px 23px 4px 4px; }
+  .ebike-account-identity { grid-template-columns: minmax(0,1fr); gap: 19px; padding-top: 35px; }
+  .ebike-balance-card { padding: 14px 17px; }
+  .ebike-account-content { grid-template-columns: 1fr; gap: 15px; margin-top: 16px; }
+  .ebike-wallet-actions,.ebike-section-heading,.ebike-menu-group,.ebike-gift-card,.ebike-account-shell .ebike-support-group { grid-column: 1; grid-row: auto; }
+  .ebike-section-heading { margin: 6px 0 -3px; }
+  .ebike-wallet-actions .wallet-button { min-height: 65px; padding: 0 13px; font-size: 13px; }
 }
-
-.hero-details {
-  position: relative;
-  z-index: 1;
-  height: 100%;
-  padding: 31px 9px 56px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.hero-label {
-  margin: 0;
-  color: rgb(255 255 255 / 91%);
-  font-size: 14px;
-  line-height: 1.35;
-  font-weight: 400;
-}
-
-.hero-phone {
-  margin: 4px 0 0;
-  color: #fff;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 19px;
-  line-height: 1.25;
-  font-weight: 700;
-  letter-spacing: .01em;
-}
-
-.hero-phone-row { display: flex; align-items: center; gap: 5px; margin-top: 4px; }
-.hero-phone-row .hero-phone { margin: 0; user-select: text; -webkit-user-select: text; }
-.hero-phone-copy {
-  display: inline-grid;
-  place-items: center;
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
-  margin: -6px 0;
-  padding: 10px;
-  border: 0;
-  border-radius: 6px;
-  color: #fff;
-  background: transparent;
-  cursor: pointer;
-}
-.hero-phone-copy svg { width: 22px; height: 22px; }
-.hero-phone-copy:active { background: #ffffff26; }
-.hero-phone-copy:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-.hero-phone-copy:disabled { opacity: .5; cursor: default; }
-.hero-copy-status { margin: 4px 0 0; max-width: 290px; font-size: 13px; line-height: 1.35; color: #fff; }
-.hero-copy-status:empty { display: none; }
-
-.hero-balance {
-  margin: 0 0 1px;
-}
-
-.balance-line {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  margin-top: 4px;
-}
-
-.balance-currency {
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.balance-amount {
-  color: #fff;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 23px;
-  line-height: 1.1;
-  font-weight: 700;
-}
-
-.account-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 17px;
-  padding: 0 5px;
-}
-
-.wallet-actions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 0;
-}
-
-.wallet-button {
-  min-height: 66px;
-  border: 1px solid rgb(142 0 15 / 15%);
-  border-radius: 6px;
-  background: linear-gradient(108deg, #e2172a 0%, #a00818 45%, #12090a 100%);
-  color: #fff;
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: transform 140ms ease, opacity 140ms ease;
-}
-
-.wallet-button:active {
-  transform: scale(.985);
-  opacity: .9;
-}
-
-.menu-group {
-  overflow: hidden;
-  border-radius: 5px;
-  background: var(--account-panel);
-}
-
-.menu-group ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.menu-group li {
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.menu-row {
-  width: 100%;
-  min-height: 55px;
-  padding: 0 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  border: 0;
-  border-bottom: 0;
-  background: transparent;
-  color: var(--account-ink);
-  text-align: left;
-  text-decoration: none;
-  font: inherit;
-  cursor: pointer;
-  transition: background 140ms ease;
-}
-
-.menu-group li:last-child .menu-row {
-  border-bottom: 0;
-}
-
-.menu-row:active,
-.menu-row:hover {
-  background: rgb(255 255 255 / 42%);
-}
-
-.menu-row > div:first-child,
-.menu-leading {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 25px;
-}
-
-.menu-icon,
-.menu-row > div:first-child > div:first-child {
-  width: 24px;
-  height: 24px;
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #4d4d52;
-}
-
-.menu-icon svg,
-.menu-row > div:first-child svg {
-  width: 23px;
-  height: 23px;
-}
-
-.account-page .fill-none { fill: none; }
-.account-page .fill-current { fill: currentColor; }
-.account-page .stroke-current { stroke: currentColor; stroke-width: 1.8; }
-
-.menu-label,
-.menu-row > div:first-child > span {
-  color: var(--account-ink);
-  font-size: 14px;
-  font-weight: 400;
-}
-
-.menu-row > svg:last-child,
-.row-chevron {
-  width: 17px;
-  height: 17px;
-  flex: none;
-  color: #111;
-  stroke-width: 2;
-}
-
-.menu-group [data-purpose="support-menu-group"] .menu-row {
-  min-height: 54px;
-}
-
-.bottom-navigation {
-  position: fixed;
-  z-index: 10;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  max-width: 480px;
-  height: 72px;
-  margin: 0 auto;
-  padding: 6px 8px 5px;
-  border-top: 1px solid #29292b;
-  background: linear-gradient(180deg, #161618, #111113);
-}
-
-.bottom-navigation-inner {
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  align-items: center;
-}
-
-.bottom-tab {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #9a9a9e;
-  text-decoration: none;
-}
-
-.bottom-tab svg {
-  width: 24px;
-  height: 24px;
-  fill: currentColor;
-}
-
-.bottom-tab .bottom-label,
-.bottom-tab span {
-  margin-top: 2px;
-  color: inherit;
-  font-family: Georgia, serif;
-  font-size: 11px;
-  line-height: 1.2;
-}
-
-.bottom-tab.active {
-  color: var(--account-accent);
-}
-
-.bottom-tab.active .bottom-label {
-  color: var(--account-accent);
-  font-weight: 700;
-}
-
-.logout-row:disabled {
-  cursor: wait;
-  opacity: .6;
-}
-
-@media (min-width: 600px) {
-  .account-shell {
-    box-shadow: 0 0 40px rgb(23 23 25 / 8%);
-  }
-
-  .account-hero {
-    height: 264px;
-  }
+@media (max-width: 390px) {
+  .ebike-account-shell { padding-right: 12px; padding-left: 12px; }
+  .ebike-menu-group .menu-row { padding: 0 13px; }
+  .ebike-menu-group .menu-row > div:first-child,.ebike-menu-group .menu-leading { gap: 10px; }
+  .ebike-menu-group .menu-row > div:first-child > span,.ebike-menu-group .menu-label { font-size: 13px; }
 }

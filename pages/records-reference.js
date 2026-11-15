@@ -104,26 +104,23 @@
   const error = document.querySelector("[data-products-error]");
   const quantity = document.querySelector("[data-purchase-count]");
   const income = document.querySelector("[data-purchase-total]");
-  const iconPaths = {
-    daily: '<path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="4"/>',
-    total: '<path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/>',
-    validity: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-    bought: '<path d="M3 4h2l2.2 11h10.9l2-8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>',
-    paid: '<path d="M5 7h14v13H5zM7 7V5a2 2 0 0 1 2-2h9"/><path d="M8 12h8m-8 4h5"/>',
-    next: '<path d="M4 5h16v15H4zM8 3v4m8-4v4M4 10h16"/><path d="m9 15 2 2 4-4"/>'
+  const iconFiles = {
+    daily: "calendar-days", total: "receipt-text", validity: "history",
+    bought: "credit-card", paid: "arrow-down-left", next: "calendar-days"
   };
   const field = (label, value, iconKey) => {
     const line = document.createElement("div");
-    line.className = "owned-product-row";
-    const icon = document.createElement("span");
-    icon.className = "owned-product-row-icon";
+    line.className = "ebike-product-field";
+    const icon = document.createElement("img");
+    icon.className = "ebike-product-field-icon";
+    icon.src = `/pages/assets/ebike-icon-${iconFiles[iconKey]}.png`;
+    icon.alt = "";
     icon.setAttribute("aria-hidden", "true");
-    icon.innerHTML = `<svg viewBox="0 0 24 24" focusable="false">${iconPaths[iconKey]}</svg>`;
     const name = document.createElement("span");
-    name.className = "owned-product-row-label";
+    name.className = "ebike-product-field-label";
     name.textContent = label;
     const valueNode = document.createElement("strong");
-    valueNode.className = "owned-product-row-value";
+    valueNode.className = "ebike-product-field-value";
     valueNode.textContent = value;
     line.append(icon, name, valueNode);
     return line;
@@ -144,42 +141,42 @@
       payload.products.forEach((product, index) => {
         const isGrant = product.source === "admin_grant";
         const article = document.createElement("article");
-        article.className = "owned-product";
+        article.className = "ebike-product-card";
         article.dataset.productId = String(product.id);
         article.style.setProperty("--card-order", String(index));
 
         const image = document.createElement("img");
         const vip = Number(product.vip);
-        image.src = vip === 1 ? "/pages/assets/narke-vip-gold.jpg" : "/pages/assets/narke-vip-blue.jpg";
+        image.src = vip === 1 ? "/pages/assets/e-bike-product-white.jpg" : "/pages/assets/e-bike-product-black.jpg";
         image.alt = "";
-        image.className = "owned-product-image";
+        image.className = "ebike-product-visual";
         image.loading = "lazy";
 
         const details = document.createElement("details");
-        details.className = "owned-product-details";
+        details.className = "ebike-product-details";
         details.open = true;
         const summary = document.createElement("summary");
-        summary.className = "owned-product-summary";
+        summary.className = "ebike-product-summary";
         const heading = document.createElement("span");
-        heading.className = "owned-product-heading";
+        heading.className = "ebike-product-heading";
         const title = document.createElement("h2");
-        title.className = "owned-product-title";
+        title.className = "ebike-product-title";
         title.textContent = product.name || "Produit";
         const origin = document.createElement("span");
-        origin.className = `owned-product-origin${isGrant ? " is-grant" : ""}`;
+        origin.className = `ebike-product-origin${isGrant ? " is-grant" : ""}`;
         origin.textContent = isGrant ? "VIP octroyé" : "VIP acheté";
         const amount = document.createElement("strong");
-        amount.className = "owned-product-price";
+        amount.className = "ebike-product-price";
         amount.textContent = formatMoney(product.amount_fcfa);
         const chevron = document.createElement("span");
-        chevron.className = "owned-product-chevron";
+        chevron.className = "ebike-product-chevron";
         chevron.setAttribute("aria-hidden", "true");
         chevron.textContent = "›";
         heading.append(title, origin);
         summary.append(heading, amount, chevron);
 
         const copy = document.createElement("div");
-        copy.className = "owned-product-copy";
+        copy.className = "ebike-product-data";
         const paid = isGrant ? "Non applicable" : formatMoney(product.income_fcfa);
         const next = isGrant
           ? "Non applicable"

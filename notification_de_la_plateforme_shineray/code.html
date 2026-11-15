@@ -1,28 +1,67 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Notifications — E-BIKE Pro</title><link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/notification.css"></head>
-<body class="notification-page"><main class="page"><header class="page-header"><a class="back" href="/accueil" aria-label="Retour à l’accueil">‹</a><h1>Notifications</h1><span class="header-spacer"></span></header>
-<section class="notification-card" data-notification-card>
-<h2 id="notification-title">Notification de la plateforme</h2>
-<div class="notification-copy">
-<p class="notification-disclaimer">Bonus de bienvenue : 1 500 FCFA. Dépôt minimum : 2 500 FCFA.</p>
-<p>Bienvenue sur votre espace E-BIKE Pro.</p>
-<ol>
-  <li>Le dépôt minimum est de 2 500 FCFA. Le crédit intervient après vérification et approbation du paiement.</li>
-  <li>Bonus d'inscription : 1 500 FCFA pour les nouveaux comptes.</li>
-  <li>Les revenus quotidiens, la durée et le montant total sont indiqués sur chaque offre VIP avant l’achat.</li>
-  <li>Parrainage : 40 % au niveau 1, 2 % au niveau 2 et 1 % au niveau 3, uniquement sur le premier dépôt approuvé de chaque filleul. Aucune commission sur les dépôts suivants.</li>
-  <li>Chaque achat VIP conserve les conditions enregistrées lors de sa confirmation.</li>
-  <li>Les revenus des produits achetés sont automatiquement crédités sur votre solde toutes les 24 heures après l’achat.</li>
-  <li>Retrait minimum : 1 500 FCFA. Frais : 20 %. Nombre de demandes illimité, sous réserve du solde disponible. Un VIP actif est requis. Ouverture de 09 h à 18 h, heure du Maroc ; fermeture automatique à 18 h.</li>
-  <li>Rejoignez nos groupes WhatsApp et Telegram pour suivre les offres de la plateforme. Retrouvez également notre service client sur notre chaîne WhatsApp.</li>
-</ol>
-</div>
-<footer class="notification-actions">
-  <div class="notification-telegram">
-    <a href="https://chat.whatsapp.com/FsLLzRGELbHDBefDY3JLQp?s=cl&amp;p=i&amp;mlu=4&amp;ilr=4&amp;iam=2" target="_blank" rel="noopener noreferrer">Groupe WhatsApp</a>
-    <a href="https://t.me/+uZ-9XZeYk35lOWU0" target="_blank" rel="noopener noreferrer">Groupe Telegram</a>
-    <a href="https://whatsapp.com/channel/0029VbEIGFwCXC3P9ltlHF02" target="_blank" rel="noopener noreferrer">Chaîne WhatsApp</a>
-  </div>
-  <button type="button" data-notification-close>Désactiver les rappels</button>
-</footer>
-</section></main><script>document.querySelector("[data-notification-close]").addEventListener("click",()=>location.assign("/accueil"));</script></body></html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Notifications — E-BIKE Pro</title>
+  <link rel="stylesheet" href="/pages/notification.css">
+</head>
+<body class="notification-page ebike-redesigned">
+<main class="ebike-notice-page">
+  <header class="ebike-notice-page-heading">
+    <a href="/accueil" aria-label="Retour à l’accueil"><img src="/pages/assets/ebike-icon-arrow-up-right.png" alt=""></a>
+    <h1>Vos informations</h1>
+  </header>
+  <article class="notification-card" data-notification-card>
+    <header class="ebike-notice-heading">
+      <div><p>E-BIKE PRO · L’ESSENTIEL</p><h2 id="notification-title">Bienvenue dans<br>votre espace.</h2></div>
+      <div class="ebike-notice-symbol" aria-hidden="true"><img src="/pages/assets/ebike-icon-megaphone.png" alt=""></div>
+      <button class="ebike-notice-close" type="button" data-notification-close aria-label="Fermer la notification"><img src="/pages/assets/ebike-icon-x.png" alt=""></button>
+    </header>
+    <div class="notification-copy">
+      <div class="ebike-notice-summary" aria-label="Conditions d’accueil">
+        <div><span>Bonus de bienvenue</span><strong>1 500 <small>FCFA</small></strong></div>
+        <div><span>Dépôt minimum</span><strong>2 500 <small>FCFA</small></strong></div>
+      </div>
+      <section class="ebike-notice-block">
+        <img src="/pages/assets/ebike-icon-wallet-cards.png" alt="" aria-hidden="true">
+        <div><h3>Vos dépôts et vos offres</h3>
+          <p>Le dépôt minimum est de 2 500 FCFA. Le crédit intervient après vérification et approbation du paiement.</p>
+          <p>Bonus d'inscription : 1 500 FCFA pour les nouveaux comptes.</p>
+          <p>Les revenus quotidiens, la durée et le montant total sont indiqués sur chaque offre VIP avant l’achat.</p>
+          <p>Chaque achat VIP conserve les conditions enregistrées lors de sa confirmation.</p>
+        </div>
+      </section>
+      <section class="ebike-notice-block">
+        <img src="/pages/assets/ebike-icon-users-round.png" alt="" aria-hidden="true">
+        <div><h3>Vos revenus et votre équipe</h3>
+          <p>Les revenus des produits achetés sont automatiquement crédités sur votre solde toutes les 24 heures après l’achat.</p>
+          <p>Parrainage : 40 % au niveau 1, 2 % au niveau 2 et 1 % au niveau 3, uniquement sur le premier dépôt approuvé de chaque filleul. Aucune commission sur les dépôts suivants.</p>
+        </div>
+      </section>
+      <section class="ebike-notice-block">
+        <img src="/pages/assets/ebike-icon-arrow-up-right.png" alt="" aria-hidden="true">
+        <div><h3>Les conditions de retrait</h3>
+          <p>Retrait minimum : 1 500 FCFA. Frais : 20 %. Nombre de demandes illimité, sous réserve du solde disponible. Un VIP actif est requis. Ouverture de 09 h à 18 h, heure du Maroc ; fermeture automatique à 18 h.</p>
+        </div>
+      </section>
+      <section class="ebike-notice-block">
+        <img src="/pages/assets/ebike-icon-headset.png" alt="" aria-hidden="true">
+        <div><h3>Gardons le contact</h3>
+          <p>Rejoignez nos groupes WhatsApp et Telegram pour suivre les offres de la plateforme. Retrouvez également notre service client sur notre chaîne WhatsApp.</p>
+        </div>
+      </section>
+    </div>
+    <footer class="notification-actions">
+      <nav class="notification-telegram" aria-label="Nos communautés">
+        <a href="https://chat.whatsapp.com/FsLLzRGELbHDBefDY3JLQp?s=cl&amp;p=i&amp;mlu=4&amp;ilr=4&amp;iam=2" target="_blank" rel="noopener noreferrer">Groupe WhatsApp</a>
+        <a href="https://t.me/+uZ-9XZeYk35lOWU0" target="_blank" rel="noopener noreferrer">Groupe Telegram</a>
+        <a href="https://whatsapp.com/channel/0029VbEIGFwCXC3P9ltlHF02" target="_blank" rel="noopener noreferrer">Chaîne WhatsApp</a>
+      </nav>
+      <button class="ebike-notice-confirm" type="button" data-notification-close>J’ai compris<img src="/pages/assets/ebike-icon-check.png" alt=""></button>
+    </footer>
+  </article>
+</main>
+<script>document.querySelectorAll("[data-notification-close]").forEach(button=>button.addEventListener("click",()=>location.assign("/accueil")));</script>
+</body>
+</html>

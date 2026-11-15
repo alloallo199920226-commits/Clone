@@ -121,8 +121,8 @@
           const cell = document.createElement("td");
           if (column === 0) {
             const art = document.createElement("img");
-            art.className = "team-level-art";
-            art.src = `/pages/assets/narke-model-${index === 2 ? 4 : index + 1}.png`;
+            art.className = "ebike-level-icon";
+            art.src = "/pages/assets/ebike-icon-users-round.png";
             art.alt = "";
             art.setAttribute("aria-hidden", "true");
             const label = document.createElement("span");
@@ -162,9 +162,10 @@
         row.className = "team-member-row";
         row.dataset.memberLevel = String(level);
         const avatar = document.createElement("img");
-        avatar.className = "team-member-avatar";
-        avatar.src = `/pages/assets/narke-model-${Math.min(3, Math.max(1, level))}.png`;
-        avatar.alt = `Jet-ski NARKE — niveau ${level}`;
+        avatar.className = "ebike-referral-avatar";
+        avatar.src = "/pages/assets/ebike-icon-user-round.png";
+        avatar.alt = "";
+        avatar.setAttribute("aria-hidden", "true");
         const details = document.createElement("div");
         details.className = "team-member-details";
         const phone = document.createElement("strong");

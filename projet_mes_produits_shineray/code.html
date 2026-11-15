@@ -9,54 +9,32 @@
   <link rel="stylesheet" href="/pages/narke-project.css">
   <script src="/pages/records-reference.js" defer></script>
 </head>
-<body class="narke-project-body">
-  <main class="page owned-project narke-project-page" data-products-page>
-    <header class="project-brandbar" aria-label="E-BIKE Pro">
-      <a class="project-back" href="/accueil" aria-label="Retour à l’accueil">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8"/></svg>
-      </a>
-      <img class="project-wordmark" src="/pages/assets/narke-project-logo.png" alt="E-BIKE Pro">
-      <img class="project-header-craft" src="/pages/assets/e-bike-product-black.jpg" alt="" aria-hidden="true">
-    </header>
-    <section class="project-hero" aria-label="Mes produits E-BIKE Pro">
-      <img class="project-hero-image" src="/pages/assets/e-bike-home-scene.jpg" alt="Vélo électrique E-BIKE Pro en déplacement">
-      <div class="project-hero-copy">
-        <img src="/pages/assets/narke-project-logo.png" alt="E-BIKE Pro">
-        <p>MES PRODUITS</p>
-        <h1>E-BIKE PRO</h1>
-      </div>
-      <img class="project-hero-fleet" src="/pages/assets/e-bike-product-white.jpg" alt="" aria-hidden="true">
+  <body class="narke-project-body ebike-redesigned">
+  <main class="page owned-project narke-project-page ebike-project-page" data-products-page>
+    <section class="project-hero ebike-project-intro" aria-label="Mes produits E-BIKE Pro">
+      <div class="ebike-project-intro-copy"><span class="ebike-kicker">VOTRE PARCOURS</span><h1>Mes produits</h1><p>Retrouvez vos offres actives et le détail de leurs revenus.</p></div>
+      <div class="ebike-project-art" aria-hidden="true"><img src="/pages/assets/e-bike-product-black.jpg" alt=""><span>01 / E-BIKE PRO</span></div>
     </section>
-    <section class="owned-stats" aria-label="Mes statistiques">
+    <section class="owned-stats ebike-product-metrics" aria-label="Mes statistiques">
       <div class="owned-stat" data-purpose="stat-quantity">
-        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 2 12 7v14l-12 7L4 23V9l12-7Zm0 14 12-7M16 16 4 9m12 7v14"/></svg>
+        <img src="/pages/assets/ebike-icon-bike.png" alt="" aria-hidden="true">
         <span class="owned-stat-label">Quantité achetée</span>
         <strong class="owned-stat-value" data-purchase-count>—</strong>
       </div>
       <div class="owned-stat" data-purpose="stat-revenue">
-        <svg viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="12" cy="8" rx="8" ry="4"/><path d="M4 8v13c0 2 4 4 8 4s8-2 8-4V8m-16 4c0 2 4 4 8 4m-8 0c0 2 4 4 8 4m10-7c3 0 6 1 6 3s-3 3-6 3m-4 0c-1 0-2 0-3-.2m13-2.8v9c0 2-3 3-6 3s-6-1-6-3v-9"/></svg>
+        <img src="/pages/assets/ebike-icon-wallet-cards.png" alt="" aria-hidden="true">
         <span class="owned-stat-label">Mes revenus</span>
         <strong class="owned-stat-value" data-purchase-total>—</strong>
       </div>
     </section>
-    <section class="owned-product-list" data-products-list aria-live="polite" aria-label="Mes produits" aria-busy="true"></section>
-    <section class="empty-state owned-empty" data-products-empty hidden>
+    <section class="ebike-list-heading"><div><span class="ebike-kicker">PORTEFEUILLE</span><h2>Produits détenus</h2></div><span class="ebike-live-tag"><i></i> Données du compte</span></section>
+    <section class="owned-product-list ebike-product-list" data-products-list aria-live="polite" aria-label="Mes produits" aria-busy="true"></section>
+    <section class="empty-state owned-empty ebike-empty" data-products-empty hidden>
       <span class="empty-state-mark" aria-hidden="true">—</span>
       <strong>Aucun produit pour le moment</strong>
       <span>Vos VIP achetés ou octroyés apparaîtront ici.</span>
     </section>
     <p class="records-error" data-products-error role="alert" hidden></p>
-    <section class="project-fleet" aria-label="La gamme E-BIKE Pro">
-      <img src="/pages/assets/e-bike-product-black.jpg" alt="" aria-hidden="true">
-    </section>
   </main>
-  <nav class="owned-bottom-nav" data-purpose="bottom-navigation" aria-label="Navigation principale">
-    <div class="owned-bottom-inner">
-      <a href="/accueil" data-purpose="nav-item-home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 1 11h3v10h6v-6h4v6h6V11h3z"/></svg><span>Accueil</span></a>
-      <a href="/projet" data-purpose="nav-item-project" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM1 2v2h2l3.6 7.6-1.4 2.4a2 2 0 0 0 1.8 3h12v-2H7.4l.9-1.6h7.5a2 2 0 0 0 1.8-1l3.6-6.4a1 1 0 0 0-.9-1.5H5.2l-.9-2H1Zm16 16a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/></svg><span>Mes produits</span></a>
-      <a href="/equipe" data-purpose="nav-item-team"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 1 1.6 5h5l-4 3 1.5 5-4.1-3-4.1 3 1.5-5-4-3h5L12 1ZM5 13l1 3h3l-2.4 1.8.9 3-2.5-1.8-2.5 1.8.9-3L1 16h3l1-3Zm14 0 1 3h3l-2.4 1.8.9 3-2.5-1.8-2.5 1.8.9-3L15 16h3l1-3Z"/></svg><span>Équipe</span></a>
-      <a href="/compte" data-purpose="nav-item-profile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4 0-8 2-8 5v2h16v-2c0-3-4-5-8-5Z"/></svg><span>Moi</span></a>
-    </div>
-  </nav>
 </body>
 </html>
