@@ -3,6 +3,15 @@ name: Reference fidelity
 description: User expectations for faithful screen reproduction and meaningful visual checks.
 ---
 
+Sur les pages de connexion et d’inscription, ne pas reproduire la fausse barre
+d’état du modèle : heure « 9:41 », réseau, Wi-Fi et batterie.
+
+**Why:** l’utilisateur a demandé explicitement de rendre ces éléments invisibles
+ou de les supprimer sur les deux pages.
+
+**How to apply:** les retirer aussi des images utilisées, pas uniquement du HTML ;
+conserver la présentation commune des deux formulaires et leurs champs réels.
+
 Reproduce the user’s supplied screen composition and text closely rather than substituting a different interface.
 
 La reconstruction NARKE concerne la connexion, l’inscription, l’accueil et les

@@ -1,4 +1,4 @@
-/* E-BIKE Pro login recreation. Signup continues using the shared NARKE styles. */
+/* Shared E-BIKE Pro authentication presentation. */
 body.login-page {
   min-height: 100vh;
   min-height: 100svh;
@@ -54,7 +54,7 @@ body.login-page {
   z-index: 0;
   flex: 0 0 auto;
   width: 100%;
-  aspect-ratio: 941 / 835;
+  aspect-ratio: 941 / 800;
   overflow: hidden;
   background: #ed1218;
 }
