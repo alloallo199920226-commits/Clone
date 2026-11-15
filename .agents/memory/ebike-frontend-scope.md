@@ -1,0 +1,15 @@
+---
+name: E-BIKE Pro frontend adaptation
+description: User-approved visual direction and backend boundary for the new E-BIKE Pro presentation.
+---
+
+L’utilisateur souhaite le nouveau modèle E-BIKE Pro rouge et bleu pour l’accueil,
+puis l’adapter à toutes les pages et tous les onglets frontend, sans toucher au backend.
+
+**Why:** l’utilisateur a explicitement demandé cette limite lors de la fourniture
+du modèle d’accueil.
+
+**How to apply:** travailler sur la présentation et les interactions frontend ;
+préserver les comptes, API, codes produits, montants réels et règles financières.
+Ne pas déduire des tarifs, stocks, livraisons ou nouvelles offres à partir des
+images de référence. Ne pas reproduire de fausse barre d’état de téléphone.

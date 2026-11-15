@@ -152,6 +152,14 @@ async function main() {
       width: 472, height: 864, deviceScaleFactor: 1, mobile: true,
     });
     await navigate("/connexion");
+    if (process.argv.includes("--ebike-home")) {
+      await require("./ebike-home-browser.cjs")({
+        call, evaluate, waitFor, navigate, screenshot,
+        trackUser: id => { userId = id; },
+      });
+      assert.deepEqual(errors, []);
+      return;
+    }
     if (process.argv.includes("--admin-customer-reset")) {
       await require("./admin-customer-reset-browser.cjs")({ call, evaluate, waitFor, navigate, screenshot });
       return;

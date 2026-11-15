@@ -74,13 +74,39 @@
   selectSlide(0);
   startCarousel();
   const showAll = document.querySelector("[data-show-all]");
-  const additionalCards = [...document.querySelectorAll(".product-card")].slice(4);
-  additionalCards.forEach(card => { card.hidden = true; });
+  const grid = document.querySelector(".product-grid");
+  const cardTemplate = grid.querySelector(".product-card").cloneNode(true);
+  document.querySelectorAll(".product-card").forEach(card => { card.hidden = false; });
+  showAll?.setAttribute("aria-expanded", "true");
   showAll?.addEventListener("click", () => {
-    const expanded = showAll.getAttribute("aria-expanded") !== "true";
-    additionalCards.forEach(card => { card.hidden = !expanded; });
-    showAll.setAttribute("aria-expanded", String(expanded));
-    showAll.textContent = expanded ? "Voir moins ↑" : "Voir tout →";
+    grid.scrollIntoView({ behavior: motion.matches ? "auto" : "smooth", block: "start" });
+  });
+  const favoritesKey = "ebike-home-favorites";
+  let favorites = new Set();
+  try {
+    const saved = JSON.parse(localStorage.getItem(favoritesKey) || "[]");
+    if (Array.isArray(saved)) favorites = new Set(saved.filter(value => typeof value === "string"));
+  } catch { /* Favorites are optional; catalog and purchasing stay available. */ }
+  const updateFavorite = button => {
+    const card = button.closest(".product-card");
+    const favorite = favorites.has(card.dataset.vip);
+    button.setAttribute("aria-pressed", String(favorite));
+    button.setAttribute("aria-label", `${favorite ? "Retirer des" : "Ajouter aux"} favoris de cet appareil : ${card.dataset.model || card.dataset.vip}`);
+  };
+  grid.addEventListener("click", event => {
+    const button = event.target.closest("[data-favorite]");
+    if (!button) return;
+    const code = button.closest(".product-card").dataset.vip;
+    const next = new Set(favorites);
+    if (next.has(code)) next.delete(code);
+    else next.add(code);
+    try {
+      localStorage.setItem(favoritesKey, JSON.stringify([...next]));
+      favorites = next;
+      updateFavorite(button);
+    } catch {
+      catalogStatus.textContent = "Le navigateur ne permet pas d’enregistrer vos favoris sur cet appareil.";
+    }
   });
   const setBuyLabel = (button, text) => {
     const label = button.querySelector("[data-buy-label]") || button.querySelector("span:not([aria-hidden])");
@@ -103,15 +129,16 @@
   };
   let selectedCard = null;
   const format = (value) => new Intl.NumberFormat("fr-FR").format(Number(value));
-  document.querySelectorAll('[data-purpose="buy-btn"]').forEach((button) => {
-    button.addEventListener("click", () => {
+  grid.addEventListener("click", event => {
+      const button = event.target.closest('[data-purpose="buy-btn"]');
+      if (!button) return;
       if (!catalogReady || button.disabled) return;
       selectedCard = button.closest(".product-card");
       title.textContent = selectedCard.dataset.model
         ? `${selectedCard.dataset.model} · ${selectedCard.dataset.name || selectedCard.dataset.vip}`
         : selectedCard.dataset.name || selectedCard.dataset.vip;
       image.src = selectedCard.dataset.image;
-      image.alt = `Jet-ski NARKE — offre ${selectedCard.dataset.vip}`;
+      image.alt = `Illustration vélo électrique — offre ${selectedCard.dataset.vip}`;
       dialog.querySelector("[data-detail-price]").textContent = `Prix:FCFA ${format(selectedCard.dataset.price)}`;
       dialog.querySelector("[data-detail-daily]").textContent = `Revenu quotidien:FCFA ${format(selectedCard.dataset.daily)}`;
       dialog.querySelector("[data-detail-total]").textContent = `Revenu total:FCFA ${format(selectedCard.dataset.total)}`;
@@ -128,7 +155,6 @@
         }
       } catch (reason) { error.textContent = reason.message; confirmButton.disabled = true; }
       dialog.showModal();
-    });
   });
   dialog.querySelector(".cancel-purchase").addEventListener("click", () => dialog.close());
   confirmButton.addEventListener("click", async () => {
@@ -166,7 +192,7 @@
       confirmButton.disabled = false;
     }
   });
-  const buyButtons = document.querySelectorAll('[data-purpose="buy-btn"]');
+  const buyButtons = () => grid.querySelectorAll('[data-purpose="buy-btn"]');
   const catalogStatus = document.querySelector(".catalog-status");
   const catalogRetry = document.createElement("button");
   catalogRetry.type = "button";
@@ -178,7 +204,7 @@
   const clearCatalog = () => {
     catalogReady = false;
     confirmButton.disabled = true;
-    buyButtons.forEach(button => {
+    buyButtons().forEach(button => {
       button.disabled = true;
       setBuyLabel(button, "Acheter");
       const card = button.closest(".product-card");
@@ -208,7 +234,35 @@
     const result = await response.json();
     if (version !== loadVersion) return;
     if (!response.ok || !Array.isArray(result.products)) throw new Error("Catalogue indisponible.");
-    buyButtons.forEach(button => {
+    if (result.products.some(product => !product || typeof product.code !== "string" || !product.code.trim())) {
+      throw new Error("Catalogue invalide.");
+    }
+    if (new Set(result.products.map(product => product.code)).size !== result.products.length) {
+      throw new Error("Catalogue invalide.");
+    }
+    const cards = result.products.map((product, index) => {
+      const card = cardTemplate.cloneNode(true);
+      card.hidden = false;
+      card.classList.remove("extra-card");
+      card.dataset.vip = product.code;
+      card.dataset.purpose = `vip-card-${index + 1}`;
+      card.dataset.model = /^VIP\s*\d+$/i.test(product.name || product.code)
+        ? `E-Bike Pro X${index + 1}` : product.name || product.code;
+      card.dataset.image = index % 2 === 0
+        ? "/pages/assets/e-bike-product-black.jpg" : "/pages/assets/e-bike-product-white.jpg";
+      card.querySelector(".vehicle-image img").src = card.dataset.image;
+      card.querySelector(".vehicle-image img").alt = `Illustration vélo électrique — ${card.dataset.model}`;
+      card.querySelector(".vehicle-image img").loading = index < 2 ? "eager" : "lazy";
+      const category = card.querySelector(".product-category");
+      if (category) category.textContent = `Offre ${product.code}`;
+      const badge = card.querySelector(".product-badge");
+      if (badge) badge.textContent = index === 0 ? "Découverte" : index === 1 ? "Premium" : product.code;
+      const favorite = card.querySelector("[data-favorite]");
+      if (favorite) updateFavorite(favorite);
+      return card;
+    });
+    grid.replaceChildren(...cards);
+    buyButtons().forEach(button => {
       const card = button.closest(".product-card");
       const product = result.products.find(value => value.code === card.dataset.vip);
       const valid = product && Number.isSafeInteger(product.price) && product.price > 0
@@ -218,6 +272,7 @@
       const available = valid && product.active === true;
       card.dataset.available = String(Boolean(available));
       button.disabled = !available;
+      button.setAttribute("aria-label", `${available ? "Acheter" : "Offre indisponible :"} ${card.dataset.model}`);
       if (valid) {
         card.dataset.name = product.name;
         card.querySelector(".product-title-row h3, h2").textContent = card.dataset.model || product.name;
@@ -235,7 +290,7 @@
       if (!available) setBuyLabel(button, "Indisponible");
     });
     catalogReady = true;
-    catalogStatus.textContent = "";
+    catalogStatus.textContent = result.products.length ? "" : "Aucun produit disponible pour le moment.";
     } catch {
       if (version !== loadVersion) return;
       clearCatalog();
