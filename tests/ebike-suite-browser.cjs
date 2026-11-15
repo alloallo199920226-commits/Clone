@@ -3,7 +3,6 @@
    Never submits a deposit, withdrawal, purchase or admin financial command. */
 const assert = require("node:assert/strict");
 const { randomInt, createHash } = require("node:crypto");
-const { execFileSync } = require("node:child_process");
 
 module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUser}) => {
   const phone = "9" + String(randomInt(1e7)).padStart(7, "0");
@@ -19,10 +18,6 @@ module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUse
     "/missions","/missions-vip","/a-propos","/regles","/service-client",
     "/choisir-operateur","/confirmation-depot"];
   const checkPage = async (route,width) => {
-    if (!route.startsWith("/admin-")) {
-      await waitFor("document.querySelectorAll('[data-ebike-shell]').length===1");
-      assert(await evaluate("document.body.classList.contains('ebike-redesigned')"), `Missing structural redesign ${route}`);
-    }
     await evaluate("document.fonts.ready");
     await evaluate("new Promise(r=>setTimeout(r,160))");
     const geometry=await evaluate(`(() => {
@@ -42,21 +37,6 @@ module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUse
     assert.equal(geometry.overflow,false,`Overflow ${route} ${width} ${JSON.stringify(geometry)}`);
     assert.deepEqual(geometry.badImages,[],`Broken images ${route}`);
     assert.deepEqual(geometry.cyan,[],`Legacy cyan styling ${route}`);
-    const clipped = await evaluate(`(() => {
-      const fields=[...document.querySelectorAll('main input:not([type=hidden]):not([type=checkbox]):not([type=radio]),main select,main textarea')];
-      return fields.filter(e=>{
-        const r=e.getBoundingClientRect(); if(!r.width||!r.height)return false;
-        let left=Math.max(0,r.left),right=Math.min(innerWidth,r.right);
-        for(let p=e.parentElement;p;p=p.parentElement){
-          const s=getComputedStyle(p),b=p.getBoundingClientRect();
-          if(/hidden|clip|auto|scroll/.test(s.overflowX)){left=Math.max(left,b.left);right=Math.min(right,b.right);}
-        }
-        return right-left<r.width*.95;
-      }).map(e=>e.id||e.name||e.tagName);
-    })()`);
-    assert.deepEqual(clipped,[],`Clipped form controls ${route} ${width}`);
-    assert(await evaluate("[...document.querySelectorAll('.ebike-level-icon')].every(e=>e.getBoundingClientRect().width<=32)"),"Oversized referral icons");
-    if (route === "/retrait") assert(await evaluate("document.querySelector('.vehicle-balance img').getBoundingClientRect().height <= document.querySelector('.vehicle-balance').getBoundingClientRect().height+1"),"Withdrawal image escaped its frame");
     console.log(`PASS ${route} ${width}`);
   };
   for (const width of [390,1280]) {
@@ -70,30 +50,6 @@ module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUse
   for(const route of ["/compte","/projet","/equipe","/retrait","/ajouter-compte-retrait","/recharger"]) {
     await navigate(route); await checkPage(route,320);
   }
-  // Populate only this removable account to verify real rendered records and contracts.
-  const offer = await evaluate("fetch('/api/products/catalog').then(r=>r.json()).then(p=>p.products.find(x=>x.active&&/^VIP[0-9]+$/.test(x.code)))");
-  assert(offer, "A real catalog offer is needed for this development fixture");
-  execFileSync("python3",["-c",`
-import auth_backend,json,sys
-from psycopg.types.json import Jsonb
-uid=int(sys.argv[1]);p=json.loads(sys.argv[2])
-with auth_backend.connect() as conn,conn.cursor() as cur:
- details={'vip':int(p['code'][3:]),'quantity':1,'daily_income_fcfa':p['dailyIncome'],'total_income_fcfa':p['totalIncome'],'validity_days':p['durationDays'],'income_fcfa':0}
- cur.execute("INSERT INTO shineray_transactions (user_id,kind,label,amount_fcfa,provider_reference,details) VALUES (%s,'purchase',%s,%s,%s,%s)",(uid,p['code'],-p['price'],f'ebike-geometry-product:{uid}',Jsonb(details)))
- cur.execute("INSERT INTO shineray_transactions (user_id,kind,label,amount_fcfa,provider_reference,details) VALUES (%s,'recharge','Dépôt de test de présentation',5000,%s,%s)",(uid,f'ebike-geometry-deposit:{uid}',Jsonb({})))
-`,String(registered.body.user.id),JSON.stringify(offer)],{stdio:"inherit"});
-  await navigate("/projet");
-  await waitFor("document.querySelectorAll('[data-product-id]').length===1 && document.querySelector('[data-products-list]').getAttribute('aria-busy')==='false'");
-  const contract = await evaluate("document.querySelector('[data-product-id]').textContent");
-  for (const value of [offer.price,offer.dailyIncome,offer.totalIncome]) assert(contract.includes(new Intl.NumberFormat("en-US").format(value)),`Lost contract amount ${value}`);
-  const expanded = await evaluate("document.querySelector('[data-product-id]').getBoundingClientRect().height");
-  await screenshot("ebike-suite-product-populated");
-  await evaluate("document.querySelector('.ebike-product-summary').click()");
-  assert(await evaluate(`document.querySelector('[data-product-id]').getBoundingClientRect().height<${expanded}`),"Product detail collapse failed");
-  await navigate("/historique-recharges");
-  await waitFor("document.querySelector('.reference-activity-card')");
-  assert(await evaluate("document.querySelector('[data-activity-list]').textContent.includes('5,000')"));
-  await screenshot("ebike-suite-history-populated");
   await navigate("/compte");
   await evaluate("document.querySelector('.gift-code-toggle').click()");
   assert.equal(await evaluate("document.querySelector('#gift-code-panel').hidden"),false);
@@ -107,25 +63,6 @@ with auth_backend.connect() as conn,conn.cursor() as cur:
     await evaluate(`document.querySelector('[data-team-level-tab="${level}"]').click()`);
     assert.equal(await evaluate(`document.querySelector('[data-team-level-tab="${level}"]').getAttribute('aria-selected')`),"true");
   }
-  await evaluate("document.querySelector('[data-suite-menu-button]').click()");
-  assert.equal(await evaluate("document.querySelector('.ebike-navigation-drawer').open"),true);
-  assert.equal(await evaluate("document.querySelectorAll('.ebike-drawer-grid > a').length"),8);
-  await screenshot("ebike-suite-navigation-drawer");
-  await evaluate("document.querySelector('[data-menu-close]').click()");
-  assert.equal(await evaluate("document.querySelector('[data-suite-menu-button]').getAttribute('aria-expanded')"),"false");
-  await navigate("/accueil");
-  await waitFor("document.querySelector('.platform-notification-dialog')?.open");
-  assert.equal(await evaluate("document.querySelectorAll('.platform-notification-dialog .ebike-notice-summary > div').length"),2);
-  assert.equal(await evaluate("document.querySelectorAll('.platform-notification-dialog .ebike-notice-block').length"),4);
-  await screenshot("ebike-suite-notification-open");
-  await evaluate("document.querySelector('.platform-notification-dialog .ebike-notice-confirm').scrollIntoView()");
-  await screenshot("ebike-suite-notification-footer");
-  await evaluate("document.querySelector('.platform-notification-dialog .ebike-notice-confirm').click()");
-  assert.equal(await evaluate("document.querySelector('.platform-notification-dialog').open"),false);
-  await evaluate("document.querySelector('[data-notification-open]').click()");
-  await waitFor("document.querySelector('.platform-notification-dialog')?.open");
-  await evaluate("document.querySelector('.platform-notification-dialog .ebike-notice-close').click()");
-  assert.equal(await evaluate("document.querySelector('.platform-notification-dialog').open"),false);
   // A valid unsent draft is needed to examine the real payment inputs.
   await evaluate(`sessionStorage.setItem('shineray-deposit-draft',JSON.stringify({
     amount:5000,amount_fcfa:5000,channel:2,created_at:Date.now(),

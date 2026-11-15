@@ -1,48 +1,301 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
-body.ebike-redesigned{--ink:#162b49;--muted:#61738a;--line:#dbe3ec;--paper:#f2f5f8;--blue:#174c86;--red:#d8323c;font-family:"DM Sans",sans-serif;color:var(--ink)}
-body.ebike-redesigned *{box-sizing:border-box}
-body.ebike-redesigned [hidden]{display:none!important}
-body.ebike-redesigned.narke-support-page{margin:0;min-width:320px;background:var(--paper);font:15px/1.5 "DM Sans",sans-serif}
-.service-page{width:min(100%,1080px)!important;min-height:100dvh;margin:0 auto!important;padding:0 clamp(16px,4vw,52px) 50px!important;background:transparent!important;box-shadow:none!important}
-.service-page .page-header{min-height:82px!important;display:grid;grid-template-columns:48px 1fr auto;gap:18px;padding:0!important;background:transparent!important}
-.service-page .back{display:grid;place-items:center;width:43px;height:43px;border:1px solid var(--line);border-radius:12px;color:var(--blue);font:600 25px "Outfit",sans-serif;text-decoration:none}
-.service-page .page-header h1{margin:0;color:var(--ink);font:700 27px "Outfit",sans-serif!important}
-.service-banner{position:relative;display:flex;align-items:flex-end;min-height:340px;margin:0!important;overflow:hidden;border-radius:22px;background:#153e70}
-.service-banner>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.61}
-.service-banner::after{position:absolute;inset:0;content:"";background:linear-gradient(90deg,#14365f 0%,rgb(20 54 95 / .82) 48%,transparent 100%)}
-.service-banner figcaption{position:relative;z-index:1;max-width:620px;padding:clamp(25px,5vw,54px);color:white}
-.narke-service-copy>span{color:#efa1a3;font-size:11px;font-weight:700;letter-spacing:.16em}
-.narke-service-copy h2{margin:10px 0;font:700 clamp(42px,7vw,69px)/.92 "Outfit",sans-serif;letter-spacing:-1.5px}
-.narke-service-copy h2 b{color:#d5e2ef}
-.narke-service-copy p{max-width:410px;color:#e2eaf3;font-size:15px}
-.reference-hours{display:grid;grid-template-columns:46px auto 1fr;align-items:center;gap:13px;margin:20px 0 14px;padding:18px 21px;border:1px solid var(--line);border-radius:15px;background:#fff}
-.narke-headset-icon{width:26px;height:26px;object-fit:contain}
-.reference-hours strong{font:700 21px "Outfit",sans-serif;color:var(--blue)}
-.reference-hours span{justify-self:end;color:var(--muted);font-size:13px}
-.reference-contact-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.reference-contact{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:92px;padding:17px;border:1px solid var(--line);border-radius:15px;background:#fff;color:var(--ink);text-decoration:none;transition:transform .18s ease}
-.reference-contact:hover{transform:translateY(-2px);border-color:#aebdcd}
-.contact-main{display:flex;align-items:center;gap:14px;font:700 15px "Outfit",sans-serif}
-.reference-telegram{display:grid;place-items:center;width:42px;height:42px;flex:none;border-radius:13px;background:#edf3f8;color:var(--blue)}
-.reference-telegram svg{width:22px;height:22px;fill:currentColor}
-.contact-chevron{color:var(--red);font-size:24px}
-.ebike-admin-deposit{min-height:100dvh;margin:0;background:var(--paper);font:15px/1.55 "DM Sans",sans-serif}
-.ebike-admin-deposit .page{width:min(100%,860px);min-height:100dvh;margin:auto;padding:32px clamp(15px,4vw,52px);background:transparent;box-shadow:none}
-.ebike-admin-deposit .page-header{display:flex;align-items:center;min-height:72px;margin:0 0 20px;padding:0;background:transparent}
-.ebike-admin-deposit .page-header h1{margin:0;font:700 clamp(23px,4vw,32px) "Outfit",sans-serif}
-.ebike-admin-deposit .back{display:none}
-.ebike-admin-deposit .page-content{padding:0}
-.ebike-admin-deposit .page-content>p{margin:0 0 15px;padding:16px 18px;border:1px solid var(--line);border-radius:13px;background:#fff;color:#4c5e72}
-.ebike-admin-deposit .page-content>p:first-child{border-left:4px solid var(--blue)}
-.ebike-admin-deposit .page-content>p strong{color:var(--ink)}
-.ebike-admin-deposit form{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin:22px 0;padding:24px;border:1px solid var(--line);border-radius:19px;background:#fff;box-shadow:0 14px 38px #1938550b}
-.ebike-admin-deposit .field-label{margin:6px 0 0;color:var(--ink);font:700 14px "DM Sans",sans-serif}
-.ebike-admin-deposit input.input{width:100%;height:54px;padding:0 13px;border:1px solid #c4d0dd;border-radius:10px;background:#fbfcfd;color:var(--ink);font:16px "DM Sans",sans-serif}
-.ebike-admin-deposit input.input:focus{outline:1px solid #8291a2;outline-offset:1px;box-shadow:none}
-.ebike-admin-deposit form>p{grid-column:1/-1;margin:6px 0;color:#43566b}
-.ebike-admin-deposit form>p label{display:flex;align-items:center;gap:10px}
-.ebike-admin-deposit input[type=checkbox]{width:19px;height:19px;accent-color:var(--blue)}
-.ebike-admin-deposit .button-wide{grid-column:1/-1;min-height:52px;border:0;border-radius:11px;background:var(--red);color:#fff;font:700 15px "DM Sans",sans-serif}
-.ebike-admin-deposit .status{grid-column:1/-1;min-height:0;margin:0;color:#9b2932}
-@media(max-width:650px){.service-page{padding:0 15px 32px!important}.service-page .page-header{min-height:68px!important}.service-banner{min-height:300px}.reference-hours{grid-template-columns:35px auto;gap:9px 11px;padding:15px}.reference-hours span{grid-column:2;justify-self:start}.reference-contact-list{grid-template-columns:1fr}.reference-contact{min-height:76px}.ebike-admin-deposit .page{padding:17px 14px}.ebike-admin-deposit form{grid-template-columns:1fr;padding:18px}.ebike-admin-deposit form>p,.ebike-admin-deposit .button-wide,.ebike-admin-deposit .status{grid-column:auto}}
-@media(max-width:360px){.service-page{padding-right:11px!important;padding-left:11px!important}.service-banner{min-height:270px}.service-banner figcaption{padding:21px}.narke-service-copy h2{font-size:43px}.reference-hours strong{font-size:19px}}
+/* Page-specific refinements for the supplied SHINERAY mobile references. */
+.reference-page {
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  background: #fff;
+  color: #181818;
+  font-family: Arial, Helvetica, sans-serif;
+  box-shadow: none;
+}
+
+.reference-page .page-header {
+  min-height: 48px;
+  grid-template-columns: 42px 1fr 42px;
+  padding: 0 6px;
+  background: #f1f1f1;
+}
+
+.reference-page .page-header h1 {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.reference-page .back {
+  padding-left: 3px;
+  font-size: 29px;
+}
+
+.reference-crop {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  margin: 0;
+  background: #edf1f4;
+}
+
+.reference-crop img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.about-page .page-header {
+  min-height: 60px;
+}
+
+.about-page .page-header h1 {
+  text-transform: lowercase;
+}
+
+.about-content {
+  padding: 21px 6px 28px;
+}
+
+.about-fleet {
+  width: calc(100% - 17px);
+  aspect-ratio: 1.79;
+}
+
+.about-page .reference-copy {
+  margin: 3px 0 2px;
+  color: #1b1b1b;
+  font-size: 13px;
+  line-height: 1.52;
+}
+
+.about-showroom {
+  width: calc(100% - 17px);
+  margin-top: 1px;
+  aspect-ratio: 1.7731;
+}
+
+.about-page .about-caption {
+  margin-top: 1px;
+}
+
+.rules-content {
+  padding: 20px 12px 28px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.rules-banner {
+  width: calc(100% - 7px);
+  aspect-ratio: 1;
+  margin-bottom: 2px;
+}
+
+.rules-pack-banner {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 0 16px;
+}
+
+.rules-intro {
+  margin: 0 0 17px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.rules-arrival {
+  margin: 18px 0 12px;
+}
+
+.reference-terms {
+  margin: 0;
+  padding-left: 19px;
+}
+
+.reference-terms li {
+  padding: 0 0 12px 1px;
+  line-height: 1.6;
+}
+
+.reference-subtitle {
+  margin: 7px 0 16px;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.rules-content .reference-copy {
+  margin: 0;
+}
+
+.reference-disclaimer {
+  margin: 22px 0 0;
+  color: #777;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.service-page .page-header h1 {
+  font-weight: 700;
+}
+
+.service-page .page-header { min-height: 54px; }
+.service-page .service-banner { width: 100%; margin: 6px 0 0; aspect-ratio: 472 / 266; }
+.service-page .reference-hours { min-height: 82px; margin: 0; background: linear-gradient(90deg, #e50920, #000); }
+.service-page .reference-hours strong { font-size: 22px; }
+.service-page .reference-contact-list { gap: 11px; margin: 16px 0 0; padding: 50px 24px 39px; background: linear-gradient(90deg, #e50920, #000); }
+.service-page .reference-contact { min-height: 61px; padding: 0 24px 0 33px; text-decoration: none; }
+.service-page .contact-main { gap: 16px; }
+.service-page .contact-main > span:last-child { overflow-wrap: anywhere; }
+.service-page .reference-telegram { width: 39px; height: 39px; flex-basis: 39px; }
+
+.service-banner {
+  width: calc(100% - 4px);
+  margin-left: 2px;
+  aspect-ratio: 1.76;
+}
+
+.reference-hours {
+  display: flex;
+  min-height: 69px;
+  margin: 0 2px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(105deg, #e50920 0%, #a50013 50%, #170204 100%);
+  color: #fff;
+  text-align: center;
+}
+
+.reference-hours strong {
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.reference-hours span {
+  margin-top: 2px;
+  color: #f3d9dc;
+  font-size: 14px;
+}
+
+.reference-contact-list {
+  display: grid;
+  gap: 10px;
+  margin: 14px 2px 0;
+  padding: 42px 22px 32px;
+  background: linear-gradient(105deg, #e50920 0%, #a50013 49%, #170204 100%);
+}
+
+.reference-contact {
+  display: flex;
+  min-width: 0;
+  min-height: 55px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 5px;
+  padding: 0 12px 0 32px;
+  background: #fff;
+  color: #222;
+  font-size: 14px;
+}
+
+.contact-main {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 32px;
+}
+
+.reference-telegram {
+  display: grid;
+  width: 35px;
+  height: 35px;
+  flex: 0 0 35px;
+  place-items: center;
+  border-radius: 50%;
+  background: #269ed8;
+}
+
+.reference-telegram svg {
+  width: 21px;
+  height: 21px;
+  fill: #fff;
+}
+
+.contact-unavailable {
+  flex: 0 0 auto;
+  color: #777;
+  font-size: 10px;
+}
+
+@media (min-width: 700px) {
+  .reference-page {
+    margin: 18px auto;
+    min-height: calc(100vh - 36px);
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .reference-contact-list {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+  .contact-main {
+    gap: 14px;
+  }
+  .reference-contact {
+    padding-left: 12px;
+  }
+}
+
+/* Service rows remain visually faithful while reporting that no destinations are configured. */
+.service-page .reference-contact {
+  width: 100%;
+  border: 0;
+  text-align: left;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+
+.service-page .reference-contact:focus-visible {
+  outline: 2px solid #222;
+  outline-offset: 2px;
+}
+
+.service-page .contact-chevron {
+  flex: 0 0 auto;
+  color: #333;
+  font-size: 31px;
+  line-height: 1;
+}
+
+.service-unavailable {
+  width: min(390px, calc(100% - 32px));
+  border: 0;
+  border-radius: 7px;
+  padding: 22px;
+  color: #222;
+  box-shadow: 0 12px 40px #0004;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.service-unavailable::backdrop {
+  background: #0008;
+}
+
+.service-unavailable h2 {
+  margin: 0 0 11px;
+  font-size: 17px;
+}
+
+.service-unavailable p {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.service-unavailable button {
+  display: block;
+  margin-left: auto;
+  border: 0;
+  border-radius: 4px;
+  padding: 10px 20px;
+  background: #e50920;
+  color: #fff;
+}

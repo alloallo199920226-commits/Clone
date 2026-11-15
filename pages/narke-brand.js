@@ -33,7 +33,7 @@
           ? "/pages/assets/e-bike-product-black.jpg" : "/pages/assets/e-bike-product-white.jpg";
       }
       if (next !== source) element.setAttribute("src", next);
-      if (next === "/pages/assets/ebike-logo.png" && element.alt !== "E-BIKE Pro") element.alt = "E-BIKE Pro";
+      if (next === "/pages/assets/ebike-logo.png") element.alt = "E-BIKE Pro";
     }
   }
   const isAdmin = Boolean(document.querySelector("#admin-root,.admin-login-page,.admin-login-brand"));
@@ -48,11 +48,6 @@
       link.rel = "stylesheet";
       link.href = stylePath;
       document.head.append(link);
-    }
-    if (!isAdmin && ![...document.scripts].some(script => new URL(script.src || location.href).pathname === "/pages/narke-suite.js")) {
-      const shell = document.createElement("script");
-      shell.src = "/pages/narke-suite.js";
-      document.head.append(shell);
     }
   }
   // The historical manifest endpoint remains untouched: the installed app uses

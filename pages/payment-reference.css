@@ -1,53 +1,62 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
-body.ebike-redesigned.narke-withdraw-page{--ink:#162b49;--muted:#61738a;--line:#dbe3ec;--paper:#f2f5f8;--blue:#174c86;--red:#d8323c;margin:0;min-width:320px;background:var(--paper);color:var(--ink);font:15px/1.5 "DM Sans",sans-serif}
-body.ebike-redesigned.narke-withdraw-page *{box-sizing:border-box}
-body.ebike-redesigned.narke-withdraw-page [hidden]{display:none!important}
-.ebike-withdraw-shell{width:min(100%,1000px)!important;min-height:100dvh;margin:auto!important;padding:30px clamp(16px,4vw,50px) 60px!important;background:transparent!important}
-.ebike-withdraw-shell .finance-header{position:static!important;height:68px!important;grid-template-columns:1fr auto!important;padding:0!important;background:transparent!important}
-.finance-header h1{font:700 clamp(26px,3vw,34px) "Outfit",sans-serif!important;color:var(--ink)}
-.finance-back{display:none}
-.info-button{width:auto!important;height:42px!important;padding:0 16px;border:1px solid var(--line)!important;border-radius:999px!important;background:#fff!important;color:var(--blue)!important;font:600 14px "DM Sans",sans-serif!important}
-.info-button::after{content:"Historique"}
-.info-button img{width:18px;height:18px;object-fit:contain}
-.withdraw-content{display:grid;grid-template-columns:minmax(250px,.9fr) minmax(320px,1.1fr);gap:14px 30px;padding:0!important}
-.vehicle-balance{position:relative!important;grid-column:1;grid-row:1/4;align-self:start;width:100%;min-width:0;height:470px;aspect-ratio:auto!important;margin:0!important;overflow:hidden;border-radius:22px!important;background:#dce5ed;isolation:isolate}
-.vehicle-balance img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover!important;object-position:center}
-.vehicle-balance::after{position:absolute;z-index:1;inset:0;content:"";background:linear-gradient(180deg,transparent 40%,rgb(11 36 64 / .8))}
-.vehicle-balance figcaption{position:absolute;z-index:2;right:24px!important;top:auto!important;bottom:25px;left:24px;text-align:left!important;color:#fff!important;font-size:15px!important}
-.vehicle-balance figcaption strong{margin-top:7px!important;font:700 clamp(25px,3vw,34px) "Outfit",sans-serif!important;overflow-wrap:anywhere}
-.withdraw-content .finance-section-label{margin:0!important;align-self:end}
-.narke-finance-icon,.instruction-icon{width:23px;height:23px;stroke:var(--red);fill:none}
-.wallet-select{height:auto!important;min-height:58px;padding:13px 16px!important;border:1px solid var(--line)!important;border-radius:13px!important;background:#fff!important;color:var(--ink)!important;font:600 15px "DM Sans",sans-serif!important;box-shadow:none!important}
-.wallet-select .chevron{font-size:23px;color:var(--blue)}
-.wallet-options{display:grid;gap:8px}
-.wallet-options[hidden]{display:none!important}
-.wallet-options .wallet-select{min-height:48px}
-.payment-status{grid-column:2;margin:0!important;color:#9d2931;font-size:14px}
-.payment-status:not(:empty){border-left:3px solid var(--red);padding:8px 12px;background:#fff1f1}
-.withdraw-content .amount-title{justify-content:space-between!important;margin:12px 0 0!important}
-.withdraw-content .amount-title small{color:var(--red)!important;font-size:14px!important}
-.input-wrap{height:58px!important;gap:14px!important;padding:0 17px!important;border:1px solid #bdc9d7!important;border-radius:13px!important;background:#fff!important;box-shadow:none!important}
-.input-wrap span{color:var(--blue);font-size:14px!important;font-weight:700}
-.input-wrap input{min-width:0;font-size:16px!important;color:var(--ink)!important}
-.input-wrap input:focus{outline:none}
-.input-wrap:focus-within{border-color:#8291a2!important;box-shadow:inset 0 -2px var(--blue)!important}
-.received-amount{margin:0!important;padding:15px 16px;border-radius:12px;background:#e9eff5;color:var(--ink);font-size:15px!important;font-weight:700}
-.minimum-note{margin:0!important;text-align:left!important;color:var(--muted)!important;font-size:13px!important}
-.payment-submit{display:flex;width:100%;align-items:center;justify-content:center;gap:12px;cursor:pointer}
-.withdraw-submit{margin:2px 0 0!important;min-height:56px!important;border:0!important;border-radius:13px!important;background:var(--red)!important;color:white!important;font:700 16px "Outfit",sans-serif!important;box-shadow:none!important}
-.withdraw-submit img{width:20px;height:20px;filter:brightness(0) invert(1)}
-.withdraw-submit:disabled{opacity:.62;cursor:wait}
-.withdraw-content .instructions{grid-column:1/-1;display:grid;grid-template-columns:240px 1fr;gap:16px 25px;margin:30px 0 0!important;padding:23px!important;border:1px solid var(--line);border-radius:18px;background:#fff}
-.instructions h2{display:flex;align-items:center;gap:10px;margin:0!important;font:700 20px "Outfit",sans-serif!important}
-.instruction-boats{display:none!important}
-.instructions ol{margin:0;padding-left:20px;color:#43556e}
-.instructions li{margin:0 0 10px;font-size:14px;line-height:1.52}
-.payment-disclosure{color:var(--muted)!important;font-size:13px!important}
-.payment-disclosure a,.wallet-link{color:var(--blue)!important;font-weight:700}
-.finance-dialog{width:min(520px,calc(100% - 28px));border:1px solid var(--line);border-radius:20px;padding:26px;background:#f9fbfd;color:var(--ink);font:15px "DM Sans",sans-serif;box-shadow:0 24px 80px #11284340}
-.finance-dialog h2{font:700 22px "Outfit",sans-serif}
-.finance-dialog p{line-height:1.6}
-.finance-dialog button{min-height:46px;padding:0 20px;border:0;border-radius:10px;background:var(--red);color:white;font:700 15px "DM Sans",sans-serif}
-.finance-dialog::backdrop{background:#10294488}
-@media(max-width:700px){.ebike-withdraw-shell{padding:12px 17px 42px!important}.withdraw-content{grid-template-columns:1fr;gap:12px}.vehicle-balance{position:relative;top:auto;grid-row:auto;height:190px;aspect-ratio:auto!important}.withdraw-content .instructions{grid-column:auto;grid-template-columns:1fr;margin-top:14px!important;padding:18px!important}.payment-status{grid-column:auto}.withdraw-content .amount-title{margin-top:8px!important}.ebike-withdraw-shell .finance-header{height:58px!important}}
-@media(max-width:360px){.ebike-withdraw-shell{padding-right:12px!important;padding-left:12px!important}.vehicle-balance{height:166px}.wallet-select{font-size:14px!important}.minimum-note{font-size:12px!important}.finance-header h1{font-size:25px!important}}
+*{box-sizing:border-box}
+html{background:#fff;color:#111;font-family:Arial,sans-serif}
+body{margin:0;min-height:100dvh;background:#fff;color:#111;font:14px Arial,sans-serif}
+.finance-page{max-width:480px;min-height:100dvh;margin:0 auto;background:#fff;padding-bottom:24px}
+.finance-header{height:54px;position:sticky;z-index:5;top:0;display:grid;grid-template-columns:42px 1fr 42px;align-items:center;background:#f1f1f1;padding:0 7px}
+.finance-header h1{margin:0;font-size:15px;text-align:left;font-weight:600}
+.finance-back{color:#111;text-decoration:none;font-size:29px;line-height:1;padding-left:2px}
+.info-button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;justify-self:end;border:0;width:26px;height:26px;border-radius:50%;background:linear-gradient(#555,#101010);color:#fff;font:bold italic 17px Georgia,serif;cursor:pointer}
+.finance-content{padding:0 16px 32px}
+.finance-section-label{display:flex;align-items:center;justify-content:flex-start;gap:13px;margin:29px 1px 35px;font-size:16px;font-weight:700}
+.finance-section-label small{font-size:14px;font-weight:400;white-space:nowrap}
+.amount-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px 7px;margin-bottom:26px}
+.amount-choice{min-height:41px;border:1px solid #f0f0f0;border-radius:6px;background:#fff;color:#858585;font:14px Arial,sans-serif;box-shadow:0 1px 4px #00000008;cursor:pointer}
+.amount-choice[aria-pressed=true]{background:#eee;border-color:#ddd;color:#222}
+.input-wrap{height:45px;display:flex;align-items:center;border:1px solid #cfcfcf;border-radius:6px;box-shadow:0 1px 5px #00000013;padding:0 20px;gap:14px}
+.input-wrap span{font-size:14px;white-space:nowrap}
+.input-wrap input{width:100%;border:0;outline:0;background:transparent;font:14px Arial,sans-serif;color:#222}
+.input-wrap input::placeholder{color:#b7b7b7}
+.recharge-amount{background:#fafafa}
+.recharge-amount input{min-width:0;color:#222}
+.recharge-amount input::placeholder{color:#666;opacity:1}
+@layer form-controls {
+html body .finance-page .input-wrap.recharge-amount{border:1px solid #888 !important}
+html body .finance-page .input-wrap.recharge-amount:focus-within{border:1px solid #555 !important;box-shadow:0 0 0 2px #5554 !important}
+}
+.channel-heading{margin:29px 10px 12px;font-size:16px;font-weight:700}
+.channel-choice{width:100%;height:47px;border:1px solid #d3d3d3;border-radius:5px;background:linear-gradient(90deg,#f4f4f4,#d2d2d2);font:13px Arial,sans-serif;color:#111;cursor:pointer;box-shadow:0 1px 3px #0002}
+.channel-choice+.channel-choice{margin-top:7px;background:#fff;border-color:#f0f0f0}
+.channel-choice[aria-pressed=true]{border-color:#c8c8c8;background:linear-gradient(90deg,#f4f4f4,#d2d2d2);color:#111}
+.payment-submit{width:100%;height:48px;margin-top:55px;border:0;border-radius:4px;background:#e6001d;color:#fff;font:bold 14px Arial,sans-serif;box-shadow:0 2px 5px #0003;cursor:pointer}
+.payment-submit:disabled{opacity:.72}
+.instructions{margin:45px 10px 0}
+.instructions h2{font-size:16px;margin:0 0 22px}
+.instructions ol{list-style:none;padding:0;margin:0}
+.instructions li{font-size:13px;line-height:1.4;margin:0 0 13px}
+.payment-status{min-height:0;color:#b00018;font-size:12px;line-height:1.4;margin:10px 10px 0}
+.payment-disclosure{font-size:10px;color:#777;line-height:1.45;margin:20px 10px 0}
+.finance-dialog{width:min(420px,calc(100% - 32px));border:0;border-radius:8px;padding:23px;background:#fff;color:#222;box-shadow:0 12px 40px #0004}
+.finance-dialog::backdrop{background:#0008}
+.finance-dialog h2{font-size:17px;margin:0 0 12px}
+.finance-dialog p{font-size:13px;line-height:1.5;margin:0 0 18px}
+.finance-dialog button{display:block;margin-left:auto;border:0;border-radius:4px;background:#e4001b;color:#fff;padding:10px 22px;font:14px Arial,sans-serif}
+.vehicle-balance{position:relative;display:block;overflow:hidden;width:100%;aspect-ratio:434/245;margin:0 0 20px;border-radius:5px;background:#e7e7e7}
+.vehicle-balance img{width:100%;height:100%;display:block;object-fit:cover}
+.vehicle-balance figcaption{position:absolute;right:12px;top:10px;text-align:right;color:#111;font-size:14px;font-weight:700}
+.vehicle-balance figcaption strong{display:block;margin-top:7px;font-size:14px;font-weight:400}
+.vehicle-balance .balance-value{font-size:26px;font-weight:700}
+.withdraw-content{padding-top:10px;padding-left:19px;padding-right:19px}
+.withdraw-content .finance-section-label{margin:2px 8px 13px}
+.wallet-select{height:49px;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border:1px solid #ccc;border-radius:6px;background:#fff;color:#222;text-align:left;font:14px Arial,sans-serif;box-shadow:0 1px 5px #00000016;cursor:pointer}
+.wallet-select .chevron{font-size:24px}
+.withdraw-content .amount-title{margin:22px 8px 12px;justify-content:space-between}
+.withdraw-content .amount-title small{font-size:13px;font-weight:700}
+.received-amount{margin:18px 9px 0;font-size:13px}
+.minimum-note{margin:9px 7px 0;text-align:right;color:#df873f;font-size:13px}
+.withdraw-submit{margin-top:27px}
+.withdraw-content .instructions{margin-top:61px}
+.withdraw-content .instructions h2{margin-bottom:21px}
+.wallet-empty{font-size:13px;color:#666;line-height:1.5}
+.wallet-link{color:#d70d24}
+@media(min-width:700px){.finance-page{min-height:100vh}}
+@media(max-width:410px){.finance-section-label{flex-wrap:wrap;gap:6px 10px}.finance-section-label small{font-size:12px}.withdraw-content .amount-title{flex-wrap:nowrap}.wallet-select{font-size:13px}}

@@ -11,19 +11,20 @@
   <script src="/pages/sonarapay.js" defer></script>
   <script src="/pages/deposit-flow.js" defer></script>
 </head>
-<body class="deposit-page deposit-page--confirmation ebike-redesigned">
+<body class="deposit-page deposit-page--confirmation">
   <main class="narke-payment-scene">
     <header class="narke-payment-topbar">
+      <a class="narke-payment-brand" href="/recharger" aria-label="E-BIKE Pro — Retour à la recharge"><img src="/pages/assets/narke-project-logo.png" alt="E-BIKE Pro"><span>Recharge<br>de compte</span></a>
       <a class="narke-payment-backlink" href="/recharger" data-i18n="narkeBack">← Retour</a>
     </header>
-    <div class="narke-payment-experience narke-payment-state ebike-payment-layout">
+    <div class="narke-payment-experience narke-payment-state">
       <section class="narke-payment-intro" aria-labelledby="narke-state-title">
         <div class="narke-result-symbol" data-narke-symbol aria-hidden="true">↻</div>
         <p class="narke-payment-eyebrow">E-BIKE PRO</p>
         <h1 class="narke-payment-story" id="narke-state-title" data-narke-title data-i18n="narkePendingHero">Votre recharge suit son cours.</h1>
         <p class="narke-payment-lede" data-narke-lede data-i18n="narkePendingLede">Suivez votre demande sans lancer un autre paiement.</p>
       </section>
-    <section class="deposit-card ebike-confirmation-card" aria-labelledby="deposit-title">
+    <section class="deposit-card" aria-labelledby="deposit-title">
       <div class="deposit-missing" data-deposit-missing hidden role="alert">
         <p>Les informations de ce dépôt ne sont pas disponibles.</p>
         <a href="/recharger">Retourner à Recharger</a>

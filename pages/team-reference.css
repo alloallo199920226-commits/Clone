@@ -1,151 +1,211 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap");
-
+:root { --team-red: #e50920; }
 * { box-sizing: border-box; }
-html:has(body.ebike-redesigned) { min-height: 100%; background: #f2f5f8; }
-body.ebike-redesigned.narke-team-page { min-width: 320px; min-height: 100dvh; margin: 0; color: #17283e; background: #f2f5f8; font-family: "DM Sans",sans-serif; -webkit-font-smoothing: antialiased; }
-.ebike-team-portal {
-  width: min(100%,1120px); min-height: 100dvh; margin: 0 auto; padding: 24px 38px 132px;
-  color: #17283e; background: transparent; font-family: "DM Sans",sans-serif;
+html, body { margin: 0; min-width: 320px; }
+.team-nav-symbol { width: 28px; height: 28px; fill: currentColor; }
+.team-portal {
+  width: min(100%, 480px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 0 5px 76px;
+  background: #f1f4f9;
+  color: #152743;
+  font-family: "DM Sans", sans-serif;
 }
-.ebike-team-heading { display: grid; grid-template-columns: minmax(0,1fr) auto auto; align-items: center; gap: 11px; margin: 4px 0 20px; }
-.ebike-team-heading h1 { display: flex; align-items: center; gap: 13px; margin: 0; color: #17283e; font: 800 clamp(25px,3vw,34px)/1.1 "Manrope",sans-serif; letter-spacing: -.04em; }
-.ebike-team-heading h1 img { width: 27px; height: 27px; }
-.ebike-team-heading::before { display: block; grid-column: 1 / -1; grid-row: 1; margin-bottom: -9px; color: #8999ab; content: "CROISSANCE DE VOTRE RÉSEAU"; font-size: 9px; font-weight: 700; letter-spacing: .17em; }
-.ebike-team-heading h1 { grid-column: 1; grid-row: 2; }
-.ebike-team-heading .team-view-link,.ebike-team-heading .team-missions-link { grid-row: 2; }
-.ebike-team-heading .team-view-link { display: inline-flex; min-height: 43px; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: 3px 14px 3px 3px; padding: 0 17px; color: #fff; background: #d92e3c; font: 700 12px "DM Sans",sans-serif; text-decoration: none; }
-.ebike-team-heading .team-view-link span,.ebike-team-heading .team-missions-link span { font-size: 19px; line-height: 1; }
-.ebike-team-heading .team-missions-link { display: inline-flex; min-height: 43px; align-items: center; justify-content: center; gap: 8px; border: 1px solid #d4deea; border-radius: 3px 14px 3px 3px; padding: 0 15px; color: #225b98; background: #fff; font: 700 12px "DM Sans",sans-serif; text-decoration: none; }
-.ebike-invitation-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 12px; }
-.ebike-invite-card { position: relative; min-height: 132px; margin: 0; border: 1px solid #dce4ed; border-radius: 4px 19px 4px 4px; padding: 20px 22px; background: #fff; }
-.ebike-invite-card::before { display: block; margin: 0 0 11px; color: #8291a3; content: "INVITEZ VOTRE RÉSEAU"; font-size: 9px; font-weight: 700; letter-spacing: .15em; }
-.ebike-invite-link::before { content: "LIEN PERSONNEL"; }
-.ebike-invite-card .team-invite-row { display: flex; min-height: auto; align-items: center; justify-content: space-between; gap: 13px; }
-.ebike-invite-card .team-invite-row > div { min-width: 0; }
-.ebike-invite-card .team-invite-value { overflow: hidden; color: #17283e; font: 800 21px/1.25 "Manrope",sans-serif; letter-spacing: .04em; text-overflow: ellipsis; white-space: nowrap; }
-.ebike-invite-card .team-link-value { max-width: 100%; font: 600 12px/1.45 "DM Sans",sans-serif; letter-spacing: 0; }
-.ebike-invite-card .team-invite-label { display: block; margin-top: 5px; color: #8492a3; font-size: 11px; }
-.ebike-invite-card .team-copy { display: inline-flex; min-height: 39px; flex: none; align-items: center; justify-content: center; border: 1px solid #dce4ed; border-radius: 3px 12px 3px 3px; padding: 0 13px; color: #225b98; background: #f7f9fb; font: 700 11px "DM Sans",sans-serif; cursor: pointer; }
-.ebike-invite-card .team-copy::before { width: 14px; height: 14px; margin-right: 7px; background: url("/pages/assets/ebike-icon-copy.png") center/contain no-repeat; content: ""; }
-.ebike-invite-card .team-copy[data-copied="true"] { border-color: #2b7c62; color: #fff; background: #2b7c62; }
-.ebike-invite-card .team-status { min-height: 0; margin: 8px 0 0; color: #9b3942; font-size: 11px; overflow-wrap: anywhere; }
-.ebike-invite-card .team-status:empty { display: none; }
-.ebike-invite-card .team-status[data-state="success"] { color: #237154; font-weight: 700; }
-.ebike-network-overview { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(0,.8fr); align-items: stretch; gap: 13px; margin: 14px 0 27px; }
-.ebike-commission-wrap { align-self: stretch; overflow: hidden; border: 1px solid #dce4ed; border-radius: 4px 18px 4px 4px; background: #fff; color: #17283e; }
-.ebike-commission-wrap::before { display: block; padding: 17px 19px 12px; color: #17283e; content: "Commissions par niveau"; font: 700 15px "Manrope",sans-serif; }
-.ebike-commission-wrap .team-commission-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12px; }
-.ebike-level-icon { display:inline-block; width:26px; height:26px; object-fit:contain; vertical-align:middle; margin-right:7px; }
-.ebike-commission-wrap .team-commission-table th,.ebike-commission-wrap .team-commission-table td { height: 40px; border: 0; border-top: 1px solid #edf1f5; padding: 7px 10px; color: #43556d; text-align: center; font-size: 11px; line-height: 1.3; }
-.ebike-commission-wrap .team-commission-table th { height: 33px; color: #8390a0; background: #f8fafc; font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-.ebike-commission-wrap .team-commission-table th:first-child,.ebike-commission-wrap .team-commission-table td:first-child { width: 46%; text-align: left; }
-.ebike-commission-wrap .team-commission-table td:first-child { display: table-cell; }
-.ebike-commission-wrap .team-commission-table tbody td:first-child { color: #17283e; font-weight: 600; }
-.ebike-commission-wrap .team-level-icon { width: 18px; height: 18px; margin: 0 8px -5px 0; object-fit: contain; opacity: .78; }
-.ebike-commission-wrap .team-level-rate { display: block; margin: 2px 0 0 26px; color: #d92e3c; font-size: 9px; }
-.ebike-network-overview .team-metrics { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 0; }
-.ebike-network-overview .team-metric { position: relative; display: flex; min-height: 82px; flex-direction: column; justify-content: center; gap: 4px; border: 1px solid #dce4ed; border-radius: 4px 17px 4px 4px; padding: 14px 18px 14px 53px; color: #8190a1; background: #fff; text-align: left; font-size: 11px; }
-.ebike-network-overview .team-metric::before { position: absolute; top: 50%; left: 17px; width: 22px; height: 22px; transform: translateY(-50%); background: url("/pages/assets/ebike-icon-users-round.png") center/contain no-repeat; content: ""; }
-.ebike-network-overview .team-metric:nth-child(2)::before { background-image: url("/pages/assets/ebike-icon-wallet-cards.png"); }
-.ebike-network-overview .team-metric .font-mono { color: #17283e; font: 800 22px/1.1 "Manrope",sans-serif; }
-.ebike-members-panel,.ebike-terms-panel { margin: 0 0 16px; border: 1px solid #dce4ed; border-radius: 4px 20px 4px 4px; background: #fff; }
-.ebike-members-panel { overflow: hidden; }
-.ebike-members-panel .team-members-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 21px 14px; }
-.ebike-members-panel .team-members-kicker { color: #d92e3c; font-size: 9px; font-weight: 700; letter-spacing: .15em; }
-.ebike-members-panel h2 { margin: 4px 0 0; color: #17283e; font: 800 21px "Manrope",sans-serif; letter-spacing: -.03em; }
-.ebike-members-panel .team-inline-detail-link { display: inline-flex; align-items: center; gap: 6px; color: #225b98; font-size: 11px; font-weight: 700; text-decoration: none; }
-.ebike-members-panel .team-level-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border-top: 1px solid #e5ebf1; border-bottom: 1px solid #e5ebf1; background: #f9fafc; }
-.ebike-members-panel .team-level-tab { display: grid; min-height: 74px; align-content: center; justify-items: start; gap: 5px; border: 0; border-right: 1px solid #e5ebf1; border-bottom: 2px solid transparent; padding: 0 18px; color: #77879a; background: transparent; text-align: left; font: 600 11px "DM Sans",sans-serif; cursor: pointer; }
-.ebike-members-panel .team-level-tab:last-child { border-right: 0; }
-.ebike-members-panel .team-level-tab[aria-selected="true"] { border-bottom-color: #d92e3c; color: #17283e; background: #fff; }
-.ebike-members-panel .team-level-revenue { color: #225b98; font: 800 16px "Manrope",sans-serif; }
-.ebike-members-panel .team-member-list { padding: 0 20px; }
-.ebike-members-panel .team-detail-more { margin: 0; padding: 12px; color: #8390a0; font-size: 11px; text-align: center; }
-.ebike-members-panel .team-detail-empty { display: flex; min-height: 208px; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin: 0; padding: 20px; color: #8290a0; font-size: 13px; }
-.ebike-members-panel .team-detail-empty img { width: 136px; height: 105px; object-fit: contain; }
-.ebike-members-panel .team-detail-status { padding: 14px 20px; color: #a1323c; font-size: 12px; }
-.ebike-team-portal .team-disclosure { color: #8390a0; font-size: 10px; line-height: 1.5; }
-.ebike-terms-panel { padding: 20px 22px; color: #68798d; font-size: 12px; line-height: 1.55; }
-.ebike-terms-panel h2 { display: flex; align-items: center; gap: 9px; margin: 0 0 15px; color: #17283e; font: 700 16px "Manrope",sans-serif; }
-.ebike-terms-panel h2 img { width: 20px; height: 20px; }
-.ebike-terms-panel p { margin: 0 0 11px; }
-.ebike-terms-panel p:last-of-type { margin-bottom: 13px; }
-.ebike-terms-panel .team-term-level { color: #d92e3c; }
-.ebike-team-portal .team-disclosure:not([data-revenue-note]) { margin-top: 11px; }
-.ebike-team-portal .team-bottom-nav { display: none !important; }
-.ebike-team-portal [hidden] { display: none !important; }
+.team-brandbar {
+  display: flex;
+  height: 95px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 11px;
+}
+.team-wordmark {
+  position: relative;
+  display: flex;
+  height: 37px;
+  align-items: center;
+  width: 169px;
+  background: #fff;
+  padding: 0;
+  color: #123d79;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+}
+.team-wordmark img { display: block; width: 100%; height: auto; max-height: 37px; object-fit: contain; }
+.team-wordmark::before {
+  display: none;
+  position: absolute;
+  left: 4px;
+  width: 34px;
+  height: 29px;
+  background: linear-gradient(135deg, transparent 0 30%, white 31% 48%, transparent 49%), linear-gradient(45deg, transparent 0 36%, white 37% 52%, transparent 53%);
+  content: "";
+}
+.team-view-link,
+.team-copy {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 18px;
+  padding: 0 20px;
+  background: var(--team-red);
+  color: #fff;
+  font: 600 14px "DM Sans", sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+.team-view-link { border-radius: 3px; min-width: 132px; }
+.team-header-actions { display: grid; justify-items: end; gap: 6px; }
+.team-missions-link {
+  display: inline-flex;
+  min-height: 25px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d20c22;
+  border-radius: 14px;
+  padding: 0 13px;
+  background: #fff;
+  color: #c90c20;
+  font: 600 12px "DM Sans", sans-serif;
+  text-decoration: none;
+}
+.team-missions-link:focus-visible { outline: none; box-shadow: inset 0 -2px #123d79; }
+.team-invite {
+  min-height: 155px;
+  margin: 0 0 21px;
+  border-radius: 6px;
+  padding: 19px 11px 14px 21px;
+  background: #fff;
+}
+.team-invite-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 132px;
+  align-items: center;
+  gap: 8px;
+  min-height: 60px;
+}
+.team-invite-value { overflow: hidden; color: #222; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; }
+.team-invite-label { display: block; margin-top: 3px; color: #b81b29; font-size: 13px; }
+.team-table-wrap { overflow-x: auto; border: 1px solid #dce4f1; border-radius: 12px; background: #fff; color: #152743; }
+.team-commission-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
+.team-commission-table th,
+.team-commission-table td { height: 38px; border-bottom: 1px solid #e1e8f1; padding: 5px 4px; color: #32445f; text-align: center; font-weight: 400; }
+.team-commission-table th { background: #edf2f8; color: #123d79; }
+.team-commission-table th:first-child,
+.team-commission-table td:first-child { width: 51%; }
+.team-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin: 15px 0; }
+.team-metric {
+  display: grid;
+  min-height: 66px;
+  align-content: center;
+  gap: 5px;
+  border-radius: 5px;
+  border: 1px solid #dce4f1;
+  background: #fff;
+  color: #152743;
+  text-align: center;
+  font-size: 15px;
+}
+.team-terms {
+  margin: 0;
+  border-radius: 5px;
+  padding: 16px 14px 17px;
+  border: 1px solid #dce4f1;
+  background: #fff;
+  color: #40516b;
+  font-size: 13px;
+  line-height: 1.43;
+}
+.team-terms h2 { margin: 0 0 10px; border-left: 3px solid #df1e2b; padding-left: 9px; color: #152743; font-size: 15px; font-weight: 700; }
+.team-terms p { margin: 0 0 14px; }
+.team-terms p:last-of-type { margin-bottom: 10px; }
+.team-disclosure { color: #64728a; font-size: 11px; line-height: 1.4; }
+.team-bottom-nav {
+  position: fixed;
+  z-index: 5;
+  bottom: 8px;
+  right: 12px;
+  left: 12px;
+  display: grid;
+  width: min(calc(100% - 24px), 560px);
+  height: 70px;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 0 auto;
+  border: 1px solid #123d79;
+  border-radius: 21px;
+  background: #123d79;
+  box-shadow: 0 9px 27px rgb(17 46 89 / 20%);
+}
+.team-bottom-nav a {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 2px;
+  position: relative;
+  color: #fff;
+  font: 12px "DM Sans", sans-serif;
+  text-decoration: none;
+}
+.team-bottom-nav a[aria-current="page"] { color: #fff; }
+.team-bottom-nav a[aria-current="page"]::after { position:absolute; right:28%; bottom:0; left:28%; height:2px; border-radius:2px 2px 0 0; background:#df1e2b; content:""; }
+.team-nav-symbol { font: 21px "DM Sans", sans-serif; line-height: 1; }
+.team-status { min-height: 17px; margin: 8px 3px; color: #8b222b; font-size: 12px; }
+.team-invite .team-status:empty { display: none; }
+.team-invite .team-status { font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
+.team-status[data-state="success"] { color: #155b35; font-weight: 700; }
+.team-copy[data-copied="true"] { background: #155b35; }
+.team-detail-page { padding: 0; }
+.team-detail-page .page-header { height: 55px; background: #fff; }
+.team-detail-page .page-header h1 { font-size: 15px; }
+.team-level-tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #dce4f1; background: #fff; }
+.team-level-tab {
+  display: grid;
+  min-height: 77px;
+  align-content: center;
+  justify-items: center;
+  gap: 11px;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  padding: 0 2px;
+  background: #fff;
+  color: #152743;
+  font: 14px "DM Sans", sans-serif;
+  cursor: pointer;
+}
+.team-level-tab[aria-selected="true"] { border-color: #123d79; background: #eaf0f8; box-shadow: inset 0 -2px #df1e2b; }
+.team-level-revenue { color: #123d79; font-size: 15px; font-weight: 700; }
+.team-detail-empty {
+  display: flex;
+  min-height: 385px;
+  margin: 0;
+  padding: 106px 0 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  color: #999;
+  font-size: 15px;
+}
+.team-detail-empty img { width: 248px; height: 204px; object-fit: contain; }
+.team-member-list { padding: 0 14px; }
+.team-member-row { display: grid; min-height: 64px; grid-template-columns: 54px minmax(0,1fr) auto; align-items: center; gap: 10px; border-bottom: 1px solid #eee; font-size: 14px; }
+.team-member-avatar { width: 36px; height: 36px; justify-self: center; object-fit: contain; }
+.team-member-details { display: grid; min-width: 0; gap: 4px; }
+.team-member-phone { overflow: hidden; color: #222; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+.team-member-date { color: #888; font-size: 12px; }
+.team-member-investment { padding-right: 2px; color: #161616; font-size: 15px; font-weight: 700; white-space: nowrap; }
+.team-detail-more { padding: 12px 14px; color: #888; font-size: 13px; text-align: center; }
+.team-loading-row { height: 64px; border-bottom: 1px solid #eee; background: linear-gradient(#f3f3f3,#f3f3f3) 10px 16px / 36px 36px no-repeat, linear-gradient(#eee,#eee) 65px 19px / 42% 10px no-repeat, linear-gradient(#eee,#eee) 65px 38px / 58% 8px no-repeat, linear-gradient(#eee,#eee) calc(100% - 4px) 20px / 44px 11px no-repeat; animation: team-placeholder 1.2s ease-in-out infinite alternate; }
+@keyframes team-placeholder { to { opacity: .55; } }
+.team-detail-status { padding: 18px; color: #8b222b; font-size: 13px; }
+[hidden] { display: none !important; }
+@media (max-width: 360px) {
+  .team-invite { padding-left: 13px; }
+  .team-invite-row { grid-template-columns: minmax(0, 1fr) 118px; }
+  .team-copy { padding: 0 12px; font-size: 12px; }
+  .team-wordmark { font-size: 23px; }
+}
 
-/* The level-detail page is a focused member ledger rather than another dashboard. */
-.ebike-team-detail {
-  width: min(100%,960px); min-height: 100dvh; margin: 0 auto; padding: 22px 38px 125px;
-  color: #17283e; background: transparent; font-family: "DM Sans",sans-serif;
-}
-.ebike-detail-header { display: flex; min-height: 74px; align-items: center; gap: 17px; border: 0; border-bottom: 1px solid #dce4ed; background: transparent; }
-.ebike-detail-header .back { display: grid; width: 39px; height: 39px; place-items: center; border: 1px solid #dce4ed; border-radius: 3px 12px 3px 3px; background: #fff; }
-.ebike-detail-header .back img { width: 17px; height: 17px; transform: rotate(180deg); }
-.ebike-detail-header > div { display: grid; gap: 4px; }
-.ebike-detail-header .ebike-kicker { color: #d92e3c; }
-.ebike-detail-header h1 { margin: 0; color: #17283e; font: 800 23px/1 "Manrope",sans-serif; }
-.ebike-level-intro { padding: 25px 0 15px; }
-.ebike-level-intro h2 { margin: 0 0 5px; color: #17283e; font: 700 19px "Manrope",sans-serif; }
-.ebike-level-intro p { margin: 0; color: #8390a0; font-size: 12px; }
-.ebike-level-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); overflow: hidden; border: 1px solid #dce4ed; border-radius: 4px 17px 4px 4px; background: #fff; }
-.ebike-level-tabs .team-level-tab { display: grid; min-height: 84px; align-content: center; justify-items: start; gap: 7px; border: 0; border-right: 1px solid #e8edf2; border-bottom: 3px solid transparent; padding: 0 20px; color: #758498; background: #fff; text-align: left; font: 600 12px "DM Sans",sans-serif; cursor: pointer; }
-.ebike-level-tabs .team-level-tab:last-child { border-right: 0; }
-.ebike-level-tabs .team-level-tab[aria-selected="true"] { border-bottom-color: #d92e3c; background: #f8fafc; color: #17283e; }
-.ebike-level-tabs .team-level-revenue { color: #225b98; font: 800 18px "Manrope",sans-serif; }
-.ebike-member-list { margin-top: 15px; overflow: hidden; border: 1px solid #dce4ed; border-radius: 4px 17px 4px 4px; padding: 0 20px; background: #fff; }
-.ebike-member-list .team-member-row { display: grid; min-height: 76px; grid-template-columns: 44px minmax(0,1fr) auto; align-items: center; gap: 13px; border-bottom: 1px solid #edf1f5; font-size: 13px; }
-.ebike-member-list .team-member-row:last-child { border-bottom: 0; }
-.ebike-referral-avatar { display: grid; width: 34px; height: 34px; justify-self: center; object-fit: contain; border-radius: 50%; padding: 8px; background: #eff3f7; }
-.ebike-member-list .team-member-details { display: grid; min-width: 0; gap: 4px; }
-.ebike-member-list .team-member-phone { overflow: hidden; color: #17283e; font-size: 13px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-.ebike-member-list .team-member-date { color: #8794a3; font-size: 10px; }
-.ebike-member-list .team-member-investment { color: #225b98; font: 800 13px "Manrope",sans-serif; white-space: nowrap; }
-.ebike-team-detail .team-detail-more { margin: 0; padding: 15px; color: #8390a0; font-size: 11px; text-align: center; }
-.ebike-team-detail .team-detail-empty { display: flex; min-height: 300px; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #8290a0; font-size: 13px; }
-.ebike-team-detail .team-detail-empty img { width: 190px; height: 150px; object-fit: contain; }
-.ebike-team-detail .team-detail-status { margin-top: 14px; border: 1px solid #edcdd1; border-radius: 4px 14px 4px 4px; padding: 14px 17px; color: #973a43; background: #fff8f8; font-size: 12px; }
-.team-loading-row { height: 76px; border-bottom: 1px solid #edf1f5; background: linear-gradient(#eef2f6,#eef2f6) 8px 20px / 34px 34px no-repeat, linear-gradient(#edf1f5,#edf1f5) 60px 23px / 36% 9px no-repeat, linear-gradient(#f1f4f7,#f1f4f7) 60px 42px / 48% 7px no-repeat, linear-gradient(#edf1f5,#edf1f5) calc(100% - 4px) 31px / 65px 10px no-repeat; animation: eb-team-placeholder 1.2s ease-in-out infinite alternate; }
-@keyframes eb-team-placeholder { to { opacity: .56; } }
-body.ebike-redesigned [hidden] { display: none !important; }
-@media(max-width: 820px) {
-  .ebike-team-portal { padding: 20px 22px 120px; }
-  .ebike-network-overview { grid-template-columns: 1fr; }
-  .ebike-network-overview .team-metrics { grid-template-columns: 1fr 1fr; }
-  .ebike-team-detail { padding: 18px 22px 120px; }
-}
-@media(max-width: 560px) {
-  .ebike-team-portal { padding: 15px 13px 115px; }
-  .ebike-team-heading { grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 15px; }
-  .ebike-team-heading::before { grid-column: 1 / -1; }
-  .ebike-team-heading h1 { font-size: 24px; }
-  .ebike-team-heading h1 img { width: 22px; height: 22px; }
-  .ebike-team-heading .team-view-link { grid-column: 1; grid-row: 3; justify-self: start; min-height: 38px; }
-  .ebike-team-heading .team-missions-link { grid-column: 2; grid-row: 3; min-height: 38px; }
-  .ebike-invitation-grid { grid-template-columns: 1fr; gap: 9px; }
-  .ebike-invite-card { min-height: 111px; padding: 15px 16px; }
-  .ebike-invite-card .team-invite-value { font-size: 17px; }
-  .ebike-invite-card .team-link-value { font-size: 10px; }
-  .ebike-invite-card .team-copy { min-height: 35px; padding: 0 9px; font-size: 10px; }
-  .ebike-network-overview { margin: 11px 0 22px; }
-  .ebike-commission-wrap .team-commission-table th,.ebike-commission-wrap .team-commission-table td { padding: 6px 5px; font-size: 10px; }
-  .ebike-members-panel .team-members-heading { padding: 15px; }
-  .ebike-members-panel .team-inline-detail-link { font-size: 9px; }
-  .ebike-members-panel .team-level-tab { min-height: 68px; padding: 0 9px; font-size: 10px; }
-  .ebike-members-panel .team-level-revenue { font-size: 13px; }
-  .ebike-members-panel .team-member-list { padding: 0 12px; }
-  .ebike-terms-panel { padding: 17px; }
-  .ebike-team-detail { padding: 13px 13px 115px; }
-  .ebike-detail-header { min-height: 63px; }
-  .ebike-detail-header h1 { font-size: 20px; }
-  .ebike-level-intro { padding-top: 20px; }
-  .ebike-level-tabs .team-level-tab { min-height: 75px; padding: 0 10px; font-size: 10px; }
-  .ebike-level-tabs .team-level-revenue { font-size: 14px; }
-  .ebike-member-list { padding: 0 12px; }
-  .ebike-member-list .team-member-row { min-height: 68px; grid-template-columns: 37px minmax(0,1fr) auto; gap: 8px; }
-  .ebike-member-list .team-member-investment { font-size: 11px; }
-}
-@media(prefers-reduced-motion: reduce) {
-  .ebike-team-portal *, .ebike-team-detail *, .ebike-team-portal *::before, .ebike-team-detail *::before { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-}
+.team-commission-table th, .team-commission-table td { height: 40px; padding: 8px; font-size: 12px; line-height: 16px; }
+.team-commission-table th { font-weight: 400; }
