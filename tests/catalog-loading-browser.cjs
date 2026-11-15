@@ -32,7 +32,7 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
     assert(await evaluate(`Array.from(document.querySelectorAll(".metrics strong,.product-footer b"))
       .every(node => node.textContent === "—")`));
     assert(await evaluate(`Array.from(document.querySelectorAll('[data-purpose="buy-btn"]')).every(node => node.disabled)`));
-    assert(await evaluate(`!document.querySelector(".product-card").dataset.price`));
+    assert(await evaluate(`!document.querySelector(".product-card")?.dataset.price`));
   };
   const product = { code: "VIP1", name: "VIP1", price: 3500, dailyIncome: 1225,
     totalIncome: 79625, durationDays: 65, active: true };
@@ -51,7 +51,8 @@ module.exports = async ({ call, evaluate, waitFor, navigate, screenshot, paused 
   await answer(200, { products: [product] });
   await waitFor(`document.querySelector(".product-card").dataset.price === "3500"`);
   assert(await evaluate(`!document.querySelector('[data-purpose="buy-btn"]').disabled`));
-  assert.equal(await evaluate(`document.querySelectorAll(".product-card")[1].querySelector(".product-footer b").textContent`), "—");
+  assert.equal(await evaluate(`document.querySelectorAll(".product-card").length`), 1,
+    "Only the configured product must render; no static extra offers");
   await evaluate(`document.querySelector('[data-purpose="buy-btn"]').click()`);
   assert(await evaluate(`document.querySelector("[data-detail-price]").textContent.replace(/\\s/g, "").includes("3500")`));
   await evaluate(`document.querySelector(".cancel-purchase").click()`);

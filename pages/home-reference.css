@@ -199,6 +199,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid #276ac0; outline-offs
 }
 .product-card:hover { transform: translateY(-2px); box-shadow: 0 7px 16px rgba(29, 63, 119, .15); }
 .product-card[hidden] { display: none !important; }
+.product-grid[hidden] { display: none !important; }
 .vehicle-image { display: flex; width: calc(100% + 16px); height: 119px; flex: 0 0 119px; align-items: center; justify-content: center; margin: -7px -8px 3px; overflow: hidden; background: #edf1f5; }
 .vehicle-image img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
 .product-card:hover .vehicle-image img { transform: scale(1.035); }
@@ -209,7 +210,10 @@ button:focus-visible, a:focus-visible { outline: 3px solid #276ac0; outline-offs
 .product-badge { position: absolute; top: 11px; left: 8px; display: inline-flex; min-height: 22px; align-items: center; border-radius: 999px; padding: 2px 9px; background: var(--red); color: white; font-size: 10px; font-weight: 800; line-height: 1; box-shadow: 0 2px 4px rgba(128, 11, 21, .18); }
 .product-badge.premium { background: #ed2632; }
 .product-title-row { display: flex; min-height: 34px; align-items: flex-start; justify-content: space-between; gap: 4px; }
+.product-title-row > div { min-width: 0; }
 .product-title-row h3 { overflow: hidden; margin: 1px 0 0; color: #15213a; font-family: "Outfit", sans-serif; font-size: 14px; font-weight: 800; letter-spacing: -.25px; line-height: 1.1; text-overflow: ellipsis; white-space: nowrap; }
+.product-card[data-catalog-information] .product-title-row h3 { overflow: visible; white-space: normal; overflow-wrap: anywhere; }
+.product-card[data-catalog-information] .product-badge { max-width: calc(100% - 56px); overflow-wrap: anywhere; }
 .product-category { overflow: hidden; margin: 2px 0 0; color: #48546a; font-size: 9px; line-height: 1.12; text-overflow: ellipsis; white-space: nowrap; }
 .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0 5px; margin: 4px 0 5px; }
 .metrics strong { display: block; color: var(--blue); font-family: "Outfit", sans-serif; font-size: 11px; font-weight: 800; line-height: 1.25; overflow-wrap: anywhere; }

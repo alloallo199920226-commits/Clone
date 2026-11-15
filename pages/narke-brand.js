@@ -1,8 +1,32 @@
 /* E-BIKE Pro presentation adapter. Stored values, routes and API contracts stay intact. */
 (() => {
   "use strict";
+  const bikeModels = ["City", "Urban", "Trek", "Sport", "Explorer", "Signature"];
+  const bikeProductName = value => {
+    const match = /^VIP\s*(\d+)$/i.exec(value.trim());
+    const level = match ? Number(match[1]) : 0;
+    return Number.isSafeInteger(level) && level > 0
+      ? `E-Bike Pro ${bikeModels[level - 1] || `Série ${level}`}` : null;
+  };
+  function nameProductTitle(node) {
+    if (isAdmin || !node.parentElement?.closest(".product-title-row h3,#dialog-title,.owned-product-title")) return;
+    const model = bikeProductName(node.data);
+    if (!model) return;
+    node.data = model;
+    const card = node.parentElement.closest(".product-card");
+    if (!card) return;
+    // Presentation only: keep the administrator name and purchase code intact.
+    card.dataset.model = model;
+    for (const element of [card, ...card.querySelectorAll("[aria-label],img[alt]")]) {
+      for (const attribute of ["aria-label", "alt"]) {
+        const label = element.getAttribute(attribute);
+        if (label) element.setAttribute(attribute, label.replace(/\bVIP\s*\d+\b/gi,
+          code => bikeProductName(code) || code));
+      }
+    }
+  }
   const legacyBrand = /\b(?:NARKE(?:\s+Industries)?|IVECO|SHINERAY|SWM|Sprite|AERONOVA|Valhalla)\b/gi;
-  const excluded = "script,style,noscript,textarea,input,code,pre,[contenteditable]";
+  const excluded = "script,style,noscript,textarea,input,code,pre,[contenteditable],[data-catalog-information]";
   const attributes = ["title", "alt", "aria-label", "placeholder"];
   const replace = value => value.replace(/\b(?:iveco|narke)\s*pay\b/gi, "Paiement E-BIKE Pro")
     .replace(legacyBrand, "E-BIKE Pro")
@@ -10,6 +34,7 @@
     .replace(/\bsonara[\s-]*pay\b/gi, "service de paiement")
     .replace(/10 h à 00 h \(minuit\), heure de l’Algérie/g, "09 h à 18 h, heure du Maroc");
   function labels(element) {
+    if (element.closest("[data-catalog-information]")) return;
     for (const name of attributes) {
       const value = element.getAttribute(name);
       if (value !== null && replace(value) !== value) element.setAttribute(name, replace(value));
@@ -73,6 +98,7 @@
   });
   function rewrite(root) {
     if (root.nodeType === Node.TEXT_NODE) {
+      nameProductTitle(root);
       if (root.parentElement && !root.parentElement.closest(excluded)) {
         const value = replace(root.data);
         if (value !== root.data) root.data = value;

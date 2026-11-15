@@ -42,3 +42,18 @@ espaces vides. La réussite des parcours fonctionnels ne prouvait pas la qualit�
 pas seulement le premier écran ou l’absence de défilement horizontal global.
 Contrôler les dimensions réelles des en-têtes, icônes et contrôles, ainsi que les
 états vides et les sections situées sous la ligne de flottaison.
+
+Le catalogue doit afficher « les informations des produits configurés depuis
+l’admin », sans inventer des offres. L’utilisateur demande désormais des noms de
+produits équivalents aux termes E-Bike : les intitulés génériques VIP peuvent
+recevoir des noms de modèles côté site utilisateur.
+
+**Why:** l’utilisateur a signalé que les produits affichés ne venaient pas de
+l’administration, puis a précisé cette demande après l’explication d’une correction
+ciblée de la lecture du catalogue côté serveur.
+
+**How to apply:** préserver les noms enregistrés et les codes en données ; ne
+renommer que leur présentation générique VIP sur le site. Garder les noms
+personnalisés configurés par l’administrateur, les prix, revenus et durées enregistrés ;
+laisser le catalogue vide si aucun produit n’est configuré. Cette correction
+n’autorise pas à étendre les règles d’achat ni à modifier le rendu de l’administration.

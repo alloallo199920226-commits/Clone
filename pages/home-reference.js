@@ -76,7 +76,7 @@
   const showAll = document.querySelector("[data-show-all]");
   const grid = document.querySelector(".product-grid");
   const cardTemplate = grid.querySelector(".product-card").cloneNode(true);
-  document.querySelectorAll(".product-card").forEach(card => { card.hidden = false; });
+  grid.replaceChildren();
   showAll?.setAttribute("aria-expanded", "true");
   showAll?.addEventListener("click", () => {
     grid.scrollIntoView({ behavior: motion.matches ? "auto" : "smooth", block: "start" });
@@ -117,6 +117,7 @@
     button.addEventListener("click", () => { location.href = button.dataset.route; });
   });
   const dialog = document.querySelector(".purchase-dialog");
+  dialog.dataset.catalogInformation = "";
   const title = dialog.querySelector("#dialog-title");
   const image = dialog.querySelector(".purchase-details img");
   const error = dialog.querySelector(".purchase-error");
@@ -134,9 +135,7 @@
       if (!button) return;
       if (!catalogReady || button.disabled) return;
       selectedCard = button.closest(".product-card");
-      title.textContent = selectedCard.dataset.model
-        ? `${selectedCard.dataset.model} · ${selectedCard.dataset.name || selectedCard.dataset.vip}`
-        : selectedCard.dataset.name || selectedCard.dataset.vip;
+      title.textContent = selectedCard.dataset.name || selectedCard.dataset.vip;
       image.src = selectedCard.dataset.image;
       image.alt = `Illustration vélo électrique — offre ${selectedCard.dataset.vip}`;
       dialog.querySelector("[data-detail-price]").textContent = `Prix:FCFA ${format(selectedCard.dataset.price)}`;
@@ -202,6 +201,7 @@
   catalogStatus.after(catalogRetry);
   let loadVersion = 0;
   const clearCatalog = () => {
+    grid.hidden = true;
     catalogReady = false;
     confirmButton.disabled = true;
     buyButtons().forEach(button => {
@@ -243,25 +243,30 @@
     const cards = result.products.map((product, index) => {
       const card = cardTemplate.cloneNode(true);
       card.hidden = false;
+      card.dataset.catalogInformation = "";
       card.classList.remove("extra-card");
       card.dataset.vip = product.code;
       card.dataset.purpose = `vip-card-${index + 1}`;
-      card.dataset.model = /^VIP\s*\d+$/i.test(product.name || product.code)
-        ? `E-Bike Pro X${index + 1}` : product.name || product.code;
+      card.dataset.name = product.name || product.code;
+      card.dataset.model = card.dataset.name;
+      card.querySelector(".product-title-row h3, h2").textContent = card.dataset.name;
       card.dataset.image = index % 2 === 0
         ? "/pages/assets/e-bike-product-black.jpg" : "/pages/assets/e-bike-product-white.jpg";
       card.querySelector(".vehicle-image img").src = card.dataset.image;
       card.querySelector(".vehicle-image img").alt = `Illustration vélo électrique — ${card.dataset.model}`;
       card.querySelector(".vehicle-image img").loading = index < 2 ? "eager" : "lazy";
       const category = card.querySelector(".product-category");
-      if (category) category.textContent = `Offre ${product.code}`;
+      if (category) category.textContent = Number.isSafeInteger(product.durationDays) && product.durationDays > 0
+        ? `Durée : ${format(product.durationDays)} jours` : "Durée non configurée";
       const badge = card.querySelector(".product-badge");
-      if (badge) badge.textContent = index === 0 ? "Découverte" : index === 1 ? "Premium" : product.code;
+      if (badge) badge.textContent = product.code;
+      card.querySelector(".price-caption").textContent = "Prix du produit";
       const favorite = card.querySelector("[data-favorite]");
       if (favorite) updateFavorite(favorite);
       return card;
     });
     grid.replaceChildren(...cards);
+    grid.hidden = false;
     buyButtons().forEach(button => {
       const card = button.closest(".product-card");
       const product = result.products.find(value => value.code === card.dataset.vip);
@@ -269,14 +274,14 @@
         && Number.isSafeInteger(product.dailyIncome) && product.dailyIncome > 0
         && Number.isSafeInteger(product.totalIncome) && product.totalIncome >= product.dailyIncome
         && Number.isSafeInteger(product.durationDays) && product.durationDays > 0;
-      const available = valid && product.active === true;
+      const available = valid && product.active === true && product.purchasable !== false;
       card.dataset.available = String(Boolean(available));
       button.disabled = !available;
       button.setAttribute("aria-label", `${available ? "Acheter" : "Offre indisponible :"} ${card.dataset.model}`);
       if (valid) {
         card.dataset.name = product.name;
         card.querySelector(".product-title-row h3, h2").textContent = card.dataset.model || product.name;
-        card.setAttribute("aria-label", `${card.dataset.model || product.name} — ${product.name}`);
+        card.setAttribute("aria-label", card.dataset.name);
         card.dataset.price = String(product.price);
         card.dataset.daily = String(product.dailyIncome);
         card.dataset.total = String(product.totalIncome);

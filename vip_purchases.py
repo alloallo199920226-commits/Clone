@@ -1,5 +1,6 @@
 """Real, atomic purchases using the settled account ledger, not a payment provider."""
 import uuid
+import re
 
 from psycopg.types.json import Jsonb
 
@@ -16,16 +17,18 @@ DEFAULT_PRODUCTS = {
 }
 
 
-def catalog(cursor, lock=False):
+def catalog(cursor, lock=False, configured_only=False):
     from product_catalog_admin import initialized
-    products = {} if initialized(cursor) else {code: dict(value) for code, value in DEFAULT_PRODUCTS.items()}
+    products = {} if configured_only or initialized(cursor) else {code: dict(value) for code, value in DEFAULT_PRODUCTS.items()}
     cursor.execute("SELECT id,value FROM shineray_admin_resources WHERE kind='product' ORDER BY id"
                    + (" FOR SHARE" if lock else ""))
     seen = set()
     for row in cursor.fetchall():
         value = row["value"]
         code = value.get("code")
-        if code not in DEFAULT_PRODUCTS:
+        if configured_only and (not isinstance(code, str) or not re.fullmatch(r"[A-Z0-9_-]{2,32}", code)):
+            raise db.AuthError(503, "Code du produit non configuré dans l’administration.")
+        if not configured_only and code not in DEFAULT_PRODUCTS:
             continue
         if code in seen:
             raise db.AuthError(503, "Plusieurs produits utilisent le même code VIP. Contactez l’administration.")
@@ -41,12 +44,15 @@ def catalog(cursor, lock=False):
                 or not value["dailyIncome"] <= value["totalIncome"] <= value["dailyIncome"] * value["durationDays"]):
             raise db.AuthError(503, "Revenus du produit non configurés ou incohérents dans l’administration.")
         products[code].update(dailyIncome=value["dailyIncome"], totalIncome=value["totalIncome"])
+        if configured_only:
+            # Publishing configured information must not extend financial permissions.
+            products[code]["purchasable"] = code in DEFAULT_PRODUCTS
     return products
 
 
 def available():
     with db.connect() as conn, conn.cursor() as cursor:
-        return {"products": list(catalog(cursor).values()), "automaticIncomeEnabled": True}
+        return {"products": list(catalog(cursor, configured_only=True).values()), "automaticIncomeEnabled": True}
 
 
 def purchase(user_id, body):
