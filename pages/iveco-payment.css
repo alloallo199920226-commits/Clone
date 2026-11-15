@@ -6,3 +6,17 @@ body.ep-finance.ep-withdraw-page .wallet-options .wallet-select{min-height:52px}
 body.ep-finance.ep-withdraw-page .net-line [data-amount-received]{color:var(--ep-blue)}
 body.ep-finance.ep-withdraw-page .payment-submit{margin-top:10px}
 @media(max-width:540px){body.ep-finance.ep-withdraw-page .withdraw-submit{font-size:13px!important}}
+@media(max-width:560px){
+  body.ep-finance.ep-withdraw-page .step-heading{align-items:flex-start;gap:9px}
+  body.ep-finance.ep-withdraw-page .step-heading>div{flex:1 1 auto;min-width:0}
+  body.ep-finance.ep-withdraw-page .step-heading>small{
+    flex:0 0 auto;margin-left:0;white-space:nowrap;padding-top:2px;font-size:11px
+  }
+  body.ep-finance.ep-withdraw-page .step-heading p{max-width:35ch}
+  body.ep-finance.ep-withdraw-page .payment-submit{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;
+    min-width:0;padding:12px 13px;line-height:1.3;overflow-wrap:anywhere
+  }
+  body.ep-finance.ep-withdraw-page .payment-submit b{justify-self:end}
+  body.ep-finance.ep-withdraw-page .withdraw-content{min-width:0}
+}

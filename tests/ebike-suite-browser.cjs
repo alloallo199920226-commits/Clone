@@ -3,8 +3,10 @@
    Never submits a deposit, withdrawal, purchase or admin financial command. */
 const assert = require("node:assert/strict");
 const { randomInt, createHash } = require("node:crypto");
+const fs = require("node:fs");
 
 module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUser}) => {
+  const layoutIssues = [];
   for (const route of ["/connexion","/inscription"]) {
     await navigate(route);
     for (const width of [320,390,1280]) {
@@ -24,7 +26,7 @@ module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUse
   }).then(async r=>({status:r.status,body:await r.json()}))`);
   assert.equal(registered.status,201,JSON.stringify(registered.body));
   trackUser(registered.body.user.id);
-  const routes = ["/compte","/projet","/equipe","/mon-equipe","/recharger","/retrait",
+  const routes = ["/accueil","/compte","/projet","/equipe","/mon-equipe","/recharger","/retrait",
     "/financement","/historique-recharges","/historique-retraits",
     "/gestion-compte-bancaire","/ajouter-compte-retrait","/notifications",
     "/missions","/missions-vip","/a-propos","/regles","/service-client",
@@ -32,13 +34,39 @@ module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUse
   const checkPage = async (route,width) => {
     await evaluate("document.fonts.ready");
     await evaluate("new Promise(r=>setTimeout(r,160))");
+    if(route==="/accueil") await evaluate("document.querySelector('dialog[open] [data-notification-close]')?.click()");
     const geometry=await evaluate(`(() => {
       const visible=e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0};
+      const customer=!${JSON.stringify(route)}.startsWith('/admin');
+      const inScrollableRegion=e=>{
+        for(let p=e.parentElement;p&&p!==document.body;p=p.parentElement)
+          if(/auto|scroll/.test(getComputedStyle(p).overflowX)&&p.scrollWidth>p.clientWidth) return true;
+        return false;
+      };
       return {overflow:document.documentElement.scrollWidth>innerWidth,
         legacy:/\\b(?:NARKE|IVECO|SHINERAY)\\b/i.test(document.body.innerText+' '+document.title),
         title:document.title,background:getComputedStyle(document.body).backgroundColor,
         badImages:[...document.images].filter(visible).filter(e=>!e.complete||!e.naturalWidth).map(e=>e.src),
         overflowElements:[...document.querySelectorAll('body *')].filter(e=>visible(e)&&e.getBoundingClientRect().right>innerWidth+2).slice(0,5).map(e=>e.tagName+'.'+e.className),
+        clippedControls:customer?[...document.querySelectorAll('a,button,input,select,textarea,h1,h2,h3,label,.team-invite-value')]
+          .filter(e=>visible(e)&&!inScrollableRegion(e)).filter(e=>{const r=e.getBoundingClientRect();return r.left < -2 || r.right > innerWidth+2})
+          .slice(0,8).map(e=>({element:e.tagName+'.'+e.className,text:e.textContent.trim().slice(0,45),
+            left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right})):[],
+        oversizedHeaders:customer?[...document.querySelectorAll('.narke-suite-header,.team-brandbar,.project-brandbar,.home-header,.info-brandbar,.missions-header')]
+          .filter(visible).filter(e=>e.getBoundingClientRect().height>84)
+          .map(e=>({element:e.className,height:e.getBoundingClientRect().height})):[],
+        oversizedHeaderAssets:customer?[...document.querySelectorAll('.narke-suite-header img,.narke-suite-header svg')]
+          .filter(visible).filter(e=>{const r=e.getBoundingClientRect();return e.tagName.toLowerCase()==='svg'?r.width>40||r.height>40:r.width>180||r.height>64})
+          .map(e=>({element:e.tagName,width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height})):[],
+        oversizedTitles:customer&&innerWidth<700?[...document.querySelectorAll('h1')].filter(visible)
+          .filter(e=>parseFloat(getComputedStyle(e).fontSize)>42)
+          .map(e=>({title:e.textContent.slice(0,50),size:getComputedStyle(e).fontSize})):[],
+        distantEmptyStates:customer&&innerWidth<700?[...document.querySelectorAll('img[src*="empty-records.svg"]')].filter(visible)
+          .map(e=>{
+            const tabs=[...document.querySelectorAll('[data-team-level-tab]')].filter(visible);
+            const previous=tabs.length?Math.max(...tabs.map(tab=>tab.getBoundingClientRect().bottom)):0;
+            return {height:e.getBoundingClientRect().height,gap:previous?e.getBoundingClientRect().top-previous:0};
+          }).filter(e=>e.height>160||e.gap>160):[],
         cyan:[...document.querySelectorAll('body *')].filter(visible).filter(e=>{
           const c=getComputedStyle(e).color.match(/[\\d.]+/g)?.map(Number);
           return c&&c[0]<80&&c[1]>150&&c[2]>150&&Math.abs(c[1]-c[2])<110;
@@ -46,10 +74,19 @@ module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUse
     })()`);
     await screenshot(`ebike-suite-${route.slice(1)}-${width}`);
     assert.equal(geometry.legacy,false,`Old brand ${route} ${JSON.stringify(geometry)}`);
-    assert.equal(geometry.overflow,false,`Overflow ${route} ${width} ${JSON.stringify(geometry)}`);
     assert.deepEqual(geometry.badImages,[],`Broken images ${route}`);
     assert.deepEqual(geometry.cyan,[],`Legacy cyan styling ${route}`);
-    console.log(`PASS ${route} ${width}`);
+    for(const issue of ["overflow","clippedControls","oversizedHeaders","oversizedHeaderAssets","oversizedTitles","distantEmptyStates"]) {
+      if(Array.isArray(geometry[issue])?geometry[issue].length:geometry[issue])
+        layoutIssues.push({route,width,issue,details:geometry[issue]});
+    }
+    if(width===390 && ["/accueil","/compte","/projet","/equipe","/mon-equipe","/retrait"].includes(route)) {
+      const metrics=await call("Page.getLayoutMetrics");
+      const image=await call("Page.captureScreenshot",{format:"png",captureBeyondViewport:true,
+        clip:{x:0,y:0,width:390,height:Math.min(metrics.cssContentSize.height,7000),scale:1}});
+      fs.writeFileSync(`/tmp/ebike-mobile-full-${route.slice(1)}.png`,Buffer.from(image.data,"base64"));
+    }
+    console.log(`${layoutIssues.some(i=>i.route===route&&i.width===width)?"LAYOUT":"PASS"} ${route} ${width}`);
   };
   for (const width of [390,1280]) {
     await call("Emulation.setDeviceMetricsOverride",{width,height:width===390?844:900,deviceScaleFactor:1,mobile:width<700});
@@ -62,6 +99,15 @@ module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUse
   for(const route of ["/compte","/projet","/equipe","/retrait","/ajouter-compte-retrait","/recharger"]) {
     await navigate(route); await checkPage(route,320);
   }
+  await navigate("/retrait");
+  await evaluate("document.querySelector('[data-suite-menu-button]').click()");
+  assert.equal(await evaluate("document.querySelector('[data-suite-menu-button]').getAttribute('aria-expanded')"),"true");
+  assert(await evaluate("(()=>{const r=document.querySelector('.narke-suite-menu').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth})()"),
+    "The financial navigation menu must fit the narrow viewport");
+  await screenshot("ebike-suite-finance-menu-open");
+  await call("Input.dispatchKeyEvent",{type:"keyDown",key:"Escape",code:"Escape"});
+  await call("Input.dispatchKeyEvent",{type:"keyUp",key:"Escape",code:"Escape"});
+  assert.equal(await evaluate("document.querySelector('.narke-suite-menu').hidden"),true);
   await navigate("/compte");
   await evaluate("document.querySelector('.gift-code-toggle').click()");
   assert.equal(await evaluate("document.querySelector('#gift-code-panel').hidden"),false);
@@ -109,5 +155,6 @@ module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUse
   await waitFor("document.querySelector('#dashboard-view')?.hidden===false && document.querySelector('#admin-content').textContent.includes('État de la plateforme')");
   await call("Emulation.setDeviceMetricsOverride",{width:1280,height:900,deviceScaleFactor:1,mobile:false});
   await checkPage("/admin-dashboard",1280);
-  console.log("PASS: complete E-BIKE Pro route coverage, three widths, legacy brand removal, real navigation, team tabs, payment language, unchanged imported admin script and signed-in admin.");
+  assert.deepEqual(layoutIssues,[],`Customer layout issues: ${JSON.stringify(layoutIssues)}`);
+  console.log("PASS: complete E-BIKE Pro route coverage, three widths, bounded headers/icons, readable mobile title sizes, unclipped controls, local empty-state spacing, real navigation, team tabs, payment language, unchanged imported admin script and signed-in admin.");
 };

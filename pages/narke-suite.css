@@ -340,3 +340,360 @@ body.ep-redesign.login-page .phone-field { border: 1px solid #c8d1d7; }
   body.ep-redesign.login-page .ep-auth-brand { top: 22px; left: 24px; }
   body.ep-redesign.login-page .ep-auth-brand p { margin-top: 32px; font-size: 34px; }
 }
+
+/* Customer portal polish: compact mobile-first hierarchy, shared controls and content-first pacing.
+   All selectors are customer body classes; finance states and administration are deliberately isolated. */
+body.ep-redesign:not(.ep-finance) {
+  --ep-ink:#112840;
+  --ep-blue:#1346a6;
+  --ep-red:#ed1c2b;
+  --ep-paper:#f4f2ec;
+  --ep-line:#d2d9d9;
+  --ep-muted:#607184;
+  --ep-white:#fffdfa;
+}
+body.ep-redesign:not(.ep-finance) :is(.page,.reference-page,.missions-app,.team-portal,.team-detail-page,.account-shell) {
+  min-width:0;
+}
+body.ep-redesign:not(.ep-finance) :is(button,a,input,select,textarea) { font-family:"DM Sans",sans-serif; }
+body.ep-redesign:not(.ep-finance) :is(button,a) { transition:background-color .18s ease,color .18s ease,border-color .18s ease,transform .18s ease; }
+body.ep-redesign:not(.ep-finance) :is(.narke-suite-bottom,.bottom-navigation,.team-bottom-nav,.owned-bottom-nav) {
+  height:calc(66px + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  background:rgba(244,242,236,.97);
+  backdrop-filter:blur(14px);
+  box-shadow:0 -5px 18px #1128400a;
+}
+body.ep-redesign:not(.ep-finance) :is(.narke-suite-bottom,.bottom-navigation,.team-bottom-nav,.owned-bottom-nav) svg {
+  width:21px;height:21px;
+}
+body.ep-redesign:not(.ep-finance) .narke-suite-menu {
+  width:min(310px,calc(100vw - 28px));
+  border:1px solid var(--ep-line);
+  border-radius:14px;
+  padding:7px;
+  box-shadow:0 18px 42px #11284022;
+}
+body.ep-redesign:not(.ep-finance) .narke-suite-menu a { border-radius:9px; }
+
+/* Home: keep the actual bicycle image, but let the catalogue and member actions arrive sooner. */
+body.ep-redesign:has(.home-content) { padding-bottom:calc(72px + env(safe-area-inset-bottom)); }
+body.ep-redesign:has(.home-content) .home-header {
+  height:66px;padding:8px 16px;align-items:center;
+  background:var(--ep-ink);color:#fff;
+}
+body.ep-redesign:has(.home-content) :is(.header-icon,.shineray-logo) { color:#fff; }
+body.ep-redesign:has(.home-content) .header-icon svg { stroke:#fff; }
+body.ep-redesign:has(.home-content) .shineray-logo { width:156px; }
+body.ep-redesign:has(.home-content) .logo-cyclist { width:82px;height:42px;margin:-2px 0 -3px 31px; }
+body.ep-redesign:has(.home-content) .logo-wordmark { font-size:25px; }
+body.ep-redesign:has(.home-content) .logo-wordmark strong { font-size:19px; }
+body.ep-redesign:has(.home-content) .logo-tagline { margin-left:24px;font-size:10px; }
+body.ep-redesign:has(.home-content) .home-hero { height:clamp(350px,112vw,470px);min-height:350px; }
+body.ep-redesign:has(.home-content) .hero-scene { object-position:center 40%; }
+body.ep-redesign:has(.home-content) .home-hero::after {
+  background:linear-gradient(90deg,#112840d9 0%,#11284082 46%,#11284010 100%);
+}
+body.ep-redesign:has(.home-content) .hero-copy {
+  top:52%;left:20px;width:min(76%,370px);
+}
+body.ep-redesign:has(.home-content) .hero-copy h1 {
+  font-size:clamp(32px,9.1vw,44px);line-height:.98;letter-spacing:-.045em;
+}
+body.ep-redesign:has(.home-content) .hero-features { gap:5px;margin:13px 0;font-size:12px; }
+body.ep-redesign:has(.home-content) .hero-cta {
+  min-height:43px;height:auto;border-radius:7px;padding:9px 14px;font-size:13px;
+}
+body.ep-redesign:has(.home-content) .quick-actions {
+  display:grid;width:calc(100% - 28px);grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:0;margin:-16px auto 25px;overflow:hidden;border:1px solid #d6dde5;border-radius:14px;
+  padding:5px 0;background:#fffdfa;box-shadow:0 8px 23px #11284018;transform:none;
+}
+body.ep-redesign:has(.home-content) .quick-action {
+  min-width:0;min-height:68px;gap:4px;border-right:1px solid #dce1e2;
+  color:var(--ep-ink);font-size:11px;line-height:1.2;
+}
+body.ep-redesign:has(.home-content) .quick-action:last-child { border-right:0; }
+body.ep-redesign:has(.home-content) .quick-action svg { width:25px;height:25px;fill:var(--ep-blue); }
+body.ep-redesign:has(.home-content) .catalog { width:calc(100% - 28px);margin:0 auto;padding:0 0 24px; }
+body.ep-redesign:has(.home-content) .catalog-heading { margin:0 0 13px;padding-bottom:10px; }
+body.ep-redesign:has(.home-content) .catalog-heading h2 { font-size:23px; }
+body.ep-redesign:has(.home-content) .product-grid { grid-template-columns:repeat(2,minmax(0,1fr));gap:10px; }
+body.ep-redesign:has(.home-content) .product-card {
+  display:flex;min-height:0;grid-template-columns:none;grid-template-rows:none;gap:0;
+  border:1px solid #d7dfe5;border-top:2px solid var(--ep-blue);border-radius:12px;padding:7px;
+  background:var(--ep-white);box-shadow:0 4px 14px #1128400d;
+}
+body.ep-redesign:has(.home-content) .product-card:nth-child(3n+1) { grid-row:auto; }
+body.ep-redesign:has(.home-content) .vehicle-image {
+  width:calc(100% + 14px);height:112px;min-height:0;flex:0 0 112px;margin:-7px -7px 7px;
+  border-radius:11px 11px 0 0;background:#e7ebeb;
+}
+body.ep-redesign:has(.home-content) .vehicle-image img { object-fit:cover; }
+body.ep-redesign:has(.home-content) .product-title-row h3 { font-size:14px; }
+body.ep-redesign:has(.home-content) .metrics { gap:3px 8px;padding:7px 0; }
+body.ep-redesign:has(.home-content) .product-footer { padding-top:8px; }
+body.ep-redesign:has(.home-content) .product-footer button {
+  width:40px;min-height:38px;height:38px;flex:0 0 40px;border-radius:8px;
+}
+body.ep-redesign:has(.home-content) .bottom-navigation {
+  right:10px;bottom:max(7px,env(safe-area-inset-bottom));left:10px;width:auto;height:63px;
+  border:1px solid #d6dfe6;border-radius:15px;padding:4px 0;
+  background:rgba(255,253,250,.97);box-shadow:0 5px 20px #11284020;transform:none;
+}
+body.ep-redesign:has(.home-content) .bottom-navigation a { color:var(--ep-muted);font-size:10px; }
+body.ep-redesign:has(.home-content) .bottom-navigation a[aria-current=page] { color:var(--ep-red); }
+body.ep-redesign:has(.home-content) .bottom-navigation a:not(:last-child)::after { background:#dce1e2; }
+body.ep-redesign:has(.home-content) :is(.home-menu,.purchase-dialog) { border-radius:16px; }
+
+/* Owned-product page: image is the lead; eliminate the empty decorative panel and oversized title slab. */
+body.ep-redesign.narke-project-body .narke-project-page { width:min(100%,720px);max-width:720px; }
+body.ep-redesign.narke-project-body .project-brandbar {
+  display:grid;height:58px;grid-template-columns:42px minmax(0,1fr) 62px;gap:0;
+  padding:0 13px;background:var(--ep-paper);box-shadow:none;
+}
+body.ep-redesign.narke-project-body .project-wordmark {
+  position:static;justify-self:center;width:116px;max-width:100%;height:auto;max-height:38px;transform:none;
+}
+body.ep-redesign.narke-project-body .project-header-craft {
+  position:static;justify-self:end;width:62px;height:40px;max-width:100%;
+}
+body.ep-redesign.narke-project-body .project-hero,
+body.ep-redesign.narke-project-body .project-hero-image { height:clamp(195px,58vw,265px);min-height:0; }
+body.ep-redesign.narke-project-body .project-hero::before { display:none; }
+body.ep-redesign.narke-project-body .project-hero::after {
+  display:block;background:linear-gradient(90deg,#112840b0,transparent 83%);
+}
+body.ep-redesign.narke-project-body .project-hero-image {
+  width:100%;object-fit:cover;object-position:center 52%;
+}
+body.ep-redesign.narke-project-body .project-hero-copy {
+  top:auto;right:auto;bottom:18px;left:18px;width:auto;max-width:72%;align-content:start;
+  justify-items:start;gap:4px;padding:0;background:transparent;text-align:left;transform:none;
+}
+body.ep-redesign.narke-project-body .project-hero-copy img { display:none; }
+body.ep-redesign.narke-project-body .project-hero-copy p { font-size:9px; }
+body.ep-redesign.narke-project-body .project-hero-copy h1 {
+  font:700 clamp(25px,7vw,38px)/.98 "Outfit",sans-serif;letter-spacing:-.045em;
+}
+body.ep-redesign.narke-project-body .project-hero-fleet { display:none; }
+body.ep-redesign.narke-project-body .owned-stats {
+  gap:0;padding:10px 15px;background:#e5e9e6;
+}
+body.ep-redesign.narke-project-body .owned-stat {
+  min-height:63px;border:0;border-right:1px solid var(--ep-line);border-radius:0;
+  padding:5px 10px;background:transparent;box-shadow:none;animation:none;
+}
+body.ep-redesign.narke-project-body .owned-stat:last-child { border-right:0; }
+body.ep-redesign.narke-project-body .owned-stat svg { width:25px;height:25px; }
+body.ep-redesign.narke-project-body .owned-stat-value { font-size:18px; }
+body.ep-redesign.narke-project-body .owned-product-list { gap:10px;padding:12px 14px; }
+body.ep-redesign.narke-project-body .owned-empty {
+  min-height:126px;margin:10px 14px 12px;border:1px solid #d9e0e5;border-radius:13px;
+  padding:18px;background:#fffdfa;color:var(--ep-ink);
+}
+body.ep-redesign.narke-project-body .owned-empty .empty-state-mark {
+  display:grid;width:32px;height:32px;place-items:center;border:1px solid var(--ep-red);
+  border-radius:50%;color:var(--ep-red);
+}
+body.ep-redesign.narke-project-body .project-fleet { display:none; }
+
+/* Account: a compact identity strip keeps balance and working controls above the fold. */
+body.ep-redesign.narke-account-page .account-hero { height:clamp(160px,44vw,220px);min-height:0; }
+body.ep-redesign.narke-account-page .hero-details { gap:8px;padding:18px 20px; }
+body.ep-redesign.narke-account-page .hero-phone { font-size:21px; }
+body.ep-redesign.narke-account-page .account-content { padding:22px clamp(16px,4vw,38px) 96px; }
+body.ep-redesign.narke-account-page .account-workbench-heading { padding-bottom:13px; }
+body.ep-redesign.narke-account-page .account-workbench-heading h2 {
+  margin:6px 0;font-size:clamp(27px,7vw,36px);line-height:1;
+  letter-spacing:-.015em;word-spacing:.025em;
+}
+body.ep-redesign.narke-account-page .account-workbench-heading>span { font-size:13px; }
+body.ep-redesign.narke-account-page .account-control-deck { gap:10px;margin:15px 0 24px; }
+body.ep-redesign.narke-account-page .account-wallet-instrument {
+  min-height:104px;border-radius:10px;padding:14px 16px;background:#e4e9e6;
+}
+body.ep-redesign.narke-account-page .account-wallet-instrument>strong { font-size:34px; }
+body.ep-redesign.narke-account-page .wallet-button { min-height:48px;border-radius:8px; }
+body.ep-redesign.narke-account-page .account-route-directory { gap:28px; }
+body.ep-redesign.narke-account-page .menu-row { min-height:51px; }
+
+/* Team dashboards: modest heading, styled routes, invitation fields remain fully readable. */
+body.ep-redesign.narke-team-page .team-brandbar { height:62px;padding-inline:18px; }
+body.ep-redesign.narke-team-page .team-wordmark img { width:118px;max-height:38px; }
+body.ep-redesign.narke-team-page .team-page-heading {
+  min-height:174px;grid-template-columns:1fr auto auto;gap:10px 14px;
+  padding:24px clamp(18px,5vw,46px) 18px;
+  background-image:linear-gradient(90deg,#112840ed 0%,#112840b6 70%,#11284070),url("/pages/assets/ebike-collective.jpg");
+  background-position:center 53%;background-size:cover;
+}
+body.ep-redesign.narke-team-page .team-page-heading h1 {
+  grid-column:1/-1;font-size:clamp(34px,9vw,46px);line-height:1;
+}
+body.ep-redesign.narke-team-page .team-view-link,
+body.ep-redesign.narke-team-page .team-missions-link {
+  display:inline-flex;min-height:40px;align-items:center;justify-content:center;gap:7px;
+  border:1px solid #ffffff7a;border-radius:8px;padding:8px 11px;font-size:12px;font-weight:700;
+}
+body.ep-redesign.narke-team-page .team-view-link { background:var(--ep-red);border-color:var(--ep-red); }
+body.ep-redesign.narke-team-page .team-missions-link { background:#fff;color:var(--ep-ink); }
+body.ep-redesign.narke-team-page .team-metrics { padding:13px 18px;background:#e5e9e6; }
+body.ep-redesign.narke-team-page .team-metric { gap:6px; }
+body.ep-redesign.narke-team-page .team-metric span:first-child { font-size:21px; }
+body.ep-redesign.narke-team-page .team-level-board { gap:20px;padding:24px clamp(18px,5vw,46px); }
+body.ep-redesign.narke-team-page .team-level-board h2 { font-size:26px; }
+body.ep-redesign.narke-team-page .team-level-panel { min-height:118px;padding:12px; }
+body.ep-redesign.narke-team-page .team-level-panel>strong { font-size:27px; }
+body.ep-redesign.narke-team-page .team-invitation-workspace {
+  overflow:hidden;border-radius:12px;margin:0 clamp(14px,4vw,38px);
+}
+body.ep-redesign.narke-team-page .team-invite { min-height:116px;padding:16px; }
+body.ep-redesign.narke-team-page .team-invite-value {
+  font-size:14px;line-height:1.35;overflow-wrap:anywhere;word-break:break-word;
+}
+body.ep-redesign.narke-team-page .team-copy {
+  min-height:38px;border-radius:7px;padding:8px 10px;font-size:12px;font-weight:700;
+}
+body.ep-redesign.narke-team-page .team-members-inline { gap:15px 28px;padding:30px clamp(18px,5vw,46px); }
+body.ep-redesign.narke-team-page .team-members-heading h2 { margin:4px 0;font-size:31px; }
+body.ep-redesign.narke-team-page .team-inline-detail-link {
+  display:inline-flex;min-height:38px;align-items:center;gap:6px;border:1px solid var(--ep-blue);
+  border-radius:7px;padding:8px 11px;color:var(--ep-blue);font-size:12px;font-weight:700;text-decoration:none;
+}
+body.ep-redesign.narke-team-page .team-detail-empty {
+  grid-area:members;min-height:210px;padding:20px 0;gap:6px;color:var(--ep-muted);font-size:13px;
+}
+body.ep-redesign.narke-team-page .team-member-list:empty { display:none;min-height:0;padding:0; }
+body.ep-redesign.narke-team-page .team-detail-empty img { width:min(150px,42vw);height:112px; }
+body.ep-redesign.narke-team-page .team-terms {
+  margin:0 clamp(18px,5vw,46px);border-radius:12px;padding:20px;background:#e6eae7;
+}
+body.ep-redesign.narke-team-page .team-terms h2 { font-size:18px; }
+
+/* Secondary customer information and mission pages retain real imagery with restrained hero height. */
+body.ep-redesign.narke-missions-page .missions-app { width:min(100%,860px);padding-bottom:92px; }
+body.ep-redesign.narke-missions-page .missions-intro {
+  min-height:235px;padding:34px clamp(20px,6vw,54px);
+  background-position:center 52%;background-size:cover;
+}
+body.ep-redesign.narke-missions-page .missions-intro h1 { font-size:clamp(36px,8vw,52px); }
+body.ep-redesign.narke-missions-page .mission-section { padding-inline:clamp(16px,4vw,36px); }
+body.ep-redesign.narke-missions-page .mission-card { border-radius:12px;padding:15px; }
+body.ep-redesign.narke-missions-page .mission-action { min-height:43px;border-radius:7px; }
+body.ep-redesign.narke-support-page .service-banner { height:clamp(205px,58vw,340px);min-height:0; }
+body.ep-redesign.narke-support-page .narke-service-copy h2 { font-size:clamp(34px,8vw,52px); }
+body.ep-redesign.narke-support-page .reference-contact { min-height:105px;border-radius:0 0 10px 10px; }
+body.ep-redesign.narke-info-body .info-content { max-width:1000px;padding-inline:clamp(16px,5vw,48px); }
+body.ep-redesign.narke-info-body .info-hero { min-height:0;margin-bottom:15px; }
+body.ep-redesign.narke-info-body .info-hero>img { height:clamp(190px,55vw,320px); }
+body.ep-redesign.narke-info-body .info-hero h1 {
+  font-size:clamp(26px,7.1vw,40px);letter-spacing:-.04em;overflow-wrap:anywhere;
+}
+body.ep-redesign.narke-info-body .info-section { gap:24px;padding:27px 0; }
+body.ep-redesign.narke-info-body .info-jumpbar { overflow-x:auto;flex-wrap:nowrap;padding:8px; }
+body.ep-redesign.narke-info-body .info-jumpbar a { flex:none;border-radius:8px; }
+body.ep-redesign.notification-page .page { width:min(100%,760px); }
+body.ep-redesign.notification-page .notification-card { border-radius:13px;padding:clamp(20px,5vw,38px); }
+body.ep-redesign.notification-page .notification-card h2 { font-size:clamp(27px,7vw,40px); }
+
+/* Auth surfaces: image-led but short enough that the form stays central on a phone. */
+body.ep-redesign.login-page .auth-card { border-radius:14px 14px 0 0; }
+body.ep-redesign.login-page .signup-footer a { border-radius:7px; }
+
+@media(max-width:760px) {
+  body.ep-redesign.narke-account-page .account-shell { display:flex;flex-direction:column; }
+  body.ep-redesign.narke-account-page .account-hero { position:relative;width:100%;height:164px;min-height:0; }
+  body.ep-redesign.narke-account-page .account-content { padding:18px 16px 96px; }
+  body.ep-redesign.narke-account-page .account-control-deck { grid-template-columns:1fr; }
+  body.ep-redesign.narke-account-page .account-route-directory { grid-template-columns:1fr; }
+  body.ep-redesign.narke-account-page .wallet-actions { display:grid;grid-template-columns:1fr 1fr; }
+  body.ep-redesign.narke-account-page .wallet-button { width:100%;justify-content:center;padding-inline:8px; }
+  body.ep-redesign.narke-team-page .team-page-heading { grid-template-columns:1fr 1fr;padding:20px 17px 16px; }
+  body.ep-redesign.narke-team-page .team-page-heading h1 { font-size:38px; }
+  body.ep-redesign.narke-team-page .team-metrics { padding:12px 14px; }
+  body.ep-redesign.narke-team-page .team-metric { display:grid;gap:2px;padding:0 9px; }
+  body.ep-redesign.narke-team-page .team-level-board { grid-template-columns:1fr;gap:9px;padding:20px 16px; }
+  body.ep-redesign.narke-team-page .team-level-board-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  body.ep-redesign.narke-team-page .team-level-panel { min-height:104px;padding:10px 7px; }
+  body.ep-redesign.narke-team-page .team-level-panel>strong { font-size:23px; }
+  body.ep-redesign.narke-team-page .team-level-panel>b { font-size:12px; }
+  body.ep-redesign.narke-team-page .team-invitation-workspace { grid-template-columns:1fr 1fr;margin-inline:12px; }
+  body.ep-redesign.narke-team-page .team-invite { min-height:130px;padding:12px 9px; }
+  body.ep-redesign.narke-team-page .team-invite-row { grid-template-columns:minmax(0,1fr);gap:8px; }
+  body.ep-redesign.narke-team-page .team-copy { width:100%; }
+  body.ep-redesign.narke-team-page .team-members-inline {
+    grid-template-columns:1fr;grid-template-areas:"heading" "tabs" "members";gap:12px;padding:24px 16px;
+  }
+  body.ep-redesign.narke-team-page .team-members-heading h2 { font-size:29px; }
+  body.ep-redesign.narke-team-page .team-level-tabs { flex-direction:row;overflow-x:auto; }
+  body.ep-redesign.narke-team-page .team-level-tab { min-width:0;flex:1;min-height:62px; }
+  body.ep-redesign.narke-team-page .team-terms { margin:0 14px;padding:17px; }
+  body.ep-redesign.narke-info-body .info-section { grid-template-columns:1fr;gap:8px;padding:22px 0; }
+  body.ep-redesign.narke-info-body .info-hero { margin:0 0 15px; }
+  body.ep-redesign.narke-info-body .info-hero-copy {
+    left:0;max-width:100%;min-width:0;padding:22px 18px 24px;
+  }
+  body.ep-redesign.narke-info-body .info-hero h1 { font-size:clamp(26px,7.1vw,34px); }
+  body.ep-redesign.narke-support-page .reference-contact-list { grid-template-columns:1fr;margin:0 18px; }
+  body.ep-redesign.narke-support-page .reference-hours { margin:22px 18px; }
+  body.ep-redesign.login-page .hero-art { height:190px;min-height:190px; }
+  body.ep-redesign.login-page .hero-image { height:190px;object-position:center 44%; }
+  body.ep-redesign.login-page .auth-card { padding:20px 18px; }
+}
+@media(max-width:380px) {
+  body.ep-redesign:has(.home-content) .hero-copy { left:16px;width:80%; }
+  body.ep-redesign:has(.home-content) .hero-copy h1 { font-size:32px; }
+  body.ep-redesign:has(.home-content) .quick-actions { width:calc(100% - 20px); }
+  body.ep-redesign:has(.home-content) .quick-action { font-size:10px; }
+  body.ep-redesign.narke-team-page .team-page-heading h1 { font-size:34px; }
+  body.ep-redesign.narke-team-page .team-invite-value { font-size:12px; }
+  body.ep-redesign.narke-team-page .team-level-panel { padding-inline:5px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  body.ep-redesign:not(.ep-finance) *,body.ep-redesign:not(.ep-finance) *::before,body.ep-redesign:not(.ep-finance) *::after {
+    scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;
+  }
+}
+
+/* Injected member chrome on wallet/ledger routes. Never applied to deposit/withdraw admin forms. */
+body.ep-finance.narke-suite-page .narke-suite-header {
+  position:relative;z-index:12;display:grid;width:100%;height:58px;min-height:58px;
+  grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:0;
+  margin:0;padding:0 14px;border:0;border-bottom:1px solid var(--ep-line);border-radius:0;
+  background:var(--ep-paper);box-shadow:none;
+}
+body.ep-finance.narke-suite-page .narke-suite-header .narke-suite-logo {
+  display:block;justify-self:center;width:min(124px,100%);height:auto;max-height:38px;object-fit:contain;
+}
+body.ep-finance.narke-suite-page .narke-suite-header :is(button,a) {
+  display:grid;width:40px;height:40px;place-items:center;border:0;border-radius:8px;
+  padding:0;background:transparent;color:var(--ep-ink);text-decoration:none;cursor:pointer;
+}
+body.ep-finance.narke-suite-page .narke-suite-header svg {
+  display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+body.ep-finance.narke-suite-page .narke-suite-header [data-suite-bell] { position:relative;justify-self:end; }
+body.ep-finance.narke-suite-page .narke-suite-header [data-suite-bell]::after {
+  position:absolute;top:9px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--ep-red);content:"";
+}
+body.ep-finance.narke-suite-page .narke-suite-menu {
+  position:absolute;z-index:20;top:51px;left:12px;display:grid;width:min(300px,calc(100vw - 24px));
+  gap:2px;border:1px solid var(--ep-line);border-radius:12px;padding:7px;background:var(--ep-white);
+  box-shadow:0 16px 36px #11284024;
+}
+body.ep-finance.narke-suite-page .narke-suite-menu[hidden] { display:none; }
+body.ep-finance.narke-suite-page .narke-suite-menu a {
+  display:block;min-height:42px;border-radius:8px;padding:11px 12px;color:var(--ep-ink);
+  font-size:14px;text-decoration:none;
+}
+body.ep-finance.narke-suite-page .narke-suite-menu a:hover { background:#e9edf0; }
+body.ep-finance.narke-history-page .narke-suite-bottom { height:calc(62px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom); }
+body.ep-redesign.narke-project-body .owned-bottom-nav {
+  right:auto;left:50%;width:min(calc(100% - 24px),560px);transform:translateX(-50%);
+}
+@media(prefers-reduced-motion:reduce) {
+  body.ep-finance.narke-suite-page .narke-suite-header *,
+  body.ep-finance.narke-suite-page .narke-suite-header *::before,
+  body.ep-finance.narke-suite-page .narke-suite-header *::after { transition-duration:.01ms!important; }
+}

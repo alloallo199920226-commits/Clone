@@ -29,3 +29,16 @@ images de référence. Ne pas reproduire de fausse barre d’état de téléphon
 Recomposer réellement les structures et l’ordre des contenus ; ne pas valider la
 refonte à partir des couleurs et des textes seuls. Comparer les vues connectées et
 les états ouverts, y compris le paiement, avant d’annoncer une correction complète.
+
+L’utilisateur rejette aussi les pages « débordées, trop grandes et non stylées » :
+sur mobile, garder des titres et bandeaux proportionnés, des actions équilibrées,
+des en-têtes bornés et des états vides proches de leur contenu.
+
+**Why:** après la refonte, ses captures ont encore montré des titres géants,
+un logo et une cloche démesurés sur Retrait, des décorations coupées et de grands
+espaces vides. La réussite des parcours fonctionnels ne prouvait pas la qualité visuelle.
+
+**How to apply:** examiner les pages utilisateur connectées en entier sur téléphone,
+pas seulement le premier écran ou l’absence de défilement horizontal global.
+Contrôler les dimensions réelles des en-têtes, icônes et contrôles, ainsi que les
+états vides et les sections situées sous la ligne de flottaison.
