@@ -2,12 +2,17 @@ const assert = require("node:assert/strict");
 module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, prefix = "+229" }) => {
   const operatorCount = prefix === "+226" ? 3 : 2;
   const balance = () => evaluate("(async () => (await (await fetch('/api/me')).json()).balance_fcfa)()");
+  const openingBalance = await balance();
+  assert(Number.isSafeInteger(openingBalance), "Test account balance must come from the server");
+  const layoutFailures = [];
   const noProviderBrand = async () => assert(!await evaluate("/sonarapay/i.test(document.body.innerText + ' ' + Array.from(document.querySelectorAll('[aria-label]'), node => node.getAttribute('aria-label')).join(' '))"), "Provider name must not be displayed");
   const premiumLayout = async () => {
     assert.equal(await evaluate("!!document.querySelector('link[href=\"/pages/narke-payment.css\"]')"), true);
     assert(!await evaluate("/IVECO|Valhalla|MAQUETTE|DEMO-NA/.test(document.title+' '+document.body.innerText)"));
-    assert(await evaluate("getComputedStyle(document.querySelector('.narke-payment-scene')).backgroundImage.includes('narke-payment-ocean.webp')"));
-    assert(await evaluate("(async()=>{const image=new Image();image.src='/pages/assets/narke-payment-ocean.webp';await image.decode();return image.naturalWidth>0;})()"), "Premium marine background must load");
+    assert(!await evaluate("[...document.querySelectorAll('body *')].some(e=>/narke-(?:payment-ocean|waterline|home-hero)/.test(getComputedStyle(e).backgroundImage))"),
+      "Old marine payment composition must not remain");
+    assert(await evaluate("(async()=>{const image=new Image();image.src='/pages/assets/ebike-precision.jpg';await image.decode();return image.naturalWidth>0;})()"),
+      "New engineering imagery must load");
     assert(await evaluate("[...document.images].every(image=>image.complete&&image.naturalWidth>0)"), "All visible payment assets must load");
     for (const [width,height] of [[320,568],[390,667],[390,844],[472,802],[768,844],[1280,900]]) {
       await call("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: true });
@@ -21,8 +26,10 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
           height:document.documentElement.scrollHeight,
           parts:[...document.querySelectorAll('.deposit-card-header,.deposit-amount-bar,.deposit-section-title,.deposit-operator-options,.deposit-phone-label,.deposit-phone-wrap,.deposit-form-warning,.deposit-orange-otp,.deposit-submit')].map(n=>[n.className,Math.round(n.getBoundingClientRect().height)])};
       })()`);
-      assert(geometry.controls && geometry.top>=0 && geometry.bottom<=height+1 && geometry.height<=height+1,
-        `Single-screen controls clipped at ${width}×${height}: ${JSON.stringify(geometry)}`);
+      if (!(geometry.controls && geometry.top>=0 && geometry.bottom<=height+1 && geometry.height<=height+1)) {
+        await screenshot("ebike-payment-layout-failure");
+        layoutFailures.push({width,height,state:await evaluate("document.body.dataset.paymentState || (document.body.classList.contains('narke-recovery')?'recovery':'operator')"),...geometry});
+      }
       assert(await evaluate("[...document.querySelectorAll('input')].filter(node=>node.getBoundingClientRect().height>0).every(node=>parseFloat(getComputedStyle(node).fontSize)>=16)"), "No mobile input zoom");
     }
     await call("Emulation.setDeviceMetricsOverride", { width:390, height:844, deviceScaleFactor:1, mobile:true });
@@ -109,7 +116,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'pending'");
   assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), true);
   await noProviderBrand();
-  assert.equal(await balance(), 2300);
+  assert.equal(await balance(), openingBalance);
   assert.equal(await evaluate("getComputedStyle(document.querySelector('.deposit-details')).display"), "none");
   assert.equal(await evaluate("getComputedStyle(document.querySelector('.deposit-ussd-card')).display"), "none");
   const paymentPath = await evaluate("location.pathname + location.search");
@@ -133,7 +140,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   assert.equal(await evaluate("document.querySelector('[data-sonara-redirect]').hidden"), false);
   assert.match(await evaluate("document.querySelector('[data-sonara-redirect]').textContent"), /accueil.*10 s/);
   await noProviderBrand();
-  assert.equal(await balance(), 5800);
+  assert.equal(await balance(), openingBalance + 3500);
   assert.equal(await evaluate("document.querySelector('[data-sonara-success]').hidden"), false);
   assert.equal(await evaluate("document.body.dataset.paymentState"), "successful");
   assert.match(await evaluate("document.querySelector('[data-narke-title]').textContent"), /large/);
@@ -164,10 +171,10 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await noProviderBrand();
   await navigate(paymentPath);
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'successful'");
-  assert.equal(await balance(), 5800);
+  assert.equal(await balance(), openingBalance + 3500);
   await evaluate("document.querySelector('[data-deposit-modify]').click()");
   await waitFor("location.pathname === '/choisir-operateur'");
-  assert.equal(await balance(), 5800);
+  assert.equal(await balance(), openingBalance + 3500);
   await navigate(paymentPath);
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'successful'");
   await evaluate("document.querySelector('.deposit-close').click()");
@@ -198,7 +205,7 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'pending'");
   assert.equal(await evaluate("document.querySelector('#sonara-otp').value"), "");
   assert(!await evaluate("sessionStorage.getItem('shineray-deposit-draft').includes('123456')"));
-  assert.equal(await balance(), 5800);
+  assert.equal(await balance(), openingBalance + 3500);
   await evaluate(`fetch('/api/test/sonarapay', {method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({status:'failed'})})`);
   await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'failed'");
@@ -211,11 +218,11 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
   await premiumLayout();
   assert.equal(await evaluate("document.querySelector('[data-sonara-redirect]').hidden"), false);
   await noProviderBrand();
-  assert.equal(await balance(), 5800);
+  assert.equal(await balance(), openingBalance + 3500);
   await screenshot("sonarapay-failed");
   await waitFor("location.pathname === '/accueil'");
   assert(Date.now() - failureSeenAt >= 9700, "Failure redirect must wait 10 seconds");
-  assert.equal(await balance(), 5800);
+  assert.equal(await balance(), openingBalance + 3500);
   if (prefix === "+226") {
     await evaluate(`(async () => {
       await fetch('/api/test/sonarapay', {method:'POST',headers:{'Content-Type':'application/json'},
@@ -232,7 +239,8 @@ module.exports = async ({ call, evaluate, navigate, waitFor, screenshot, phone, 
     await waitFor("document.querySelector('[data-sonara-panel]')?.dataset.paymentStatus === 'pending'");
     assert(!await evaluate("sessionStorage.getItem('shineray-deposit-draft').includes('123456')"));
     assert.equal(await evaluate("document.querySelector('#sonara-otp').value"), "");
-    assert.equal(await balance(), 5800);
+    assert.equal(await balance(), openingBalance + 3500);
   }
-  console.log("PASS: automatic success/failure detection, visible failure alert, both 10-second home redirects, no pending redirect, real account/isolated provider, exactly-once credit, initial and follow-up OTP clearing, 4 widths. NO live provider calls.");
+  assert.deepEqual(layoutFailures, [], "Payment layouts must fit without clipping controls");
+  console.log("PASS: automatic success/failure detection, visible failure alert, both 10-second home redirects, no pending redirect, real account/isolated provider, exactly-once credit, initial and follow-up OTP clearing, 6 widths. NO live provider calls.");
 };

@@ -9,16 +9,30 @@
   <script src="/pages/narke-suite.js" defer></script>
   <script src="/pages/team.js" defer></script>
 </head>
-<body class="narke-suite-page narke-team-page">
+<body class="narke-suite-page narke-team-page ep-redesign">
   <main class="team-portal" data-team-page>
     <header class="team-brandbar">
-      <div class="team-wordmark"><img src="/pages/assets/narke-home-logo.png" alt="E-BIKE Pro"></div>
+        <div class="team-wordmark"><img src="/pages/assets/ebike-logo.png" alt="E-BIKE Pro"></div>
     </header>
     <section class="team-page-heading">
       <h1><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 20v-2a4 4 0 0 0-3-3.9M16 2.1a4 4 0 0 1 0 7.8"/></svg>Mon équipe</h1>
       <a class="team-view-link" href="/mon-equipe">Voir mes filleuls <span aria-hidden="true">›</span></a>
       <a class="team-missions-link" href="/missions">Missions <span aria-hidden="true">›</span></a>
     </section>
+    <section class="team-metrics" data-purpose="statistics-overview">
+      <div class="team-metric"><span class="font-mono">—</span><span>Nombre d’invités</span></div>
+      <div class="team-metric"><span class="font-mono">FCFA —</span><span>Revenus sur invitation</span></div>
+    </section>
+    <section class="team-level-board" aria-labelledby="team-level-board-title">
+      <header><span class="team-members-kicker">Répartition</span><h2 id="team-level-board-title">Le réseau, par niveau</h2></header>
+      <div class="team-level-board-grid" data-team-levels aria-live="polite">
+        <article class="team-level-panel" aria-busy="true"><span>Niveau 01</span><strong>Chargement…</strong></article>
+        <article class="team-level-panel" aria-busy="true"><span>Niveau 02</span><strong>Chargement…</strong></article>
+        <article class="team-level-panel" aria-busy="true"><span>Niveau 03</span><strong>Chargement…</strong></article>
+      </div>
+    </section>
+    <p class="team-disclosure" data-revenue-note hidden>Le revenu indiqué est agrégé ; sa répartition par niveau n’est pas fournie.</p>
+    <section class="team-invitation-workspace" aria-label="Partager une invitation">
     <section class="team-invite team-invite-code" aria-label="Code d’invitation">
       <div class="team-invite-row">
         <div><div class="team-invite-value" data-referral-code>Chargement…</div><span class="team-invite-label">Code d’invitation</span></div>
@@ -32,16 +46,6 @@
         <button class="team-copy" type="button" data-copy-value="link">Copier le lien</button>
       </div>
     </section>
-    <div class="team-table-wrap">
-      <table class="team-commission-table">
-        <thead><tr><th>Taux de commission</th><th>Nombre d’invités</th><th>Revenu</th></tr></thead>
-        <tbody data-team-levels><tr><td colspan="3">Chargement…</td></tr></tbody>
-      </table>
-    </div>
-    <p class="team-disclosure" data-revenue-note hidden>Le revenu indiqué est agrégé ; sa répartition par niveau n’est pas fournie.</p>
-    <section class="team-metrics" data-purpose="statistics-overview">
-      <div class="team-metric"><span class="font-mono">—</span><span>Nombre d’invités</span></div>
-      <div class="team-metric"><span class="font-mono">FCFA —</span><span>Revenus sur invitation</span></div>
     </section>
     <section class="team-members-inline" aria-labelledby="team-members-title">
       <div class="team-members-heading">

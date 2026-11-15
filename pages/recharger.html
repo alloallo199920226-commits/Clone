@@ -1,49 +1,28 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#00131d">
-  <title>Recharger — E-BIKE Pro</title>
-  <link rel="stylesheet" href="/pages/pages.css">
-  <link rel="stylesheet" href="/pages/narke-recharge.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#112840"><title>Recharger — E-BIKE Pro</title>
+  <link rel="stylesheet" href="/pages/pages.css"><link rel="stylesheet" href="/pages/narke-recharge.css">
   <script src="/pages/payment-reference.js" defer></script>
 </head>
-<body class="narke-recharge-page">
-  <main class="finance-page recharge-page">
-    <header class="recharge-brand-header" aria-label="E-BIKE Pro">
-      <span class="brand-header-sheen" aria-hidden="true"></span>
-      <a class="brand-header-back" href="/accueil" aria-label="Retour à l’accueil">‹</a>
-      <img class="brand-header-logo" src="/pages/assets/narke-project-logo.png" alt="E-BIKE Pro">
-      <span class="brand-header-vehicle" aria-hidden="true"></span>
-    </header>
-
-    <nav class="recharge-nav" aria-label="Navigation de la page">
-      <a class="recharge-back" href="/accueil" aria-label="Retour à l’accueil">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m0 0 6.5-6.5M5 12l6.5 6.5"/></svg>
-      </a>
-      <h1>Recharger</h1>
-      <a class="history-info" href="/historique-recharges" aria-label="Ouvrir l’historique des dépôts" data-history-link>i</a>
-    </nav>
-
+<body class="ep-finance ep-recharge-page narke-recharge-page">
+<main class="finance-page recharge-page">
+  <header class="recharge-brand-header">
+    <a class="brand-header-back" href="/accueil" aria-label="Retour à l’accueil">←</a>
+    <a class="brand-home" href="/accueil" aria-label="E-BIKE Pro — accueil"><img class="brand-header-logo" src="/pages/assets/ebike-logo.png" alt="E-BIKE Pro"></a>
+    <a class="history-info" href="/historique-recharges" aria-label="Ouvrir l’historique des dépôts" data-history-link>Historique</a>
+  </header>
+  <div class="recharge-layout">
+    <aside class="recharge-visual">
+      <img src="/pages/assets/ebike-precision.jpg" alt="" class="recharge-hero-photo">
+      <div class="visual-caption"><span>ESPACE MEMBRE / FINANCES</span><h1>Recharge<br>de compte.</h1><p>Alimentez votre espace en quelques étapes.</p></div>
+      <span class="visual-index">01 — 03</span>
+    </aside>
     <div class="finance-content recharge-content">
-      <section class="recharge-hero" aria-label="E-BIKE Pro — Rechargement de compte">
-        <div class="recharge-hero-copy">
-          <span class="hero-kicker">E-BIKE PRO</span>
-          <h2>Rechargement<br>de compte</h2>
-          <p>Espace membre</p>
-        </div>
-        <img src="/pages/assets/e-bike-home-scene.jpg" alt="" class="recharge-hero-photo">
-      </section>
-
+      <div class="journey-heading"><span>01 / NOUVEAU DÉPÔT</span><h2>Préparez votre recharge</h2><p>Choisissez un montant, puis votre canal de paiement.</p></div>
       <section class="amount-section" aria-labelledby="amount-heading">
-        <div class="finance-section-label">
-          <h2 id="amount-heading">
-            <svg class="section-icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="10" cy="5" rx="7" ry="3"/><path d="M3 5v4c0 1.7 3.1 3 7 3 .8 0 1.6-.1 2.3-.2M3 9v4c0 1.7 3.1 3 7 3 .8 0 1.6-.1 2.3-.2M3 13v4c0 1.7 3.1 3 7 3 .8 0 1.6-.1 2.3-.2M17 11v10m-4-6 4-4 4 4"/></svg>
-            <span>Montant de la recharge</span>
-          </h2>
-          <small>(Minimum 2 500 FCFA)</small>
-        </div>
+        <div class="finance-section-label"><h2 id="amount-heading"><span class="stage-number">01</span><span>Montant à déposer</span></h2><small>Minimum 2 500 FCFA</small></div>
         <div class="amount-options" aria-label="Montants proposés">
           <button type="button" class="amount-choice" data-amount-choice="2500" aria-pressed="false">2 500</button>
           <button type="button" class="amount-choice" data-amount-choice="5000" aria-pressed="false">5 000</button>
@@ -52,45 +31,22 @@
           <button type="button" class="amount-choice" data-amount-choice="40000" aria-pressed="false">40 000</button>
           <button type="button" class="amount-choice" data-amount-choice="7000" aria-pressed="false">7 000</button>
         </div>
-        <label class="recharge-amount">
-          <span>FCFA</span>
-          <input id="amount" type="number" min="2500" step="1" inputmode="numeric" placeholder="Veuillez saisir le montant de la recharge" aria-label="Montant de la recharge" aria-describedby="recharge-status">
-        </label>
+        <label class="recharge-amount"><span>FCFA</span><input id="amount" type="number" min="2500" step="1" inputmode="numeric" placeholder="Saisir un autre montant" aria-label="Montant de la recharge" aria-describedby="recharge-status"></label>
       </section>
-
       <section class="channel-section" aria-labelledby="channel-heading">
-        <h2 class="channel-heading" id="channel-heading">
-          <svg class="section-icon wallet-section-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5h16a2 2 0 0 1 2 2v10H3a2 2 0 0 1-2-2v-11a3 3 0 0 1 3-3h14v4"/><path d="M21 11h-6a2.5 2.5 0 0 0 0 5h6z"/><circle cx="15" cy="13.5" r=".5"/></svg>
-          <span>Méthode de recharge</span>
-        </h2>
+        <div class="finance-section-label"><h2 class="channel-heading" id="channel-heading"><span class="stage-number">02</span><span>Canal de recharge</span></h2></div>
         <div class="channel-list">
-          <button class="channel-choice" type="button" data-channel-choice="2" aria-pressed="true">
-            <span>Recharger le canal 2</span>
-            <img src="/pages/assets/e-bike-product-black.jpg" alt="" aria-hidden="true">
-            <span class="channel-check" aria-hidden="true"></span>
-          </button>
-          <button class="channel-choice" type="button" data-channel-choice="1" aria-pressed="false">
-            <span>Recharger le canal 1</span>
-            <img src="/pages/assets/e-bike-product-white.jpg" alt="" aria-hidden="true">
-            <span class="channel-check" aria-hidden="true"></span>
-          </button>
+          <button class="channel-choice" type="button" data-channel-choice="2" aria-pressed="true"><span>Recharger le canal 2</span><img src="/pages/assets/e-bike-product-black.jpg" alt="" aria-hidden="true"><span class="channel-check" aria-hidden="true"></span></button>
+          <button class="channel-choice" type="button" data-channel-choice="1" aria-pressed="false"><span>Recharger le canal 1</span><img src="/pages/assets/e-bike-product-white.jpg" alt="" aria-hidden="true"><span class="channel-check" aria-hidden="true"></span></button>
         </div>
       </section>
-
-      <button class="payment-submit" type="button" data-payment-action data-payment-kind="recharge">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 8V5H5a2 2 0 0 0 0 4h16v11H5a2 2 0 0 1-2-2V7"/><path d="M21 12h-6v5h6M16 14.5h1"/></svg>
-        <span>Rechargez maintenant</span>
-      </button>
-      <p class="payment-status" id="recharge-status" data-payment-status role="status" aria-live="polite"></p>
-
-      <section class="instructions" aria-labelledby="instructions-heading">
-        <header class="instructions-header">
-          <h2 id="instructions-heading">
-            <svg class="section-icon document-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3V1h6v2M9 9h6M9 13h6M9 17h4"/></svg>
-            <span>Instructions de recharge</span>
-          </h2>
-          <img src="/pages/assets/e-bike-product-black.jpg" alt="" aria-hidden="true">
-        </header>
+      <div class="recharge-action-zone">
+        <span class="action-index">ÉTAPE SUIVANTE</span>
+        <button class="payment-submit" type="button" data-payment-action data-payment-kind="recharge"><span>Continuer vers le paiement</span><b aria-hidden="true">→</b></button>
+        <p class="payment-status" id="recharge-status" data-payment-status role="status" aria-live="polite"></p>
+      </div>
+      <details class="instructions">
+        <summary><span class="instruction-index">i</span><span>Conditions et instructions de recharge</span><span class="summary-arrow" aria-hidden="true">＋</span></summary>
         <ol>
           <li>Le dépôt minimum est de 2 500 FCFA. Les dépôts inférieurs à ce montant ne seront pas crédités sur votre compte.</li>
           <li>Veuillez utiliser votre compte le plus récent pour chaque dépôt.</li>
@@ -98,13 +54,10 @@
           <li>Si votre dépôt n'est pas crédité immédiatement après le transfert, veuillez contacter le service client.</li>
           <li>Cher membre, si vous recevez le message « Portefeuille indisponible » lors d'un rechargement via Moov, vous pouvez utiliser Togocel pour recharger votre compte ; le rechargement se déroulera normalement.</li>
         </ol>
-        <a class="payment-disclosure" href="/historique-recharges" data-history-link>
-          <span>Historique des recharges</span>
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>
-        </a>
-      </section>
+        <a class="payment-disclosure" href="/historique-recharges" data-history-link>Historique des recharges <span aria-hidden="true">↗</span></a>
+      </details>
     </div>
-    <div class="recharge-waterline" aria-hidden="true"></div>
-  </main>
+  </div>
+</main>
 </body>
 </html>

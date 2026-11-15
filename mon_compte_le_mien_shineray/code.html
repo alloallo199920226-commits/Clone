@@ -8,14 +8,14 @@
 <link rel="stylesheet" href="/pages/narke-suite.css"/>
 <script src="/pages/narke-suite.js" defer></script>
 </head>
-<body class="account-page narke-suite-page narke-account-page">
+<body class="account-page narke-suite-page narke-account-page ep-redesign">
 <!-- Mobile Container Wrapper -->
 <div class="account-shell">
 <!-- BEGIN: UserProfileBanner -->
 <!-- Top banner with photographic background of utility truck and account details -->
 <section class="account-hero" data-purpose="user-profile-header">
 <!-- Background Vehicle Image -->
-<img alt="Vélo électrique E-BIKE Pro sur la route" class="hero-vehicle" src="/pages/assets/e-bike-home-scene.jpg"/>
+<img alt="Vélo électrique E-BIKE Pro présenté en studio" class="hero-vehicle" src="/pages/assets/ebike-signature.jpg"/>
 <!-- Dark gradient overlay for readability -->
 <div class="hero-shade"></div>
 <!-- User Account Information Layer -->
@@ -31,19 +31,21 @@
 </div>
 <p class="hero-copy-status" data-phone-copy-status role="status" aria-live="polite" aria-atomic="true"></p>
 </div>
-<!-- Account Balance Block -->
-<div class="hero-balance">
-<p class="hero-label">Solde du compte</p>
-<div class="balance-line">
-<span class="balance-currency">FCFA</span>
-<span class="balance-amount" data-demo-balance>…</span>
-</div>
-</div>
 </div>
 </section>
 <!-- END: UserProfileBanner -->
 <!-- Main Container Content -->
 <main class="account-content">
+<header class="account-workbench-heading">
+  <p class="account-overline">E-BIKE PRO / ESPACE MEMBRE</p>
+  <h2>Votre poste<br>de pilotage.</h2>
+  <span>Un aperçu de votre compte et des opérations disponibles.</span>
+</header>
+<section class="account-wallet-instrument" aria-label="Solde de votre compte">
+  <div><p>Solde disponible</p><span class="account-wallet-currency">FCFA</span></div>
+  <strong data-demo-balance>…</strong>
+  <small>Solde interne à la plateforme</small>
+</section>
 <!-- BEGIN: ActionButtons -->
 <!-- Recharge and Withdrawal Buttons -->
 <section class="wallet-actions" data-purpose="wallet-actions">
@@ -262,6 +264,40 @@
 </nav>
 <!-- END: BottomNavigation -->
 <script>
+  // Reassemble the original feature nodes into a compact account workbench.
+  // Controls/data hooks remain on their original nodes so their API behavior is unchanged.
+  (() => {
+    const main = document.querySelector('.account-content');
+    if (!main) return;
+    const heading = main.querySelector('.account-workbench-heading');
+    const wallet = main.querySelector('.account-wallet-instrument');
+    const actions = main.querySelector('.wallet-actions');
+    const finance = main.querySelector('[data-purpose="finance-menu-group"]');
+    const gift = main.querySelector('.gift-code-card');
+    const support = main.querySelector('[data-purpose="support-menu-group"]');
+    const giftCss = main.querySelector('link[href="/pages/gift-codes.css"]');
+    const giftScript = main.querySelector('script[src="/pages/gift-codes.js"]');
+    if (giftCss) document.head.append(giftCss);
+    const overview = document.createElement('section');
+    overview.className = 'account-control-deck';
+    overview.setAttribute('aria-label', 'Solde et actions principales');
+    overview.append(wallet, actions);
+    const directory = document.createElement('div');
+    directory.className = 'account-route-directory';
+    const financeLane = document.createElement('section');
+    financeLane.className = 'account-finance-lane';
+    const financeHeading = document.createElement('header');
+    financeHeading.innerHTML = '<span>01 / Opérations</span><h3>Suivi financier</h3>';
+    financeLane.append(financeHeading, finance);
+    const supportLane = document.createElement('aside');
+    supportLane.className = 'account-support-lane';
+    const supportHeading = document.createElement('header');
+    supportHeading.innerHTML = '<span>02 / Ressources</span><h3>Compte & assistance</h3>';
+    supportLane.append(supportHeading, support, gift);
+    if (giftScript) supportLane.append(giftScript);
+    directory.append(financeLane, supportLane);
+    main.replaceChildren(heading, overview, directory);
+  })();
   const phoneCopyButton = document.querySelector('[data-copy-phone]');
   const phoneCopyStatus = document.querySelector('[data-phone-copy-status]');
   phoneCopyButton.addEventListener('click', async () => {

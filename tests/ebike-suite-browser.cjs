@@ -5,6 +5,18 @@ const assert = require("node:assert/strict");
 const { randomInt, createHash } = require("node:crypto");
 
 module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUser}) => {
+  for (const route of ["/connexion","/inscription"]) {
+    await navigate(route);
+    for (const width of [320,390,1280]) {
+      await call("Emulation.setDeviceMetricsOverride",{width,height:width<700?844:900,deviceScaleFactor:1,mobile:width<700});
+      await evaluate("document.fonts.ready");
+      assert.equal(await evaluate("document.documentElement.scrollWidth>innerWidth"),false,`${route} overflow at ${width}`);
+      assert(await evaluate("Boolean(document.querySelector('[data-auth-form]'))"));
+      assert.equal(await evaluate("/NARKE|IVECO|SHINERAY/i.test(document.body.innerText+' '+document.title)"),false);
+      assert(await evaluate("[...document.querySelectorAll('[data-auth-form] input:not([type=hidden])')].every(e=>parseFloat(getComputedStyle(e).fontSize)>=16)"));
+      await screenshot(`ebike-industrial-${route.slice(1)}-${width}`);
+    }
+  }
   const phone = "9" + String(randomInt(1e7)).padStart(7, "0");
   const registered = await evaluate(`fetch('/api/auth/register',{
     method:'POST',headers:{'Content-Type':'application/json'},
@@ -62,6 +74,14 @@ module.exports = async ({call, evaluate, waitFor, navigate, screenshot, trackUse
   for(const level of ["1","2","3"]) {
     await evaluate(`document.querySelector('[data-team-level-tab="${level}"]').click()`);
     assert.equal(await evaluate(`document.querySelector('[data-team-level-tab="${level}"]').getAttribute('aria-selected')`),"true");
+  }
+  for (const route of ["/compte","/equipe","/recharger","/projet"]) {
+    await navigate(route);
+    assert(await evaluate(`(() => {
+      const sources=[...document.images].map(e=>e.currentSrc||e.src).join(' ')+
+        [...document.querySelectorAll('body *')].map(e=>getComputedStyle(e).backgroundImage).join(' ');
+      return /ebike-(?:atelier|precision|signature|collective)/.test(sources);
+    })()`),`New industrial imagery missing on ${route}`);
   }
   // A valid unsent draft is needed to examine the real payment inputs.
   await evaluate(`sessionStorage.setItem('shineray-deposit-draft',JSON.stringify({

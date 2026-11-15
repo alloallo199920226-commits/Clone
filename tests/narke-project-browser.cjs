@@ -57,7 +57,12 @@ with auth_backend.connect() as con,con.cursor() as cur:
         assert(rendered.includes(new Intl.NumberFormat("en-US").format(amount)),`Missing real contract amount ${amount}`);
       }
       assert(rendered.includes("180"));
-      assert(rendered.includes("Configuration en attente"),"Missing schedule must not become a fake next payout");
+      if (product.next_income_at) {
+        assert(!rendered.includes("Configuration en attente"), "A real income schedule must be displayed");
+      } else {
+        assert(rendered.includes(product.automatic_income_enabled ? "Cycle terminé" : "Configuration en attente"),
+          "Missing schedule must not become a fake next payout");
+      }
     }
     for (const route of ["/accueil","/projet","/equipe","/compte"]) {
       assert(await evaluate(`!!document.querySelector('.owned-bottom-nav a[href="${route}"]')`));

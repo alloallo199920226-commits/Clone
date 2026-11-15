@@ -116,28 +116,19 @@
     if (levelRows) {
       levelRows.replaceChildren();
       counts.forEach((count, index) => {
-        const row = document.createElement("tr");
-        [`Équipe de niveau ${index + 1}`, String(count), formatAmount(commissions[index])].forEach((value, column) => {
-          const cell = document.createElement("td");
-          if (column === 0) {
-            const art = document.createElement("img");
-            art.className = "team-level-art";
-            art.src = `/pages/assets/narke-model-${index === 2 ? 4 : index + 1}.png`;
-            art.alt = "";
-            art.setAttribute("aria-hidden", "true");
-            const label = document.createElement("span");
-            label.className = "team-level-name";
-            label.textContent = value;
-            const rate = document.createElement("b");
-            rate.className = "team-level-rate";
-            rate.textContent = `${team.referral_percentages[index]}%`;
-            cell.append(art, label, rate);
-          } else {
-            cell.textContent = value;
-          }
-          row.append(cell);
-        });
-        levelRows.append(row);
+        const panel = document.createElement("article");
+        panel.className = "team-level-panel";
+        panel.dataset.level = String(index + 1);
+        const indexLabel = document.createElement("span");
+        indexLabel.textContent = `Niveau 0${index + 1}`;
+        const rate = document.createElement("strong");
+        rate.textContent = `${team.referral_percentages[index]} %`;
+        const countLabel = document.createElement("span");
+        countLabel.textContent = `${count} membre${count > 1 ? "s" : ""}`;
+        const commission = document.createElement("b");
+        commission.textContent = formatAmount(commissions[index]);
+        panel.append(indexLabel, rate, countLabel, commission);
+        levelRows.append(panel);
       });
     }
     const unallocatedNote = document.querySelector("[data-revenue-note]");
@@ -161,10 +152,10 @@
         const row = document.createElement("article");
         row.className = "team-member-row";
         row.dataset.memberLevel = String(level);
-        const avatar = document.createElement("img");
+        const avatar = document.createElement("span");
         avatar.className = "team-member-avatar";
-        avatar.src = `/pages/assets/narke-model-${Math.min(3, Math.max(1, level))}.png`;
-        avatar.alt = `Jet-ski NARKE — niveau ${level}`;
+        avatar.setAttribute("aria-hidden", "true");
+        avatar.textContent = "EP";
         const details = document.createElement("div");
         details.className = "team-member-details";
         const phone = document.createElement("strong");

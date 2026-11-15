@@ -1,77 +1,26 @@
 <!doctype html>
-<html lang="fr" class="deposit-document">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#061421">
-  <title>E-BIKE Pro — Choisir un opérateur</title>
-  <link rel="stylesheet" href="/pages/narke-payment.css">
-  <script src="/pages/deposit-i18n.js" defer></script>
-  <script src="/pages/sonarapay.js" defer></script>
-  <script src="/pages/deposit-flow.js" defer></script>
-</head>
-  <body class="deposit-page deposit-page--operator">
-  <main class="narke-payment-scene">
-    <header class="narke-payment-topbar">
-      <a class="narke-payment-brand" href="/recharger" aria-label="E-BIKE Pro — Retour à la recharge"><img src="/pages/assets/narke-project-logo.png" alt="E-BIKE Pro"><span>Recharge<br>de compte</span></a>
-      <a class="narke-payment-backlink" href="/recharger" data-i18n="narkeBack">← Retour</a>
-    </header>
-    <div class="narke-payment-experience">
-      <section class="narke-payment-intro">
-        <p class="narke-payment-eyebrow">E-BIKE PRO</p>
-        <h1 class="narke-payment-story" data-i18n="narkeFormHero">Choisissez votre mode de paiement.</h1>
-        <p class="narke-payment-lede" data-i18n="narkeFormLede">Choisissez un moyen de paiement et suivez les étapes affichées.</p>
-      </section>
+<html lang="fr" class="deposit-document"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#112840"><title>E-BIKE Pro — Choisir un opérateur</title>
+<link rel="stylesheet" href="/pages/narke-payment.css"><link rel="stylesheet" href="/pages/deposit-flow.css"><script src="/pages/deposit-i18n.js" defer></script><script src="/pages/sonarapay.js" defer></script><script src="/pages/deposit-flow.js" defer></script></head>
+<body class="ep-finance ep-payment-page deposit-page deposit-page--operator"><main class="narke-payment-scene">
+  <header class="narke-payment-topbar"><a class="narke-payment-brand" href="/recharger" aria-label="E-BIKE Pro — Retour à la recharge"><img src="/pages/assets/ebike-logo.png" alt="E-BIKE Pro"><span>ESPACE MEMBRE<br>RECHARGE</span></a><a class="narke-payment-backlink" href="/recharger" data-i18n="narkeBack">← Retour</a></header>
+  <div class="narke-payment-experience">
+    <section class="narke-payment-intro"><p class="narke-payment-eyebrow">02 / OPÉRATEUR & NUMÉRO</p><h1 class="narke-payment-story" data-i18n="narkeFormHero">Choisissez votre mode de paiement.</h1><p class="narke-payment-lede" data-i18n="narkeFormLede">Choisissez un moyen de paiement et suivez les étapes affichées.</p><img class="payment-detail-image" src="/pages/assets/ebike-atelier.jpg" alt="" aria-hidden="true"></section>
     <section class="deposit-card" aria-labelledby="deposit-title">
-      <div class="deposit-missing" data-deposit-missing hidden role="alert">
-        <p>Votre montant de recharge n’a pas été sélectionné.</p>
-        <a href="/recharger">Retourner à Recharger</a>
-      </div>
-
+      <div class="deposit-missing" data-deposit-missing hidden role="alert"><p>Votre montant de recharge n’a pas été sélectionné.</p><a href="/recharger">Retourner à Recharger</a></div>
       <div class="deposit-content" data-deposit-content>
-        <header class="deposit-card-header">
-          <h2 class="deposit-brand" id="deposit-title" data-i18n="narkeFormTitle">Votre recharge</h2>
-          <div class="deposit-heading-tools" aria-label="Outils de paiement">
-            <span class="deposit-timer" aria-label="Temps restant pour terminer ce parcours">20:00</span>
-            <button class="deposit-language" type="button" data-deposit-language aria-label="Passer en anglais">English</button>
-          </div>
-          <a class="deposit-close" href="/recharger" aria-label="Fermer et revenir à Recharger">×</a>
-        </header>
-
+        <header class="deposit-card-header"><div><span class="card-overline">SÉLECTION DE PAIEMENT</span><h2 class="deposit-brand" id="deposit-title" data-i18n="narkeFormTitle">Votre recharge</h2></div><div class="deposit-heading-tools"><span class="deposit-timer" aria-label="Temps restant pour terminer ce parcours">20:00</span><button class="deposit-language" type="button" data-deposit-language aria-label="Passer en anglais">English</button></div><a class="deposit-close" href="/recharger" aria-label="Fermer et revenir à Recharger">×</a></header>
         <div class="deposit-body">
-          <div class="deposit-amount-bar" aria-label="Montant sélectionné">
-            <span class="deposit-amount-label">Montant du paiement</span>
-            <strong class="deposit-amount-value"><span data-deposit-amount>—</span></strong>
-          </div>
-
-          <h2 class="deposit-section-title">Veuillez sélectionner un mode de paiement</h2>
-          <div class="deposit-operator-set">
-            <div class="deposit-operator-logos" aria-hidden="true"></div>
-            <div class="deposit-operator-options" role="group" aria-label="Opérateur de paiement"></div>
-          </div>
-
+          <div class="deposit-amount-bar" aria-label="Montant sélectionné"><span class="deposit-amount-label">Montant de la demande</span><strong class="deposit-amount-value"><span data-deposit-amount>—</span></strong></div>
+          <div class="operator-block"><span class="form-step-label">A — RÉSEAU MOBILE</span><h2 class="deposit-section-title">Veuillez sélectionner un mode de paiement</h2><div class="deposit-operator-set"><div class="deposit-operator-logos" aria-hidden="true"></div><div class="deposit-operator-options" role="group" aria-label="Opérateur de paiement"></div></div></div>
           <form id="deposit-operator-form" novalidate>
-            <label class="deposit-phone-label" for="deposit-phone">Portefeuille électronique de paiement</label>
-            <div class="deposit-phone-wrap narke-wallet-field">
-              <span class="deposit-country-flag" data-deposit-flag aria-hidden="true"></span>
-              <span class="deposit-phone-prefix" data-deposit-prefix aria-hidden="true">+</span>
-              <input class="deposit-phone-input" id="deposit-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Votre numéro de téléphone" aria-describedby="deposit-phone-warning deposit-phone-status" required>
-            </div>
+            <span class="form-step-label">B — COORDONNÉES</span><label class="deposit-phone-label" for="deposit-phone">Portefeuille électronique de paiement</label>
+            <div class="deposit-phone-wrap narke-wallet-field"><span class="deposit-country-flag" data-deposit-flag aria-hidden="true"></span><span class="deposit-phone-prefix" data-deposit-prefix aria-hidden="true">+</span><input class="deposit-phone-input" id="deposit-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Votre numéro de téléphone" aria-describedby="deposit-phone-warning deposit-phone-status" required></div>
             <p class="deposit-form-warning" id="deposit-phone-warning">Veuillez vérifier le numéro de téléphone avant de soumettre.</p>
-            <div class="deposit-orange-otp" data-orange-otp hidden>
-              <label for="deposit-orange-otp" data-i18n="sonaraOtpLabel">Code temporaire de l’opérateur (pas votre PIN)</label>
-              <p data-i18n="orangeOtpHelp"></p>
-              <div class="narke-otp-field"><input id="deposit-orange-otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="12" pattern="[0-9]{4,12}" aria-describedby="deposit-phone-status"></div>
-            </div>
-            <button class="deposit-submit" type="submit"><span data-submit-label>Soumettre</span> <span aria-hidden="true">→</span></button>
-            <p class="deposit-form-status" id="deposit-phone-status" data-deposit-status role="alert" aria-live="polite"></p>
+            <div class="deposit-orange-otp" data-orange-otp hidden><label for="deposit-orange-otp" data-i18n="sonaraOtpLabel">Code temporaire de l’opérateur (pas votre PIN)</label><p data-i18n="orangeOtpHelp"></p><div class="narke-otp-field"><input id="deposit-orange-otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="12" pattern="[0-9]{4,12}" aria-describedby="deposit-phone-status"></div></div>
+            <div class="submit-rail"><button class="deposit-submit" type="submit"><span data-submit-label>Soumettre</span><span aria-hidden="true">→</span></button><p class="deposit-form-status" id="deposit-phone-status" data-deposit-status role="alert" aria-live="polite"></p></div>
           </form>
-
         </div>
       </div>
     </section>
-    </div>
-    <footer class="narke-payment-footer">E-BIKE PRO</footer>
-  </main>
-</body>
-</html>
+  </div><footer class="narke-payment-footer">E-BIKE PRO <span>— ESPACE MEMBRE</span></footer>
+</main></body></html>
