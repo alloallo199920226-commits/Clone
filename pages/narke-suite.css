@@ -599,6 +599,19 @@ body.ep-redesign.notification-page .notification-card h2 { font-size:clamp(27px,
 /* Auth surfaces: image-led but short enough that the form stays central on a phone. */
 body.ep-redesign.login-page .auth-card { border-radius:14px 14px 0 0; }
 body.ep-redesign.login-page .signup-footer a { border-radius:7px; }
+body.ep-redesign.login-page .signup-footer a.auth-switch-question {
+  min-height:44px;
+  padding:8px 0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  box-shadow:none;
+  font:inherit;
+  text-align:left;
+  white-space:normal;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
 
 @media(max-width:760px) {
   body.ep-redesign.narke-account-page .account-shell { display:flex;flex-direction:column; }

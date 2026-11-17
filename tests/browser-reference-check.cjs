@@ -152,6 +152,10 @@ async function main() {
       width: 472, height: 864, deviceScaleFactor: 1, mobile: true,
     });
     await navigate("/connexion");
+    if (process.argv.includes("--auth-navigation")) {
+      await require("./auth-navigation-browser.cjs")({ call, evaluate, waitFor, navigate, screenshot });
+      return;
+    }
     if (process.argv.includes("--ebike-suite")) {
       await require("./ebike-suite-browser.cjs")({
         call, evaluate, waitFor, navigate, screenshot,
